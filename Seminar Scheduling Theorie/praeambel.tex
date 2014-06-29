@@ -1,0 +1,60 @@
+\documentclass[
+		a4paper,
+		12pt,
+		twoside=false,
+		chapterprefix,
+		numbers=noenddot,
+		plainheadsepline
+]{scrreprt} %{article}
+
+\usepackage[utf8]{inputenc}		% UTF8-Kodierung für Umlaute usw
+\usepackage[T1]{fontenc} 		% Ligaturen, richtige Umlaute im PDF 
+\usepackage[german,ngerman]{babel} % Silbentrennung
+
+%\usepackage{fancyhdr}
+\usepackage{setspace} % Zeilenabstand
+	\onehalfspacing % 1,5 Zeilen
+
+% Graphik
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{tikz}
+	\usetikzlibrary[topaths,arrows,calc]
+\usepackage{rotating}
+% Bildunterschrift
+\setcapindent{0em} % kein Einrücken der Caption von Figures und Tabellen
+%\setcapwidth[c]{0.5\textwidth}
+
+\usepackage{bm}
+\setlength{\headheight}{15pt}
+
+\usepackage{hyperref}
+\setlength{\parindent}{0em}
+
+\usepackage[paper=a4paper,left=30mm,right=30mm,top=20mm,bottom=20mm]{geometry}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\usepackage[square,sort]{natbib}
+% Mathe
+\usepackage{amssymb,amsmath}
+% Schrift-art
+\usepackage{mathptmx}% Times Roman font
+
+% Absätze
+\setlength{\parindent}{0pt}
+% Floatbarrier
+% [verbose] 
+% Schreibt viele zusätzliche Informationen in die Log-Datei.
+\usepackage[verbose]{placeins}
+
+% Schriften-Größen
+\setkomafont{chapter}{\LARGE\rmfamily} % Überschrift der Ebene
+\setkomafont{section}{\Large\rmfamily}
+\setkomafont{subsection}{\large\rmfamily}
+\setkomafont{subsubsection}{\large\rmfamily}
+\setkomafont{chapterentry}{\large\rmfamily} % Überschrift der Ebene in Inhaltsverzeichnis
+\setkomafont{descriptionlabel}{\bfseries\rmfamily} % für description Umgebungen
+\setkomafont{captionlabel}{\small\bfseries}
+%\setkomafont{caption}{\small}
+\usepackage[font=small,labelfont=bf,labelsep=colon]{caption}

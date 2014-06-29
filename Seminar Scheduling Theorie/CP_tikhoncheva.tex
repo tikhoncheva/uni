@@ -1,0 +1,42 @@
+\input{praeambel.tex} % Importiere die Einstellungen 
+
+\begin{document}
+%\pagestyle{empty}
+
+% Titelseite
+\input{./title.tex}
+
+%\newpage
+\pagenumbering{Roman} % große Römische Seitenummerierung
+\setcounter{page}{1}
+\pagestyle{plain} % normale Kopf- und Fußzeilen für den Rest
+
+%\setcounter{lofdepth}{2}
+\tableofcontents
+\listoffigures
+%\listoftables
+\clearpage
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+\include{00-Kapitel}
+\include{01-Kapitel}
+\include{02-Kapitel}
+\include{03-Kapitel}
+
+\newpage
+
+
+\bibliographystyle{plainnat}
+%\bibliographystyle{plain}
+\bibliography{bibliographie}
+
+\pagestyle{plain}
+\include{Erklaerung}
+
+\newpage
+
+
+\end{document}
+
