@@ -1,14 +1,14 @@
 \chapter{Constraint Programming}
 \label{sec:CP}
 
-\cite{CPforScheduling} definieren {\bf Constraint Programming} (deutsch: Bedingungsprogrammierung, Constraintsprogrammierung) als eine Methode zur Formulierung und Lösung eines diskreten Bedingungserfüllungs- oder Bedingungsoptimierungsproblems durch systematische Anwendung deduktiver Folgerungen, um den Suchraum zu minimieren. CP ist eine Erweiterung der logischen Programmierung, da sie erlaubt,  verschiedene mächtige Suchalgorithmen zu benutzen und sie für jedes spezifische Problem entsprechend anzupassen. Das macht dieses Programmierparadigma sehr flexibel, fordert aber eine bestimmte Erfahrung in der deklarativen logischen Programmierung und in der Entwicklung von Suchalgorithmen \citep[vgl][]{CPforScheduling}.
+\cite{CPforScheduling} definieren {\bf Constraint Programming} (deutsch: Bedingungsprogrammierung, Constraintsprogrammierung) als eine Methode zur Formulierung und Lösung eines diskreten Bedingungserfüllungs- oder Bedingungsoptimierungsproblems durch systematische Anwendung deduktiver Folgerungen, um den Suchraum zu minimieren. CP ist eine Erweiterung der logischen Programmierung, da sie erlaubt,  verschiedene mächtige Suchalgorithmen zu benutzen und sie für jedes spezifische Problem entsprechend anzupassen. Das macht dieses Programmierparadigmas sehr flexibel, fordert aber eine bestimmte Erfahrung in der deklarativen logischen Programmierung und in der Entwicklung von Suchalgorithmen \citep[vgl][]{CPforScheduling}.
 
 In diesem Kapitel definieren wir die Hauptbegriffe aus der Theorie der CP, stellen das allgemeine CP Programmierungsgerüst vor und am Ende machen wir einen Vergleich zwischen CP und gemischter ganzzahliger Optimierung (Mixed-Integer Programming, {\bf MIP}).
 
 \section{Constraint Satisfication Problem}
 
 {\bf Constraint Satisfication Problem} (deutsch: Bedingungserfüllungsproblem, {\bf CSP}) ist ein Problem der Zuweisung der gegebenen Variablen die Werte aus der gegebenen Definitionsbereichen, so dass alle Bedingungen an die Variable erfüllt sind \citep[vgl][]{CSP}. Formeller:\\
-Gegeben seien die Menge $X= \{ x_1,x_2,\dots, x_n\}$ diskrete Variablen zusammen mit ihren endlichen Definitionsbereichen $\{ D_1,D_2,,\dots D_n\}$ und die Menge der Bedingungen $C_{ijk\dots}$ zwischen den Variablen $x_i, x_j, x_k, \dots$, die die möglichen Werte der Variablen zusätzlich einschränken.
+Ein CSP ist gegeben durch die Menge $X= \{ x_1,x_2,\dots, x_n\}$ diskrete Variablen zusammen mit ihren endlichen Definitionsbereichen $\{ D_1,D_2,,\dots D_n\}$ und die Menge der Bedingungen $C_{ijk\dots}$ zwischen den Variablen $x_i, x_j, x_k, \dots$, die die möglichen Werte der Variablen zusätzlich einschränken. 
 %\footnote{Wir betrachten den Fall, wenn die Definitionsbereiche der Variablen eine Folge konsekutiven ganzen Zahlen darstellen}
 
 Im allgemeinen können die Variablen von verschiedenen Typen sein (ganzzahlig, boolean, symbolisch, Mengen). Dafür gibt es verschiedene Typen der Bedingungen:
@@ -41,7 +41,7 @@ Wenn das Problem sich in Block $4$ als widersprüchlich erwiesen hat, wird in Bl
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.9]{fig/CSPalgorithm.png}
-	\caption{Allgemeiner Algorithmus für das Constraint Satisfaction Problem }
+	\caption[Allgemeiner Algorithmus für das Constraint Satisfaction Problem]{Allgemeiner Algorithmus für das Constraint Satisfaction Problem \citep[aus][]{CPforScheduling}}
 	\label{fig:CSPalgorithm}
 \end{figure}
 
@@ -49,7 +49,7 @@ Wenn das Problem sich in Block $4$ als widersprüchlich erwiesen hat, wird in Bl
 
 \subsection{Bedingungsfortpflanzung (constraint propagation)}
 
-Das Verfahren der Bedingungsfortpflanzung prüft die Widerspruchsfreiheit der im Problem vorhandenen Bedingungen, um die neue ableiten zu können (eng. {\bf arc consistency checking}).
+Das Verfahren der Bedingungsfortpflanzung prüft die Widerspruchsfreiheit der im Problem vorhandenen Bedingungen, um die neuen Bedingungen ableiten zu können (eng. {\bf arc consistency checking}).
 
 Hier geht man davon aus, dass die Bedingungen zwischen der Variablen eines CSP immer nur zwei Variablen beeinflussen. In diesem Fall kann CSP als ein Bedingungsgraph dargestellt werden. Variablen des CSP bilden die Menge der Knoten des Graphen. Die Knoten sind adjazent, wenn es eine Bedingung gibt, die die entsprechende Variable verbindet \citep[vgl.][]{CSP}.
 
@@ -63,7 +63,7 @@ Sei eine Bedingung $C_{ij}$ zwischen den Variablen $x_i$ und $x_j$ gegeben. Der 
 		\centering
 		\includegraphics[scale=0.7]{fig/ConstraintPropagation1.png}
 	}
-	\caption{Reduktion des Suchraums mithilfe der Widerspruchsfreiheit eines Bogens}
+	\caption[Reduktion des Suchraums mithilfe der Widerspruchsfreiheit eines Bogens]{Reduktion des Suchraums mithilfe der Widerspruchsfreiheit eines Bogens \citep[aus][]{CPforScheduling}}
 	\label{fig:ConstraintPropagation1}
 \end{wrapfigure}
 
@@ -78,7 +78,7 @@ Zu bemerken ist, dass die Bedingungsfortpflanzung die Information der Definition
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.8]{fig/ConstraintPropagation2.png}
-	\caption{Reduktion des Suchraums mithilfe der Widerspruchsfreiheit mehreren Bogen}
+	\caption[Reduktion des Suchraums mithilfe der Widerspruchsfreiheit mehreren Bogen]{Reduktion des Suchraums mithilfe der Widerspruchsfreiheit mehreren Bogen \citep[aus][]{CPforScheduling}}
 	\label{fig:ConstraintPropagation2}
 \end{figure}
 
@@ -99,7 +99,7 @@ Angenommen unser COP hat eine Zielfunktion $Z$, die minimiert werden soll. Wenn 
 
 \section{Vorteile von Constraint Programmierung}
 
-In diesem Abschnitt möchten wir die Vorteile der Constraint Programmierung vorstellen, die dieses Programmierparadigma attraktiv zum Lösen von Scheduling-Aufgaben  machen.
+In diesem Abschnitt möchten wir die Vorteile der Constraint Programmierung vorstellen, die dieses Programmierparadigmas attraktiv zum Lösen von Scheduling-Aufgaben  machen.
 
 \subsection {Indexierung der Variable}
 Analog zu den Programmiersprachen ermöglicht CP die Benutzung einer Variablen als Indizes von anderen Variablen, was normalerweise die Anzahl der  Entscheidungsvariablen reduziert.
@@ -162,7 +162,7 @@ Aus diesen Beispielen ist es offensichtlich, dass sich viele Bedingungen im CP d
 Die beiden Methoden Constraint und  ganzzahlige Programmierung sind ganz unterschiedlich und lassen sich nicht miteinander vergleichen. 
 So macht IP sich der mathematischen Struktur des Problems voll zunutze, während CP dem Forscher großen Spielraum im Entwerfen von Nebenbedingungen und Suchalgorithmen lässt.
 
-Es gilt generell, dass die Zielfunktion eine zentrale Rolle in IP spielt. Dabei wird auch versucht, die kleinste Menge der Nebenbedingungen zu finden, die ausreichend ist, den Kernpunkt des Problems zu beschreiben. CP konzentriert sich dagegen auf die Constraints. Alle zusätzliche Wissen des Problem, die als Constraints formuliert und ins Modell hinzugefügt wurden, können die Performanz des Suchalgorithmus verbessern. Die Suchverfahren stützen sich seinerseits weniger auf die mathematische Struktur der Zielfunktion oder des Constraints, aber mehr auf die spezifischen Aspekte des Problems.
+Es gilt generell, dass die Zielfunktion eine zentrale Rolle in IP spielt. Dabei wird auch versucht, die kleinste Menge der Nebenbedingungen zu finden, die ausreichend ist, den Kernpunkt des Problems zu beschreiben. CP konzentriert sich dagegen auf die Constraints. Alles zusätzliche Wissen des Problem, die als Constraints formuliert und ins Modell hinzugefügt wurden, können die Performanz des Suchalgorithmus verbessern. Die Suchverfahren stützen sich seinerseits weniger auf die mathematische Struktur der Zielfunktion oder des Constraints, aber mehr auf die spezifischen Aspekte des Problems.
 
 Die Wahl, welche von beiden Paradigmen besser zu benutzen ist, hängt deswegen in der ersten Linie von dem Problem, den Problemgrößen, den Daten, dem Model, aber auch von den Forschern und der Software, die er benutzt, ab. Außerdem es ist auch möglich beide Methoden zu kombinieren.
 
