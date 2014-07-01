@@ -34,6 +34,7 @@
 
 \usepackage{hyperref}
 
+\newcommand{\inhalt}{\frame{   \frametitle{Überblick}   \tableofcontents[currentsection]}}
 
 \newcounter{saveenumi}
 \newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
@@ -70,8 +71,12 @@
 \tableofcontents
 \end{frame} 
 
-%------------------------------------------------------------------------------%                                    CP
+%------------------------------------------------------------------------------%
+%                                    CP
+
 \section{Constraint Programmierung}
+\inhalt
+
 \nocite{CSP}
 \nocite{CPforScheduling}
 \begin{frame}
@@ -269,8 +274,8 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \end{frame}
 %                             -----------------------                         %
 %                    Vorteil des Constraint Programmierung                    %
-\subsection{Vorteil des Constraint Programmierung}
-\begin{frame}{Vorteil des Constraint Programmierung}
+\subsection{Vorteil der Constraint Programmierung}
+\begin{frame}{Vorteil der Constraint Programmierung}
 \begin{itemize}
 	\vspace{30pt}
 	\item Analog zu den Programmiersprachen ist die Benutzung einer Variablen als Indizes von anderen Variablen erlaubt\\
@@ -305,7 +310,7 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 
 	\begin{itemize}
 	
-	\item Einfachere Notation der Nebenbedienungen
+	\item Einfachere Notation der Nebenbedingungen
 	
 	\vspace{5pt}
 	{\tiny
@@ -401,6 +406,7 @@ Allgemein gilt:
 %------------------------------------------------------------------------------%
 %                       Beispiele aus der Scheduling Theorie
 \section{Beispiele aus der Scheduling Theorie}
+\inhalt
 %                             -----------------------                         %
 \subsection{Minimieren der gewichteten Gesamtverspätung}
 \begin{frame}[allowframebreaks]{$1||\sum{w_jT_j}$}
