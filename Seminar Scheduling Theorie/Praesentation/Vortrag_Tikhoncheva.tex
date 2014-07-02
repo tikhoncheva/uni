@@ -16,6 +16,7 @@
 
 \usepackage{color}
 	\definecolor{darkred}{rgb}{0.55, 0.0, 0.0}
+	\definecolor{rosyBrown}{rgb}{1., 0.75, 0.75}
 
 % tikz
 \usepackage{tikz}
@@ -54,7 +55,7 @@
 
 \title{Constraint Programmierung für Scheduling}   
 \author{Ekaterina Tikhoncheva} 
-\date{08.01.2014} 
+\date{\today} 
 
 % zusaetzlich ist das usepackage{beamerthemeshadow} eingebunden 
 \usepackage{beamerthemeshadow}
@@ -67,7 +68,7 @@
 \end{frame}
 %------------------------------------------------------------------------------%                                    Plan
 \begin{frame}
-\frametitle{Plan}
+\frametitle{Agenda}
 \tableofcontents
 \end{frame} 
 
@@ -83,43 +84,31 @@
 
 \frametitle{Was ist Constraint Programmierung?}
 
-\begin{definition}[Constraint Programmierung]
-    Die {\color{darkred} Constraint Logische Programmierung} (engl. Constraint Logic Programming) oder einfach {\color{darkred}Constraint Programmierung} (kurz {\color{darkred} \it CP}) ist ein Programmierparadigma, das unbekannte Variablen und Beziehungen zwischen ihnen durch Nebenbedingungen (Constraints) beschreibt. 
-\end{definition}
-\pause
+\begin{block}{}
+    Die {\color{darkred} Constraint Logische Programmierung} (engl. Constraint Logic Programming) oder einfach {\color{darkred}Constraint Programmierung} (kurz {\color{darkred} \it CP}) ist ein Ansatz zur Lösung eines Bedingungserfüllung- oder Optimierungsroblems. Die zwei Hauptprinzipien von CP sind:\\
+    \begin{itemize}
+    \item Deduktion der zusätzlichen Nebenbedingungen aus den vorhandenen Nebenbedingungen durch logische Folgerungen
+    \item Anwendung der Suchalgorithmen zum Untersuchen des Lösungsraums
+    \end{itemize}
+\end{block}
 
+\pause 
 {\centering
-Es kam aus dem Bereich der künstlichen Intelligenz und gilt als eine Erweiterung
+Ursprünglich stammt es aus dem Bereich der künstlichen Intelligenz und gilt als eine Erweiterung
 der Ideen der logischen Programmierung.
 }
 
-\pause
-{\color{darkred}Zwei Hauptprinzipien}:
-\begin{itemize}
-\item Deduktion der zusätzlichen Nebenbedingungen aus den vorhandenen durch logische Folgerungen
-\item Anwendung der Suchalgorithmen zum Untersuchen des Lösungsraums
-\end{itemize}
 \end{frame}
-%                             -----------------------                         %
-\begin{frame}
 
-Constraint Programmierung:
-\begin{itemize}
-\centering
-\item Constraint Satisfication Problem
-\item Constraint Optimization Problem
-\end{itemize}
-
-\end{frame}
 %                             -----------------------                         %
-\subsection{Constraint Satisfication Problem}
+\subsection{Constraint Satisfaction Problem}
 \begin{frame}{Constraint Satisfication Problem}
   \begin{definition}
   Ein {\color{darkred} Constraint Satisfication Problem} ({\color{darkred}CSP}) ist definiert durch\begin{itemize}
 	\item  die Menge $X= \{ x_1,x_2,\dots, x_n\}$ diskrete Variablen zusammen mit ihren endlichen Definitionsbereichen $\{ D_1,D_2,,\dots D_n\}$ 
 	\item die Menge der Bedingungen $C_{ijk\dots}$ zwischen den Variablen $x_i, x_j, x_k, \dots$, die die möglichen Werte der Variablen zusätzlich einschränken.
   \end{itemize}
-  Ein CSP besitzt eine {\bf (zulässige) Lösung}, wenn eine Zuweisung der Werten aus den  Definitionsbereichen zu jeder Variable existiert, sodass alle Bedingungen erfüllt sind.
+  Ein CSP besitzt eine {\bf (zulässige) Lösung}, wenn eine Zuweisung der Werte aus den  Definitionsbereichen zu jeder Variable existiert, so dass alle Bedingungen erfüllt sind.
   \end{definition}
 \end{frame}
 %                             -----------------------                         %
@@ -147,12 +136,14 @@ Dafür gibt es verschiedene Typen der Bedingungen:
      {
      	\tiny 1: Initialisiere das Modell
      };
+     \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};
   \end{tikzpicture}
 \end{frame}
 %
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+     \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block] at (4, 0.5)(comment1) 
      {
@@ -174,6 +165,7 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+     \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block] at (4, 0.5)(comment1)
      {
@@ -185,6 +177,7 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+     \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}}; 
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block, text width=3.7cm] at (4, 0.5)(comment1)
      {
@@ -198,6 +191,7 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+      \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block, text width=3.7cm] at (4, 0.5)(comment1) 
      {
@@ -210,16 +204,17 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+     \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block,text width=3.7cm] at (4, 0.5)(comment1) {\tiny 6:
-     	{\bf Branching}\\ Teile das ursprüngliche Problems in eine Menge von Teilproblemen $\rightsquigarrow$  Entscheidungsbaum\\};
+     	{\bf Branching}\\ Teile das ursprüngliche Problem in eine Menge von Teilproblemen $\rightsquigarrow$  Entscheidungsbaum\\};
      
      \pause
      
      \node [block, text width=3.5cm] at (-4.5, 0.5)(comment2)
      {
         \tiny oft\qquad {\color{darkred} das Backtracking-Verfahren} \\
-     	\qquad $'-'$ ineffizient \\
+     	\space$'-'$ ineffizient \\
      	Alternativ\qquad {\color{darkred}lookahead Verfahren} 
      	\qquad(z.B. Forward checking, MAC) \\
      };
@@ -229,7 +224,7 @@ Dafür gibt es verschiedene Typen der Bedingungen:
      \node [block, color = red, text width=3.5cm] at (-4.5, -1.0)(comment3)
      {
      	\tiny \color{black}{\bf ?}: wo wird als erstes verzweigt\\
-     	Z.B in die Variable mit dem kleinsten Definitionsbereich \\
+     	z.B in die Variable mit dem kleinsten Definitionsbereich \\
      };
      
      \pause
@@ -245,10 +240,11 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \begin{frame}{Lösung des Constraint Satisfaction Problems}
 \centering
  \begin{tikzpicture}[overlay]
+      \node at ( -5,-3.7) (Ref) {\tiny Bild aus \cite{CPforScheduling}};S
      \node at ( 0,-0.5) (picture) {\includegraphics[scale = 0.45]{fig/CSPalgorithm.png}};
      \node [block] at (4, 0.5)(comment1) 
      {
-     	\tiny 7: Wähle nächstes Teilproblem und versuch es zu lösen \\
+     	\tiny 7: Wähle nächstes Teilproblem und versuche es zu lösen \\
      };
   \end{tikzpicture}
 \end{frame}
@@ -261,21 +257,24 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 	\begin{itemize}
 	\item Angenommen unser COP hat eine Zielfunktion Z, die minimiert werden soll. 
 	
-	\item Ohne $Z$ habe wir ein CSP und seine Lösung können wir
+	\item Ohne $Z$ haben wir ein CSP und seine Lösung können wir
 	mit Hilfe des Algorithmus finden.
 	
-	\item Sobald eine Lösung von CSP
+	\pause
+	
+	\item Sobald eine Lösung des CSP
 	gefunden wurde, berechne den Wert der Zielfunktion Z0 und füge die Bedingung Z < Z0 zum Problem hinzu 
 	
-	\item Löse neues CSP und so weiter, bis es zu einem Widerspruch gekommen ist und alle Zweige
+	\item Löse neues CSP und so weiter, bis es zu einem Widerspruch kommt und alle Zweige
 	im Suchbaum untersucht wurden.
+	\pause
 	\item Die zuletzt gefundene zulässige Lösung ist somit die Lösung des COP.
 	\end{itemize}
 \end{frame}
 %                             -----------------------                         %
 %                    Vorteil des Constraint Programmierung                    %
-\subsection{Vorteil der Constraint Programmierung}
-\begin{frame}{Vorteil der Constraint Programmierung}
+\subsection{Vorteile der Constraint Programmierung}
+\begin{frame}{Vorteile der Constraint Programmierung}
 \begin{itemize}
 	\vspace{30pt}
 	\item Analog zu den Programmiersprachen ist die Benutzung einer Variablen als Indizes von anderen Variablen erlaubt\\
@@ -292,15 +291,15 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 			$y[i,j]\in \{0,1\}$ 
 					$1$, falls Job $i$ ein direkter Vorgänger des Jobs $j$ ist\\
 			\vspace{3pt}
-			Gesamte Preis der Jobreihenfolge : $\sum_{i,j,i\not =  j} {cost[i,j]y[i,j]}$ \qquad\qquad {\color{red} }\\
+			Gesamter Preis der Jobreihenfolge : $\sum_{i,j,i\not =  j} {cost[i,j]y[i,j]}$ \qquad\qquad {\color{red} }\\
 		};
 
 		\node [block,text width=5.cm] at (7.5, 0.5)(CP) 
 		{
 			\tiny {\color{darkred} CP:} n Variablen \\
-			$job[k]=$ Index des k-ten Jobs in Reihenfolge \\
+			$job[k]=$ Index des k-ten Jobs in der Reihenfolge \\
 			\vspace{5pt}
-			Gesamte Preis der Jobreihenfolge : $\sum_{k>1} {cost[job[k-1],job[k]]}$ \qquad\qquad {\color{red} }\\
+			Gesamter Preis der Jobreihenfolge : $\sum_{k>1} {cost[job[k-1],job[k]]}$ \qquad\qquad {\color{red} }\\
 		};
 	\end{tikzpicture}
 	\end{itemize}
@@ -386,9 +385,9 @@ Allgemein gilt:
 	{
 		\small {\color{darkred} IP:}\\ 
 		\begin{itemize}
-		 \item wichtig ist mathematische Struktur des Problems
-		 \item zentrale Rolle spielt Zielfunktion 
-		 \item gesucht wird die kleinste Menge der Nebenbedingungen, die ausreichend ist, den Kernpunkt des Problems zu beschreiben
+		 \item wichtig ist die mathematische Struktur des Problems
+		 \item zentrale Rolle spielt die Zielfunktion 
+		 \item gesucht wird eine Menge der Nebenbedingungen, die ausreichend ist, den Kernpunkt des Problems zu beschreiben
 		 \end{itemize}
 	};
 	\node [block,text width=5.cm] at (7.5, 0.5)(CP) 
@@ -397,7 +396,7 @@ Allgemein gilt:
 		\begin{itemize}
 		 \item lässt großen Spielraum im Entwerfen von Nebenbedingungen und Suchalgorithmen
 		 \item konzentriert sich auf Nebenbedingen 
-		 \item soviel Nebenbedingungen, wie möglich
+		 \item so viele Nebenbedingungen, wie möglich
 		 \end{itemize}
 	};
 	\end{tikzpicture}
@@ -429,8 +428,9 @@ Die einfachste Formulierung des Problems in CP:
 \begin{align}
  \min & \sum_{j}{w_jT_j} \nonumber \\
  s.t.\quad C_j & = p_j + s_j\qquad\qquad \forall j=1..n \nonumber \\
- C_j  & \le s_k \vee  C_k \le s_j \qquad \forall j,k=1..n,\ k>j \nonumber
-\end{align}
+ C_j  & \le s_k \vee  C_k \le s_j \qquad \forall j,k=1..n,\ k>j \nonumber \\
+ T_j & = \max\{0, C_j - d_j\} \qquad\qquad \forall j=1..n \nonumber
+ \end{align}
 \end{block}
 
 Insgesamt: $2n$ Variablen und $\frac{n(n+1)}{2}$ Nebenbedingungen.
@@ -439,7 +439,7 @@ Insgesamt: $2n$ Variablen und $\frac{n(n+1)}{2}$ Nebenbedingungen.
 
 Eine andere Formulierung ist möglich:
 \begin{itemize}
-\item ersetze $n$ Variablen $s$ durch $n$ Variablen $pos$ mit den Definitionsbereichen $[1..n]$, wobei $pos[j]$ die Position des Jobs $j$ in der Bearbeitungsreihenfolge ist.
+\item Ersetze $n$ Variablen $s$ durch $n$ Variablen $pos$ mit den Definitionsbereichen $[1..n]$, wobei $pos[j]$ die Position des Jobs $j$ in der Bearbeitungsreihenfolge ist.
 \end{itemize}
 \begin{block}{} \begin{align}
 	pos_j & \not= pos_k\qquad\qquad \forall j,k=1..n,\ k>j \nonumber \\
@@ -456,8 +456,8 @@ Weitere Bedingungen:
  Wird ein Job auf der Position $j$ platziert, ist die untere Schranke seiner Fertigstellungszeit gleich der Summe seiner Bearbeitungszeit und der Summe $p_i$ von $j-1$ Jobs mit den kleinsten Bearbeitungszeiten.
 \begin{block}{}
 \begin{align}
-  pos_j=k \wedge j<=k  & \Rightarrow C_j \ge \sum_{l<=k} p_l \nonumber \\
-  pos_j=k \wedge j>k  & \Rightarrow C_j \ge p_j+\sum_{l<k} p_l \nonumber 
+  & pos_j=k \wedge j<=k  \qquad \Rightarrow \qquad C_j \ge \sum_{l<=k} p_l \nonumber \\
+  & pos_j=k \wedge j>k  \qquad \Rightarrow  \qquad C_j \ge p_j+\sum_{l<k} p_l \nonumber 
 \end{align}
 \end{block}
 \vspace{8pt}
@@ -473,7 +473,7 @@ Mögliche Heuristik für das Suchverfahren WMDD (\glqq {\it weighted modified du
 
 \vspace{40pt}
 \begin{block}{}
-Die Aufgabe ist $n$ Jobs zu $m$ Maschinen zuordnen, wobei jeder Job $j$ aus einer Menge von Operationen $O_j$ besteht, die in einer bestimmten Reihenfolge abgearbeitet werden müssen.
+Die Aufgabe ist $n$ Jobs zu $m$ Maschinen zuzuordnen, wobei jeder Job $j$ aus einer Menge von Operationen $O_j$ besteht, die in einer bestimmten Reihenfolge abgearbeitet werden müssen.
 \end{block}
 
 \begin{block}{}
@@ -486,13 +486,13 @@ zur Lösung das {\color{darkred}Branch \& Bound} Verfahren.
 CP-Formulierung:
 \begin{itemize}
 \item definiere eine Variable $s_o$ für die Startzeit der Operation $o\in O_j$, $s_o\in \{0,1,\dots C\}$, wobei $C_{max}<C$ ist. 
-\item Oder besser :  $s_o\in[\sum_{o'\in pred(o)}p_{o'}\dots\ C-p_o-\sum_{o'\in succ(o)}p_{o'}]$, wobei $pred(o)$ der Vorgänger und $succ(o)$ ein Nachfolger von einer Operation $o$ sind.
+\item Oder besser:  $s_o\in[\sum_{o'\in pred(o)}p_{o'}\dots\ C-p_o-\sum_{o'\in succ(o)}p_{o'}]$, wobei $pred(o)$ der Vorgänger und $succ(o)$ ein Nachfolger von einer Operation $o$ sind.
 \end{itemize}
 
 \begin{block}{Die Nebenbedingungen} \begin{align}
-  s_o + p_o \le s_{o'} &\qquad  o,o'\in O_j,\ o'\in succ(o),\ j=1\dots n \nonumber \\
-  s_o + p_o \le C &\qquad  o\in O \nonumber \\
-  s_o + p_o \le s_{o'}\ & \vee\ s_{o'} + p_{o'} \le s_{o} \qquad o,o'\in O, o\not=o', m_o=m_{o'} \nonumber 
+ & s_o + p_o \le s_{o'} \qquad  o,o'\in O_j,\ o'\in succ(o),\ j=1\dots n \nonumber \\
+ & s_o + p_o \le C \qquad  o\in O \nonumber \\
+ & s_o + p_o \le s_{o'}\  \vee\ s_{o'} + p_{o'} \le s_{o} \qquad o,o'\in O, o\not=o', m_o=m_{o'} \nonumber 
 \end{align}
 \end{block}
 wobei $O$ die Menge aller Operationen bezeichnet.
@@ -534,9 +534,10 @@ Einen Spielplan für $9$ Basketball-Teams erstellen. Es sollen $18$ Termine fest
 
 Das Problem wird in drei Phasen gelöst: \begin{itemize}
 \setlength{\itemsep}{0pt}
-\item Generierung von einem Muster (engl. pattern) für jedes Team, das für jeden Termin feststellt, ob Team ein Heim-, Auswärtsspiel oder \glqq bye\grqq\ spielen kann. 
-\item Suche nach einer Menge von $9$ Mustern, die die Erstellung eines Zeitplanes ermöglichen.
-\item Generierung eines Zeitplans, indem man anhand der Menge von Mustern die Zuordnung von Spielen zu den Teams und Paare von Gegner bestimmt.
+\item Generierung von einem Muster (engl. pattern) für jedes Team, das für jeden Termin feststellt, ob das Team ein Heim-, Auswärtsspiel oder \glqq bye\grqq\ spielen kann. 
+\item Suche nach einer Menge von 9 Mustern, die die Erstellung eines
+Zeitplanes ermöglichen.
+\item Generierung eines Zeitplanes, indem man anhand des Zeitplans die Zuordnung von Spielen zu den Teams und Paare von Gegnern bestimmt.
 \end{itemize}
 
 \newpage
@@ -549,7 +550,7 @@ Binäre Variablen $h_j, a_j, b_j, j=1\dots 18,$ für Heimspiele, Auswärtsspiele
 
 \item s.g. Mirroring: Termine sind paarweise in die vorgegebene Menge $m$ gruppiert, jedes Paar bezeichnet Spiele der gleichen Teams: $h_j=a_{j'},\ a_j=h_{j'},\ b_j=b_{j'}\ (j, j')\in m$
 
-\item die beiden letzten Spielen können nicht beide Auswärtsspiele sein : $a_{17}+a_{18} = 2$
+\item die beiden letzten Spielen können nicht beide Auswärtsspiele sein: $a_{17}+a_{18} = 2$
 
 \item Es sind nicht mehr als zwei Auswärtsspiele nacheinander erlaubt:\\ $a_j+a_{j+1}+a_{j+2}<3$ 
 
@@ -589,7 +590,7 @@ Die effektivste Suchstrategie in diesem Fall ist das Durchzählen der möglichen
 \newpage
 
 \begin{block}{Phase $3$: Erstellung von einem zulässigen Zeitplan}
-Ordne erst jedes Team zu einem von $9$ vorhandenen Mustern zu und danach sucht es für jedes Team nach den möglichen Gegnern an jedem Termin.
+Ordne erst jedes Team zu einem von $9$ vorhandenen Mustern zu und danach suche es für jedes Team nach den möglichen Gegnern an jedem Termin.
 
 \begin{itemize}
 \item formuliere die Aufgabe als ein CP Modell, das jeweils für jedes Team und jeden Termin einen Gegner und eine Spielart (Heim-/Auswärtsspiel oder bye) berechnet
@@ -597,6 +598,24 @@ Ordne erst jedes Team zu einem von $9$ vorhandenen Mustern zu und danach sucht e
 \end{itemize}
 \end{block}
 
+\newpage
+
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+ Phase & IP & CP & Ergebnis der Phase \\
+  & SPARCstation $20$ & Pentium II, $233$ MHz & \\
+  & & $64$ MB RAM & \\  \hline
+  & CPLEX $4.0$ & Friar Tuck &\\
+\hline\hline
+$1$  & nicht gegeben & $0.44$ sec & $38$ Mustern\\
+\hline
+$2$  & $<1\ min$ & \glqq Sekunden\grqq  & $17$ Menge\\
+& & & von 9 Mustern \\
+\hline
+$3$  & $24$ Stunden & $53.7sec$ & 179 Zeitpläne\\
+\hline
+\end{tabular}
 \end{frame}
 
 %------------------------------------------------------------------------------%                                    References

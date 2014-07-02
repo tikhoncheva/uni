@@ -35,7 +35,8 @@ Die einfachste Formulierung des Problems in CP benötigt $n$ Variablen $s_j$ mit
 \begin{align}
  \min & \sum_{j}{w_jT_j} \nonumber \\
  s.t.\quad C_j & = p_j + s_j\qquad\qquad \forall j=1..n \nonumber \\
- C_j  & \le s_k \vee  C_k \le s_j \qquad \forall j,k=1..n,\ k>j \nonumber
+ C_j  & \le s_k \vee  C_k \le s_j \qquad \forall j,k=1..n,\ k>j \nonumber \\
+ T_j & = \max\{0, C_j - d_j\} \qquad\qquad \forall j=1..n \nonumber
 \end{align}
 
 In dieser Formulierung sind insgesamt $2n$ Variablen und $\frac{n(n+1)}{2}$ Nebenbedingungen definiert.
