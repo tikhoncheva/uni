@@ -1,0 +1,176 @@
+#!/usr/bin/env python
+import optparse
+import sys
+import models
+from collections import namedtuple
+
+optparser = optparse.OptionParser()
+optparser.add_option("-i", "--input", dest="input", default="data/input_short", help="File containing sentences to translate (default=data/input_short)")
+optparser.add_option("-t", "--translation-model", dest="tm", default="data/tm", help="File containing translation model (default=data/tm)")
+optparser.add_option("-l", "--language-model", dest="lm", default="data/lm", help="File containing ARPA-format language model (default=data/lm)")
+optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxint, type="int", help="Number of sentences to decode (default=no limit)")
+optparser.add_option("-k", "--translations-per-phrase", dest="k", default=1, type="int", help="Limit on number of translations to consider per phrase (default=1)")
+optparser.add_option("-s", "--stack-size", dest="s", default=1, type="int", help="Maximum stack size (default=1)")
+optparser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False,  help="Verbose mode (default=off)")
+opts = optparser.parse_args()[0]
+
+
+def bitmap2str(b, n, on='o', off='.'):
+  """ Generate a length-n string representation of bitmap b """
+  return '' if n==0 else (on if b&1==1 else off) + bitmap2str(b>>1, n-1, on, off)
+
+def getcoverage(i,j):
+  coverage = 0;
+  for ind in xrange(i,j):
+    coverage = coverage | pow(2,ind)
+  return coverage
+
+def extract_english(h): 
+    return "" if h.predecessor is None else "%s%s " % (extract_english(h.predecessor), h.phrase.english)
+
+
+#
+# read translation model from the file data/tm, set pruning parameter k=1 (default)
+tm = models.TM(opts.tm, opts.k)
+# read language model from the file data/lm
+lm = models.LM(opts.lm)
+# both models are defined in "models.py"
+#
+# read an input file line by line in a list called "french", each line in input file = french sentence
+# each element in this list is a tuple of words of the input line
+french = [tuple(line.strip().split()) for line in open(opts.input).readlines()[:opts.num_sents]]
+#
+# tm should translate unknown words as-is with probability 1
+# for each word in the list french
+for word in set(sum(french,())):
+  # if word is unknown
+  if (word,) not in tm:
+    # save a word in a translation model with a logarithmic probability 0 (e.t. with probability 1)
+    tm[(word,)] = [models.phrase(word, 0.0)]
+#
+# output in a standard out
+sys.stderr.write("Decoding %s...\n" % (opts.input,))
+#
+# start decoding algorithm
+# for each sentence in french
+for f in french:
+  # define new tuple names "hypothesis". Each hypothesis consist of logarithmic probability, lm_state (two last words in our translation for LM), 
+  # previous hypothesis (predecessor) and phrase NEW and coverage
+  hypothesis = namedtuple("hypothesis", "logprob, lm_state, predecessor, phrase, coverage")
+  # define start (empty) hypothesis with lm_state </s>
+  initial_hypothesis = hypothesis(0.0, lm.begin(), None, None, 0) 
+  #
+  # 
+  # define a set of stacks (implemented as a list of dictionaries, 
+  # each element of the dictionary is a translation "hypothesis" with respective probability score)
+  # there are so many stacks a words in sentence f + 1 for first empty hypothesis
+  # all hypotheses in stacks[i] represent translations of the first i words of the input sentence
+  stacks = [{} for _ in f] + [{}]
+  #
+  # first stack contains only one hypothesis : the empty hypothesis
+  stacks[0][lm.begin()] = initial_hypothesis
+  #
+  # for each stack
+  for i, stack in enumerate(stacks[:-1]):
+    #
+    sys.stdout.write("\nStack")
+    sys.stdout.write(str(i))
+    sys.stdout.write("\n")
+    sys.stdout.write(str(stack))
+    sys.stdout.write("\n")
+    sys.stdout.write("\n")
+    # sort translation hypothesis from the current stack in decreasing order of logarithmic probabilities
+    # and consider first s best elements (pruning with the stack size s, default s=1)
+    for h in sorted(stack.itervalues(),key=lambda h: -h.logprob)[:opts.s]:
+      # current coverage of the hypothesis h
+      hcoverage = h.coverage
+      # ptint state
+      sys.stdout.write("start with ");
+      print extract_english(h) 
+      sys.stdout.write(" and coverage ");
+      sys.stdout.write(bitmap2str(hcoverage,len(f)));
+      sys.stdout.write("\n");
+      
+      # for each new hypothesis that can be derived from h
+      for j in xrange(i,len(f)+1):
+	
+	for k in xrange(j+1,len(f)+1):
+	  for swap in xrange(0,2):
+	    if swap == 0: # direkt order
+	      coverage = getcoverage(i,k) #getcoverage(i,k)
+	      stackNum  = k 
+	      fphrase = f[i:k] 
+	    
+	    if swap == 1 and k-j>1: # indirekt order + we don't want
+	      # to rotate single words
+	      coverage = getcoverage(j+1,k) #getcoverage(i,k)
+	      stackNum  = k-j-1 
+	      fphrase = f[j+1:k] #f[j+1:k]+f[i:j+1]
+	    
+	    if k-j>swap:
+	      sys.stdout.write(bitmap2str(coverage,len(f)));
+	      sys.stdout.write("   ");
+	      sys.stdout.write(str(fphrase))
+	      sys.stdout.write("  in stack ");
+	      sys.stdout.write(str(stackNum))
+	    
+	    if (fphrase in tm) and (hcoverage & coverage == 0) and k-j>swap:
+	      sys.stdout.write("\t TM knows: \n")
+	      sys.stdout.write("\n");
+	      # for all translation options
+	      sys.stdout.write("tm  " + str(tm[fphrase]) +"\n")
+	      for phrase in tm[fphrase]:
+		# recalculate probability of the hypothesis extended with the new phrase
+		logprob = h.logprob + phrase.logprob
+		# save current state of the translation ()
+		lm_state = h.lm_state
+		# for each english word in the phrase
+		
+		for word in phrase.english.split():
+		  # calculate a probability based on lm
+		  (lm_state, word_logprob) = lm.score(lm_state, word)
+		  logprob += word_logprob
+		#end for loop word
+		
+		# add a probability of the last word, if we reached the end of the foreign sentence  
+		logprob += lm.end(lm_state) if stackNum == len(f) else 0.0
+		# create new hypothesis
+		new_hypothesis = hypothesis(logprob, lm_state, h, phrase, hcoverage | coverage)
+		# expanded hypothesis is placed in corresponding stack
+		if lm_state not in stacks[stackNum] or stacks[stackNum][lm_state].logprob < logprob: # second case is recombination
+		  stacks[stackNum][lm_state] = new_hypothesis   
+	      # end loop over phrases
+	    else :
+	      sys.stdout.write("\n");
+	    # end if  
+	  
+	  # end swap
+	#end loop k
+      #end loop j
+      
+    # end loop over hypothesis in the current stack
+  # end loop over stacks
+  
+  # in the last stack find a hypothesis with the highest probability - it is our best translation
+  winner = max(stacks[-1].itervalues(), key=lambda h: h.logprob)
+  #
+  # define function "extract_english", which sets together an english translation for a given hypothesis
+  def extract_english(h): 
+    return "" if h.predecessor is None else "%s%s " % (extract_english(h.predecessor), h.phrase.english)
+  #
+  # print an englisch translation for the winner 
+  
+  print extract_english(winner)
+  #
+  # if we want to see a verbose information of the translation process
+  if opts.verbose:
+    # define a function "extract_tm_logprob", which returns a logarithmic probability of a given hypothesis
+    def extract_tm_logprob(h):
+      return 0.0 if h.predecessor is None else h.phrase.logprob + extract_tm_logprob(h.predecessor)
+    #
+    # calculate logarithmic probability of the best translation-hypothesis
+    tm_logprob = extract_tm_logprob(winner)
+    #  
+    # print on a standard out information about achieved probabilitys of the best translation
+    sys.stderr.write("LM = %f, TM = %f, Total = %f\n" % 
+      (winner.logprob - tm_logprob, tm_logprob, winner.logprob))
