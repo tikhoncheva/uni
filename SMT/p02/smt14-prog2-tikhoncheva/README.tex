@@ -1,0 +1,85 @@
+\documentclass[11pt,a4paper]{scrartcl}
+
+\usepackage{fullpage}
+%\usepackage[top=2in, bottom=1.5in, left=1in, right=1in]{geometry}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{rotating}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+\usepackage{listings}
+\usepackage{color}
+	\definecolor{darkred}{rgb}{0.55, 0.0, 0.0}
+	\definecolor{darkgreen}{rgb}{0.19, 0.80, 0.19}
+%%%%% COMMANDS
+
+%\renewcommand{\thesubsection}{\alph{subsection})}
+
+\usepackage{listings}
+\lstset{language=Python,
+basicstyle=\scriptsize,
+keywordstyle=\color{blue}\ttfamily,
+stringstyle=\color{red}\ttfamily,
+commentstyle=\color{darkgreen}\ttfamily,
+numbers=left,
+title=\lstname
+}
+
+\setlength{\parindent}{0pt} 
+
+\begin{document}
+
+\title{Programmieraufgabe 2}
+\author{Ekatherina Tikhoncheva}
+\maketitle
+
+\section{Der Basis-Decoder}
+
+Das kommentierte Skript {\bf decode}, so wie es gegeben wurde, ist unter den Namen {\bf decodeCommented} gespeichert.
+ 
+Das beste Ergebnis (LM+TM) bei der Stackgröße $1$, das man mit diesem Skript erzielen kann, ist $-1442.727775$.
+Wenn man die Stackgröße auf $1000$ erhöht, ist das Ergebnis (LM+TM) besser geworden : $-1439.213923$.
+
+\section{Decoding mit Phrasenvertauschung}
+
+Wie man gesehen hat, behält der Basis Decoder die Reihenfolge der französischen Phrasen bei. Wir möchten das ändern, so dass der neue Decoder benachbarte Phrasen vertauschen kann. 
+
+\vspace{10pt}
+Um die Implementierungsidee zu erklären betrachten wir ein kleines Beispiel. Sei der französischen Satz {\it un Comité de sélection a été constitué} gegeben. \\
+Wie davor gehen wir monoton von links nach rechts und suchen nach möglichen Phrasen:
+
+\vspace{7pt}
+1. Phrase \glqq un\grqq\ besteht aus ein Wort, ist in TM $\Rightarrow$ übersetze die Phrase und shau nach den Phrasen danach.\\
+Erste Phrase nach \glqq un\grqq\  ist  \glqq Comité\grqq\  $\Rightarrow$  vertausche die Phrasen und übersetze jede einzige vertauschte Phrase separat.\\
+Zweite Phrase nach \glqq un\grqq\  ist  \glqq Comité de\grqq\  $\Rightarrow$  vertausche die Phrasenund übersetze jede einzige vertauschte Phrase separat.
+
+\vspace{7pt}
+2. Phrase \glqq un Comité\grqq\ besteht aus zwei Wörtern, ist in TM $\Rightarrow$ übersetze und shau nach den Phrasen danach.\\
+Erste Phrase danach ist \glqq de\grqq\  $\Rightarrow$  vertausche die Phrasen und übersetze jede einzige vertauschte Phrase separat. \\
+usw.
+
+\vspace{20pt}
+For Implementation siehe Datei {\bf decodeMy}. Hier ist ein Ausschnitt davon mit den meisten Änderungen.
+
+Um nach einer gefundenen Phrase alle mögliche Phrasen danach zu finden, brauchen wir eine zusätzliche Schleife (Zeile $18$).
+Die Schleife ueber $swap=1,2$ unterscheidet ob es sich um eine einzige Phrase oder um Vertauschung von zwei Phrasen handelt (Zeilen $20$, $23$ und $56$).\\
+Wenn wir zwei nacheinandre folgende Phrasen $P_1$ und $P_2$ gefunden haben, dann werden in entsprechenden Stack alle Kombinationen von  möglichen Übersetzungen der Phrase $P_2$ gefolgt von allen möglichen Übersetzungen der Phrase $P_1$ (Zeile $74-115$).
+
+\lstinputlisting[language=Python]{decodeMyCut}	 
+
+\vspace{20pt}
+Die Ergebnisse dieses Decoder sind :
+
+\vspace{5pt}
+$-1409.200122$ für Stackgröße $1$  (Basis-Decoder $-1442.727775$)\\
+$-1391.747648$ für Stackgröße $1000$ (Basis-Decoder $-1439.213923$)\\
+
+Bei dem Versuch die Pruning Konstante $s$ hoehe zu wählen, hat sich das Ergebnis nicht verbessert.
+$-1391.747648$ für Stackgröße $5000$ (Basis-Decoder $-1439.213923$).
+\end{document}
