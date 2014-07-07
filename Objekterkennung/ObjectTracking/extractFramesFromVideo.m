@@ -4,27 +4,30 @@ clc;
 close all;  
 clear; 
 
-video_path = ['.']
-videoName = 'redcup.avi';
+
+video_path = ['.'];
+videoName = 'redcup2.avi';
 [~, videoNameWithoutExt, ~] = fileparts(videoName);
+output_path = ['.' filesep 'Frames' filesep videoNameWithoutExt];
 
-output_path = ['.' filesep strcat('Frames_',videoNameWithoutExt)]
+
+% % Converte video to readable format !
+% mov = mmread([video_path filesep videoName]);
+% 
+% writerObj = VideoWriter([video_path filesep 'readcup2.avi']);
+%     open(writerObj);
+% writeVideo(writerObj,mov.frames);
+% close(writerObj);
 
 
-% Read in the movie.
-mov = VideoReader([video_path filesep videoName]);
+mov = VideoReader('readcup2.avi');
+% movFrames=read(mov);
+nFrames=mov.NumberOfFrames;
 
-numberOfFrames = mov.NumberOfFrames% size(mov, 2);
-
-for frame = 1 : numberOfFrames
-    % Extract the frame from the movie structure.
-    thisFrame = mov(frame).cdata;
-    % Create a filename.
-    outputFileNameFrame = sprintf('Frame %4.4d.png', frame);
-    outputFileName = fullfile(output_path, outputFileNameFrame);
-
-    % Write it out to disk.
-    imwrite(thisFrame, outputFileName, 'png');
+for i = 1:nFrames
+    img = read(mov,i);
+    % Write out to a JPEG file (img1.jpg, img2.jpg, etc.)
+    imwrite(img,fullfile(output_path,sprintf('img%d.jpg',i)));
 end
 
 end
