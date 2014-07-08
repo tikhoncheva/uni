@@ -25,9 +25,6 @@ def getcoverage(i,j):
     coverage = coverage | pow(2,ind)
   return coverage
 
-def extract_english(h): 
-    return "" if h.predecessor is None else "%s%s " % (extract_english(h.predecessor), h.phrase.english)
-
 
 #
 # read translation model from the file data/tm, set pruning parameter k=1 (default)
@@ -115,7 +112,7 @@ for f in french:
 		  #end for loop word
 		
 		  # add a probability of the last word, if we reached the end of the foreign sentence  
-		  logprob += lm.end(lm_state) if j == len(f) else 0.0
+		  logprob += lm.end(lm_state) if k == len(f) else 0.0
 		  # create new hypothesis
 		  # NEW calculate a new coverage vector
 		  new_hypothesis = hypothesis(logprob, lm_state, h, phrase, hcoverage | coverage)
