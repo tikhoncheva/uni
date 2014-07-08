@@ -1,0 +1,128 @@
+  # for each stack
+  for i, stack in enumerate(stacks[:-1]):
+    #
+    #sys.stdout.write("\nStack")
+    #sys.stdout.write(str(i))
+    #sys.stdout.write("\n")
+    #sys.stdout.write(str(stack))
+
+    # sort translation hypothesis from the current stack in decreasing order of logarithmic probabilities
+    # and consider first s best elements (pruning with the stack size s, default s=1)
+    for h in sorted(stack.itervalues(),key=lambda h: -h.logprob)[:opts.s]:
+      # NEW : save current coverage of the hypothesis h
+      hcoverage = h.coverage
+      
+      # for each new hypothesis that can be derived from h
+      for j in xrange(i,len(f)+1):
+	# NEW  + additional loop to run over all posible phrase after already found first one
+	for k in xrange(j+1,len(f)+1):
+	  # NEW swap indicates swaping of phrases
+	  for swap in xrange(0,2):
+	    
+	    # NEW swap=0 means add one phrase how it is
+	    if swap==0:
+	      coverage = getcoverage(i,k) # save coverage of the phrase
+	      stackNum  = k # stack number where to put new translation
+	      fphrase = f[i:k]	# phrase  
+	      
+	      # if TM knows the phrase and there is no overlap in coverage vector
+	      if (fphrase in tm) and (hcoverage & coverage == 0) and k-j>swap:
+		# we add we before all possible translations into corresponding stacks
+		for phrase in tm[fphrase]:
+		  # recalculate probability of the hypothesis extended with the new phrase
+		  logprob = h.logprob + phrase.logprob
+		  # save current state of the translation ()
+		  lm_state = h.lm_state
+		  # for each english word in the phrase
+		
+		  for word in phrase.english.split():
+		   # calculate a probability based on lm
+		    (lm_state, word_logprob) = lm.score(lm_state, word)
+		    logprob += word_logprob
+		  #end for loop word
+		
+		  # add a probability of the last word, if we reached the end of the foreign sentence  
+		  logprob += lm.end(lm_state) if j == len(f) else 0.0
+		  # create new hypothesis
+		  # NEW calculate a new coverage vector
+		  new_hypothesis = hypothesis(logprob, lm_state, h, phrase, hcoverage | coverage)
+		  # expanded hypothesis is placed in corresponding stack
+		  if lm_state not in stacks[stackNum] or stacks[stackNum][lm_state].logprob < logprob: # second case is recombination
+		    stacks[stackNum][lm_state] = new_hypothesis   
+		# end loop over phrases
+	    # end if swap==0
+	  
+	    # NEW swap=1 means : find two phrases one after another and try to swap them
+	    if swap==1 and k>j+1: # second case because we dont want to swap phrase with it self
+	
+	      coverage = getcoverage(i,k)	# save coverage of the phrase
+	      stackNum  = k 			# stack number where to put new translation
+	      
+	      # split long phrase that we found in two an look if they build two meaningfull phrases
+	      fphrase1 = f[i:j+1]
+	      fphrase2 = f[j+1:k]
+	      if (fphrase1 in tm and fphrase2 in tm):
+		
+		# if TM knew both as phrases we can swap them
+		fphrase = fphrase2+fphrase1
+		
+		# now add fphrase2 first with all possible translations
+		# and then direckt phrase1 with all possible translations
+		for phrase2 in tm[fphrase2]:
+		  
+		  # recalculate probability of the hypothesis extended with the new phrase
+		  logprob = h.logprob + phrase2.logprob
+		  # save current state of the translation ()
+		  lm_state = h.lm_state
+		  # for each english word in the phrase
+		  
+		  for word in phrase2.english.split():
+		    # calculate a probability based on lm
+		    (lm_state, word_logprob) = lm.score(lm_state, word)
+		    logprob += word_logprob
+		  #end for loop word
+		  
+		  # add a probability of the last word, if we reached the end of the foreign sentence  
+		  logprob += lm.end(lm_state) if j == len(f) else 0.0
+		  
+		  # create new hypothesis
+		  new_hypothesis1 = hypothesis(logprob, lm_state, h, phrase2, hcoverage | (coverage/2))
+		  
+		  # phrase2 is saved we extand it with all possible traslations for phrase1
+		  for phrase1 in tm[fphrase1]:
+		    
+		    # recalculate probability of the hypothesis extended with the new phrase
+		    logprob = new_hypothesis1.logprob + phrase1.logprob
+		    # save current state of the translation ()
+		    
+		    # NEW actuall state is previous hypothesis new_hypothesis1
+		    lm_state = new_hypothesis1.lm_state
+		    # for each english word in the phrase
+		      
+		    for word in phrase1.english.split():
+		      # calculate a probability based on lm
+		      (lm_state, word_logprob) = lm.score(lm_state, word)
+		      logprob += word_logprob
+		    #end for loop word
+		      
+		    # add a probability of the last word, if we reached the end of the foreign sentence  
+		    logprob += lm.end(lm_state) if j == len(f) else 0.0
+		    
+		    # create new hypothesis
+		    new_hypothesis2 = hypothesis(logprob, lm_state, new_hypothesis1, phrase1, hcoverage | coverage)
+		    # expanded hypothesis is placed in corresponding stack
+		    if lm_state not in stacks[stackNum] or stacks[stackNum][lm_state].logprob < logprob: # second case is recombination
+			stacks[stackNum][lm_state] = new_hypothesis2
+		  # end loop over phrases1
+		  
+	        # end loop over phrases2
+	 
+	      # end if fphrase1 in tm and fphrase2 in tm
+	    # end if swap==1
+	  
+	  # end swap
+	#end loop k
+      #end loop j
+      
+    # end loop over hypothesis in the current stack
+  # end loop over stacks
