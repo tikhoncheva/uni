@@ -78,6 +78,50 @@
 \section{Constraint Programmierung}
 \inhalt
 
+\begin{frame}
+\frametitle{Dame oder Tiger?}
+\small
+\pause
+Ein Gefangener soll zwischen {\color{darkred} drei Türen} wählen. Hinter einer von zwei Türen ist entweder {\color{darkred} eine Dame} oder {\color{darkred}ein Tiger} versteckt. Das dritte Zimmer ist {\color{darkred}leer}. Auf jeder Tür hängt ein Schild. Das Schild auf der Tür zur Dame sagt Wahrheit. Das Schild auf der Tür zum Tiger lügt. Das Schild ins leere Zimmer kann sowohl lügen, als auch Wahrheit sagen.
+
+\vspace{10pt}
+ \begin{tikzpicture}
+     \node [block, text width=2.8cm] at (-5,-0.5) (S1) {\centering I\\ Zimmer III ist leer.};
+     
+     \node [block, text width=4.0cm] at (-1.2, - 0.5)(S2) {\centering II\\ Der Tiger ist im Zimmer I.};
+     
+     \node [block, text width=3.5cm] at ( 3.0,-0.5) (S3) {\centering III\\ Dieses Zimmer ist leer.};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+\frametitle{Dame oder Tiger?}
+\small  
+
+ \begin{tikzpicture}
+     \node [block, text width=2.8cm] at (-5,-0.5) (S1) {\centering I\\ Zimmer III ist leer.};
+     
+     \node [block, text width=4.0cm] at (-1.2, - 0.5)(S2) {\centering II\\ Der Tiger ist im Zimmer I.};
+     
+     \node [block, text width=3.5cm] at ( 3.0,-0.5) (S3) {\centering III\\ Dieses Zimmer ist leer.};
+  \end{tikzpicture}
+
+\vspace{10pt}
+Variablen: $r_1,r_2,r_3\in \{l,t,e\}$ für Zimmer ($l=Dame$,$t=Tiger$,$e=leer$)\\
+\hspace{40pt} $s_1,s_2,s_3\in\{0,1\}$ für Schilder.
+
+Nebenbedingungen: $r_i = t \rightarrow s_i=0$, $r_i=l \rightarrow s_i=1$\\
+\hspace{80pt} $s_1=l \rightarrow r_3\not= e$, $s_2=l \rightarrow r_1\not= t$, $s_3=l \rightarrow r_3\not= e$
+
+Lösung:\\ \pause 
+\hspace{40pt} Aus $r_i = l \rightarrow s_i=1$ folgt $r_3\not=l$. $\Rightarrow$ $r_3\in\{t,e\}$ \pause
+
+\hspace{40pt} Angenommen $r_2 = l$. Daraus folgt $s_2=1$, $r_1=t$, $s_1=0$ $r_3=e$. Aber dann ist $s_1=0$. D.h. Zimmer III kann nicht leer sein, wir sind zu einem Widerspruch gekommen. \pause
+
+\hspace{40pt} Angenommen $r_1 = l$. Dann gilt: $s_1=1$, $r_2=t$, $s_2=0$ $r_3=e$, $s_3 = 1$. Die Lösung ist gefunden!
+\end{frame}
+
 \nocite{CSP}
 \nocite{CPforScheduling}
 \begin{frame}
@@ -404,7 +448,7 @@ Allgemein gilt:
 
 %------------------------------------------------------------------------------%
 %                       Beispiele aus der Scheduling Theorie
-\section{Anwendung von CP zur Lösung von Schedulingaufgaben}
+\section{Beispiele aus der Scheduling Theorie}
 \inhalt
 %                             -----------------------                         %
 \subsection{Minimieren der gewichteten Gesamtverspätung}
@@ -620,6 +664,7 @@ $3$  & $24$ Stunden & $53.7sec$ & 179 Zeitpläne\\
 
 %------------------------------------------------------------------------------%                                    References
 \begin{frame}[allowframebreaks]
+	\nocite{LadyOrTiger}
 	\frametitle{References}
 	\bibliographystyle{plain}
 	\bibliography{bibliographie}

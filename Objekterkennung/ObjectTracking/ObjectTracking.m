@@ -65,7 +65,7 @@ CT(1,:) = [x0, y0];
 % Feature Space : RGB color space quantized in 16x16x16 bins
 m = 16^3; % m-bins  histogram
 h = 2.0;  % kernel bandwidth
-eps = 0.00001; % precision
+eps = 0.001; % precision
 
 %% Target Model
 
@@ -88,11 +88,11 @@ for frameId=2:Nframes
     % get center of the previous frame
     y0 = CT(frameId-1,:);
 %     % find pixels of interest (POI) around y0
-     x= findPixels(frames{frameId}, y0, a, b);
+%     x= findPixels(frames{frameId}, y0, a, b);
 %     % calculate delta(b(x_star_i) - u)
-     dbu = delta_b_u(frames{frameId}, x, m); 
+%     dbu = delta_b_u(frames{frameId}, x, m); 
 %     % normalized coordinates of pixels inside selected region and target center
-     [normX, normY0] = normalizeX(x, y0, a, b);
+%     [normX, normY0] = normalizeX(x, y0, a, b);
 %        
 %     % Target candidates
 %     p_y0 = pdf(normX, dbu , normy0, m , h);
@@ -103,13 +103,12 @@ for frameId=2:Nframes
 
     % find center of the target :
     while 1
-        % Target candidates
         % find pixels of interest (POI) around y0
-%        x= findPixels(frames{frameId}, y0, a, b);
+        x= findPixels(frames{frameId}, y0, a, b);
         % calculate delta(b(x_star_i) - u)
-%        dbu = delta_b_u(frames{frameId}, x, m); 
+        dbu = delta_b_u(frames{frameId}, x, m); 
         % normalized coordinates of pixels inside selected region and target center
-%        [normX, normY0] = normalizeX(x, y0, a, b);
+        [normX, normY0] = normalizeX(x, y0, a, b);
         % Target candidates
         p_y0 = pdf(normX, dbu , normY0, m , h);        
         % plot around current target center
@@ -136,13 +135,14 @@ for frameId=2:Nframes
         % calculate new center 
         normY1 = sum(normXw)/sum(w);
         
-        y1 = [round(normY1(1)*a), round(normY1(2)*b)] ;     
+        y1 = [round(normY1(1)*a), round(normY1(2)*b)];
         
-        if ( sqrt((normY0-normY1)*(normY0-normY1)') < eps)
+        
+        if ( (y0-y1)*(y0-y1)' < eps)
             break;
         else
             y0 = y1;
-            normY0 = normY1;
+            %normY0 = normY1;
         end         
     end
     t=-pi:0.01:pi;
@@ -180,10 +180,6 @@ for y = y_min:y_max
         end
     end
 end
-
-% figure
-%     imagesc(img),hold on,
-%     plot (pixels(:,1),pixels(:,2),'.b');
 
 end
 
@@ -231,11 +227,6 @@ function p = pdf(x, dbu, cy, m, h)
             p(u) = p(u) +  k_x(i)*dbu(i,u);
         end
         p(u) = p(u)*C;
-        
-        % 
-%         if p(u)==0
-%            p(u)=0.00001; 
-%         end
     end  
     
 end
