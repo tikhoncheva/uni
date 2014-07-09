@@ -9,9 +9,12 @@ video_path = ['.'];
 videoName = 'result_redcup2.avi';
 
 framefiles = dir([frame_path filesep '*.jpg']) ;    
-Nframes = length(framefiles);   
+
+
 % read all frames from the order
+Nframes = length(framefiles);   
 frames = cell(1,Nframes); % cell of the images
+
 
 writerObj = VideoWriter([video_path filesep videoName]);
 open(writerObj);
