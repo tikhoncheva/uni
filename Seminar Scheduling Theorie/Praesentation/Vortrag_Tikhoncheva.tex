@@ -316,6 +316,17 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 %                             -----------------------                         %
 %                    Vorteil des Constraint Programmierung                    %
 \subsection{Vorteile der Constraint Programmierung}
+
+\begin{frame}{Vorteile der Constraint Programmierung}
+\begin{itemize} \itemsep0pt
+	\item CP ist besonders für ganzzahlige Variablen geeignet.
+	\item CP passt am besten zum Lösen von Problemen mit vielen Nebenbedingungen.
+	\item CP ist mehr effektiv in Fällen vieler Nebenbedingungen mit wenigen Variablen in jedem einzelnen Constraint.
+	\item Der Ansatz von CP lohnt sich besonders für Probleme, die sich als eine optimale Abbildung einer geordneten Menge in eine andere Menge darstellen lassen.
+\end{itemize}
+\end{frame}
+
+
 \begin{frame}{Vorteile der Constraint Programmierung}
 \begin{itemize}
 	\vspace{30pt}
@@ -372,6 +383,8 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 	
 	\vspace{5pt}
 
+	\pause
+	
 	{\tiny
 	Seien die Variablen $MaschineA$ und $MaschineB$ ganzzahlig und ihre Werte sind die Nummern der Jobs, die auf diesen Maschinen abgearbeitet werden.
 	
@@ -394,6 +407,8 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 		};
 	\end{tikzpicture}
 	
+	\pause
+		
 	\vspace{5pt}
 	{\tiny 
 	Die Fertigstellungszeit-Bedingung: falls Job $A$ und Job $B$ auf einer Maschine abgearbeitet werden, dann muss die Bearbeitung von Job $A$ früher fertig werden, als die Bearbeitung vom Job $B$ beginnt, oder umgekehrt.\\}
@@ -419,29 +434,12 @@ Dafür gibt es verschiedene Typen der Bedingungen:
 \end{frame}
 %                             -----------------------                         %
 \begin{frame}
-Allgemein gilt:
 
-\vspace{30pt}
-\begin{tikzpicture}
-	\node [block, text width=5.1cm] at (2, 0.5)(IP) 
-	{
-		\small {\color{darkred} IP:}\\ 
-		\begin{itemize}
-		 \item wichtig ist die mathematische Struktur des Problems
-		 \item zentrale Rolle spielt die Zielfunktion 
-		 \item gesucht wird eine Menge der Nebenbedingungen, die ausreichend ist, um den Kernpunkt des Problems zu beschreiben
-		 \end{itemize}
-	};
-	\node [block,text width=5.cm] at (7.5, 0.5)(CP) 
-	{
-		\small {\color{darkred} CP:}\\
-		\begin{itemize}
-		 \item lässt großen Spielraum im Entwerfen von Nebenbedingungen und Suchalgorithmen
-		 \item konzentriert sich auf Nebenbedingen 
-		 \item so viele Nebenbedingungen, wie möglich
-		 \end{itemize}
-	};
-	\end{tikzpicture}
+Die beiden Methoden Constraint und  ganzzahlige Programmierung sind ganz unterschiedlich und lassen sich nicht miteinander vergleichen.
+
+\vspace{15pt}
+Die Wahl, welche von beiden Paradigmen besser zu benutzen ist, hängt deswegen in der ersten Linie von dem Problem, den Problemgrößen, den Daten, dem Model, aber auch von den Forschern und der Software, die er benutzt, ab. Außerdem es ist auch möglich beide Methoden zu kombinieren.
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -519,8 +517,8 @@ Die Aufgabe ist $n$ Jobs zu $m$ Maschinen zuzuordnen, wobei jeder Job $j$ aus ei
 \end{block}
 
 \begin{block}{}
-Zur Modellierung dieses Problems verwendet man so genannte {\color{darkred}disjunktive Graphen} und
-zur Lösung das {\color{darkred}Branch \& Bound} Verfahren.
+Zur Modellierung dieses Problems kann man z.B. so genannte {\color{darkred}disjunktive Graphen} und
+zur Lösung das {\color{darkred}Branch \& Bound} Verfahren verwendet.
 \end{block}
 
 \newpage
@@ -569,7 +567,7 @@ $\Rightarrow$ falls $lst(o') - p_o + 1 \le est(o') + p_{o'} -1$ gilt, lösche {\
 \small
 
 \begin{block}{Aufgabe}
-Einen Spielplan für $9$ Basketball-Teams erstellen. Es sollen $18$ Termine festgelegt werden, sodass an jedem Termin $8$ Teams spielen und ein Team nicht spielt (d.h. hat \glqq bye\grqq). Alle Termine sollten in neun Wochen mit einem Wochenende und einen Arbeitstag pro Woche geplant werden.
+Einen Spielplan für $9$ Basketball-Teams erstellen. Es sollen $18$ Termine festgelegt werden, sodass an jedem Termin $8$ Teams spielen und ein Team nicht spielt (d.h. hat \glqq bye\grqq). Alle Termine sollten in neun Wochen mit einem Spiel am Wochenende und einem Spiel am Arbeitstag pro Woche geplant werden und zusätzliche Wünsche von Teams erfüllen.
 \end{block}
 
 \newpage
@@ -590,7 +588,7 @@ Binäre Variablen $h_j, a_j, b_j, j=1\dots 18,$ für Heimspiele, Auswärtsspiele
 \setlength{\itemsep}{0pt}
 \item jedes Team hat nur ein Spiel an jedem Termin: $h_j+a_j+b_j = 1$
 
-\item s.g. Mirroring: Termine sind paarweise in die vorgegebene Menge $m$ gruppiert, jedes Paar bezeichnet Spiele der gleichen Teams: $h_j=a_{j'},\ a_j=h_{j'},\ b_j=b_{j'}\ (j, j')\in m$
+\item s.g. Mirroring: Termine sind paarweise in die vorgegebene Menge $m$ gruppiert, jedes Paar bezeichnet Spieltermine der gleichen Teams: $h_j=a_{j'},\ a_j=h_{j'},\ b_j=b_{j'}\ (j, j')\in m$
 
 \item die beiden letzten Spielen können nicht beide Auswärtsspiele sein: $a_{17}+a_{18} = 2$
 
@@ -615,8 +613,6 @@ $h_j+b_j+h_{j+1}+b_{j+1}+h_{j+2}+b_{j+2} +h_{j+3} ++b_{j+3} +h_{j+4}+b_{j+4} <5 
 \item Jedes Team spielt ein Heimspiel oder bye mindestens an zwei der ersten fünf Wochenenden $\sum_{j\in\{2,4,6,8,10\}}(h_j+b_j) \ge 2$
 \end{itemize}
 \end{block}
-
-Die effektivste Suchstrategie in diesem Fall ist das Durchzählen der möglichen Werte vom $h,a,b$ in der Reihenfolge $h_1,a_1,b_1,h_2,a_2\dots$.
 
 
 \begin{block}{Phase $2$:  Menge von Mustern (CSP)}
@@ -652,7 +648,7 @@ Ordne erst jedes Team zu einem von $9$ vorhandenen Mustern zu und danach suche e
 \hline\hline
 $1$  & nicht gegeben & $0.44$ sec & $38$ Mustern\\
 \hline
-$2$  & $<1\ min$ & \glqq Sekunden\grqq  & $17$ Menge\\
+$2$  & $<1\ min$ & \glqq Sekunden\grqq  & $17$ Mengen\\
 & & & von 9 Mustern \\
 \hline
 $3$  & $24$ Stunden & $53.7sec$ & 179 Zeitpläne\\
