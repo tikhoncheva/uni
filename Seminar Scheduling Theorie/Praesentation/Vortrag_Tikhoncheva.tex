@@ -112,7 +112,7 @@ Variablen: $r_1,r_2,r_3\in \{l,t,e\}$ für Zimmer ($l=Dame$,$t=Tiger$,$e=leer$)\
 \hspace{40pt} $s_1,s_2,s_3\in\{0,1\}$ für Schilder.
 
 Nebenbedingungen: $r_i = t \rightarrow s_i=0$, $r_i=l \rightarrow s_i=1$\\
-\hspace{80pt} $s_1=l \rightarrow r_3\not= e$, $s_2=l \rightarrow r_1\not= t$, $s_3=l \rightarrow r_3\not= e$
+\hspace{80pt} $s_1=1 \rightarrow r_3= e$, $s_2=1 \rightarrow r_1= t$, $s_3=1 \rightarrow r_3= e$
 
 Lösung:\\ \pause 
 \hspace{40pt} Aus $r_i = l \rightarrow s_i=1$ folgt $r_3\not=l$. $\Rightarrow$ $r_3\in\{t,e\}$ \pause
