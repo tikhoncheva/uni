@@ -17,17 +17,14 @@
 \usepackage{color}
 	\definecolor{darkred}{rgb}{0.55, 0.0, 0.0}
 
-% tikz
-\usepackage{tikz}
-\usepackage{varwidth}
-	\usetikzlibrary{automata,positioning}
-	\usetikzlibrary{shapes,arrows}
-	% Define block styles
-	\tikzstyle{block} = [rectangle, draw, rounded corners,text width=3.1cm] %,minimum width=20pt, minimum height=0pt]
-
 \usepackage{amssymb,amsmath}
 
 \usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+
 \usepackage{lmodern}
 
 \usepackage{natbib}
@@ -68,7 +65,7 @@
 \section{Introduction}
 \begin{frame}
 \frametitle{Introduction}
-Two major components in of tracking:
+Two major components of tracking:
 \begin{itemize}
 \item Target Representation and Localization
 \item Filtering and Data Association
@@ -144,17 +141,12 @@ We introduce an Approach toward target representation and localization based on
 \begin{frame}
 \frametitle{Similarity Function}
 To calculate distance between target and candidates we need to define {\color{darkred} a distance function between two distributions}.
-\pause
+
 	$$d(y) = \sqrt{1-\hat{\rho}(y)}$$
 where $\hat{\rho}(y) \equiv \hat{\rho}[\hat{p}(y), \hat{q}] = \sum_{u=1}^{m}\sqrt{\hat{p}_u(y) \hat{q}_u}$ is the sample estimate of {\color{darkred} Bhattacharrya coefficient}.
 
-\pause
-{\color{darkred} Note} : $\hat{\rho}(y)$ is the cosine of the angle between the $m$-dimensional unite vectors $(\sqrt{\hat{p}_1(y)},\dots \sqrt{\hat{p}_m(y)})$ and $(\sqrt{\hat{q}_1},\dots \sqrt{\hat{q}_m})$. 
 
-\pause
-{\color{darkred} Note} : $d(y)$ is a metric.
-
-\pause
+\vspace{10pt}
 {\color{darkred} Note} : $d(y)$ is smooth $\Rightarrow$ we can apply  gradient-based optimization!
 
 \end{frame}
@@ -224,8 +216,135 @@ Else $\hat{y}_0=\hat{y}_0$ and go to 2
 \frametitle{Calculation Results}
 \centering
 %\movie[height=3.5cm, width=4.8cm]{avi}{images/ResultRedcup2.avi}
-\includemovie[poster,text=(ResultRedcup2.avi),mouse,repeat]
-{0.5\linewidth}{.375\linewidth}{images/ResultRedcup2.avi}
+%\includemovie[poster,text=(ResultRedcup2.avi),mouse,repeat]
+%{0.5\linewidth}{.375\linewidth}{images/ResultRedcup2.avi}
+
+
+\begin{figure}
+         \centering
+         \begin{subfigure}[b]{0.4\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0001.png}
+         \end{subfigure}%
+         \begin{subfigure}[b]{0.4\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0001.png}
+         \end{subfigure}
+         \\
+         \begin{subfigure}[b]{0.4\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0001.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.4\textwidth}
+                  \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0001.png}
+         \end{subfigure}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Red Cup}
+\begin{figure}
+         \centering
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0001.png}
+         \end{subfigure}%
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0010.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0020.png}
+         \end{subfigure}
+         \\
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0040.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0050.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/redcup/Frame0090.png}
+         \end{subfigure}
+\end{figure}         
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Owl}
+\begin{figure}
+         \centering
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0001.png}
+         \end{subfigure}%
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0010.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0030.png}
+         \end{subfigure}
+         \\
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0050.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0070.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/owl/Frame0085.png}
+         \end{subfigure}
+\end{figure}         
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{PETS01D1Human1man}
+\begin{figure}
+         \centering
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0001.png}
+         \end{subfigure}%
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0030.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0060.png}
+         \end{subfigure}
+         \\
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0086.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0100.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1man/Frame0150.png}
+         \end{subfigure}
+\end{figure}         
+
+\end{frame}
+
+\begin{frame}
+\frametitle{PETS01D1Human1car}
+\begin{figure}
+         \centering
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0001.png}
+         \end{subfigure}%
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0015.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0040.png}
+         \end{subfigure}
+         \\
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0054.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0092.png}
+         \end{subfigure}
+         \begin{subfigure}[b]{0.3\textwidth}
+                 \includegraphics[width=\textwidth]{results/PETS01D1Human1car/Frame0093.png}
+         \end{subfigure}
+\end{figure}         
 
 \end{frame}
 
@@ -233,6 +352,7 @@ Else $\hat{y}_0=\hat{y}_0$ and go to 2
 \begin{frame}[allowframebreaks]
 	\frametitle{References}
 	\nocite{KernelBasedObjectTracking}
+	\nocite{MeanShift}	
 	\bibliographystyle{plain}
 	\bibliography{bibliographie}
 \end{frame}
@@ -249,7 +369,7 @@ Else $\hat{y}_0=\hat{y}_0$ and go to 2
 \begin{frame}
 \centering
 \begin{figure}
-	\includegraphics{images/who.png}
+	\includegraphics{who.png}
 \end{figure}
 \end{frame}
 \end{document}
