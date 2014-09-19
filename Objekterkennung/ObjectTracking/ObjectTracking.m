@@ -25,8 +25,8 @@ end
 %
 %% 2: mark object to track 
 
-a = 30; % horizontal radius of Ellipse
-b = 40; % vertical radius of Ellipse
+a = 25; % horizontal radius of Ellipse
+b = 30; % vertical radius of Ellipse
 
 % show first image and wait till tracking object will be marked
 f = figure;
@@ -46,7 +46,8 @@ f = figure;
         xt=x0+a*cos(t);
         yt=y0+b*sin(t);
     plot(xt,yt,'r')
-print(f, '-r80', '-dtiff', fullfile(output_path, sprintf('Frame1.jpg')));
+    
+print(f, '-r80', '-dtiff', fullfile(output_path, sprintf('Frame0001.jpg')));
 hold off;    
     
     
@@ -57,9 +58,6 @@ hold off;
 
 % center of the target (CT) in each frame
 CT = zeros(Nframes,2);
-% normalized coordinates of target center in each frame
-normCT = zeros(Nframes,2);
-
 % initial location of the target (got from user)
 CT(1,:) = [x0, y0];
 %
@@ -67,7 +65,7 @@ CT(1,:) = [x0, y0];
 % Feature Space : RGB color space quantized in 16x16x16 bins
 m = 16^3; % m-bins  histogram
 h = 2.0;  % kernel bandwidth
-eps = 0.0001; % precision
+eps = 0.001; % precision
 
 %% Target Model
 
@@ -78,11 +76,10 @@ x= findPixels(frames{1}, CT(1,:), a, b);
 % calculate delta(b(x_star_i) - u)
 dbu = delta_b_u(frames{1}, x, m); %size: size(x_star,1) times m
 % normalized coordinates of pixels inside selected region and target center
-[normX, normCT(1,:)]= normalizeX(x,CT(1,:),a,b);
+[normX, normY0]= normalizeX(x,CT(1,:),a,b);
 
 % Target model: 
-q = pdf(normX, dbu, normCT(1,:) , m, 1.);
-
+q = pdf(normX, dbu, normY0 , m, 1.);
 
 %% Targen Lokalization!
 
@@ -90,34 +87,44 @@ q = pdf(normX, dbu, normCT(1,:) , m, 1.);
 for frameId=2:Nframes
     % get center of the previous frame
     y0 = CT(frameId-1,:);
-    % find pixels of interest (POI) around y0
-    x= findPixels(frames{frameId}, y0, a, b);
-    % calculate delta(b(x_star_i) - u)
-    dbu = delta_b_u(frames{frameId}, x, m); 
-    % normalized coordinates of pixels inside selected region and target center
-    [normX, normy0] = normalizeX(x, y0, a, b);
-       
-    % Target candidates
-    p_y0 = pdf(normX, dbu , normy0, m , h);
- 
-    % Bhattacharyya Coefficient
-    rho0 = sum(sqrt(q.*p_y0));
-    
-    f=figure;
+%     % find pixels of interest (POI) around y0
+%     x= findPixels(frames{frameId}, y0, a, b);
+%     % calculate delta(b(x_star_i) - u)
+%     dbu = delta_b_u(frames{frameId}, x, m); 
+%     % normalized coordinates of pixels inside selected region and target center
+%     [normX, normY0] = normalizeX(x, y0, a, b);
+%        
+%     % Target candidates
+%     p_y0 = pdf(normX, dbu , normy0, m , h);
+     
+    f=figure;%('visible','off');
       imagesc(frames{frameId}), 
       title(sprintf('Frame %i from %i', frameId, Nframes)), hold on;
 
     % find center of the target :
     while 1
-      
+        % find pixels of interest (POI) around y0
+        x= findPixels(frames{frameId}, y0, a, b);
+        % calculate delta(b(x_star_i) - u)
+        dbu = delta_b_u(frames{frameId}, x, m); 
+        % normalized coordinates of pixels inside selected region and target center
+        [normX, normY0] = normalizeX(x, y0, a, b);
+        % Target candidates
+        p_y0 = pdf(normX, dbu , normY0, m , h);        
         % plot around current target center
+        
         t=-pi:0.01:pi;
             xt= y0(1)+a*cos(t);
             yt= y0(2)+b*sin(t);
         plot(xt,yt,'b')
+        plot(y0(1),y0(2),'b+', 'MarkerSize', 10);
         
         % calculate wights
-        q_p = sqrt(q./p_y0);
+        q_p = ones(1,m);
+        Ind = find(p_y0>0);
+        q_p(Ind) = sqrt(q(Ind)./p_y0(Ind));
+ %       q_p = sqrt(q./p_y0);
+  
         w = zeros(1,size(x,1));
         normXw = zeros(size(x,1),2);
         for i=1:size(x,1)
@@ -126,66 +133,31 @@ for frameId=2:Nframes
         end  
         
         % calculate new center 
-        normy1 = sum(normXw)/sum(w);
-        y1 = [round(normy1(1)*a), round(normy1(2)*b)] ;
+        normY1 = sum(normXw)/sum(w);
         
-%         By numerical problems        
-%         % Target candidates
-%         p_y1 = pdf(normX, dbu , normy1, m , h);
-%         
-%         % Bhattacharyya Coefficient
-%         rho1 = sum(sqrt(q.*p_y1));
-%         
-%         while rho1 <rho0
-%             sprintf(' %f < % f',rho1, rho0 )
-%             y1 = (y0+y1)/2.;
-%             normy1 = [y1(1)/a, y1(2)/b] ;
-%             p_y1 = pdf(normX, dbu , normy1, m , h);
-%             rho1 = sum(sqrt(q.*p_y1));
-%             
-%             t=-pi:0.01:pi;
-%                 xt= y1(1)+a*cos(t);
-%                 yt= y1(2)+b*sin(t);
-%             plot(xt,yt)    
-%         end        
+        y1 = [round(normY1(1)*a), round(normY1(2)*b)];
         
-        if ( sqrt((normy0-normy1)*(normy0-normy1)') < eps)
+        
+        if ( (y0-y1)*(y0-y1)' < eps)
             break;
         else
             y0 = y1;
-            normy0 = normy1;
-            % Target candidates
-            p_y0 = pdf(normX, dbu , normy0, m , h);
+            %normY0 = normY1;
         end         
     end
     t=-pi:0.01:pi;
         xt= y1(1)+a*cos(t);
         yt= y1(2)+b*sin(t);
     plot(xt,yt,'g')
+    plot(y1(1),y1(2),'g+', 'MarkerSize', 10);
     hold off;
     print(f, '-r80', '-dtiff', fullfile(output_path,...
-                                     sprintf('Frame%d.jpg',frameId)));
+                                     sprintf('Frame%04d.jpg',frameId)));
     %
-    normCT(frameId,:) = normy1;
     CT(frameId,:) = y1;
 end
-% 
-% for i=2:Nframes
-%     f = figure('visible','off');
-%         imagesc(frames{i});
-%         title(sprintf('Frame %i from %i', i, Nframes)), hold on;
-%     % plot an ellipse
-%     t=-pi:0.01:pi;
-%         xt= CT(i,1)+a*cos(t);
-%         yt= CT(i,2)+b*sin(t);
-%     plot(xt,yt)
-%     hold off;
-%     
-%     print(f, '-r80', '-dtiff', fullfile(output_path,...
-%                                     sprintf('Frame%d.jpg',i)));
-% end
 
-close all;  
+close all;
 end
 
 %% Function findPixels
@@ -193,19 +165,21 @@ function pixels = findPixels(img, cy, a, b)
 % find pixels inside selected ellipse (x/a)^2+(y/b)^2=1
 
 pixels = [];
-for y = cy(2)-b:cy(2)+b % size(img,1)
-    for x = cy(1)-a:cy(1)+a %size(img,2)
+y_min = max([1, cy(2)-b]);
+y_max = min([cy(2)+b, size(img,1)]);
+
+x_min = max([1, cy(1)-a]);
+x_max = min([cy(1)+a, size(img,2)]);
+
+for y = y_min:y_max
+    for x = x_min:x_max
         dist =  ((x-cy(1))/a)^2 + ((y-cy(2))/b)^2 ;
-        dist = dist^(1/2);
+        %dist = dist^(1/2);
         if(dist<=1) %euclidean distance
             pixels = [x y ; pixels];
         end
     end
 end
-
-% figure
-%     imagesc(img),hold on,
-%     plot (pixels(:,1),pixels(:,2),'.b');
 
 end
 
@@ -218,15 +192,13 @@ if (size(img,3)~=3)
 end
 
 
-r = img(pixel(1),pixel(2),1);
-g = img(pixel(1),pixel(2),2);
-b = img(pixel(1),pixel(2),3);
+r = img(pixel(2),pixel(1),1);
+g = img(pixel(2),pixel(1),2);
+b = img(pixel(2),pixel(1),3);
 
 r_bin = floor(r*16)+1;
 g_bin = floor(g*16)+1;
 b_bin = floor(b*16)+1;
-
-bin = sprintf('%f  %f  %f ', (r_bin-1)*256, (g_bin-1)*16 , b_bin);
 
 bxy = (r_bin-1)*256 + (g_bin-1)*16 + b_bin;
 
@@ -255,11 +227,6 @@ function p = pdf(x, dbu, cy, m, h)
             p(u) = p(u) +  k_x(i)*dbu(i,u);
         end
         p(u) = p(u)*C;
-        
-        % 
-        if p(u)==0
-           p(u)=0.00001; 
-        end
     end  
     
 end
@@ -279,7 +246,6 @@ end
 
 %% delta(b(x_i)-u)
 function dbu = delta_b_u(img, x, m)
-
     dbu = zeros (size(x,1), m);
     % dbu = uint16(dbu);
     for i=1:size(x,1)
@@ -290,12 +256,6 @@ function dbu = delta_b_u(img, x, m)
             end;
         end
     end
-%     
-%     if x==0
-%         d = 1;
-%     else
-%         d = 0;
-%     end
 end
 
 %% Normolization of the coordinates

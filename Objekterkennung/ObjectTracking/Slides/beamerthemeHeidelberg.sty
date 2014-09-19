@@ -1,0 +1,64 @@
+% Copyright 2007 by Till Tantau
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% beamerthemeHeidelberg.sty %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This file was modified and renamed to beamerthemeHeidelberg.sty
+% author: Jannik Strötgen
+% email: stroetgen@uni-hd.de
+% address: Institute of Computer Science, University of Heidelberg, Heidelberg, Germany
+%
+%
+
+
+%\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/beamerthemeHeidelberg.sty,v 1.11 2007/01/28 20:48:30 tantau Exp $
+\ProvidesPackageRCS $Header: /cvsroot/latex-beamer/latex-beamer/themes/theme/beamerthemeHeidelberg.sty,v 1 2010/04/30 10:56:30 jannik Exp $
+
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useoutertheme[subsection=false]{miniframes} % added
+\usecolortheme{whale}
+\usecolortheme{orchid}
+\useinnertheme{rectangles}
+
+\definecolor{unirot}{rgb}{0.5976525,0,0}
+\usecolortheme[named=unirot]{structure}
+
+\setbeamertemplate{footline}%{infolines theme} % changed
+{
+\leavevmode%
+\hbox{%
+\begin{beamercolorbox}[wd=.15\paperwidth,ht=2.25ex,dp=1ex,left]{author in head/foot}%
+\usebeamerfont{date in head/foot}\hspace*{2ex}\insertshortdate{}%
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=.35\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+\usebeamerfont{author in head/foot}\insertshorttitle%~~(\insertshortinstitute)
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=.35\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+\usebeamerfont{author in head/foot}\insertshortauthor
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=.15\paperwidth,ht=2.25ex,dp=1ex,right]{title in head/foot}%
+\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+\end{beamercolorbox}%
+}
+\vskip0pt
+}
+
+\beamertemplatenavigationsymbolsempty % hide navigation bar
+
+\setbeamerfont{block title}{size={}}
+
+\mode
+<all>
