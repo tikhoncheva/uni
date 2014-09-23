@@ -2,21 +2,10 @@
 clear all
 close all
 clc
+%% Set parameters
+SetParameters;
 
-%% add MPM-code
-addpath(genpath(['..' filesep 'MPM_release_v1']));
-
-%% add SIFT-descriptor
-% addpath(genpath(['..' filesep 'SIFT']));
-% addpath(genpath(['..' filesep '..' filesep 'vlfeat-0.9.19']));
-
-%% add MSER feature detector
-% addpath(genpath(['..' filesep 'MSER']));
-
-%% read test images
- image_path = ['.' filesep 'churchSmall'];
-%image_path = ['/home/kitty/Documents/Uni/Master/Databases/SUN/Images/c/church/outdoor/'];
-
+%% read images
 imagefiles = dir([image_path filesep '*.jpg']) ;
 
 N = length(imagefiles);   % number of images in the ordner
@@ -34,34 +23,8 @@ end
 %%
 %% SIFT descriptors
 
-%% Parameters
-
-%N = 2;
-minDeg = 5;
-
-% nFeaturePoints = 10;
- 
-peak_thresh = 30;
-%%
-
-% cell of the keypoints-matrices
-framesCell = cell(1,N); % Nx(4xK1) matrices
-
-% cell of the descriptors-matrices
-descrCell = cell(1,N); % Nx(128xK1) matrices
-
-% number of interest points in each image
-nP = zeros(N,1);
-
-% Cell of the adjazent matrices on each image
-adjCell = cell(1,N); % nP_i x nP_i
-
-
 %% Reference image
 % The first image is a reference image
-
-%% Reference image
-
 img1 = 1;
 % The first image is a reference image
 
@@ -82,86 +45,97 @@ ymin = rect(1,2);
 
 %%
 
+detectorId = find(fparam.bFeatExtUse);
+detector = fparam.featExt{detectorId};
+
+descriptor = 'sift';
+
+
+
+minAreaRatio = 0.01;
+maxAreaRatio = 0.3;
+thresholdlevel = 1; % 0: low, 1: normal, 2: high
+
+
+%%
+
+N = 2;
+
+minDeg = 5;
+nFeaturePoints = 10;
+
+% peak_thresh = 30;
+thresholdlevel = 2;
+
+% cell of the keypoints-matrices
+framesCell = cell(1,N); % Nx(4xK1) matrices
+
+% cell of the descriptors-matrices
+descrCell = cell(1,N); % Nx(128xK1) matrices
+
+% number of interest points in each image
+nP = zeros(N,1);
+
+% Cell of the adjazent matrices on each image
+adjCell = cell(1,N); % nP_i x nP_i
+
+%%
+
 for i = 1 : N
     
-    img = image{i};     %double(image{i})/256;
-        
-%% Use Harris corner detector    
+    img = image{i};     
 
     if i==1
-        [framesCell{1}, descrCell{1}] = vl_sift(img1cut,'PeakThresh', 10);
-        
+%         [framesCell{1}, descrCell{1}] = vl_sift(img1cut,'PeakThresh', 10);
+        [framesCell{i}, descrCell{i} ] = loadfeatures_vlfeat( img1cut, detector, thresholdlevel);
         framesCell{1}(1,:) = framesCell{1}(1,:) + xmin;
         framesCell{1}(2,:) = framesCell{1}(2,:) + ymin;
-        
-%         corners = corner(img1cut, 'Harris', nFeaturePoints);
-%         corners(:,1) = corners(:,1)+ xmin;
-%         corners(:,2) = corners(:,2)+ ymin;
 
     else
-%         corners = corner(img, 'Harris', nFeaturePoints);
-        [framesCell{i}, descrCell{i}] = vl_sift(img,'PeakThresh', 13);
+        %[framesCell{i}, descrCell{i}] = vl_sift(img,'PeakThresh', 13);
+        [framesCell{i}, descrCell{i} ] = loadfeatures_vlfeat( img, detector, thresholdlevel);
     end
     
+     % rescaling for each detector
+    framesCell{i}(3:6,:) = framesCell{i}(3:6,:) * fparam.bFeatScale(detectorId);
+    
+    % eleminate too small or large features
+    areaimg = prod(size(img));
+    area = pi * abs(framesCell{i}(3,:).*framesCell{i}(6,:) - framesCell{i}(4,:).*framesCell{i}(5,:)); % area of ellipse
+    idxValid = ( area > minAreaRatio * areaimg ) & ( area < maxAreaRatio * areaimg );
+    framesCell{i} = framesCell{i}(:,idxValid);
+    
     nP(i,1) = size(framesCell{i}, 2);
-     
     
-%     figure
-%         imagesc(img); colormap(gray); hold on;
-%         % plot(corners(:,1), corners(:,2), 'r*');
-%         vl_plotframe(framesCell{i});
-%     hold off;
+    %% descriptor extraction (SIFT)
     
-%     
-%     x = corners(:,1);
-%     y = corners(:,2);
-
-%% use MSER feature detector
-%     
-%     [r, ell] = mser(img, 1) ;
-%     r=double(r) ;
-%     [x, y]=ind2sub(size(img),r) ;                    
-%     x = double(x) ;
-%     y = double(y) ;
-%
-
-%% SIFT descriptors
-
-% 
-% 
-%     nKeyPoints = length(x);
-%     nP(i,1) = nKeyPoints;
-%     
-%     sigma = ones(1, nKeyPoints);
-%     theta = zeros(1,nKeyPoints);
-%     % (4xK1) matrice
-%     framesCell{i} = [x'; y'; sigma; theta];
-%     
-%     img2 = double(img)/256;
-%     
-%     % (128xK1) matrice
-%     descrCell{i} = siftdescriptor(img2,framesCell{i}([1 2 4],:),0.3);
+    if size(framesCell{i},2) > 0 && ( isempty(descrCell{i}) || size(framesCell{i},2) ~= size(descrCell{i},2) ) 
+        [ framesCell{i} descrCell{i} ] = extractSIFT(img, framesCell{i},...
+            'contrastInsensitive', fparam.bContrastInsenstive, 'NBP', fparam.nBP,...
+            'descScale', fparam.descScale, 'estimateOrientation', fparam.bEstimateOrientation);
+        %[ tmpFrame tmpDesc ] = extractSIFT(featInfo.img_gray, tmpFrame, 'estimateOrientation', true);
+    end
     
     %% build a dependency graph on each image
     
-    [adjMatrixInd, ~] = knnsearch(descrCell{i}', descrCell{i}', 'k', minDeg+1);
+    [adjMatrixInd, ~] = knnsearch(framesCell{i}(1:2,:)', ....
+                                  framesCell{i}(1:2,:)', 'k', minDeg+1);
     
     %% delete loops in each vertex (first column of the matrix)
     adjMatrixInd = adjMatrixInd(:,2:end);
 
     %%  draw graph
-    f = figure ; 
-        imagesc(img) ;    % image
-        colormap(gray); 
-        hold on ;
-        %plot(x, y, 'r*');   % corner points
-        vl_plotframe(framesCell{i});
-        line([framesCell{i}(1,:) framesCell{i}(1,adjMatrixInd(:,:))],[...
-            framesCell{i}(2,:) framesCell{i}(2,adjMatrixInd(:,:))],... % edges
-                                                            'Color', 'b');       
-    hold off;
-    print(f, '-r80', '-dtiff', fullfile(['.' filesep 'graphs'], ...
-                                      sprintf('%s.jpg',imagefiles(i).name)));
+%     f = figure ; 
+%         imagesc(img) ;    % image
+%         colormap(gray); 
+%         hold on ;
+%         vl_plotframe(framesCell{i});
+%         line([framesCell{i}(1,:) framesCell{i}(1,adjMatrixInd(:,:))],[...
+%             framesCell{i}(2,:) framesCell{i}(2,adjMatrixInd(:,:))],... % edges
+%                                                             'Color', 'b');       
+%     hold off;
+%     print(f, '-r80', '-dtiff', fullfile(['.' filesep 'graphs'], ...
+%                                       sprintf('%s',imagefiles(i).name)));
     %%
     adjMatrix = zeros(nP(i),nP(i));
 
@@ -171,7 +145,11 @@ for i = 1 : N
     
     adjCell{i} = adjMatrix;
 end
-% 
+
+close all;
+
+ 
+
 %%  MPM
 
 % first image is a reference image
