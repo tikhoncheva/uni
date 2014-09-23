@@ -7,14 +7,16 @@ clc
 addpath(genpath(['..' filesep 'MPM_release_v1']));
 
 %% add SIFT-descriptor
-addpath(genpath(['..' filesep 'SIFT']));
+% addpath(genpath(['..' filesep 'SIFT']));
+% addpath(genpath(['..' filesep '..' filesep 'vlfeat-0.9.19']));
 
-%% add SIFT-descriptor 
-addpath(genpath(['..' filesep 'MSER']));
+%% add MSER feature detector
+% addpath(genpath(['..' filesep 'MSER']));
 
 %% read test images
  image_path = ['.' filesep 'churchSmall'];
 %image_path = ['/home/kitty/Documents/Uni/Master/Databases/SUN/Images/c/church/outdoor/'];
+
 imagefiles = dir([image_path filesep '*.jpg']) ;
 
 N = length(imagefiles);   % number of images in the ordner
@@ -25,9 +27,7 @@ for i=1:N
     currentimage = imread([image_path filesep currentfilename]);
     
     % Convert the image to gray scale
-    % image{i} = double(rgb2gray(currentimage))/256;
-    % image{i} = currentimage;
-    image{i} = rgb2gray(currentimage);
+    image{i} = single(rgb2gray(currentimage));
 end
 
 
@@ -37,9 +37,11 @@ end
 %% Parameters
 
 %N = 2;
-minDeg = 10;
-nFeaturePoints = 50;
+minDeg = 5;
 
+% nFeaturePoints = 10;
+ 
+peak_thresh = 30;
 %%
 
 % cell of the keypoints-matrices
@@ -54,20 +56,66 @@ nP = zeros(N,1);
 % Cell of the adjazent matrices on each image
 adjCell = cell(1,N); % nP_i x nP_i
 
+
+%% Reference image
+% The first image is a reference image
+
+%% Reference image
+
+img1 = 1;
+% The first image is a reference image
+
+% select rectangle region on the first image
+
+f = figure;
+    imagesc(image{img1}),colormap(gray);
+    title('Reference Image');
+    hold on;     
+    rect = getrect;    
+hold off;
+
+img1cut = imcrop(image{img1},rect);
+
+xmin = rect(1,1);
+ymin = rect(1,2);
+
+
+%%
+
 for i = 1 : N
     
-    img = image{i};
-
+    img = image{i};     %double(image{i})/256;
+        
 %% Use Harris corner detector    
-    corners = corner(img, 'Harris', nFeaturePoints);
+
+    if i==1
+        [framesCell{1}, descrCell{1}] = vl_sift(img1cut,'PeakThresh', 10);
+        
+        framesCell{1}(1,:) = framesCell{1}(1,:) + xmin;
+        framesCell{1}(2,:) = framesCell{1}(2,:) + ymin;
+        
+%         corners = corner(img1cut, 'Harris', nFeaturePoints);
+%         corners(:,1) = corners(:,1)+ xmin;
+%         corners(:,2) = corners(:,2)+ ymin;
+
+    else
+%         corners = corner(img, 'Harris', nFeaturePoints);
+        [framesCell{i}, descrCell{i}] = vl_sift(img,'PeakThresh', 13);
+    end
+    
+    nP(i,1) = size(framesCell{i}, 2);
+     
+    
 %     figure
 %         imagesc(img); colormap(gray); hold on;
-%         plot(corners(:,1), corners(:,2), 'r*');
+%         % plot(corners(:,1), corners(:,2), 'r*');
+%         vl_plotframe(framesCell{i});
 %     hold off;
     
-    x = corners(:,1);
-    y = corners(:,2);
-    
+%     
+%     x = corners(:,1);
+%     y = corners(:,2);
+
 %% use MSER feature detector
 %     
 %     [r, ell] = mser(img, 1) ;
@@ -78,38 +126,42 @@ for i = 1 : N
 %
 
 %% SIFT descriptors
-    nKeyPoints = length(x);
-    nP(i,1) = nKeyPoints;
-    
-    sigma = ones(1, nKeyPoints);
-    theta = zeros(1,nKeyPoints);
-    % (4xK1) matrice
-    framesCell{i} = [x'; y'; sigma; theta];
-    
-    img2 = double(img)/256;
-    
-    % (128xK1) matrice
-    descrCell{i} = siftdescriptor(img2,framesCell{i}([1 2 4],:),0.3);
+
+% 
+% 
+%     nKeyPoints = length(x);
+%     nP(i,1) = nKeyPoints;
+%     
+%     sigma = ones(1, nKeyPoints);
+%     theta = zeros(1,nKeyPoints);
+%     % (4xK1) matrice
+%     framesCell{i} = [x'; y'; sigma; theta];
+%     
+%     img2 = double(img)/256;
+%     
+%     % (128xK1) matrice
+%     descrCell{i} = siftdescriptor(img2,framesCell{i}([1 2 4],:),0.3);
     
     %% build a dependency graph on each image
     
-    [adjMatrixInd, ~] = knnsearch(descrCell{i}', descrCell{i}','k', minDeg+1);
+    [adjMatrixInd, ~] = knnsearch(descrCell{i}', descrCell{i}', 'k', minDeg+1);
     
     %% delete loops in each vertex (first column of the matrix)
     adjMatrixInd = adjMatrixInd(:,2:end);
 
-    %%
-%     % draw graph
-%     f = figure ; 
-%         imagesc(img) ;    % image
-%         colormap(gray); 
-%         hold on ;
-%         plot(x, y, 'r*');   % corner points
-%         line([x(:) x(adjMatrixInd(:,:))],[y(:) y(adjMatrixInd(:,:))],... % edges
-%                                                             'Color', 'b');       
-%     hold off;
-%     print(f, '-r80', '-dtiff', fullfile(['.' filesep 'graphs'], ...
-%                                      sprintf('%s.jpg',imagefiles(i).name)));
+    %%  draw graph
+    f = figure ; 
+        imagesc(img) ;    % image
+        colormap(gray); 
+        hold on ;
+        %plot(x, y, 'r*');   % corner points
+        vl_plotframe(framesCell{i});
+        line([framesCell{i}(1,:) framesCell{i}(1,adjMatrixInd(:,:))],[...
+            framesCell{i}(2,:) framesCell{i}(2,adjMatrixInd(:,:))],... % edges
+                                                            'Color', 'b');       
+    hold off;
+    print(f, '-r80', '-dtiff', fullfile(['.' filesep 'graphs'], ...
+                                      sprintf('%s.jpg',imagefiles(i).name)));
     %%
     adjMatrix = zeros(nP(i),nP(i));
 
@@ -119,14 +171,13 @@ for i = 1 : N
     
     adjCell{i} = adjMatrix;
 end
-
+% 
 %%  MPM
 
 % first image is a reference image
 % second image is a target image
 
 img1 = 1;
-img2 = 11;
 
 v1 = framesCell{img1}(1:2,:);
 v1=v1';
@@ -134,13 +185,14 @@ nP1 = nP(img1,1);
  
 Objective = zeros(1, N);
 
-for img2 = 2:2
+for img2 = 2:N
+    
     v2 = framesCell{img2}(1:2,:);
     v2=v2';
     nP2 = nP(img2,1);
 
     %% initial correspondence Matrix nP1 x nP2
-    nCorr = nFeaturePoints; %5;
+    nCorr = nP2; %5;
     [corrMatrixInd, ~] = knnsearch(descrCell{img2}', descrCell{img1}','k', nCorr);
 
     corrMatrix = zeros(nP1,nP2);
@@ -149,8 +201,8 @@ for img2 = 2:2
         corrMatrix(v, corrMatrixInd(v,:)) =  1;
     end
 
-%     plotMatches(double(image{img1})/256,double(image{img2})/256, v1, v2, corrMatrix, ...
-%                                                 imagefiles(img2).name,1);
+    plotMatches(double(image{img1})/256,double(image{img2})/256, v1, v2, corrMatrix, ...
+                                                imagefiles(img2).name,1);
 
 
     %% conflict groups
@@ -210,7 +262,8 @@ for img2 = 2:2
         end
     end
 
-
+    clear('AB'); 
+    
     %% run MPM 
     %
     x = MPM(AffMatrix, group1, group2);
@@ -243,7 +296,7 @@ imwrite(image{img1}, fullfile(bestMatchesPath,...
 
 [~, bestMatchesInd ] = sort(Objective,'descend');
     
-for i=1:1
+for i=1:5
     copyfile ( ...
         fullfile(sourcePath, sprintf('result_%s-2.jpg',imagefiles(bestMatchesInd(i)).name)),...
         fullfile(bestMatchesPath, sprintf('%s.jpg',imagefiles(bestMatchesInd(i)).name)));
@@ -255,4 +308,3 @@ pause
 
 %%
 close all
-clear all
