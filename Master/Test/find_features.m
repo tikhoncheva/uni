@@ -42,12 +42,10 @@ function [tmpFrames, tmpDescr, nV ] = find_features(img, varargin)
     nV = size(tmpFrames, 2);
     
 %     
-%     if i==1
-%         tmpFrames = tmpFrames(:,1:5);
-%         nV(i,1) = 5;
-%     else
-%         %tmpFrames = tmpFrames(:,1:5);
-%     end
+    if nargin==3
+        nV = 20;
+        tmpFrames = tmpFrames(:,1:nV);
+    end
         
     %% descriptor extraction (SIFT)
     

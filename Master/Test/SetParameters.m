@@ -1,15 +1,3 @@
-%% MPM code
-addpath(genpath(['..' filesep 'MPM_release_v1']));
-
-%% VL_Library
-
-VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
-addpath(genpath(VLFEAT_Toolbox));
-
-run vl_setup.m
-
-clc;
-
 % % HARG-SSVM_v0.9 
 
 
