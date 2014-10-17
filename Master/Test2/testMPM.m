@@ -102,7 +102,17 @@ for i = 1 : N
 
 end
 
-%% Build graph on the first image 
+%% Reference image
+% The first image is a reference image
+% second image in a pair is a target image  
+
+img1 = 1;
+
+v1 = framesCell{img1}(1:2,:);
+% v1=v1';
+nV1 = nV(img1,1);
+
+%% Build a dependency graph on the first image 
 % V = {set of the interest points}
 % minDeg = 10
 adjMatrixCell{1} = buildGraph(framesCell{1}, minDeg);
@@ -110,21 +120,42 @@ adjMatrixCell{1} = buildGraph(framesCell{1}, minDeg);
 %% For all other images
 for img2 = 2:N
     
-    % 1. Reduce number of nodes
+    v2 = framesCell{img2}(1:2,:);
+    nV2 = nV(img2,1);
     
+    % 1. Reduce number of nodes
+    %    first find (#param.kNN) nearest neighbors in the second image 
+    %    for all nodes on the first image
+    
+    matchInfo = matchSIFTdescr(descrCell{img1},descrCell{img2}, mparam.kNN);
+    
+    corrMatrix = zeros(nV(img1),nV(img2));
+    for ii = 1:size(matchInfo.match,2)
+        corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
+    end
+
+    plotMatches(double(image{1})/256,double(image{2})/256, v1', v2', corrMatrix, ...
+                                                imagefiles(2).name,1);
+                                            
+    [ uniq_feat2, tmp, new_feat2 ] = unique(matchInfo.match(2,:));
+    
+    nV(img2) = size(uniq_feat2, 2);
+
+    framesCell{img2} = framesCell{img2}(:, uniq_feat2);
+    descrCell{img2}  =  descrCell{img2}(:, uniq_feat2);
+    
+     %% rebuild a dependency graph on each image
+    
+    adjMatrixCell{img2} = buildGraph(framesCell{i}, minDeg);
+    
+    draw_graph(image{img2}, imagefiles(img2).name, framesCell{img2}(1:2,:), adjMatrixCell{img2}, 1:nV(img2),...
+                                                     'saveImage', 'false'); 
     
     
     
 end
 
-% first image is a reference image
-% second image is a target image  
 
-img1 = 1;
-
-v1 = framesCell{img1}(1:2,:);
-% v1=v1';
-nV1 = nV(img1,1);
 
 %% reduce number of features
 

@@ -17,7 +17,7 @@ fparam.bEstimateOrientation = false; % estimate dominant orientations or not
 
  
 %% for initial matchin
-mparam.kNN = 30;                            % max num of NN matches for EACH feature
+mparam.kNN = 10;                            % max num of NN matches for EACH feature
 mparam.distThres = 0.95;                % threshold value of SIFT distance, when not using, set 0  
 mparam.distRatio = 0.0;                % use Lowe's unambiguous NN; when not using, set 0
 

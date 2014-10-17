@@ -4,24 +4,29 @@
 % delta = threshold
 
 
-function [matchM, distM] = matchSIFTdescr (descr1, descr2, knn)
+function [match, sim] = matchSIFTdescr (descr1, descr2, knn)
 
     n1 = size(descr1,2);
     n2 = size(descr2,2);
-    thresh = 1.5;
 
+    match = [];
+    sim = [];
     matchM = zeros(n1,n2);
     
     descr = [descr1';descr2'];  % (n1+n2) x 128
-    distM = squareform(pdist(descr, 'euclidean')); % (n1+n2) x (n1+n2)
+    distM = squareform(pdist(descr, 'euclidean')); % (n1+n2) x (n1+n2) distance matrix
     distM = distM(1:n1, n1+1:end);
-    
-    threshDistM = distM * thresh;
+
+%    thresh = 1.5;
+%   threshDistM = distM * thresh;
     
     for i=1:n1
+
+       [vals, ind] = sort(distM(i,:), 'ascend');
        
-       [~, ind] = sort(distM(i,:), 'ascend');
-       matchM(i, ind(1:knn)) = 1;            
+       match = [match [i*ones(1,knn); indx(1:knn)]];
+       sim = [sim [ind(1:knn)]];
+       %matchM(i, ind(1:knn)) = 1;            
        
 %        for j=1:n2
 %           if (threshDistM(i,j) <= distM(i, setdiff(1:n2, j )) ) 
@@ -29,5 +34,6 @@ function [matchM, distM] = matchSIFTdescr (descr1, descr2, knn)
 %           end
 %        end
     end
+    
     
 end

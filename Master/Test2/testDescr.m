@@ -135,7 +135,14 @@ end
 %     plotMatches(double(image{1})/256,double(image{2})/256, v1', v2', corrMatrix, ...
 %                                                 imagefiles(2).name,1);
 
-    [matchMatrix, distMatrix] = matchSIFTdescr(descrCell{1},descrCell{2}, 5);
+    matchInfo = matchSIFTdescr(descrCell{1},descrCell{2}, 5);
+    
+    corrMatrix = zeros(nV(img1),nV(img2));
+    for ii = 1:size(matchInfo.match,2)
+        corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
+    end
 
-    plotMatches(double(image{1})/256,double(image{2})/256, v1', v2', matchMatrix, ...
-                                                imagefiles(2).name,1);    
+    plotMatches(double(image{1})/256,double(image{2})/256, v1', v2', corrMatrix, ...
+                                                imagefiles(2).name,1);                                            
+                                            
+    
