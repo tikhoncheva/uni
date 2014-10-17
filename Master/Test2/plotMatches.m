@@ -1,4 +1,4 @@
-function h=plotMatches(Img1,Img2,x1,x2,AffM, imgName, suffix)
+function h=plotMatches(Img1, Img2, x1, x2, AffM, imgName, suffix)
 
 [m1,n1,k1]=size(Img1) ;
 [m2,n2,k2]=size(Img2) ;
@@ -31,8 +31,8 @@ f = figure ;
     
     plot(x1(:,1), x1(:,2),'b.');
     plot(x2(:,1), x2(:,2),'r.');
-    print(f, '-r80', '-dtiff', fullfile(['.' filesep 'results' filesep],...
-            sprintf('result_%s-%i.jpg', imgName, suffix)));
+%     print(f, '-r80', '-dtiff', fullfile(['.' filesep 'results' filesep],...
+%             sprintf('result_%s-%i.jpg', imgName, suffix)));
 hold off;
 
 end

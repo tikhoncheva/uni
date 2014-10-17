@@ -1,3 +1,5 @@
+% HARG-SSVM_v0.9
+
 function [frames descs]=loadfeatures_vlfeat(img_gray, detector, thresholdlevel)
 % Load local features using vlfeat library
 
