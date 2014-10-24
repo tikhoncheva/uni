@@ -42,10 +42,10 @@
 \maketitle
 
 \begin{center}
-\begin{tabular}{l r}
-Group: & Ekaterina Tikhoncheva \\ 
-		& Mary Smith \\
-		& Mary Smith2 \\
+\begin{tabular}{l l}
+Group: &  Sergej Kraft \\
+       & Elias Röger \\
+       & Ekaterina Tikhoncheva \\ 
 \end{tabular}
 \end{center}
 
@@ -60,7 +60,7 @@ This data set consists of 1797 images. Further we show an example of an image fr
 
 \begin{figure}[ht]
 	\centering
-  	% \includegraphics[width=0.33\textwidth, angle=30]{test.png}
+  	\includegraphics[width=0.33\textwidth]{task1.png}
 	\caption{Digit 3}
 	\label{fig1}
 \end{figure}
@@ -113,8 +113,8 @@ The running time of both function on the same training and data set can be found
 	\begin{tabular}{|l | c|}
 		\hline
 		function & run time \\ \hline
-		dist\_ loop &  \\ 
-		dist\_ vec & \\ \hline 
+		dist\_ loop & $9.78541$ sec \\ 
+		dist\_ vec &  $0.02423$ sec\\ \hline 
 	\end{tabular}
 \caption{Running time of two distance functions}
 \label{Tab1}
@@ -131,19 +131,19 @@ Here are results of running the implemented function on the sets of the digits $
 	\begin{tabular}{|l|c|c|}
 		\hline
 		set & k & correct classification rate\\ \hline
-		$1$ and $3$ & k=1 & \\ \hline
-		$1$ and $7$ & k=1 & \\ 
-		$1$ and $7$ & k=3 & \\ 
-		$1$ and $7$ & k=6 & \\ 
-		$1$ and $7$ & k=9 & \\ 
-		$1$ and $7$ & k=17 & \\ 						
-		$1$ and $7$ & k=33 & \\ \hline		
+		$1$ and $3$ & k=1 & $0.6$\\ \hline
+		$1$ and $7$ & k=1 & $0.57931$\\ 
+		$1$ and $7$ & k=3 & $0.61379$\\ 
+		$1$ and $7$ & k=5 & $0.63448$\\ 
+		$1$ and $7$ & k=9 & $0.67586$\\ 
+		$1$ and $7$ & k=17 & $0.64827$ \\ 						
+		$1$ and $7$ & k=33 & $0.65517$\\ \hline		
 	\end{tabular}
 \caption{Results of kNN-Classifier}
 \label{Tab2}
 \end{table}
 
-We can see that increasing the number of neighbors results in better classification rate.
+We can see that increasing the number of neighbors results in better classification rate. The possible explanation might be that the higher $k$ makes algorithm robust agains outliers. 
 
 \subsection{Cross-Validation}
  In this part of the exercise we implement an n-fold cross validation scheme to test our k-Nearest Neighbors classifier.
@@ -157,12 +157,12 @@ Each of $n$ subparts will be used one time as a test set and the remaining parts
 
 \begin{table}[htb]
 	\centering
-	\begin{tabular}{|l|c|}
+	\begin{tabular}{|l|c|c|}
 		\hline
-		n & correct classification rate\\ \hline
-		n=1 & \\ \hline
-		n=5 & \\ \hline
-		n=10 & \\ \hline		
+		n & mean correct classification rate & variance\\ \hline
+		n=1 & $0.113464$ & $7.93933868408e-05$\\ \hline
+		n=5 & $0.116699$ & $0.00079345703125$\\ \hline
+		n=10 & $0.106079101562$ & $0.000761985778809$\\ \hline		
 	\end{tabular}
 \caption{n-fold cross validation of kNN-Classifier, k = $1$}
 \label{Tab3}
@@ -171,7 +171,7 @@ Each of $n$ subparts will be used one time as a test set and the remaining parts
 
 \section{Complete Code}
 
-\lstinputlisting[language=Python]{ex01.py}
+\lstinputlisting[language=Python]{../ex01.py}
 
 \end{document}
 %------------------------------------------------------------------------------%                                    
