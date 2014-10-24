@@ -1,9 +1,3 @@
-"""
-Created on Mon Oct 20 16:07:47 2014
-
-@author: kitty
-"""
-
 import numpy as np
 import matplotlib.pyplot as plot
 
