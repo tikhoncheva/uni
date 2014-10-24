@@ -46,7 +46,6 @@ function [tmpFrames, tmpDescr, nV ] = find_features_harlap_vl(img, varargin)
     indx(indxDel) = [];
     tmpFrames = tmpFrames(:, indx);
     
-    size(tmpFrames,2)
     
     % rescaling for each detector
 %     tmpFrames(3:6,:) = tmpFrames(3:6,:) * fparam.bFeatScale(detectorId);
@@ -58,12 +57,12 @@ function [tmpFrames, tmpDescr, nV ] = find_features_harlap_vl(img, varargin)
 
     areaimg = prod(size(img));
 %     area = pi * abs(tmpFrames(3,:).*tmpFrames(6,:) - tmpFrames(4,:).*tmpFrames(5,:)); % area of ellipse
-    area = sqrt(tmpFrames(3,:).*tmpFrames(6,:) - tmpFrames(4,:).*tmpFrames(5,:))\pi; % area of ellipse
+    area = sqrt(tmpFrames(3,:).*tmpFrames(6,:) - tmpFrames(4,:).*tmpFrames(5,:)); % area of ellipse
     
 %    idxValid = ( area > minAreaRatio * areaimg ) & ( area < maxAreaRatio * areaimg );
     
-%      idxValid = ( area < minAreaRatio * areaimg ); 
-      idxValid = ( area > maxAreaRatio * areaimg );
+      idxValid = ( area < minAreaRatio * areaimg ); 
+%      idxValid = ( area > maxAreaRatio * areaimg );
     
     tmpFrames = tmpFrames(:,idxValid);
     
