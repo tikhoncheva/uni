@@ -88,7 +88,7 @@ def kNN(x_training, y_training, x_test, k=1):
     
     # sort each column of the dist matrix in ascending order
     # save indices that would sort the matrix
-    dist_sortInd = np.argsort(dist[::-1], axis = 0, ); 
+    dist_sortInd = np.argsort(dist, axis = 0, ); 
     
     # leave only k nearest neighbors : rows 1:k in the sorted array
     dist_sortInd = dist_sortInd[0:k,:]
