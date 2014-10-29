@@ -37,4 +37,4 @@ def split_data_n_equal_parts(x, y, n=2):
     #end for-loop
         
     return indx
-# end split_data_n_parts    
+# end split_data_n_parts 

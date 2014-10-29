@@ -1,3 +1,9 @@
+"""
+Created on Mon Oct 20 16:07:47 2014
+
+@author: kitty
+"""
+
 import numpy as np
 import matplotlib.pyplot as plot
 
@@ -80,9 +86,9 @@ def kNN(x_training, y_training, x_test, k=1):
     # compute distance between all points in training and test sets   
     dist, time = dist_vec(np.array(x_training), np.array(x_test))
     
-    # sort each column of the dist matrix in descending order
+    # sort each column of the dist matrix in ascending order
     # save indices that would sort the matrix
-    dist_sortInd = np.argsort(dist, axis = 0); 
+    dist_sortInd = np.argsort(dist, axis = 0, ); 
     
     # leave only k nearest neighbors : rows 1:k in the sorted array
     dist_sortInd = dist_sortInd[0:k,:]
@@ -115,17 +121,6 @@ def correctClassRate(y_pred, y_test, D, print_confMatrix = False):
         predict = y_pred[indn]
         votes_bin = np.bincount(predict, minlength = 10)
         confusionM[i,:] = np.array(votes_bin[D])
-#        # calculate the difference between prediction and correct answer
-#        diff  = y_pred[indn] - D[i];
-#        # find where classifier gave a correct answer
-#        correct_results = (diff==0) 
-#        # number of correct answers
-#        nCorrect = len(correct_results) 
-#        # number of wrong answer
-#        nWrong = nDi-nCorrect
-#        
-#        confusionM[i,i] = nCorrect
-#        confusionM[i,(i+1)%2] = nWrong
     # end for-loop
         
     if print_confMatrix:
@@ -209,10 +204,11 @@ def main():
     img = img3[0]
     assert 2 == np.size(np.shape(img))
     
-#    plot.figure()
-#    plot.gray();
-#    plot.imshow(img, interpolation = 'nearest');
-#    plot.show()
+    f = plot.figure()
+    plot.gray()
+    plot.imshow(img, interpolation = 'nearest');
+    plot.show()
+    f.savefig('task1.png')
 
     print
     print '------------------------------------------------------------------'
@@ -237,24 +233,24 @@ def main():
 
     # 2.2 Distance function computation using loops
             
-#    dist1, time1 = dist_loop(np.array(x_train), np.array(x_test))
-#    
-#    print 'Distance(loops) between ''1'' and ''3'':'
-##    print dist1
-#    print 'Spend time: {}'. format(time1)
-#    
-#    # 2.3 Distance function computation using vectorization
-#
-#    dist2, time2 = dist_vec(np.array(x_train), np.array(x_test))
-#    
-#    print 'Distance(vec) between ''1'' and ''3'':'
-##    print dist2
-#    print 'Spend time: {}'. format(time2)
-#    
-#    # Compare results from 2.2 and 2.4
-#    similar = np.allclose(dist1, dist2, rtol=1e-05, atol=1e-08)
-#    assert similar, 'Functions dist_loop and dist_vec do not provide similar results'
-#    print 'Functions dist_loop and dist_vec provide similar results'
+    dist1, time1 = dist_loop(np.array(x_train), np.array(x_test))
+    
+    print 'Distance(loops) between ''1'' and ''3'':'
+#    print dist1
+    print 'Spend time: {}'. format(time1)
+    
+    # 2.3 Distance function computation using vectorization
+
+    dist2, time2 = dist_vec(np.array(x_train), np.array(x_test))
+    
+    print 'Distance(vec) between ''1'' and ''3'':'
+#    print dist2
+    print 'Spend time: {}'. format(time2)
+    
+    # Compare results from 2.2 and 2.4
+    similar = np.allclose(dist1, dist2, rtol=1e-05, atol=1e-08)
+    assert similar, 'Functions dist_loop and dist_vec do not provide similar results'
+    print 'Functions dist_loop and dist_vec provide similar results'
 
 
     print
@@ -263,43 +259,43 @@ def main():
             
     # 2.4 A NN-Classifier
         
-#    # Indices of images with '1','3' and '7' on them
-#    ind1 = (target==1)
-#    ind3 = (target==3)
-#    ind7 = (target==7)
-#    
-#    # Save images with '1' and '3'
-#    x13 = data[ind1+ind3]
-#    y13 = target[ind1+ind3]
-#    # split sets into training and test sets
-#    x13_train, x13_test, y13_train, y13_test = cross_validation.train_test_split(x13,y13, \
-#                                                    test_size = 0.3, random_state = 0)
-#              
-#    y13_predict = kNN(x13_train,y13_train, x13_test, 1)                                   
-#    rate13 = correctClassRate(y13_predict, y13_test, [1,3], print_confMatrix = True)
-#    print '1-NN Classifier: 1 OR 3? Correct classification rate is {}'. format(rate13)
-#    print
-#    
-#    
-#    # Save images with '1' and '7'
-#    x17 = data[ind1+ind7]
-#    y17 = target[ind1+ind7]
-#   
-#    # split sets into training and test sets
-#    x17_train, x17_test, y17_train, y17_test = cross_validation.train_test_split(x17,y17, \
-#                                                    test_size = 0.4, random_state = 0)
-#    y17_predict = kNN(x17_train,y17_train, x17_test, 1)             
-#    rate17 = correctClassRate(y17_predict, y17_test, [1,7], print_confMatrix = True)
-#    print '1-NN Classifier: 1 OR 7? Correct classification rate is {}'. format(rate17)
-#    
-#    # 2.5 Try k=3,5,9,17
-#    
-#    K = [3,5,9,17,33]
-#    for k in K:
-#        y17_predict = kNN(x17_train,y17_train, x17_test, k)                                                  
-#        rate17 = correctClassRate(y17_predict, y17_test, [1, 7], print_confMatrix = False)
-#        print '{}-NN Classifier: 1 OR 7? Correct classification rate is {}'. format(k,rate17)                                 
-#    # end for loop
+    # Indices of images with '1','3' and '7' on them
+    ind1 = (target==1)
+    ind3 = (target==3)
+    ind7 = (target==7)
+    
+    # Save images with '1' and '3'
+    x13 = data[ind1+ind3]
+    y13 = target[ind1+ind3]
+    # split sets into training and test sets
+    x13_train, x13_test, y13_train, y13_test = cross_validation.train_test_split(x13,y13, \
+                                                    test_size = 0.3, random_state = 0)
+              
+    y13_predict = kNN(x13_train,y13_train, x13_test, 1)                                   
+    rate13 = correctClassRate(y13_predict, y13_test, [1,3], print_confMatrix = True)
+    print '1-NN Classifier: 1 OR 3? Correct classification rate is {}'. format(rate13)
+    print
+    
+    
+    # Save images with '1' and '7'
+    x17 = data[ind1+ind7]
+    y17 = target[ind1+ind7]
+   
+    # split sets into training and test sets
+    x17_train, x17_test, y17_train, y17_test = cross_validation.train_test_split(x17,y17, \
+                                                    test_size = 0.4, random_state = 0)
+    y17_predict = kNN(x17_train,y17_train, x17_test, 1)             
+    rate17 = correctClassRate(y17_predict, y17_test, [1,7], print_confMatrix = True)
+    print '1-NN Classifier: 1 OR 7? Correct classification rate is {}'. format(rate17)
+    
+    # 2.5 Try k=3,5,9,17
+    
+    K = [3,5,9,17,33]
+    for k in K:
+        y17_predict = kNN(x17_train,y17_train, x17_test, k)                                                  
+        rate17 = correctClassRate(y17_predict, y17_test, [1, 7], print_confMatrix = False)
+        print '{}-NN Classifier: 1 OR 7? Correct classification rate is {}'. format(k,rate17)                                 
+    # end for loop
             
     
     ## 3 Cross-validation of nearest neighbor    

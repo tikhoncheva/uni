@@ -1,0 +1,49 @@
+------------------------------------------------------------------
+ 1 Exploring the Data 
+------------------------------------------------------------------
+['images', 'data', 'target_names', 'DESCR', 'target']
+Size of the digit set (1797, 64)
+
+------------------------------------------------------------------
+ 2 Nearest Neighbor Classifier 
+------------------------------------------------------------------
+
+ Distance function computation 
+
+Distance(loops) between 1 and 3:
+Spend time: 9.78541302681
+Distance(vec) between 1 and 3:
+Spend time: 0.0242350101471
+Functions dist_loop and dist_vec provide similar results
+
+ A NN-Classifier
+
+
+Confusion Matrix 
+[[ 30.  22.]
+ [ 22.  36.]]
+Size of the test set = 110
+1-NN Classifier: 1 OR 3? Correct classification rate is 0.6
+
+
+Confusion Matrix 
+[[ 35.  24.]
+ [ 37.  49.]]
+Size of the test set = 145
+1-NN Classifier: 1 OR 7? Correct classification rate is 0.579310344828
+3-NN Classifier: 1 OR 7? Correct classification rate is 0.613793103448
+5-NN Classifier: 1 OR 7? Correct classification rate is 0.634482758621
+9-NN Classifier: 1 OR 7? Correct classification rate is 0.675862068966
+17-NN Classifier: 1 OR 7? Correct classification rate is 0.648275862069
+33-NN Classifier: 1 OR 7? Correct classification rate is 0.655172413793
+
+------------------------------------------------------------------
+ 3 Cross-validation of nearest neighbor  
+------------------------------------------------------------------
+Size of complete data set: 1797 images
+...split into 2 groups.Number of elements in each group 899
+	 Mean classification rate = 0.113464355469, variance = 7.93933868408e-05
+...split into 5 groups.Number of elements in each group 360
+	 Mean classification rate = 0.11669921875, variance = 0.00079345703125
+...split into 10 groups.Number of elements in each group 180
+	 Mean classification rate = 0.106079101562, variance = 0.000761985778809 
