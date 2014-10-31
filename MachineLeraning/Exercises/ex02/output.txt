@@ -1,0 +1,53 @@
+Python 2.7.6 (default, Mar 22 2014, 22:59:56) 
+[GCC 4.8.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+
+Imported NumPy 1.8.2, SciPy 0.13.3, Matplotlib 1.3.1
+
+Type "scientific" for more details.
+>>> runfile('/home/kitty/Documents/Uni/WiSe1415/MachineLeraning/Exercises/ex02/ex02.py', wdir=r'/home/kitty/Documents/Uni/WiSe1415/MachineLeraning/Exercises/ex02')
+------------------------------------------------------------------
+ 1 Data Preparation  
+------------------------------------------------------------------
+['images', 'data', 'target_names', 'DESCR', 'target']
+Size of the whole digit set (1797, 64)
+Size of the set of 1s and 7s 361
+
+------------------------------------------------------------------
+ 2 Nearest mean 
+------------------------------------------------------------------
+Nearest Mean Correct Classification rate: 0.993103448276
+
+------------------------------------------------------------------
+ 3 QDA 
+------------------------------------------------------------------
+QDA prediction on the training set
+
+Confusion Matrix 
+[[ 122.    1.]
+ [  20.   73.]]
+Correct Classification rate on the training test:0.902777777778
+
+QDA prediction on the test set
+
+Confusion Matrix 
+[[ 59.   0.]
+ [ 12.  74.]]
+Correct Classification rate on the training test:0.91724137931
+------------------------------------------------------------------
+ 4 LDA 
+------------------------------------------------------------------
+LDA prediction on the training set
+
+Confusion Matrix 
+[[ 122.    1.]
+ [  27.   66.]]
+Correct Classification rate on the training test:0.87037037037
+
+LDA prediction on the test set
+
+Confusion Matrix 
+[[ 59.   0.]
+ [ 19.  67.]]
+Correct Classification rate on the training test:0.868965517241
+>>>  
