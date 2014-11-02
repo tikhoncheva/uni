@@ -216,7 +216,7 @@ def perform_qda(mu0, mu1, covmat0, covmat1, p0, p1, testx):
                          testx_centered0[i].T)/2. - b_0
         
         # k =1
-        b_1 = np.log(np.linalg.det(2*np.pi*covmat1))/2. - np.log(p1)
+        b_1 = -np.log(np.linalg.det(2*np.pi*covmat1))/2. - np.log(p1)
         covmat1_inv = np.linalg.inv(covmat1)
 
         testx_centered1 = testx - mu1
@@ -299,7 +299,7 @@ def perform_lda(mu0, mu1, covmat0, covmat1, p0, p1, testx):
         y0 = np.dot( testx[i], w_0) + b_0
         
         # k =1
-        b_1 = np.log(np.linalg.det(2*np.pi*covmat1))/2. - np.log(p1)
+        b_1 = - np.log(np.linalg.det(2*np.pi*covmat1))/2. - np.log(p1)
 
         covmat1_inv = np.linalg.inv(covmat1)        
         
@@ -437,7 +437,7 @@ def main():
     # Compute the correct classification rate
     ccr_train = correctClassRate(qda_predict_train, y_train01, [0,1],\
                                                     print_confMatrix = True)
-    print 'Correct Classification rate on the training test:{}'.format(ccr_train)
+    print 'Correct Classification rate on the training set:{}'.format(ccr_train)
 
     # Visualize  the results of prediction    
     plotPredictionResults(x_train, y_train01, qda_predict_train,\
@@ -470,7 +470,7 @@ def main():
     # Compute the correct classification rate
     ccr_test = correctClassRate(qda_predict_test, y_test01, [0,1],\
                                                     print_confMatrix = True)                                                
-    print 'Correct Classification rate on the training test:{}'.format(ccr_test)
+    print 'Correct Classification rate on the test set:{}'.format(ccr_test)
 
     # Visualize  the results of prediction
     plotPredictionResults(x_test, y_test01, qda_predict_test, \
@@ -494,7 +494,7 @@ def main():
     # Compute the correct classification rate
     ccr_train = correctClassRate(lda_predict_train, y_train01, [0,1],\
                                                     print_confMatrix = True)
-    print 'Correct Classification rate on the training test:{}'.format(ccr_train)
+    print 'Correct Classification rate on the training set:{}'.format(ccr_train)
 
     # Visualize  the results of prediction    
     plotPredictionResults(x_train, y_train01, lda_predict_train,\
@@ -528,7 +528,7 @@ def main():
     # Compute the correct classification rate
     ccr_test = correctClassRate(lda_predict_test, y_test01, [0,1],\
                                                     print_confMatrix = True)                                                
-    print 'Correct Classification rate on the training test:{}'.format(ccr_test)
+    print 'Correct Classification rate on the test set:{}'.format(ccr_test)
 
     # Visualize  the results of prediction
     plotPredictionResults(x_test, y_test01, lda_predict_test, \

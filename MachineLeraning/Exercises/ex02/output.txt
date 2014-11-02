@@ -24,16 +24,16 @@ Nearest Mean Correct Classification rate: 0.993103448276
 QDA prediction on the training set
 
 Confusion Matrix 
-[[ 122.    1.]
- [  20.   73.]]
-Correct Classification rate on the training test:0.902777777778
+[[ 118.    5.]
+ [   1.   92.]]
+Correct Classification rate on the training set:0.972222222222
 
 QDA prediction on the test set
 
 Confusion Matrix 
-[[ 59.   0.]
- [ 12.  74.]]
-Correct Classification rate on the training test:0.91724137931
+[[ 58.   1.]
+ [  0.  86.]]
+Correct Classification rate on the test set:0.993103448276
 ------------------------------------------------------------------
  4 LDA 
 ------------------------------------------------------------------
@@ -41,13 +41,13 @@ LDA prediction on the training set
 
 Confusion Matrix 
 [[ 122.    1.]
- [  27.   66.]]
-Correct Classification rate on the training test:0.87037037037
+ [  14.   79.]]
+Correct Classification rate on the training set:0.930555555556
 
 LDA prediction on the test set
 
 Confusion Matrix 
 [[ 59.   0.]
- [ 19.  67.]]
-Correct Classification rate on the training test:0.868965517241
->>>  
+ [  6.  80.]]
+Correct Classification rate on the test set:0.958620689655
+>>> 
