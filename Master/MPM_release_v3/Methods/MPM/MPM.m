@@ -36,7 +36,7 @@ strField = fieldnames(param);
 for i = 1:length(strField), eval([strField{i} '=param.' strField{i} ';']); end
 
 % eliminate conflicting elements to prevent conflicting walks
-M = M.*~full(getConflictMatrix(group1, group2));
+% M = M.*~full(getConflictMatrix(group1, group2));
 
 % initialize answer
 nMatch = length(M);
