@@ -17,19 +17,24 @@ cAdjM1 = ~full(AdjM1);
 cAdjM1(1:size(cAdjM1,1)+1:end) = false; 
 
 cAdjM2 = ~full(AdjM2);
-cAdjM2(1:size(cAdjM2,1)+1:end) = false; 
+cAdjM2(1:size(cAdjM2,1)+1:end) = false;
 
-[p,~] = find (cAdjM1);
-[i,~] = find(group1(:,p));
-j = i;
-conflictMatrix(i,j) = true; 
+[x,y] = find (cAdjM1);
+for l=1:size(x,1)
+    [i,~] = find(group1(:,x(l)));
+    [j,~] = find(group1(:,y(l)));
+    [X,Y] = meshgrid(i,j);
+    conflictMatrix(X(:),Y(:)) = true; 
+end
 
 
-[p,~] = find (cAdjM2);
-[i,~] = find(group2(:,p));
-j = i;
-conflictMatrix(i,j) = true; 
-
+[x,y] = find (cAdjM2);
+for l=1:size(x,1)
+    [i,~] = find(group2(:,x(l)));
+    [j,~] = find(group2(:,y(l)));
+    [X,Y] = meshgrid(i,j);
+    conflictMatrix(X(:),Y(:)) = true; 
+end
 
 % set the diagonal elements to zero
 conflictMatrix(1:size(conflictMatrix,1)+1:end) = false; 

@@ -6,12 +6,14 @@ close all
 %% Set parameters
 
 % MPM code
-addpath(genpath(['..' filesep '..' filesep 'MPM_release_v1_2']));
+addpath(genpath(['..' filesep '..' filesep 'MPM_release_v3']));
 
 % VL_Library
 
-VLFEAT_Toolbox = ['..' filesep '..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
+%VLFEAT_Toolbox = ['..' filesep '..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
 %VLFEAT_Toolbox = [ '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' filesep 'mex' filesep 'mexa64' ];
+VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
+
 addpath(genpath(VLFEAT_Toolbox));
 
 run vl_setup.m
@@ -30,8 +32,8 @@ SetParameters;
 % Select a reference image
 img1 = 1;
 
-N = 2;
-%N = size(image, 2)
+% N = 2;
+N = size(image, 2);
 
 % cell of the keypoints on the each image
 framesCell = cell(1,N); % Nx(4xK1) matrices
@@ -58,7 +60,7 @@ for i = 1 : N
     
     if i==1
         [ framesCell{i}, descrCell{i}, nV(i),runtime ] = ...
-                                    find_features_harlap_vl(img, true, 30);
+                                    find_features_harlap_vl(img, true, 10);
     else
         [ framesCell{i}, descrCell{i}, nV(i),runtime ] = ...
                                         find_features_harlap_vl(img, false);
@@ -90,8 +92,6 @@ nV1 = nV(img1,1);
 
 for i = 2 : N
     
-%     v2 = framesCell{i}(1:2,:);
-    
     matchInfo = make_initialmatches2(descrCell{1},descrCell{i}, mparam); 
     
 %     corrMatrix = zeros(nV(1),nV(i));
@@ -112,7 +112,7 @@ for i = 2 : N
     
     v2 = framesCell{i}(1:2,:);
     
-    %mparam.kNN = 1;
+%     mparam.kNN = 1;
     matchInfo = make_initialmatches2(descrCell{1},descrCell{i}, mparam); 
     
     corrMatrix = zeros(nV(1),nV(i));
@@ -146,7 +146,7 @@ for img2 = 2:N
     v2 = framesCell{img2}(1:2,:);
     nV2 = nV(img2,1);
 
-    matchInfo = initialmatchesCell{i};                                       
+    matchInfo = initialmatchesCell{img2};                                       
    
     Adj1 = DG{img1};
     Adj2 = DG{img2};
@@ -158,8 +158,16 @@ for img2 = 2:N
     
 
     % run MPM  
-    L12(:,1) = matchInfo.match(1,:).';
-    L12(:,2) = matchInfo.match(2,:).';
+%     L12(:,1) = matchInfo.match(1,:).';
+%     L12(:,2) = matchInfo.match(2,:).';
+%     [ group1, group2 ] = make_group12(L12);
+
+    % conflict groups
+    corrMatrix = zeros(nV1,nV2);
+    for ii = 1:size(matchInfo.match,2)
+        corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
+    end
+    [L12(:,1), L12(:,2)] = find(corrMatrix);
     [ group1, group2 ] = make_group12(L12);
 
     x = MPM(AffMatrix, group1, group2);
@@ -167,7 +175,7 @@ for img2 = 2:N
     
     CorrMatrix = zeros(nV1, nV2);
     for i=1:size(L12,1)
-        CorrMatrix(L12(i,2), L12(i,1)) = x(i);
+        CorrMatrix(L12(i,1), L12(i,2)) = x(i);
     end    
 
     newCorrMatrix = roundMatrix(CorrMatrix);

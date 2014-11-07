@@ -1,0 +1,1 @@
+Crop rectangle on the first image 

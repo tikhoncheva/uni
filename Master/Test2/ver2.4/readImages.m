@@ -2,10 +2,11 @@ function [image, imagefiles] = readImages
 
     %% Path to the Dataset
 
-    image_path = ['..' filesep 'churchSmall'];
+%     image_path = ['..' filesep 'churchSmall'];
+%     image_path = '/home/kitty/Documents/Uni/Master/A MAX-Pooling Strategy/Test2/oxbuild_small2/';
 %     image_path = ['/home/kitty/Documents/Uni/Master/Databases/SUN/Images/c/church/outdoor/'];
-    
-      image_path = ['..' filesep 'oxbuild_small'];
+%     image_path = '/home/kitty/Documents/Uni/Master/A MAX-Pooling Strategy/Test2/churchSmall/';
+     image_path = ['..' filesep 'oxbuild_small'];
     
 
     imagefiles = dir([image_path filesep '*.jpg']) ;
