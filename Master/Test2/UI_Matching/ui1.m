@@ -89,7 +89,7 @@ function mOpenImg1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [filename, pathname] = uigetfile({'*.jpg'}, 'File Selector');
-global img1;
+%global img1;
 set(handles.filename1, 'String', filename);
 img1 = imread([pathname filesep filename]);
 img1 = single(rgb2gray(img1));  % Convert the image to gray scale
@@ -112,7 +112,7 @@ function mOpenImg2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [filename, pathname] = uigetfile({'*.jpg'}, 'File Selector');
-global img2;
+%global img2;
 set(handles.filename2, 'String', filename);
 img2 = imread([pathname filesep filename]);
 img2 = single(rgb2gray(img2));  % Convert the image to gray scale
@@ -144,15 +144,14 @@ function pushbuttonStart_Callback(hObject, eventdata, handles)
 % set parameters
 
 % MPM code
-% addpath(genpath(['..' filesep '..' filesep 'MPM_release_v3']));
-addpath(genpath(['..' filesep  'MPM_release_v3']));
+ addpath(genpath(['..' filesep '..' filesep 'MPM_release_v3']));
+% addpath(genpath(['..' filesep  'MPM_release_v3']));
 
 % VL_Library
 
-VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
+% VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
 %VLFEAT_Toolbox = ['..' filesep '..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
-%VLFEAT_Toolbox = [ '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' filesep 'mex' filesep 'mexa64' ];
-% VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
+ VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
 
 addpath(genpath(VLFEAT_Toolbox));
 addpath([ '.' filesep 'Matching' ]);
@@ -296,8 +295,6 @@ newMatches = newCorrMatrix;
 axes(handles.axes3);
 plotMatches(img1,img2, v1', v2', newCorrMatrix);     
 
-set(gca,'ButtonDownFcn', @mouseclick_callback)
-set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
 % ---------------------------------------------------------------
 handles.frames = framesCell;
 handles.descr = descrCell;
@@ -306,15 +303,16 @@ handles.DG = DG;
 handles.InitialMatching = CorrMatrix;
 handles.newMatching = newCorrMatrix;
 
-global frames;
-frames = handles.frames;
-global descr;
-descr = handles.descr;
-
 guidata(hObject,handles);
+
+% set(gca,'ButtonDownFcn', @mouseclick_callback)
+% set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
 set(handles.axes3,'Visible','on');   % Show Matching results
 set(handles.checkbox2,'Enable','on');   % Show Initial Matches
+set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
 
 
 
@@ -379,42 +377,12 @@ else
     plotMatches(img1,img2, v1', v2', newMatching);  
 end
 
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
-set(gca,'ButtonDownFcn', @mouseclick_callback)
-set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
+% set(gca,'ButtonDownFcn', @mouseclick_callback)
+% set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
 
-
-
-% --- Executes on button press in checkbox3.
-% Show Matching results
-function checkbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox3
-
-
-function editOutput_Callback(hObject, eventdata, handles)
-% hObject    handle to editOutput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of editOutput as text
-%        str2double(get(hObject,'String')) returns contents of editOutput as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function editOutput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editOutput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 % --- Executes on mouse press over axes background.
@@ -426,8 +394,102 @@ function axes3_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+cP = get(gca,'Currentpoint');
+n = cP(1,1);
+m = cP(1,2);
 
-pos = get(hObject,'CurrentPoint')
+img1 = handles.img1;
+img2 = handles.img2;
+f = handles.frames;
+d = handles.descr;
+
+v1 = f{1}(1:2,:);
+v2 = f{2}(1:2,:);
+
+nV1 = size(v1,2);
+nV2 = size(v2,2);
+
+initMatches = handles.InitialMatching;
+newMatches = handles.newMatching;
+      
+           
+cP = get(gca,'Currentpoint');
+n = cP(1,1);
+m = cP(1,2);
+      
+[m1,n1, ~] = size(img1) ;
+[m2,n2, ~] = size(img2) ;
+      
+if (n>n1)
+    % point on the second image
+    n = n-n1;
+    img = 2;
+else
+    % point on the first image
+    img = 1;
+end
+      
+if img==1
+    nn = knnsearch(f{1}(1:2,:)',[n,m]);
+    feature_nn = f{1}(:,nn);  
+else
+    nn = knnsearch(f{2}(1:2,:)',[n,m]);
+    feature_nn = f{2}(:,nn);
+    feature_nn(1) = feature_nn(1) + n1;      
+end
+      
+% show best match
+      
+matchOld = zeros(nV1, nV2);
+matchNew = zeros(nV1, nV2);
+
+if (img==1)
+    matchOld(nn, :) = initMatches(nn, :);
+    matchNew(nn, :) = newMatches(nn, :);
+else
+    matchOld(:, nn) = initMatches(:, nn);
+    matchNew(:, nn) = newMatches(:,nn);          
+end
+      
+plotMatches(img1,img2, v1', v2', matchNew, matchOld);
+            
+% get corresponding descriptor of the best match      
+if img==1 
+    nn_2 = find(matchNew(nn, :));
+    feature_nn_2 = f{2}(:,nn_2);
+    feature_nn_2(1) = feature_nn_2(1) + n1;
+else
+    nn_2 = nn;  
+    feature_nn_2 = feature_nn;     
+    nn = find(matchNew(:,nn_2));
+    feature_nn = f{1}(:,nn);
+end   
+      
+vl_plotsiftdescriptor( d{1}(:,nn), feature_nn) ;
+vl_plotsiftdescriptor( d{2}(:,nn_2), feature_nn_2) ;
+      
+%       set(gca,'ButtonDownFcn', @mouseclick_callback)
+%       set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})      
+      
+% cut patches
+R  = 15; % from vl_feat
+c1  = f{1}(1:2,nn);
+patch1 = imcrop(img1, [c1(1)-R, c1(2)-R, 2*R+1, 2*R+1]);
+%  figure
+axes(handles.axes4);
+imagesc(patch1),  colormap gray, hold off;
+
+c2  = f{2}(1:2,nn_2);
+patch2 = imcrop(img2, [c2(1)-R, c2(2)-R, 2*R+1, 2*R+1]);
+
+% figure
+axes(handles.axes5);
+imagesc(patch2), colormap gray, hold off;
+
+axes(handles.axes3);
+% -----------------
 
 
 
@@ -449,8 +511,12 @@ v2 = framesCell{2}(1:2,:);
 
 newMatching = handles.newMatching;
 plotMatches(img1,img2, v1', v2', newMatching);
-set(gca,'ButtonDownFcn', @mouseclick_callback)
-set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
+
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+
+% set(gca,'ButtonDownFcn', @mouseclick_callback)
+% set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
 
 % set(handles.checkbox1,'Enable','off');   % Show DG
 % set(handles.checkbox2,'Enable','off');   % Show Initial Matches
