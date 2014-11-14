@@ -2,7 +2,7 @@
 %
 %
 
-function D = initialAffinityMatrix(v1, v2, AdjM1, AdjM2, matchInfo)
+function [D, ratio] = initialAffinityMatrix(v1, v2, AdjM1, AdjM2, matchInfo)
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);
@@ -28,16 +28,25 @@ G2 = v2(:, L2(:,1))-v2(:, L2(:,2));
 G1 = sqrt(G1(1,:).^2+G1(2,:).^2);
 G2 = sqrt(G2(1,:).^2+G2(2,:).^2);
 
+% distance matrix of the graph
 d1 = zeros(nV1, nV2);
 for i=1:size(L1,1)
     d1(L1(i,2), L1(i,1)) = G1(i);
 end
+sigma1 = sum(d1(:))/size(find(d1(:)>0),1);
+d1 = exp(-(d1)./sigma1);
 
+% distance matrix of the second graph
 d2 = zeros(nV1, nV2);
 for i=1:size(L2,1)
     d2(L2(i,2), L2(i,1)) = G2(i);
 end
+sigma2 = sum(d2(:))/size(find(d2(:)>0),1);
+d2 = exp(-(d2)./sigma2);
 
+ratio = sigma1/sigma2;
+
+% Affinity Matrix
 nAffMatrix = size(L12,1);
 D = zeros(nAffMatrix);
 for ia=1:nAffMatrix

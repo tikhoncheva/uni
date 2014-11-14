@@ -32,8 +32,8 @@ SetParameters;
 % Select a reference image
 img1 = 1;
 
-% N = 2;
-N = size(image, 2);
+ N = 2;
+%N = size(image, 2);
 
 % cell of the keypoints on the each image
 framesCell = cell(1,N); % Nx(4xK1) matrices
@@ -130,9 +130,13 @@ end
 %% Build Dependency Graph (DG) on each image
 minDeg = 30;    % Min Degree of the graph
 
-for i = 1 : N
+
+DG{1} = buildDependGraph_RefImage(framesCell{1}, minDeg);
+
+for i= 2 : N
     img = image{i}; 
-    DG{i} = buildDependGraph(framesCell{i}, minDeg);
+    %DG{i} = buildDependGraph_RefImage(framesCell{i}, minDeg);
+    DG{i} = buildDependGraph(framesCell{i}, DG{1}, initialmatchesCell{i});
 %     draw_graph(img, imagefiles(i).name, framesCell{i}(1:2,:), DG{i},...
 %                                                      'saveImage', 'false'); 
 end

@@ -7,7 +7,7 @@ function [image, imagefiles] = readImages
 %     image_path = ['/home/kitty/Documents/Uni/Master/Databases/SUN/Images/c/church/outdoor/'];
 %     image_path = '/home/kitty/Documents/Uni/Master/A MAX-Pooling Strategy/Test2/churchSmall/';
      image_path = ['..' filesep 'oxbuild_small'];
-    
+     image_path = ['..' filesep 'churchSmall'];
 
     imagefiles = dir([image_path filesep '*.jpg']) ;
 

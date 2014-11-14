@@ -22,7 +22,7 @@ function varargout = ui1(varargin)
 
 % Edit the above text to modify the response to help ui1
 
-% Last Modified by GUIDE v2.5 12-Nov-2014 16:02:54
+% Last Modified by GUIDE v2.5 14-Nov-2014 13:38:20
 clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -90,47 +90,48 @@ function mOpenImg1_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 [filename, pathname] = uigetfile({'*.jpg'}, 'File Selector');
 %global img1;
-set(handles.filename1, 'String', filename);
-img1 = imread([pathname filesep filename]);
-img1 = single(rgb2gray(img1));  % Convert the image to gray scale
-handles.img1 = img1;
+if  ~strcmp(filename,'')
+    set(handles.filename1, 'String', filename);
+    img1 = imread([pathname filesep filename]);
+    img1 = single(rgb2gray(img1));  % Convert the image to gray scale
+    handles.img1 = img1;
 
-axes(handles.axes1);
-imagesc(img1),colormap(gray), axis off;
+    axes(handles.axes1);
+    imagesc(img1),colormap(gray), axis off;
 
-handles.img1selected = 1;
-guidata(hObject,handles);
+    handles.img1selected = 1;
+    guidata(hObject,handles);
 
 
-if (handles.img2selected)
-    set(handles.pushbuttonStart,'enable','on');
-end    
-
+    if (handles.img2selected)
+        set(handles.pushbuttonStart,'enable','on');
+    end    
+end
 % --------------------------------------------------------------------
 function mOpenImg2_Callback(hObject, eventdata, handles)
 % hObject    handle to mOpenImg2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [filename, pathname] = uigetfile({'*.jpg'}, 'File Selector');
-%global img2;
-set(handles.filename2, 'String', filename);
-img2 = imread([pathname filesep filename]);
-img2 = single(rgb2gray(img2));  % Convert the image to gray scale
-handles.img2 = img2;
 
-axes(handles.axes2);
-imagesc(img2),colormap(gray), axis off;
+if  ~strcmp(filename,'')
+    set(handles.filename2, 'String', filename);
+    img2 = imread([pathname filesep filename]);
+    img2 = single(rgb2gray(img2));  % Convert the image to gray scale
+    handles.img2 = img2;
 
-handles.img2selected = 1;
-guidata(hObject,handles);
+    axes(handles.axes2);
+    imagesc(img2),colormap(gray), axis off;
+
+    handles.img2selected = 1;
+    guidata(hObject,handles);
 
 
-if (handles.img1selected)
-    set(handles.pushbuttonStart,'enable','on');
-end    
-
+    if (handles.img1selected)
+        set(handles.pushbuttonStart,'enable','on');
+    end    
+end
         
-
 % --- Executes on button press in pushbuttonStart.
 % Match two selected images
 function pushbuttonStart_Callback(hObject, eventdata, handles)
@@ -138,7 +139,13 @@ function pushbuttonStart_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+axes(handles.axes3);
+cla reset
 
+set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
+set(handles.checkboxShowInitialFeatures,'Value', 0);   % Show Initial Features
 % ---------------------------------------------------------------
 
 % set parameters
@@ -150,7 +157,6 @@ function pushbuttonStart_Callback(hObject, eventdata, handles)
 % VL_Library
 
 % VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
-%VLFEAT_Toolbox = ['..' filesep '..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
 
 addpath(genpath(VLFEAT_Toolbox));
@@ -197,6 +203,7 @@ fprintf(' %f secs elapsed for finding %d interest points on the image %d \n', ..
 fprintf(' %f secs elapsed for finding %d interest points on the image %d \n', ...
                         runtime, nV(2) , 2);                                
 
+handles.framesInitial = framesCell;
 % ------------
 
 
@@ -217,9 +224,7 @@ matchInfo = make_initialmatches2(descrCell{1},descrCell{2}, mparam);
 % delete all features that are not neighbors of some point on the
 % reference image
 
-% ?????????????
 [ uniq_feat2, ~, ~ ] = unique(matchInfo.match(2,:));
-    
 nV(2) = size(uniq_feat2, 2);
 framesCell{2} = framesCell{2}(:, uniq_feat2);
 descrCell{2}  =  descrCell{2}(:, uniq_feat2); 
@@ -235,8 +240,6 @@ for ii = 1:size(matchInfo.match,2)
     corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
 end
 
-global initMatches;
-initMatches = corrMatrix;
 % ------------ Step 3
 %
 % Build Dependency Graphs (DG) on each image
@@ -247,27 +250,25 @@ initMatches = corrMatrix;
 str = get(handles.editMinDegree, 'String');
 minDeg = str2num(str);
 
-DG{1} = buildDependGraph(framesCell{1}, minDeg);
-DG{2} = buildDependGraph(framesCell{2}, minDeg);
-
-set(handles.checkbox1,'Enable','on');   % Show Dependency graph
+DG{1} = buildDependGraph_RefImage(framesCell{1}, minDeg);
+DG{2} = buildDependGraph(framesCell{2}, DG{1}, matchInfo);
+% DG{2} = buildDependGraph_RefImage(framesCell{2}, minDeg);
+set(handles.checkShowDG,'Enable','on');   % Show Dependency graph
 
 
 %  Max-Pooling Strategy
  
 v2 = framesCell{2}(1:2,:);
 nV2 = nV(2,1);
-                                    
+%                                     
    
 Adj1 = DG{1};
 Adj2 = DG{2};
 
     
 % compute initial affinity matrix
-AffMatrix = initialAffinityMatrix(v1, v2, Adj1, Adj2, matchInfo);
-  
-    
-
+[AffMatrix,ratio] = initialAffinityMatrix(v1, v2, Adj1, Adj2, matchInfo);
+ set(handles.editRatio,'String',ratio); 
 % run MPM  
 
 % conflict groups
@@ -311,16 +312,18 @@ set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
 set(handles.axes3,'Visible','on');   % Show Matching results
-set(handles.checkbox2,'Enable','on');   % Show Initial Matches
+set(handles.checkboxShowInitM,'Enable','on');   % Show Initial Matches
+set(handles.checkboxShowNeighbors,'Enable','on');   % Show Neighbors
 set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
+set(handles.checkboxShowInitialFeatures,'Enable','on');   % Show Initial Features
 
 
 
 
-% --- Executes on button press in checkbox1.
+% --- Executes on button press in checkShowDG.
 % Show dependency  graphs
-function checkbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox1 (see GCBO)
+function checkShowDG_Callback(hObject, eventdata, handles)
+% hObject    handle to checkShowDG (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -349,14 +352,14 @@ end
 
 
 
-% --- Executes on button press in checkbox2.
+% --- Executes on button press in checkboxShowInitM.
 % Show Initial Matches
-function checkbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox2 (see GCBO)
+function checkboxShowInitM_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxShowInitM (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox2
+% Hint: get(hObject,'Value') returns toggle state of checkboxShowInitM
 img1 = handles.img1;
 img2 = handles.img2;
 framesCell = handles.frames;
@@ -475,20 +478,47 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
       
 % cut patches
 R  = 15; % from vl_feat
-c1  = f{1}(1:2,nn);
-patch1 = imcrop(img1, [c1(1)-R, c1(2)-R, 2*R+1, 2*R+1]);
-%  figure
-axes(handles.axes4);
-imagesc(patch1),  colormap gray, hold off;
 
+% second image
 c2  = f{2}(1:2,nn_2);
 patch2 = imcrop(img2, [c2(1)-R, c2(2)-R, 2*R+1, 2*R+1]);
-
-% figure
 axes(handles.axes5);
 imagesc(patch2), colormap gray, hold off;
 
+% first image
+c1  = f{1}(1:2,nn);
+axes(handles.axes4);
+if numel(c1)~=0
+    patch1 = imcrop(img1, [c1(1)-R, c1(2)-R, 2*R+1, 2*R+1]);
+    imagesc(patch1),  colormap gray, hold off;
+else
+   cla reset 
+end
+
 axes(handles.axes3);
+
+% If show Neighbors
+showNeighbors = get(handles.checkboxShowNeighbors,'Value');
+if showNeighbors
+   DG = handles.DG;
+
+   % Neighbors on the right image
+   nf2 = zeros(size(DG{2}));
+   nf2(nn_2,:) = DG{2}(nn_2,:);
+   f_2 = f{2};
+   f_2(1,:) = f_2(1,:)+ n1;
+   draw_graph(img, 'img2', f_2, nf2);
+   
+   % Neighbors on the left image
+   nf1 = zeros(size(DG{1}));
+   nf1(nn,:) = DG{1}(nn,:);
+    
+   draw_graph(img, 'img1', f{1}, nf1);
+   
+   set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+   set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})  
+   
+end
 % -----------------
 
 
@@ -518,8 +548,8 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 % set(gca,'ButtonDownFcn', @mouseclick_callback)
 % set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
 
-% set(handles.checkbox1,'Enable','off');   % Show DG
-% set(handles.checkbox2,'Enable','off');   % Show Initial Matches
+% set(handles.checkShowDG,'Enable','off');   % Show DG
+% set(handles.checkboxShowInitM,'Enable','off');   % Show Initial Matches
 
 
 
@@ -566,3 +596,75 @@ function edit3_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function editRatio_Callback(hObject, eventdata, handles)
+% hObject    handle to editRatio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editRatio as text
+%        str2double(get(hObject,'String')) returns contents of editRatio as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editRatio_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editRatio (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in checkboxShowNeighbors.
+function checkboxShowNeighbors_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxShowNeighbors (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkboxShowNeighbors
+
+
+% --- Executes on button press in checkboxShowInitialFeatures.
+%
+% Show all initial features
+%
+function checkboxShowInitialFeatures_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxShowInitialFeatures (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if get(handles.checkboxShowInitialFeatures,'Value');
+
+    img1 = handles.img1;
+    img2 = handles.img2;
+
+    [~,n1, ~] = size(img1) ;
+
+    framesCell = handles.frames;
+    initialFrames = handles.framesInitial;
+
+    initialFrames{2}(1,:)= initialFrames{2}(1,:) + n1;
+
+    plot(initialFrames{2}(1,:),initialFrames{2}(2,:), 'r.')
+
+else
+    img1 = handles.img1;
+    img2 = handles.img2;
+    framesCell = handles.frames;
+
+    v1 = framesCell{1}(1:2,:);
+    v2 = framesCell{2}(1:2,:);
+
+    newMatching = handles.newMatching;
+    plotMatches(img1,img2, v1', v2', newMatching);
+
+end
+
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
