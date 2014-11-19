@@ -157,7 +157,8 @@ set(handles.checkboxShowInitialFeatures,'Value', 0);   % Show Initial Features
 % VL_Library
 
 % VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
- VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
+%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
+ VLFEAT_Toolbox = '/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/';
 
 addpath(genpath(VLFEAT_Toolbox));
 addpath([ '.' filesep 'Matching' ]);

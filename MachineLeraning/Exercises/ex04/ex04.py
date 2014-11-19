@@ -46,6 +46,38 @@ def dr(x, y, d=[3,8]):
 #end def dr
     
 #-----------------------------------------------------------------------------
+def chooseBinSize(trainingx):
+  
+    n = trainingx.shape[0]
+    d = trainingx.shape[1]
+    
+    # Choose bin width 
+    dx = np.zeros(d, dtype = np.float128)
+    m = np.zeros(d, dtype = np.int32)
+    for j in range(0,d):
+	# for each dimension apply Freeman-Diace Rule
+        ind_sort =  np.argsort(trainingx[:,j]); # j-th feature dimension
+        IQR = trainingx[ind_sort[3*n/4],j] - trainingx[ind_sort[n/4],j]        
+        dx[j] = 2*IQR/np.power(n, 1/3.)        
+        if dx[j]<0.01:
+           dx[j] =  3.5/np.power(n, 1/3.)        
+        m_j = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/dx[j]   
+        m[j] = np.floor(m_j) + 1       
+    # end for j
+        
+    L = np.min(m);  # total number of bins as minimum over all bin sizes
+		    # in all dimensions
+    print 'Total number of bins {}'. format(L)
+    
+    # recalculate bin width according to the new bin size L
+    for j in range(0,d):
+        dx[j] = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/float(L-1)
+    # end for j 
+    
+    return L, dx
+# end chooseBinSize
+
+
 #                          Naive Bayes Training
 # determine priors  and likelihoods (for each feature and class individual 
 # histogram <=> 4 histogramms   ) 
@@ -202,19 +234,22 @@ def DT_learning_naive(trainingx, trainingy, c):
 #end def DT_learning
     
 #-----------------------------------------------------------------------------
-#               Generate Number from the given pdf for each of d dimensions    
+#               Generate a digit of the given class from the given pdf for each of d dimensions    
 def generate_number(pdf,dx):
     
     d = pdf.shape[0]    # number of dimension
     L = pdf.shape[0]    # number of bins pro dimension
     
-    newnumber = np.zeros(d, dtype = np.int32)
-    # calculate cdf from pdf
+    # because of independent of the features
+    # we can samle separately in each of d dimensions
+    
+    # calculate d cdf-s from a given pdf
     cdf = np.zeros(pdf.shape, dtype = np.float32) # cumulative distributed function
     for j in range(0, d):
         cdf[j,:] = np.cumsum(pdf[j,:])
     # end for
         
+    newnumber = np.zeros(d, dtype = np.int32)        
     for j in range(0,d):
         # randomly select a uniformly distributed number in range [0., 1.)
         alpha = random.random()
@@ -406,36 +441,15 @@ def main():
     # Training: priors and likelihood for each d=1,2
     # for each feature and class individual histograms <=> 4 histogramms   
     
-    n = rimages_train_38.shape[0]
-    d = rimages_train_38.shape[1]
+    # choose bin size
+    L, dx = chooseBinSize(rimages_train_38)
     
-    # Choose bin width 
-    dx = np.zeros(d, dtype = np.float16)
-    m = np.zeros(d, dtype = np.int32)
-    for j in range(0,d):
-        # Freeman-Diace Rule
-        ind_sort =  np.argsort(rimages_train_38[:,j]); # j-th feature dimension
-        IQR = rimages_train_38[ind_sort[3*n/4],j] - rimages_train_38[ind_sort[n/4],j]        
-        dx[j] = 2*IQR/np.power(n, 1/3.)        
-#        if dx[j]<0.001:
-#           dx[j] =  3.5/np.power(n, 1/3.)        
-        m_j = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))/dx[j]   
-        m[j] = np.floor(m_j)+1        
-    # end for j
-        
-    L = np.min(m);  # total number of bins
-    print 'Total number of bins {}'. format(L)
-    
-    for j in range(0,d):
-        dx[j] = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))/float(L-1)
-    # end for j
-
     # train classifier for each class separatly                        
     p3, pdf3 = naiveBayes_train_single_class(rimages_train_38, \
                                                   labels_train_38, 3, dx, L)
     p8, pdf8 = naiveBayes_train_single_class(rimages_train_38, \
                                                   labels_train_38, 8, dx, L)
-                                                    
+    # test classifier on the test set
     rimages_test_38_predict = naiveBayesClassifier(rimages_test_38, \
                                                 p3, p8, pdf3, pdf8, dx)
                                                 
@@ -446,8 +460,8 @@ def main():
     print 'Correct Classification rate on the test set:{}'.format(ccr_naiveBayes)   
     print 'Error rate on the test set:{}'.format(1-ccr_naiveBayes)   
 
-    plot_histogram(pdf3, dx, "Histograms of the class 3", "histograms3.png")
-    plot_histogram(pdf8, dx, "Histograms of the class 8", "histograms8.png")
+#    plot_histogram(pdf3, dx, "Histograms of the class 3", "histograms3.png")
+#    plot_histogram(pdf8, dx, "Histograms of the class 8", "histograms8.png")
     
 #    plot_likelihood(pdf3, dx, "Likelihoods of the class 3", "likelihoods3.png")
 #    plot_likelihood(pdf8, dx, "Likelihoods of the class 8", "likelihoods8.png")
@@ -460,29 +474,8 @@ def main():
     # use function  naiveBayes_train_single_class to compute the likelihood 
     # for all feature dimension
 
-    n = images_train_38.shape[0]
-    d = images_train_38.shape[1]
-    
-    # Choose bin width 
-    dx = np.zeros(d, dtype = np.float128)
-    m = np.zeros(d, dtype = np.int32)
-    for j in range(0,d):
-        # Freeman-Diace Rule
-        ind_sort =  np.argsort(images_train_38[:,j]); # j-th feature dimension
-        IQR = images_train_38[ind_sort[3*n/4],j] - images_train_38[ind_sort[n/4],j]        
-        dx[j] = 2*IQR/np.power(n, 1/3.)        
-        if dx[j]<0.01:
-           dx[j] =  3.5/np.power(n, 1/3.)        
-        m_j = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/dx[j]   
-        m[j] = np.floor(m_j) + 1       
-    # end for j
-        
-    L = np.min(m);  # total number of bins
-    print 'Total number of bins {}'. format(L)
-    
-    for j in range(0,d):
-        dx[j] = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/float(L-1)
-    # end for j
+    # choose bin size
+    L, dx = chooseBinSize(images_train_38)
 
     # train classifier for each class separatly                        
     p3, pdf3 = naiveBayes_train_single_class(images_train_38, \
