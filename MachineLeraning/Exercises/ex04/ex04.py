@@ -6,10 +6,14 @@ Exercise 4 : Generative Non-parametric Classofocation
 import numpy as np
 import matplotlib.pyplot as plot
 import vigra
-import h5py
 
-import random
-import DTnode
+
+from naiveBayes import naiveBayes_train_single_class
+from naiveBayes import naiveBayesClassifier
+from naiveBayes import generate_number
+
+from densityTree import DT_learning_naive
+
 
 #-----------------------------------------------------------------------------
 #                          Dimension Reduction Function
@@ -46,6 +50,7 @@ def dr(x, y, d=[3,8]):
 #end def dr
     
 #-----------------------------------------------------------------------------
+
 def chooseBinSize(trainingx):
   
     n = trainingx.shape[0]
@@ -77,191 +82,6 @@ def chooseBinSize(trainingx):
     return L, dx
 # end chooseBinSize
 
-
-#                          Naive Bayes Training
-# determine priors  and likelihoods (for each feature and class individual 
-# histogram <=> 4 histogramms   ) 
-def naiveBayes_train_single_class(trainingx, trainingy, c, dx, L):
-    # we consider one class c
-    #    
-    # trainingx is our training set    
-    # trainingy are class labels for each element from trainingx
-    # dx bin width
-    # L total number of bins pro dimension
-    
-    n = trainingx.shape[0]      # size of the training set
-    d = trainingx.shape[1]      # size of the feature space
-    
-    # find  in training set all members of the class c
-    xc = trainingx[trainingy==c, :]        # Class of digit c
-    nc = xc.shape[0]
-
-    ## Priors
-    prior = nc/float(n)
-    
-    ## Likelihood p(x|y=c)
-    
-    likelihood = np.zeros((d, L), dtype = np.float32)
-  
-    for j in range(0,d):
-        for i in range(0,nc):    
-            l = np.floor(xc[i,j]/dx[j])+1 # bin 
-            if l>=L+1:
-                print xc[i,j]
-            likelihood[j, l-1] = likelihood[j, l-1] + 1
-        # end for i=1..nc
-        likelihood[j,:] = likelihood[j,:]/float(nc)    
-    #end for j=1..d                 
-    
-    return prior, likelihood
-#end def naiveBayes_train
-    
-#
-#                          Naive Bayes Classifier
-#
-
-def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, dx):
-    n = testx.shape[0]
-    
-    prediction = np.zeros(n, dtype = np.int8)
-        
-    for i in range(0,n):
-        x = testx[i,:]
-        
-        # p(y = 3| x)
-        
-        l_y3_d1 = np.floor(x[0]/dx[0])+1 # bin number
-        p_x_y3_d1 = p_k3[0,l_y3_d1-1]
-
-        l_y3_d2 = np.floor(x[1]/dx[1])+1 # bin number
-        p_x_y3_d2 = p_k3[1,l_y3_d2-1]
-        
-        p_y3_x = p_x_y3_d1*p_x_y3_d2*p3
-        
-        # p(y = 8| x)
-
-        l_y8_d1 = np.floor(x[0]/dx[0])+1 # bin number
-        p_x_y8_d1 = p_k8[0,l_y8_d1-1]
-
-        l_y8_d2 = np.floor(x[1]/dx[1])+1 # bin number
-        p_x_y8_d2 = p_k8[1,l_y8_d2-1]
-        
-        p_y8_x = p_x_y8_d1*p_x_y8_d2*p8
-        
-        # argmax (p_y3_x, p_y8_x) 
-        #print p_y3_x
-        if p_y3_x>p_y8_x :
-            prediction[i] = 3
-        else:
-            prediction[i] = 8
-        # end if        
-        
-    # end for i
-    return prediction
-#end def naiveBayesClassifier
-#-----------------------------------------------------------------------------
-#               DT        
-    
-def points_in_region(points,region,dimsplit):
-    splitval = np.sum(region[dimsplit,:])/2.
-    
-    points_left = []
-    points_right = []
-
-    for i in range(0, points.shape[0]):
-        if points[i,dimsplit]< splitval:
-            points_left.append(i)
-        else :
-            points_right.append(i)
-        # end if
-    #end for
-    return splitval, points_left, points_right
-#end point_in region    
-     
-#               Learning DT         
-# we consider one class at time    
-def DT_learning_naive(trainingx, trainingy, c):
-    # naive split criterion
-    stack = []
-    
-    n = trainingx.shape[0]      # size of the training set
-    d = trainingx.shape[1]      # size of the feature space
-    
-    # find  in training set all members of the class c
-    xc = trainingx[trainingy==c, :]        # Class of digit c
-    nc = xc.shape[0]
-
-    ## Priors
-    prior = nc/float(n)
-    
-    ## Root node
-    ind = 0
-    region = np.zeros((d,2), dtype = np.float32)
-    for j in range(0,d):
-        region[j,0] = np.min(xc[:,j])
-        region[j,1] = np.min(xc[:,j])
-    # end j        
-#    tree = DTnode(ind, range(0,nc), region)
-    tree = DTnode.DTnode(ind, range(0,nc), region)
-    
-    dimsplit = 0
-    
-    splitval, points_left, points_right = points_in_region(xc,region,dimsplit)
-
-    # left node        
-    region_left = region
-    region_left[dimsplit] = [region[dimsplit,0], splitval]
-    tree.insert_left(ind+1, points_left, region_left)
-    #right node        
-    region_right = region
-    region_right[dimsplit] = [splitval, region[dimsplit,1] ]
-    tree.insert_right(ind+1, points_right, region_right)
-        
-    stack.append(DTnode.DTnode(ind+1, points_left, region_left))
-    stack.append(
-    DTnode.DTnode(ind+1, points_right, region_right))
-    
-    while stack:
-        currnode = stack.pop()
-        
-        
-        
-    # end while
-    
-    return prior
-
-
-#end def DT_learning
-    
-#-----------------------------------------------------------------------------
-#               Generate a digit of the given class from the given pdf for each of d dimensions    
-def generate_number(pdf,dx):
-    
-    d = pdf.shape[0]    # number of dimension
-    L = pdf.shape[0]    # number of bins pro dimension
-    
-    # because of independent of the features
-    # we can samle separately in each of d dimensions
-    
-    # calculate d cdf-s from a given pdf
-    cdf = np.zeros(pdf.shape, dtype = np.float32) # cumulative distributed function
-    for j in range(0, d):
-        cdf[j,:] = np.cumsum(pdf[j,:])
-    # end for
-        
-    newnumber = np.zeros(d, dtype = np.int32)        
-    for j in range(0,d):
-        # randomly select a uniformly distributed number in range [0., 1.)
-        alpha = random.random()
-        # calculate quantile on the level alpha
-        dist = abs(cdf[j,:] - alpha)
-        binx = np.argsort(dist)
-        
-        newnumber[j] = np.floor(dx[j]*binx[0])+1
-    # for j    
-    return newnumber
-# def generate_number(pdf)
-    
 #-----------------------------------------------------------------------------
 #                   Calculate the correct classification rate
 # D  - labels set
@@ -327,7 +147,7 @@ def plot_histogram(pdf,dx, title = 'Histograms for each of d dimensions',\
 #end def      
 
 #-----------------------------------------------------------------------------
-#                   Plot 1D histograms
+#                   Plot 2D Likelihood
 def plot_likelihood(pdf,dx, title = 'likelihood',\
                                              imageName = 'likelihood.png'):
     L = pdf.shape[1] # number of bins
@@ -430,35 +250,55 @@ def main():
     print 'Size of the training set of 3s and 8s: {}'. format(np.shape(rimages_train_38))
     print 'Size of the test set of 3s and 8s: {}'. format(np.shape(rimages_test_38))
           
-#                                1 Naive Bayes
-    
-    print
-    print "1 Naive Bayes"
-    print
-    print "1.1 Classification"
-    print
-    
-    # Training: priors and likelihood for each d=1,2
-    # for each feature and class individual histograms <=> 4 histogramms   
-    
-    # choose bin size
-    L, dx = chooseBinSize(rimages_train_38)
-    
-    # train classifier for each class separatly                        
-    p3, pdf3 = naiveBayes_train_single_class(rimages_train_38, \
-                                                  labels_train_38, 3, dx, L)
-    p8, pdf8 = naiveBayes_train_single_class(rimages_train_38, \
-                                                  labels_train_38, 8, dx, L)
-    # test classifier on the test set
-    rimages_test_38_predict = naiveBayesClassifier(rimages_test_38, \
-                                                p3, p8, pdf3, pdf8, dx)
-                                                
-    ccr_naiveBayes = correctClassRate(rimages_test_38_predict,\
-                                      labels_test_38, [3,8], \
-                                      print_confMatrix = True)            
-                                            
-    print 'Correct Classification rate on the test set:{}'.format(ccr_naiveBayes)   
-    print 'Error rate on the test set:{}'.format(1-ccr_naiveBayes)   
+#    
+#    print
+#    print "1 Naive Bayes"
+#    print
+#    print "1.1 Classification"
+#    print
+#    
+#    # Training: priors and likelihood for each d=1,2
+#    # for each feature and class individual histograms <=> 4 histogramms   
+#    
+#    n = rimages_train_38.shape[0]
+#    d = rimages_train_38.shape[1]
+#    
+#    # Choose bin width 
+#    dx = np.zeros(d, dtype = np.float16)
+#    m = np.zeros(d, dtype = np.int32)
+#    for j in range(0,d):
+#        # Freeman-Diace Rule
+#        ind_sort =  np.argsort(rimages_train_38[:,j]); # j-th feature dimension
+#        IQR = rimages_train_38[ind_sort[3*n/4],j] - rimages_train_38[ind_sort[n/4],j]        
+#        dx[j] = 2*IQR/np.power(n, 1/3.)             
+#        m_j = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))/dx[j]   
+#        m[j] = np.floor(m_j)+1        
+#    # end for j
+#        
+#    L = np.min(m);  # total number of bins
+#    print 'Total number of bins {}'. format(L)
+#    
+#    for j in range(0,d):
+#        dx[j] = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))\
+#                                                                    /float(L-1)
+#    # end for j
+#
+#    # train classifier for each class separatly                        
+#    p3, pdf3 = naiveBayes_train_single_class(rimages_train_38, \
+#                                                  labels_train_38, 3, dx, L)
+#    p8, pdf8 = naiveBayes_train_single_class(rimages_train_38, \
+#                                                  labels_train_38, 8, dx, L)
+#                                                    
+#    rimages_test_38_predict = naiveBayesClassifier(rimages_test_38, \
+#                                                p3, p8, pdf3, pdf8, dx)
+#                                                
+#    ccr_naiveBayes = correctClassRate(rimages_test_38_predict,\
+#                                      labels_test_38, [3,8], \
+#                                      print_confMatrix = True)            
+#                                            
+#    print 'Correct Classification rate on the test set:{}'.format(ccr_naiveBayes)   
+#    print 'Error rate on the test set:{}'.format(1-ccr_naiveBayes)   
+
 
 #    plot_histogram(pdf3, dx, "Histograms of the class 3", "histograms3.png")
 #    plot_histogram(pdf8, dx, "Histograms of the class 8", "histograms8.png")
@@ -467,32 +307,54 @@ def main():
 #    plot_likelihood(pdf8, dx, "Likelihoods of the class 8", "likelihoods8.png")
 
 
-    print
-    print "1.2 Generate Threes"
-    print
-    
-    # use function  naiveBayes_train_single_class to compute the likelihood 
-    # for all feature dimension
-
-    # choose bin size
-    L, dx = chooseBinSize(images_train_38)
-
-    # train classifier for each class separatly                        
-    p3, pdf3 = naiveBayes_train_single_class(images_train_38, \
-                                                  labels_train_38, 3, dx, L)    
-
-    
-    # generate 5 new threes
-    new3th = np.zeros((5,d), dtype = np.int32)
-    for i in range(0,5) :    
-        new3th[i,:] = generate_number(pdf3, dx)
-        
-        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
-        f = plot.figure()
-        plot.gray()
-        plot.imshow(img);
-        plot.show()
-    # end for i
+#    print
+#    print "1.2 Generate Threes"
+#    print
+#    
+#    # use function  naiveBayes_train_single_class to compute the likelihood 
+#    # for all feature dimension
+#
+#    n = images_train_38.shape[0]
+#    d = images_train_38.shape[1]
+#    
+#    # Choose bin width 
+#    dx = np.zeros(d, dtype = np.float128)
+#    m = np.zeros(d, dtype = np.int32)
+#    for j in range(0,d):
+#        # Freeman-Diace Rule
+#        ind_sort =  np.argsort(images_train_38[:,j]); # j-th feature dimension
+#        IQR = images_train_38[ind_sort[3*n/4],j] - images_train_38[ind_sort[n/4],j]        
+#        dx[j] = 2*IQR/np.power(n, 1/3.)        
+#        if dx[j]<0.01:
+#           dx[j] =  3.5/np.power(n, 1/3.)        
+#        m_j = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/dx[j]   
+#        m[j] = np.floor(m_j) + 1       
+#    # end for j
+#        
+#    L = np.min(m);  # total number of bins
+#    print 'Total number of bins {}'. format(L)
+#    
+#    for j in range(0,d):
+#        dx[j] = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/float(L-1)
+#    # end for j
+#
+#    # train classifier for each class separatly                        
+#    p3, pdf3 = naiveBayes_train_single_class(images_train_38, \
+#                                                  labels_train_38, 3, dx, L)    
+#
+#    
+#    # generate 5 new threes
+#    new3th = np.zeros((5,d), dtype = np.int32)
+#    for i in range(0,5) :    
+#        new3th[i,:] = generate_number(pdf3, dx)
+#        
+#        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
+#        plot.figure()
+#        plot.gray()
+#        plot.imshow(img);
+#        plot.show()
+#    # end for i
+#        
   
     print
     print "2 Density Tree"
@@ -500,10 +362,11 @@ def main():
     print "2.1 Building the DT. Naive splitting"
     print  
     
-#    for c in [3,8]:
-#        DT_learning_naive(images_train_38, labels_train_38, c)        
-#    # end for
-        
+    for c in [3]:
+        DT_learning_naive(rimages_train_38, labels_train_38, c)        
+    # end for
+      
+    print
     print "2.2 Classification"
     print
 
