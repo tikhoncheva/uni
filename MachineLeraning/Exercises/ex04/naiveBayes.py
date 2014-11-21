@@ -7,6 +7,39 @@ import numpy as np
 import random
 
 #-----------------------------------------------------------------------------
+# 			Choose proper bin size
+def chooseBinSize(trainingx):
+  
+    n = trainingx.shape[0]
+    d = trainingx.shape[1]
+    
+    # Choose bin width 
+    dx = np.zeros(d, dtype = np.float128)
+    m = np.zeros(d, dtype = np.int32)
+    for j in range(0,d):
+	# for each dimension apply Freeman-Diace Rule
+        ind_sort =  np.argsort(trainingx[:,j]); # j-th feature dimension
+        IQR = trainingx[ind_sort[3*n/4],j] - trainingx[ind_sort[n/4],j]        
+        dx[j] = 2*IQR/np.power(n, 1/3.)        
+        if dx[j]<0.01:
+           dx[j] =  3.5/np.power(n, 1/3.)        
+        m_j = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/dx[j]   
+        m[j] = np.floor(m_j) + 1       
+    # end for j
+        
+    L = np.min(m);  # total number of bins as minimum over all bin sizes
+		    # in all dimensions
+    print 'Total number of bins {}'. format(L)
+    
+    # recalculate bin width according to the new bin size L
+    for j in range(0,d):
+        dx[j] = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/float(L-1)
+    # end for j 
+    
+    return L, dx
+# end chooseBinSize
+
+#-----------------------------------------------------------------------------
 ##                          Naive Bayes Training
 # determine priors  and likelihoods (for each feature and class individual 
 # histogram <=> 4 histogramms   ) 

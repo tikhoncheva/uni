@@ -7,7 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plot
 import vigra
 
+from correctClassificationRate import correctClassRate
 
+from naiveBayes import chooseBinSize
 from naiveBayes import naiveBayes_train_single_class
 from naiveBayes import naiveBayesClassifier
 from naiveBayes import generate_number
@@ -48,68 +50,6 @@ def dr(x, y, d=[3,8]):
     return xn
     
 #end def dr
-    
-#-----------------------------------------------------------------------------
-
-def chooseBinSize(trainingx):
-  
-    n = trainingx.shape[0]
-    d = trainingx.shape[1]
-    
-    # Choose bin width 
-    dx = np.zeros(d, dtype = np.float128)
-    m = np.zeros(d, dtype = np.int32)
-    for j in range(0,d):
-	# for each dimension apply Freeman-Diace Rule
-        ind_sort =  np.argsort(trainingx[:,j]); # j-th feature dimension
-        IQR = trainingx[ind_sort[3*n/4],j] - trainingx[ind_sort[n/4],j]        
-        dx[j] = 2*IQR/np.power(n, 1/3.)        
-        if dx[j]<0.01:
-           dx[j] =  3.5/np.power(n, 1/3.)        
-        m_j = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/dx[j]   
-        m[j] = np.floor(m_j) + 1       
-    # end for j
-        
-    L = np.min(m);  # total number of bins as minimum over all bin sizes
-		    # in all dimensions
-    print 'Total number of bins {}'. format(L)
-    
-    # recalculate bin width according to the new bin size L
-    for j in range(0,d):
-        dx[j] = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/float(L-1)
-    # end for j 
-    
-    return L, dx
-# end chooseBinSize
-
-#-----------------------------------------------------------------------------
-#                   Calculate the correct classification rate
-# D  - labels set
-#
-def correctClassRate(y_pred, y_test, D, print_confMatrix = False):
-    n = len(D)
-    
-    # calculate confusion matrix
-    confusionM = np.zeros((n,n), dtype = np.float16)    
-    for i in range(0,n):
-        # find positions of the digit D[i] in test set and    
-        # get predicted values on the corresponding positions
-        predict = y_pred[y_test == D[i]]
-        
-        votes_bin = np.bincount(predict, minlength = 10)
-        confusionM[i,:] = np.array(votes_bin[D])
-    # end for-loop
-        
-    if print_confMatrix:
-        print
-        print 'Confusion Matrix '
-        print confusionM
-    # end if print_confMatrix
-    
-    # correct classification rate
-    ccr = np.trace(confusionM)/len(y_test)
-    return  ccr
-# end correctClassRate
 
 #-----------------------------------------------------------------------------
 #                   Plot 1D histograms
@@ -264,24 +204,7 @@ def main():
 #    d = rimages_train_38.shape[1]
 #    
 #    # Choose bin width 
-#    dx = np.zeros(d, dtype = np.float16)
-#    m = np.zeros(d, dtype = np.int32)
-#    for j in range(0,d):
-#        # Freeman-Diace Rule
-#        ind_sort =  np.argsort(rimages_train_38[:,j]); # j-th feature dimension
-#        IQR = rimages_train_38[ind_sort[3*n/4],j] - rimages_train_38[ind_sort[n/4],j]        
-#        dx[j] = 2*IQR/np.power(n, 1/3.)             
-#        m_j = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))/dx[j]   
-#        m[j] = np.floor(m_j)+1        
-#    # end for j
-#        
-#    L = np.min(m);  # total number of bins
-#    print 'Total number of bins {}'. format(L)
-#    
-#    for j in range(0,d):
-#        dx[j] = (np.max(rimages_train_38[:,j])-np.min(rimages_train_38[:,j]))\
-#                                                                    /float(L-1)
-#    # end for j
+#	L, dx = chooseBinSize(rimages_train_38)
 #
 #    # train classifier for each class separatly                        
 #    p3, pdf3 = naiveBayes_train_single_class(rimages_train_38, \
@@ -318,25 +241,8 @@ def main():
 #    d = images_train_38.shape[1]
 #    
 #    # Choose bin width 
-#    dx = np.zeros(d, dtype = np.float128)
-#    m = np.zeros(d, dtype = np.int32)
-#    for j in range(0,d):
-#        # Freeman-Diace Rule
-#        ind_sort =  np.argsort(images_train_38[:,j]); # j-th feature dimension
-#        IQR = images_train_38[ind_sort[3*n/4],j] - images_train_38[ind_sort[n/4],j]        
-#        dx[j] = 2*IQR/np.power(n, 1/3.)        
-#        if dx[j]<0.01:
-#           dx[j] =  3.5/np.power(n, 1/3.)        
-#        m_j = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/dx[j]   
-#        m[j] = np.floor(m_j) + 1       
-#    # end for j
-#        
-#    L = np.min(m);  # total number of bins
-#    print 'Total number of bins {}'. format(L)
-#    
-#    for j in range(0,d):
-#        dx[j] = (np.max(images_train_38[:,j])-np.min(images_train_38[:,j]))/float(L-1)
-#    # end for j
+#    # Choose bin width 
+#	L, dx = chooseBinSize(images_train_38)
 #
 #    # train classifier for each class separatly                        
 #    p3, pdf3 = naiveBayes_train_single_class(images_train_38, \
