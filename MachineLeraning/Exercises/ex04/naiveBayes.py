@@ -29,7 +29,7 @@ def chooseBinSize(trainingx):
         
     L = np.min(m);  # total number of bins as minimum over all bin sizes
 		    # in all dimensions
-    print 'Total number of bins {}'. format(L)
+#    print 'Total number of bins {}'. format(L)
     
     # recalculate bin width according to the new bin size L
     for j in range(0,d):
