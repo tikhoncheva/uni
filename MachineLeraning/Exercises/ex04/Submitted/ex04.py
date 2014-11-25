@@ -1,5 +1,5 @@
 """
-Exercise 4 : Generative Non-parametric Classofocation
+Exercise 4 : Generative Non-parametric Classification
 
 """
 
@@ -228,17 +228,17 @@ def main():
                                                   labels_train_38, 3, dx, L)    
 
     
-#    # generate 5 new threes
-#    new3th = np.zeros((5,d), dtype = np.int32)
-#    for i in range(0,5) :    
-#        new3th[i,:] = generate3naiveBayes(pdf3, dx)
-#        
-#        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
-#        plot.figure()
-#        plot.gray()
-#        plot.imshow(img);
-#        plot.show()
-#    # end for i
+    # generate 5 new threes
+    new3th = np.zeros((5,d), dtype = np.int32)
+    for i in range(0,3) :    
+        new3th[i,:] = generate3naiveBayes(pdf3, dx)
+        
+        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
+        plot.figure()
+        plot.gray()
+        plot.imshow(img);
+        plot.show()
+    # end for i
         
   
     print
@@ -276,22 +276,22 @@ def main():
       
       
       
-#    print 
-#    print 'Generate new threes: '
-#    
-#    d = images_train_38.shape[1]
-#    prior3, DT3 = DT_learning(images_train_38, labels_train_38, 3, 'naive')     
-#    # new threes
-#    new3th = np.zeros((5,d), dtype = np.int32)    
-#    for i in range(0,1) :    
-#        new3th[i,:] = generate3DT(DT3, images_train_38, labels_train_38, 3 )
-#        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
-#        
-#        plot.figure()
-#        plot.gray()
-#        plot.imshow(img);
-#        plot.show()
-#    # end for i
+    print 
+    print 'Generate new threes: '
+    print 
+    d = images_train_38.shape[1]
+    prior3, DT3 = DT_learning(images_train_38, labels_train_38, 3, 'naive')     
+    # new threes
+    new3th = np.zeros((5,d), dtype = np.int32)    
+    for i in range(0,3) :    
+        new3th[i,:] = generate3DT(DT3, images_train_38, labels_train_38, 3 )
+        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
+        
+        plot.figure()
+        plot.gray()
+        plot.imshow(img);
+        plot.show()
+    # end for i
       
     print
     print "Clever splitting"
@@ -315,9 +315,6 @@ def main():
 #    print 'Correct Classification rate on the test set:{}'.format(ccr_DT)   
 #    print 'Error rate on the test set:{}'.format(1-ccr_DT)           
    
-    print   
-    print "2.3 Generate Threes"
-    print
     
     print    
     print "3 Combine DT and Naive Bayes"
