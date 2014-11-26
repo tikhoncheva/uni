@@ -14,7 +14,7 @@ function remaining_features = eliminate_closed_features(coord, val)
       
     % set the threshold
     minEl = min(distM(distM(:)>0));
-    thr = minEl * 1.2;
+    thr = minEl * 2.;
     
     [i,j] = find(distM>0 & distM<thr);
     

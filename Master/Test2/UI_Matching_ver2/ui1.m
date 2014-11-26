@@ -22,7 +22,7 @@ function varargout = ui1(varargin)
 
 % Edit the above text to modify the response to help ui1
 
-% Last Modified by GUIDE v2.5 19-Nov-2014 13:27:25
+% Last Modified by GUIDE v2.5 26-Nov-2014 12:56:35
 clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,8 +57,47 @@ handles.output = hObject;
 handles.img1selected = false;
 handles.img2selected = false;
 
-% Update handles structure
-guidata(hObject, handles);
+N = 2;
+% cell of the key points
+framesCell = cell(1,N); % Nx(6xK1) matrices
+framesCell{1} = [];
+framesCell{2} = [];
+% cell of the descriptors
+descrCell = cell(1,N); % Nx(128xK1) matrices
+descrCell{1} = [];
+descrCell{2} = [];
+% number of interest points in each image
+nV= zeros(N,1);
+
+matchInfo.match = [];
+matchInfo.dist = [];
+matchInfo.sim = [];
+
+handles.frames = framesCell;
+handles.descr = descrCell;
+handles.nV = nV;
+handles.matchInfo = matchInfo;
+handles.savepoints = false;
+
+% handles.matchInfo = matchInfo;
+
+guidata(hObject,handles); 
+
+% set parameters
+
+% Piotr Dollar toolbox
+addpath('../edges-master/');
+addpath(genpath('../piotr_toolbox_V3.26/'));
+
+
+% VL_Library
+%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
+addpath('/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/');
+run vl_setup.m
+
+addpath([ '.' filesep 'Matching' ]);
+
+set(handles.axes3,'Visible','off');   % Show Matching results
 
 % UIWAIT makes ui1 wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -105,9 +144,9 @@ if  ~strcmp(filename,'')
 
     if (handles.img2selected)
 %         set(handles.pushbuttonStart,'enable','on');
-        set(handles.pushbuttonInitialMatch,'enable','on');
+        set(handles.pushbuttonGetFeauters,'enable','on');
     end  
-    
+       
     handles.matched = 0;
     guidata(hObject,handles); 
 end
@@ -133,7 +172,7 @@ if  ~strcmp(filename,'')
 
     if (handles.img1selected)
 %         set(handles.pushbuttonStart,'enable','on');
-        set(handles.pushbuttonInitialMatch,'enable','on');
+        set(handles.pushbuttonGetFeauters,'enable','on');
     end    
     
     handles.matched = 0;
@@ -141,12 +180,12 @@ if  ~strcmp(filename,'')
 end
       
 
-% --- Executes on button press in pushbuttonInitialMatch.
+% --- Executes on button press in pushbuttonGetFeauters.
+function pushbuttonGetFeauters_Callback(hObject, eventdata, handles)
 % 
-% Initial Matches
+% Compute features on the both images
 % 
-function pushbuttonInitialMatch_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbuttonInitialMatch (see GCBO)
+% hObject    handle to pushbuttonGetFeauters (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -159,103 +198,40 @@ guidata(hObject,handles);
 set(handles.checkShowDG,'Value', 0);   % Show Dependency Graph
 set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
 set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
-set(handles.checkboxShowInitialFeatures,'Value', 0);   % Show Initial Features
+
 % ---------------------------------------------------------------
-
-clc
-
-% set parameters
-
-% Piotr Dollar toolbox
-addpath('../edges-master/');
-addpath(genpath('../piotr_toolbox_V3.26/'));
-
-
-% VL_Library
-%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
-addpath('/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/');
-run vl_setup.m
-
-addpath([ '.' filesep 'Matching' ]);
-
-radius = 2;
-thr = 0.05;
-
 
 N = 2; % number of images
 img1 = handles.img1;
 img2 = handles.img2;
 
-% cell of the keypoints on the each image
-framesCell = cell(1,N); % Nx(6xK1) matrices
 % edge points on each images
 edgesCell = cell(1,N);
 
-% cell of the descriptors
-descrCell = cell(1,N); % Nx(128xK1) matrices
 % descriptors of the edge points on each images
 edgeDescrCell = cell(1,N);
 
-% number of interest points in each image
-nV= zeros(N,1);
-nE= zeros(N,1);
-
-% Cell of the dependency graphs
-DG = cell(1,N); % nV_i x nV_i
-
-
-% ------------ Step 1
-%
 % Extract edge points
 
-load ../edges-master/edgesModel.mat
 
-% find edge points
-E1 = imresize(edgesDetect(imresize(img1,2), model),0.5);
-E2 = imresize(edgesDetect(imresize(img2,2), model),0.5);
-
-% apply non-maximum suppression
-[subs1, ~] = nonMaxSupr(double(E1), radius, thr);
-bw1nms = false(size(E1));
-bw1nms(sub2ind(size(bw1nms),subs1(:,1),subs1(:,2))) = true;
-
-[subs2,~] = nonMaxSupr(double(E2), radius, thr);
-
-subs2 = 2*floor(subs2/2) + 1;
-
-highthr = 0.1;
-lowthr = 0.025;
-E1(E1>highthr) = highthr;
-E1(E1<lowthr) = lowthr;
-E1 = 1/highthr * E1;
-E2(E2>highthr) = highthr;
-E2(E2<lowthr) = lowthr;
-E2 = 1/highthr * E2;
-
-% Extract PHOW-Features (dense SIFT at several resolutions)
-[F1, D1] = vl_phow(single(E1), 'Sizes', [6,8,10,16]); % Scales 
-[F2, D2] = vl_phow(single(E2), 'Sizes', [6,8,10,16]); % Scales 
+[F1, D1] = computeDenseSIFT(img1);
+[F2, D2] = computeDenseSIFT(img2);
 
 edgesCell{1} = F1;
 edgesCell{2} = F2;
 
-nE(1) = size(F1,2);
-nE(2) = size(F2,2);
-
 edgeDescrCell{1} = D1;
 edgeDescrCell{2} = D2;
-
-
-% ---------------------------------------------------------------
  
 handles.edges = edgesCell;
 handles.edgeDescr = edgeDescrCell;
-handles.nE = nE;
+handles.matched = 0;
 
 guidata(hObject,handles);
 
-axes(handles.axes6);
-  
+% Plot two images together
+
+axes(handles.axes6); 
 % combine two images in one by putting them one next to the other
 ihight = max(size(img1,1),size(img2,1));
 if size(img1,1) < ihight
@@ -266,95 +242,231 @@ if size(img2,1) < ihight
 end
 
 img3 = cat(2,img1,img2);
-
-imshow(img3)
+imagesc(img3)
 
 set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 
+set(handles.pushbuttonStart,'Enable','off');   % Enable matching 
 
+set(handles.axes6,'Visible', 'on');
 set(handles.axes3,'Visible','off');   % Show Matching results
-% set(handles.axes3,'Visible','on');   % Show Matching results
-% set(handles.checkboxShowInitM,'Enable','on');   % Show Initial Matches
-% set(handles.checkboxShowNeighbors,'Enable','on');   % Show Neighbors
-set(handles.pushbuttonClearAll,'Enable','on');   % Enable "Close all" button
-% set(handles.checkboxShowInitialFeatures,'Enable','on');   % Show Initial Features
+set(handles.pushbuttonInitialMatch,'enable','on');
+set(handles.checkboxSavePoints,'Enable','on');   % SavePoints
+set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
+
+% --- Executes on button press in pushbuttonInitialMatch.
+% 
+% Initial Matches
+% 
+function pushbuttonInitialMatch_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonInitialMatch (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.savepoints = 1;
+guidata(hObject,handles); 
+
+img1 = handles.img1;
+img2 = handles.img2;
+
+axes(handles.axes6);
+cla reset
+% combine two images in one by putting them one next to the other
+ihight = max(size(img1,1),size(img2,1));
+if size(img1,1) < ihight
+    img1(ihight,1,1) = 0;
+end
+if size(img2,1) < ihight
+    img2(ihight,1,1) = 0;
+end
+
+img3 = cat(2,img1,img2);
+imagesc(img3)
+
+set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
 
 
+% --- Executes on button press in checkboxSavePoints.
+function checkboxSavePoints_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxSavePoints (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% 
+% if get(hObject,'Value')
+%     % if we already have matched
+%     if handles.matched
+%         
+%         handles.matched = 0;
+%         
+%         % delete old points
+%         handles.matchInfo.match = [];
+%         handles.matchInfo.dist = [];
+%         handles.matchInfo.sim = [];
+% 
+%         handles.frames = [];
+%         handles.descr = [];
+%     end
+%     handles.savepoints = 1;
+%     guidata(hObject,handles); 
+% 
+%     img1 = handles.img1;
+%     img2 = handles.img2;
+% 
+%     axes(handles.axes6);
+%     cla reset
+%     % combine two images in one by putting them one next to the other
+%     ihight = max(size(img1,1),size(img2,1));
+%     if size(img1,1) < ihight
+%         img1(ihight,1,1) = 0;
+%     end
+%     if size(img2,1) < ihight
+%         img2(ihight,1,1) = 0;
+%     end
+% 
+%     img3 = cat(2,img1,img2);
+%     imagesc(img3)
+% 
+%     set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+%     set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+%     
+%     set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results  
+%  
+% else
+%     handles.savepoints = 0;
+% end
+% 
+% set(handles.axes3,'Visible','off');   % Show Matching results   
 
 % --- Executes on mouse press over axes background.
 %
-% Find knn on the second image
+% Find kNN on the second image
 %
 function axes6_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to axes6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% ---------------------------------------------------------------------
+set(handles.axes3,'Visible','off');   % Show Matching results
+axes(handles.axes6);
+
 SetParameters;
 str=get(handles.edit3, 'String');
 mparam.kNN= str2num(str);
+knn = mparam.kNN;
 
+handles = guidata(hObject);
+% images
 img1 = handles.img1;
 img2 = handles.img2;
-
+% edge points and descriptors
 edges = handles.edges;
 edgeDesc = handles.edgeDescr;
 
 
 % get current position of the mouse
 cP = get(gca,'Currentpoint');
-n = cP(1,1);
-m = cP(1,2);
+x = cP(1,1);
+y = cP(1,2);
+        
+% find nearest edge point to the clicked point
+nn = knnsearch(edges{1}(1:2,:)',[x,y]);
 
-% find nearest edge point
-nn = knnsearch(edges{1}(1:2,:)',[n,m]);
+x = edges{1}(1,nn);
+y = edges{1}(2,nn);
 
-n = edges{1}(1,nn);
-m = edges{1}(2,nn);
+x = 2*floor(x/2) + 1; 
+y = 2*floor(y/2) + 1;
 
-n = 2*floor(n/2) + 1; 
-m = 2*floor(m/2) + 1;
 
-% replot background
-axes(handles.axes6);
-cla reset
-% combine two images in one by putting them one next to the other
-ihight = max(size(img1,1),size(img2,1));
-if size(img1,1) < ihight
-  img1(ihight,1,1) = 0;
+%  replot if user dont want to save points
+if ~handles.savepoints
+    % replot background
+    cla reset
+    % combine two images in one by putting them one next to the other
+    ihight = max(size(img1,1),size(img2,1));
+    if size(img1,1) < ihight
+      img1(ihight,1,1) = 0;
+    end
+    if size(img2,1) < ihight
+      img2(ihight,1,1) = 0;
+    end
+
+    img3 = cat(2,img1,img2);
+    imagesc(img3)
+    
+    set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+    set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 end
-if size(img2,1) < ihight
-  img2(ihight,1,1) = 0;
-end
 
-img3 = cat(2,img1,img2);
-imshow(img3)
-% --------------
-
-set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-
-if (n <= size(img1,2) && m <= size(img1,1))    
-    neightborlist = [];
-    ind = find(edges{1}(1,:)==n & edges{1}(2,:)==m); % get descriptor of the point on each scale
+% if we have clciked ont he first image
+if (x <= size(img1,2) && y <= size(img1,1))    
+    % get descriptor of the point on each scale
+    ind = find(edges{1}(1,:) == x & edges{1}(2,:) == y); 
+    
+    neightborlist = zeros(1, numel(ind)*knn);
+    vallist = zeros(1, numel(ind)*knn);
+    
     for j = 1:numel(ind)
         [val,nnInd] = sort(sum(abs(bsxfun(@minus,double(edgeDesc{2}),...
                                                double(edgeDesc{1}(:,ind(j)))))));
-        neightborlist = [neightborlist, nnInd(1:mparam.kNN)];
+        
+        a = (j-1)*mparam.kNN + 1;
+        b = j*mparam.kNN;
+        neightborlist(a:b) = nnInd(1:knn);
+        vallist(a:b) = val(1:knn);
+        
         for k = 1:mparam.kNN
             X2 = edges{2}(1,nnInd(k)) + size(img1,2);
             Y2 = edges{2}(2,nnInd(k));
             rectangle('Position',[X2-3,Y2-3,6,6],'FaceColor','y');
         end
     end
-    r = eliminate_closed_features(edges{2}(1:2,neightborlist), val);
-    for i = 1:length(r)
-        X2 = edges{2}(1,neightborlist(r(i)))+ size(img1,2);
-        Y2 = edges{2}(2,neightborlist(r(i)));
-        line([n,X2],[m,Y2],'LineWidth',1,'Color','g');
-        rectangle('Position',[X2-3,Y2-3,6,6],'FaceColor','g');
+    
+    nnInd = eliminate_closed_features(edges{2}(1:2,neightborlist), val);
+    
+    for i = 1:numel(nnInd)
+        X2 = edges{2}(1,neightborlist(nnInd(i)))+ size(img1,2);
+        Y2 = edges{2}(2,neightborlist(nnInd(i)));
+        line([x,X2],[y,Y2],'LineWidth',1,'Color','g');
+        rectangle('Position',[X2-3,Y2-3,6,6],'FaceColor','r');
     end    
-    rectangle('Position',[n-3,m-3,6,6],'FaceColor','r');        
+    rectangle('Position',[x-3,y-3,6,6],'FaceColor','r');  
+    
+    
+    % save points to match them with MPM
+    if handles.savepoints
+        set(handles.pushbuttonStart,'Enable','on');   % Enable matching 
+        
+        % get already saved frames, descriptors and matches
+        framesCell = handles.frames;
+        descrCell = handles.descr;
+        matchInfo = handles.matchInfo; 
+        
+        F1 = size(framesCell{1},2)+1;
+        D2 = size(descrCell{2},2)+1;
+        
+        % add new point to frames and descr on the first images
+        framesCell{1} = [framesCell{1},edges{1}(:,nn)];      
+        descrCell{1} = [descrCell{1},edges{1}(:,nn)];
+        % add all matches point to the frames, descr on the second image
+        framesCell{2} = [framesCell{2},edges{2}(:,neightborlist(nnInd))];
+        descrCell{2} = [descrCell{2},edges{2}(:,neightborlist(nnInd))]; 
+        % add new matches
+
+        matchInfo.match = [matchInfo.match [F1*ones(1,numel(nnInd)); D2:D2+numel(nnInd)-1]];
+        matchInfo.sim = [matchInfo.sim; val(neightborlist(nnInd))'];
+        matchInfo.dist = max(val(neightborlist(nnInd))) - val(neightborlist(nnInd));
+        
+        % update saved values
+        handles.frames = framesCell;
+        handles.descr = descrCell;
+        handles.matchInfo = matchInfo; 
+        guidata(hObject,handles); 
+    end
 end
 
 
@@ -368,113 +480,43 @@ function pushbuttonStart_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.axes3);
-cla reset
-
-handles.matched = 0;
-guidata(hObject,handles);
-
 
 set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
 set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
 set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
-set(handles.checkboxShowInitialFeatures,'Value', 0);   % Show Initial Features
+
 % ---------------------------------------------------------------
 
-% set parameters
+handles = guidata(hObject);
 
-% MPM code
- addpath(genpath(['..' filesep '..' filesep 'MPM_release_v3']));
-% addpath(genpath(['..' filesep  'MPM_release_v3']));
-
-% VL_Library
-
-% VLFEAT_Toolbox = ['..' filesep '..' filesep 'vlfeat-0.9.19' filesep 'toolbox' ];
-%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
- VLFEAT_Toolbox = '/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/';
-
-addpath(genpath(VLFEAT_Toolbox));
-addpath([ '.' filesep 'Matching' ]);
-
-run vl_setup.m
-
-clc;
-
-SetParameters;
-% get kNN from the GUI
-str=get(handles.edit3, 'String');
-mparam.kNN= str2num(str);
-
-N = 2; % number of images
 img1 = handles.img1;
 img2 = handles.img2;
 
-% cell of the keypoints on the each image
-framesCell = cell(1,N); % Nx(4xK1) matrices
+framesCell = handles.frames;
+descrCell = handles.descr;
+matchInfo = handles.matchInfo; 
 
-% cell of the descriptors
-descrCell = cell(1,N); % Nx(128xK1) matrices
+% handles.matched = 0;
+% guidata(hObject,handles);
 
-% number of interest points in each image
-nV= zeros(N,1);
+% set parameters
+
+SetParameters;
+
+N = 2;
 
 % Cell of the dependency graphs
 DG = cell(1,N); % nV_i x nV_i
 
-
-% ------------ Step 1
-%
-% Extract edge points
-% img 1
-edgesImg1 = edge(img1, 'canny')
-figure
-    imshow(edgesImg1)
-hold off;
-
-[ framesCell{1}, descrCell{1}, nV(1),runtime ] = ...
-                                    find_features_harlap_vl(img1, false, 10);
-fprintf(' %f secs elapsed for finding %d interest points on the image %d \n', ...
-                        runtime, nV(1) , 1);                                  
-% img 2    
-[ framesCell{2}, descrCell{2}, nV(2), runtime ] = ...
-                                    find_features_harlap_vl(img2, false);
-
-fprintf(' %f secs elapsed for finding %d interest points on the image %d \n', ...
-                        runtime, nV(2) , 2);                                
-
-handles.framesInitial = framesCell;
-% ------------
-
-
+size(framesCell{1})
 v1 = framesCell{1}(1:2,:);
-nV1 = nV(1,1);
-                    
-% ------------ Step 2      
-%
-% Reduce number of keypoints on the second image in each pair of images
-% For each keypoint on the ref image find theirs k nearest neighbors on 
-% the second image
-% The points that are not neighbors of some point on the ref image will be
-% deleted
+v2 = framesCell{2}(1:2,:);
 
+nV1 = size(framesCell{1},2);
+nV2 = size(framesCell{2},2);
 
-matchInfo = make_initialmatches2(descrCell{1},descrCell{2}, mparam); 
-    
-% delete all features that are not neighbors of some point on the
-% reference image
-
-[ uniq_feat2, ~, ~ ] = unique(matchInfo.match(2,:));
-nV(2) = size(uniq_feat2, 2);
-framesCell{2} = framesCell{2}(:, uniq_feat2);
-descrCell{2}  =  descrCell{2}(:, uniq_feat2); 
-   
-
-% framesCell{2} = framesCell{2}(:, matchInfo.match(2,:));
-% descrCell{2}  =  descrCell{2}(:, matchInfo.match(2,:)); 
-    
-matchInfo = make_initialmatches2(descrCell{1},descrCell{2}, mparam); 
-
-corrMatrix = zeros(nV(1),nV(2));
+% 
+corrMatrix = zeros(nV1,nV2);
 for ii = 1:size(matchInfo.match,2)
     corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
 end
@@ -486,8 +528,7 @@ handles.InitialMatching = corrMatrix;
 % Build Dependency Graphs (DG) on each image
 %
 
-%minDeg = 30;    % Min Degree of the graph
-% get kNN from the GUI
+% Min Degree of the graph
 str = get(handles.editMinDegree, 'String');
 minDeg = str2num(str);
 
@@ -497,21 +538,13 @@ DG{2} = buildDependGraph(framesCell{2}, DG{1}, matchInfo);
 set(handles.checkShowDG,'Enable','on');   % Show Dependency graph
 
 
-%  Max-Pooling Strategy
- 
-v2 = framesCell{2}(1:2,:);
-nV2 = nV(2,1);
-%                                     
-   
-Adj1 = DG{1};
-Adj2 = DG{2};
-
+%  Max-Pooling Strategy                      
     
 % compute initial affinity matrix
-[AffMatrix,ratio] = initialAffinityMatrix(v1, v2, Adj1, Adj2, matchInfo);
- set(handles.editRatio,'String',ratio); 
-% run MPM  
+[AffMatrix,ratio] = initialAffinityMatrix(v1, v2, DG{1}, DG{2}, matchInfo);
+set(handles.editRatio,'String',ratio); 
 
+% run MPM  
 % conflict groups
 corrMatrix = zeros(nV1,nV2);
 for ii = 1:size(matchInfo.match,2)
@@ -521,6 +554,7 @@ end
 [ group1, group2 ] = make_group12(L12);
 
 x = MPM(AffMatrix, group1, group2);
+
 % Objective = x'*AffMatrix * x;
     
 CorrMatrix = zeros(nV1, nV2);
@@ -531,30 +565,34 @@ end
 newCorrMatrix = roundMatrix(CorrMatrix);
 
 % visialize results of matching
+set(handles.axes6,'Visible', 'off');   % Hide plot with selected points
+
 axes(handles.axes3);
+set(handles.axes3,'Visible','on');   % Show Matching results
+cla reset
+
 plotMatches(img1,img2, v1', v2', newCorrMatrix);     
 
 % ---------------------------------------------------------------
 handles.frames = framesCell;
 handles.descr = descrCell;
-handles.nV = nV;
 handles.DG = DG;
-% handles.InitialMatching = CorrMatrix;
+handles.InitialMatching = CorrMatrix;
 handles.newMatching = newCorrMatrix;
 handles.matched = 1;
 
 guidata(hObject,handles);
 
-% set(gca,'ButtonDownFcn', @mouseclick_callback)
-% set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
+
+handles = guidata(hObject);
 set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
-set(handles.axes3,'Visible','on');   % Show Matching results
+
 set(handles.checkboxShowInitM,'Enable','on');   % Show Initial Matches
 set(handles.checkboxShowNeighbors,'Enable','on');   % Show Neighbors
 set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
-set(handles.checkboxShowInitialFeatures,'Enable','on');   % Show Initial Features
+
 
 
 
@@ -566,9 +604,12 @@ function checkShowDG_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles = guidata(hObject);
+
 img1 = handles.img1;
 img2 = handles.img2;
 framesCell = handles.frames;
+
 DG = handles.DG;
 
 checked = get(hObject,'Value');
@@ -611,6 +652,7 @@ newMatching = handles.newMatching;
 checked = get(hObject,'Value');
 
 axes(handles.axes3);
+cla reset
 if checked 
     plotMatches(img1,img2, v1', v2', newMatching, InitialMatching);           
 
@@ -632,10 +674,13 @@ function axes3_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+cla reset 
+
 img1 = handles.img1;
 img2 = handles.img2;
 f = handles.frames;
 d = handles.descr;
+
 
 v1 = f{1}(1:2,:);
 v2 = f{2}(1:2,:);
@@ -699,34 +744,30 @@ else
     feature_nn = f{1}(:,nn);
 end   
       
-vl_plotsiftdescriptor( d{1}(:,nn), feature_nn) ;
-vl_plotsiftdescriptor( d{2}(:,nn_2), feature_nn_2) ;
-      
-%       set(gca,'ButtonDownFcn', @mouseclick_callback)
-%       set(get(gca,'Children'),'ButtonDownFcn', @mouseclick_callback)
-set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})      
-      
-% cut patches
-R  = 15; % from vl_feat
+% vl_plotsiftdescriptor( d{1}(:,nn), feature_nn) ;
+% vl_plotsiftdescriptor( d{2}(:,nn_2), feature_nn_2) ;
+%       
 
-% second image
-c2  = f{2}(1:2,nn_2);
-patch2 = imcrop(img2, [c2(1)-R, c2(2)-R, 2*R+1, 2*R+1]);
-axes(handles.axes5);
-imagesc(patch2), colormap gray, hold off;
+% % cut patches
+% R  = 15; % from vl_feat
+% 
+% % second image
+% c2  = f{2}(1:2,nn_2);
+% patch2 = imcrop(img2, [c2(1)-R, c2(2)-R, 2*R+1, 2*R+1]);
+% axes(handles.axes5);
+% imagesc(patch2), colormap gray, hold off;
+% 
+% % first image
+% c1  = f{1}(1:2,nn);
+% axes(handles.axes4);
+% if numel(c1)~=0
+%     patch1 = imcrop(img1, [c1(1)-R, c1(2)-R, 2*R+1, 2*R+1]);
+%     imagesc(patch1),  colormap gray, hold off;
+% else
+%    cla reset 
+% end
+    
 
-% first image
-c1  = f{1}(1:2,nn);
-axes(handles.axes4);
-if numel(c1)~=0
-    patch1 = imcrop(img1, [c1(1)-R, c1(2)-R, 2*R+1, 2*R+1]);
-    imagesc(patch1),  colormap gray, hold off;
-else
-   cla reset 
-end
-
-axes(handles.axes3);
 
 % If show Neighbors
 showNeighbors = get(handles.checkboxShowNeighbors,'Value');
@@ -750,6 +791,10 @@ if showNeighbors
    set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})  
    
 end
+
+axes(handles.axes3);
+set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})    
 % -----------------
 
 
@@ -763,20 +808,22 @@ function pushbuttonClearAll_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles = guidata(hObject);
+set(handles.axes6, 'Visible', 'off');
+axes(handles.axes3);
+cla reset
+
 img1 = handles.img1;
 img2 = handles.img2;
-framesCell = handles.frames;
-
-v1 = framesCell{1}(1:2,:);
-v2 = framesCell{2}(1:2,:);
 
 if (handles.matched)
+    framesCell = handles.frames;
+    
+    v1 = framesCell{1}(1:2,:);
+    v2 = framesCell{2}(1:2,:);
+    
     newMatching = handles.newMatching;
-    axes(handles.axes3);
     plotMatches(img1,img2, v1', v2', newMatching);
-
-    set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
-    set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
 else
     img1 = handles.img1;
@@ -792,125 +839,10 @@ else
 
     img3 = cat(2,img1,img2);
 
-    imshow(img3)
-    
-    set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-    set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-end
-
-% set(handles.checkShowDG,'Enable','off');   % Show DG
-% set(handles.checkboxShowInitM,'Enable','off');   % Show Initial Matches
-
-
-
-function editMinDegree_Callback(hObject, eventdata, handles)
-% hObject    handle to editMinDegree (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of editMinDegree as text
-%        str2double(get(hObject,'String')) returns contents of editMinDegree as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function editMinDegree_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editMinDegree (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit3_Callback(hObject, eventdata, handles)
-% hObject    handle to edit3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit3 as text
-%        str2double(get(hObject,'String')) returns contents of edit3 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function editRatio_Callback(hObject, eventdata, handles)
-% hObject    handle to editRatio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of editRatio as text
-%        str2double(get(hObject,'String')) returns contents of editRatio as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function editRatio_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to editRatio (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in checkboxShowNeighbors.
-function checkboxShowNeighbors_Callback(hObject, eventdata, handles)
-% hObject    handle to checkboxShowNeighbors (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in checkboxShowInitialFeatures.
-%
-% Show all initial features
-%
-function checkboxShowInitialFeatures_Callback(hObject, eventdata, handles)
-% hObject    handle to checkboxShowInitialFeatures (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-if get(handles.checkboxShowInitialFeatures,'Value');
-
-    img1 = handles.img1;
-    img2 = handles.img2;
-
-    [~,n1, ~] = size(img1) ;
-
-    framesCell = handles.frames;
-    initialFrames = handles.framesInitial;
-
-    initialFrames{2}(1,:)= initialFrames{2}(1,:) + n1;
-
-    plot(initialFrames{2}(1,:),initialFrames{2}(2,:), 'r.')
-
-else
-    img1 = handles.img1;
-    img2 = handles.img2;
-    framesCell = handles.frames;
-
-    v1 = framesCell{1}(1:2,:);
-    v2 = framesCell{2}(1:2,:);
-
-    newMatching = handles.newMatching;
-    plotMatches(img1,img2, v1', v2', newMatching);
-
+    imagesc(img3)
 end
 
 set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
+guidata(hObject,handles);
+% set(handles.axes6,'Visible', 'off');   % Hide plot with selected points

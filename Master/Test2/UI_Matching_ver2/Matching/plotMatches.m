@@ -1,7 +1,7 @@
-function imageHandle = plotMatches(Img1, Img2, x1, x2, AffM, varargin )
+function plotMatches(img1, img2, x1, x2, AffM, varargin )
 
-[m1,n1,k1]=size(Img1) ;
-[m2,n2,k2]=size(Img2) ;
+[m1,n1,k1]=size(img1) ;
+[m2,n2,k2]=size(img2) ;
 
 if (k1~=k2)
     error('Images must have the same format');
@@ -9,12 +9,16 @@ end;
 
     
 % combine two images in one by putting them one next to the other
-m3 = max(m1, m2);
-n3 = n1+n2;
-Img3 = zeros(m3, n3, k1);
+ihight = max(size(img1,1),size(img2,1));
+if size(img1,1) < ihight
+  img1(ihight,1,1) = 0;
+end
+if size(img2,1) < ihight
+  img2(ihight,1,1) = 0;
+end
 
-Img3(1:m1, 1:n1,:) = Img1;
-Img3(1:m2, n1+(1:n2),:) = Img2 ;
+img3 = cat(2,img1,img2);
+imshow(img3)
 
 x2(:,1) = n1 + x2(:,1);
 
@@ -27,7 +31,8 @@ y = [ x1(matches(1,:),2) , x2(matches(2,:),2) , nans ] ;
 
 
 % f = figure ;
-imageHandle  = imagesc(Img3) ; colormap gray ; hold on ;
+
+imagesc(img3) ; hold on ;
 
 if nargin == 6 
     AffMInit = varargin{1};
