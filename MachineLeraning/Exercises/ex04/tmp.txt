@@ -21,8 +21,6 @@ from densityTree import DT_learning
 from densityTree import DT_visualize2D
 from densityTree import DT_Classifier_2classes
 from densityTree import generate_number as generate3DT
-
-from naiveBayesAndDT import generate_number as generate3
 #-----------------------------------------------------------------------------
 #                          Dimension Reduction Function
 # size(x) = n x d.
@@ -209,7 +207,7 @@ def main():
     print 'Correct Classification rate on the test set:{}'.format(ccr_naiveBayes)   
     print 'Error rate on the test set:{}'.format(1-ccr_naiveBayes)   
 
-    
+
 #    plot_histogram(pdf3, dx, "Histograms of the class 3", "histograms3.png")
 #    plot_histogram(pdf8, dx, "Histograms of the class 8", "histograms8.png")
 #    
@@ -220,16 +218,16 @@ def main():
     print "1.2 Generate Threes"
     print
     
-#    # use function  naiveBayes_train_single_class to compute the likelihood 
-#    # for all feature dimension
+    # use function  naiveBayes_train_single_class to compute the likelihood 
+    # for all feature dimension
 #
 #    n = images_train_38.shape[0]
 #    d = images_train_38.shape[1]
-    
-    # Choose bin width 
+#    
+#    # Choose bin width 
 #    L, dx = chooseBinSize(images_train_38)
-
-    # train classifier for each class separatly                        
+#
+#    # train classifier for each class separatly                        
 #    p3, pdf3 = naiveBayes_train_single_class(images_train_38, \
 #                                                  labels_train_38, 3, L, dx)    
 #    p8, pdf8 = naiveBayes_train_single_class(images_train_38, \
@@ -246,7 +244,7 @@ def main():
 #    print 'Correct Classification rate on the test set:{}'.format(ccr_naiveBayes)   
 #    print 'Error rate on the test set:{}'.format(1-ccr_naiveBayes)   
 #
-#    # generate 3 new threes
+#    # generate 5 new threes
 #    new3th = np.zeros((3,d), dtype = np.int32)
 #    for i in range(0,3) :    
 #        new3th[i,:] = generate3naiveBayes(pdf3, dx)
@@ -266,52 +264,52 @@ def main():
     print  
 
     
-#    tstart = time.time()
-#    
-#    # class 3    
-#    prior3, DT3 = DT_learning(rimages_train_38, labels_train_38, 3, 'naive')            
-#    DT_visualize2D(DT3, rimages_train_38, labels_train_38, 3, "naiveDT3.png")        
-#    # class 8
-#    prior8, DT8 = DT_learning(rimages_train_38, labels_train_38, 8, 'naive')        
-#    DT_visualize2D(DT8, rimages_train_38, labels_train_38, 8, "naiveDT8.png")        
-#    
-#    tstop = time.time()
-#    print "DT learning time (naive splitting) {}". format(tstop-tstart)
-#        
-#    tstart = time.time()    
-#    rimages_test_38_predict = DT_Classifier_2classes(rimages_test_38, 
-#                                                prior3, prior8, DT3, DT8, [3,8])
-#    tstop = time.time()
-#    print "DT classification time (naive splitting) {}". format(tstop-tstart)
-#                                                
-#    ccr_DT = correctClassRate(rimages_test_38_predict,\
-#                                      labels_test_38, [3,8], \
-#                                      print_confMatrix = True)     
-#
-#    print 'Correct Classification rate on the test set:{}'.format(ccr_DT)   
-#    print 'Error rate on the test set:{}'.format(1-ccr_DT)                 
-#      
-#    print 
-#    print 'Generate new threes: '
-#    
-    d = images_train_38.shape[1]
-
-    # new threes
-    new3th = np.zeros((3,d), dtype = np.int32)    
-    for i in range(0,3) :    
-        new3th[i,:] = generate3DT(images_train_38, labels_train_38, 3 )
-        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
+    tstart = time.time()
+    
+    # class 3    
+    prior3, DT3 = DT_learning(rimages_train_38, labels_train_38, 3, 'naive')            
+    DT_visualize2D(DT3, rimages_train_38, labels_train_38, 3, "naiveDT3.png")        
+    # class 8
+    prior8, DT8 = DT_learning(rimages_train_38, labels_train_38, 8, 'naive')        
+    DT_visualize2D(DT8, rimages_train_38, labels_train_38, 8, "naiveDT8.png")        
+    
+    tstop = time.time()
+    print "DT learning time (naive splitting) {}". format(tstop-tstart)
         
-        plot.figure()
-        plot.gray()
-        plot.imshow(img);
-        plot.show()
-    # end for i
-      
-    print
-    print "Clever splitting"
-    print
+    tstart = time.time()    
+    rimages_test_38_predict = DT_Classifier_2classes(rimages_test_38, 
+                                                prior3, prior8, DT3, DT8, [3,8])
+    tstop = time.time()
+    print "DT classification time (naive splitting) {}". format(tstop-tstart)
+                                                
+    ccr_DT = correctClassRate(rimages_test_38_predict,\
+                                      labels_test_38, [3,8], \
+                                      print_confMatrix = True)     
 
+    print 'Correct Classification rate on the test set:{}'.format(ccr_DT)   
+    print 'Error rate on the test set:{}'.format(1-ccr_DT)                 
+      
+##    print 
+##    print 'Generate new threes: '
+##    
+##    d = images_train_38.shape[1]
+##    prior3, DT3 = DT_learning(images_train_38, labels_train_38, 3, 'naive')     
+##    # new threes
+##    new3th = np.zeros((5,d), dtype = np.int32)    
+##    for i in range(0,1) :    
+##        new3th[i,:] = generate3DT(DT3, images_train_38, labels_train_38, 3 )
+##        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
+##        
+##        plot.figure()
+##        plot.gray()
+##        plot.imshow(img);
+##        plot.show()
+##    # end for i
+#      
+#    print
+#    print "Clever splitting"
+#    print
+#
 ##    # class 3    
 ##    prior3, DT3 = DT_learning(rimages_train_38, labels_train_38, 3, 'clever')        
 ###    DT_visualize2D(DT3, rimages_train_38, labels_train_38, 3, "naiveDT3.png")        
@@ -343,47 +341,40 @@ def main():
     d = images_train_38.shape[1]
 
 
-    print    
-    print "Learning phase"
-    print
-    
-    # train 1D-histogramms for each feature and class      
-    
-    tstart = time.time() 
-    L, dx = chooseBinSize(images_train_38) # number of bins, bins size
-    
-    # pdf dxL matrices                  
-    prior3, pdf3 = naiveBayes_train_single_class(images_train_38, \
-                                                  labels_train_38, 3, L, dx)    
-    prior8, pdf8 = naiveBayes_train_single_class(images_train_38, \
-                                                  labels_train_38, 8, L, dx)    
-    # compute the cdf of each histogramm
-    cdf3 = [] 
-    cdf8 = []
-    pdf3sorted = []
-    pdf8sorted = []
-    for j in range(0, d):
-        tmp = np.sort(pdf3[j])
-        pdf3sorted.append(tmp)
-        cdf3.append(np.cumsum(tmp) )
-
-        tmp = np.sort(pdf8[j])
-        pdf8sorted.append(tmp)        
-        cdf8.append(np.cumsum(tmp) )
-    # end for                                               
-
-    tstop = time.time()
-    print "Learning 1D histograms and computing cdf's took {} sec".\
-                                                        format(tstop-tstart)
-    
-    # map data to copula using rank order transformation
-    u = np.zeros(images_train_38.shape, dtype = np.float32)
-    for j in range(0,d):
-        ind = np.argsort(images_train_38[:,j])
-        u[:,j] = ind[:]/float(n+1)
-    # end for j    
-    
-    # train a DT on u
+#    print    
+#    print "Learning phase"
+#    print
+#    
+#    # train 1D-histogramms for each feature and class      
+#    
+#    tstart = time.time() 
+#    L, dx = chooseBinSize(images_train_38) # number of bins, bins size
+#    
+#    # pdf dxL matrices                  
+#    prior3, pdf3 = naiveBayes_train_single_class(images_train_38, \
+#                                                  labels_train_38, 3, dx, L)    
+#    prior8, pdf8 = naiveBayes_train_single_class(images_train_38, \
+#                                                  labels_train_38, 8, dx, L)    
+#    # compute the cdf of each histogramm
+#    cdf3 = np.zeros(pdf3.shape, dtype = np.float32)   
+#    cdf8 = np.zeros(pdf8.shape, dtype = np.float32)   
+#    for j in range(0, d):
+#        cdf3[j,:] = np.cumsum(pdf3[j,:])
+#        cdf8[j,:] = np.cumsum(pdf8[j,:])
+#    # end for                                               
+#
+#    tstop = time.time()
+#    print "Learning 1D histograms and computing cdf's took {} sec".\
+#                                                        format(tstop-tstart)
+#    
+#    # map data to copula using rank order transformation
+#    u = np.zeros(images_train_38.shape, dtype = np.float32)
+#    for j in range(0,d):
+#        ind = np.sort(images_train_38[:,j])
+#        u[:,j] = ind[:]/float(n+1)
+#    # end for j    
+#    
+#    # train a DT on u
 #    tstart = time.time() 
 #    
 #    prior3, DT3 = DT_learning(u, labels_train_38, 3, 'naive') 
@@ -391,7 +382,7 @@ def main():
 #    
 #    tstop = time.time()
 #    print "Learning DTs took {} sec". format(tstop-tstart)    
-    
+#    
 #    print    
 #    print "Classification"
 #    print    
@@ -407,21 +398,13 @@ def main():
 #        naiveBayesDensity3 = 1.
 #        naiveBayesDensity8 = 1.        
 #        for j in range(0, d):
-#            l = np.ceil(x[j]/dx[j])# bin number
-#            if l>L[j]:
-#                l= L[j] 
-#            naiveBayesDensity3 *= pdf3[j][l-1]            
-#            naiveBayesDensity8 *= pdf8[j][l-1]                      
-#            
-#            
-#            dist = abs(pdf3sorted[j] - x[j])
-#            binx = np.argsort(dist)
-#            u3[j] = cdf3[j][binx[0]]
-#            
-#            dist = abs(pdf8sorted[j] - x[j])
-#            binx = np.argsort(dist)
-#            u8[j] = cdf8[j][binx[0]]
+#            l= np.floor(x[j]/dx[j])+1 # bin number
 #
+#            naiveBayesDensity3 *= pdf3[j,l-1]            
+#            naiveBayesDensity8 *= pdf8[j,l-1]                      
+#            
+#            u3[j]= cdf3[j,l]
+#            u8[j]= cdf8[j,l]
 #        # end for j
 #        
 #        copulaDensity3 = 0
@@ -457,27 +440,7 @@ def main():
 #
 #    print 'Correct Classification rate on the test set:{}'.format(ccr)   
 #    print 'Error rate on the test set:{}'.format(1-ccr)           
-#    
-    print
-    print "Generate threes"
-    
-    new3th = np.zeros((3,d), dtype = np.int32)  
-    for i in range(0,3) :
-
-        u1 = generate3(u, labels_train_38 , 3 )
-
-        for j in range(0,d):
-            dist =abs(cdf3[j] - u1[j])
-            binx = np.argsort(dist)
-            new3th[i,j] = np.floor(dx[j]*binx[0]/2.)
-        # end for j
-        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
-        
-        plot.figure()
-        plot.gray()
-        plot.imshow(img);
-        plot.show()
-    # end for i
+      
 # end main
 
    

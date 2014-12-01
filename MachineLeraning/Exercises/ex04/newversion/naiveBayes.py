@@ -54,7 +54,7 @@ def naiveBayes_train_single_class(trainingx, trainingy, c, L, dx):
     
     ## Likelihood p(x|y=c)
     
-    histograms = [] 
+    histograms = [] # np.zeros((d, L), dtype = np.float32)
   
     for j in range(0,d):
         
@@ -121,17 +121,18 @@ def generate_number(pdf,dx):
     # calculate cumulative distribution function (cdf) from pdf
     cdf = []
     for j in range(0, d):
-        cdf.append(np.cumsum(np.sort(pdf[j])) )
+        newcdf = np.cumsum(pdf[j])
+        cdf.append(newcdf)
     # end for
         
     for j in range(0,d):
         # randomly select a uniformly distribut number in range [0., 1.)
-        alpha = random.uniform(0,1)    
+        alpha = random.random()
         # calculate quantile on the level alpha
         dist = abs(cdf[j] - alpha)
         binx = np.argsort(dist)
         
-        newnumber[j] = np.floor(dx[j]*binx[0])
+        newnumber[j] = np.floor(dx[j]*binx[0])+1
     # for j    
     return newnumber
 # def generate_number(pdf)
