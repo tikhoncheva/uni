@@ -1,0 +1,73 @@
+Python 2.7.6 (default, Mar 22 2014, 22:59:56) 
+[GCC 4.8.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+
+Imported NumPy 1.8.2, SciPy 0.13.3, Matplotlib 1.3.1
+
+Type "scientific" for more details.
+>>> runfile('/home/kitty/Documents/Uni/git/uni/MachineLeraning/Exercises/ex04/ex04.py', wdir=r'/home/kitty/Documents/Uni/git/uni/MachineLeraning/Exercises/ex04')
+
+Read data, selecting digits 3 and 8, dimension reduction
+
+Size of the training set: (100000, 9, 9)
+(100000,)
+Size of the test set: (120000, 9, 9)
+(120000,)
+Size of the training set of 3s and 8s: (19840, 2)
+Size of the test set of 3s and 8s: (23964, 2)
+
+1 Naive Bayes
+
+1.1 Classification
+
+
+Confusion Matrix 
+[[ 9904.  2356.]
+ [ 1796.  9904.]]
+Correct Classification rate on the test set:0.826573193123
+Error rate on the test set:0.173426806877
+
+1.2 Generate Threes
+
+
+2 Density Tree
+
+Naive splitting
+
+Learning DT for the class 3
+Learning DT for the class 8
+DT learning time (naive splitting) 1.50906896591
+DT classification time (naive splitting) 24.8323800564
+
+Confusion Matrix 
+[[ 10008.   2252.]
+ [  1694.  10008.]]
+Correct Classification rate on the test set:0.835252879319
+Error rate on the test set:0.164747120681
+
+Generate new threes: 
+
+Learning DT for the class 3
+
+Clever splitting
+
+
+3 Combine DT and Naive Bayes
+
+
+Learning phase
+
+Learning 1D histograms and computing cdf's took 34.8788039684 sec
+Learning DT for the class 3
+Learning DT for the class 8
+Learning DTs took 0.0317490100861 sec
+
+Classification
+
+
+Confusion Matrix 
+[[     0.  10176.]
+ [     0.   9664.]]
+Correct Classification rate on the test set:0.403271574028
+Error rate on the test set:0.596728425972
+>>> 
