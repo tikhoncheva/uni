@@ -74,7 +74,8 @@ $$p(y=k|x)=\frac{\prod_{j=1}^d p(x_j|y=k) p(y=k)}{\prod_{j=1}^d p(x_j)}$$
 Our aim is therefore to learn for each class $k$ one dimension histograms $p(x_j|y=k)$ and prior $p(y=k)$.
 
 The prior $p(y=k)$ is simply $N_k/N$, where $N_k$ is the number of elements in the training set from the class $k$ and $N$ is the size of the whole training set.
-To learn the histograms we need an appropriate binning. We selected a common bin number for each dimension in the following way: for each dimension we used the Freeman-Dice rule to compute the bin width. From the bin width we got the necessary number of bins pro dimension and class. We selected the smallest necessary number of bin over all dimensions and recalculated the corresponding bin width.
+
+To learn the histograms we need an appropriate binning. We used the Freeman-Dice rule to compute the bin width. From the bin width we got the necessary number of bins pro dimension and class. If however the bin width was to small and thus the corresponding number of bin was too big, we forced the bin width to be $1/\sqrt[3]{N}$.
 
 \begin{lstlisting}[language=Python]
 # 			Choose proper bin size
@@ -85,27 +86,21 @@ def chooseBinSize(trainingx):
     
     # Choose bin width 
     dx = np.zeros(d, dtype = np.float128)
-    m = np.zeros(d, dtype = np.int32)
+    L = np.zeros(d, dtype = np.int32)
     for j in range(0,d):
-	# for each dimension apply Freeman-Diace Rule
+	# for each dimension apply Freeman-Diaconis Rule
         ind_sort =  np.argsort(trainingx[:,j]); # j-th feature dimension
         IQR = trainingx[ind_sort[3*n/4],j] - trainingx[ind_sort[n/4],j]        
         dx[j] = 2*IQR/np.power(n, 1/3.)        
         if dx[j]<0.01:
-           dx[j] =  3.5/np.power(n, 1/3.)        
-        m_j = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/dx[j]   
-        m[j] = np.floor(m_j) + 1       
+           dx[j] =  1/np.power(n, 1/3.)  
+        m_j = (trainingx[ind_sort[n-1],j]-trainingx[ind_sort[0],j])/dx[j]   
+        L[j] = np.ceil(m_j)
     # end for j
         
-    L = np.min(m);  # total number of bins as minimum over all bin sizes
-		    # in all dimensions
-    
-    # recalculate bin width according to the new bin size L
-    for j in range(0,d):
-        dx[j] = (np.max(trainingx[:,j])-np.min(trainingx[:,j]))/float(L-1)
-    # end for j 
-    
-    return L, dx
+    return L, dx 
+    # L number of bins pro dimension
+    # dx bin width pro dimension
 # end chooseBinSize
 \end{lstlisting}
 
@@ -114,15 +109,15 @@ The learning function uses the given number of bins and bin width to calculate $
 \begin{lstlisting}[language=Python]
 ##                          Naive Bayes Training
 # determine priors  and likelihoods (for each feature and class individual 
-# histogram <=> 4 histogramms   ) 
-def naiveBayes_train_single_class(trainingx, trainingy, c, dx, L):
+# histogram <=> 4 histogramms  for two classes and two dimensions ) 
+def naiveBayes_train_single_class(trainingx, trainingy, c, L, dx):
     # we consider one class c
     #    
     # trainingx is our training set    
     # trainingy are class labels for each element from trainingx
+    # L number of bins pro dimension
     # dx bin width
-    # L total number of bins pro dimension
-    
+        
     n = trainingx.shape[0]      # size of the training set
     d = trainingx.shape[1]      # size of the feature space
     
@@ -135,25 +130,30 @@ def naiveBayes_train_single_class(trainingx, trainingy, c, dx, L):
     
     ## Likelihood p(x|y=c)
     
-    likelihood = np.zeros((d, L), dtype = np.float32)
+    histograms = [] 
   
     for j in range(0,d):
+        
+        histogram = np.zeros(L[j], dtype = np.float32)
+        
         for i in range(0,nc):    
-            l = np.floor(xc[i,j]/dx[j])+1 # bin 
-            if l>=L+1:
-                print xc[i,j]
-            likelihood[j, l-1] = likelihood[j, l-1] + 1
+            l = np.ceil(xc[i,j]/dx[j]) # bin 
+            if l>=L[j]:
+                l= L[j]
+            # end if
+            histogram[l-1] = histogram[l-1] + 1
         # end for i=1..nc
-        likelihood[j,:] = likelihood[j,:]/float(nc)    
+        histogram = histogram/float(nc)    
+        histograms.append(histogram)
     #end for j=1..d                 
-    
-    return prior, likelihood
+
+    return prior, histograms
 #end def naiveBayes_train
 \end{lstlisting}
 
 If we visualize calculated histograms we get following result:
 
-\begin{figure}[hb]
+\begin{figure}[ht]
         \centering
         \begin{subfigure}[b]{0.5\textwidth}
                 \includegraphics[width=\textwidth]{../histograms3.png}
@@ -164,9 +164,9 @@ If we visualize calculated histograms we get following result:
                 \caption{Class of handwritten eights}
         \end{subfigure}
         \caption{1 dimensional histograms pro class and dimension}
-        \label{img4}
+        \label{img1}
 \end{figure}
-
+\FloatBarrier
 One the next two images we can see the visualization of the likelihoods for each class:
 
 \begin{figure}[ht]
@@ -180,19 +180,34 @@ One the next two images we can see the visualization of the likelihoods for each
                 \caption{Class of handwritten eights}
         \end{subfigure}
         \caption{2D likelihoods}
-        \label{img4}
+        \label{img2}
 \end{figure}
 
 \FloatBarrier
 
-After learning phase of the classifier we apply it on the test set images. The correct classification rate of the classifier is $0.8266$ (error rate = $0.1734$).
+After learning phase of the classifier we applied it to the images from the test set. We got the correct classification rate of $82.26\%$ (error rate = $17.74\%$) (Confusion Table see Table \ref{Table1}).
+
+\begin{table}[hbt]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline
+		 & $3$ & $8$ \\ \hline
+		$3$ & $9864$ & $2396$  \\ 
+		$8$ & $1844$ & $9856$ \\ \hline 
+	\end{tabular}
+\caption{Confusion table of the naive Bayes Classifier}
+\label{Table1}
+\end{table}
+\FloatBarrier
 
 The classification function: 
 \begin{lstlisting}[language=Python]
 ##                          Naive Bayes Classifier
-#
-def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, dx):
+# p3(8) priors
+# p_k3(8): d rows correspond to 1D histograms pro class and dimension
+def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, L, dx):
     n = testx.shape[0]
+    d = testx.shape[1]
     
     prediction = np.zeros(n, dtype = np.int8)
         
@@ -200,27 +215,18 @@ def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, dx):
         x = testx[i,:]
         
         # p(y = 3| x)
-        
-        l_y3_d1 = np.floor(x[0]/dx[0])+1 # bin number
-        p_x_y3_d1 = p_k3[0,l_y3_d1-1]
+        # p(y = 8| x)        
+        p_y3_x = p3;
+        p_y8_x = p8;
+        for j in range(0,d):
+            l = np.ceil(x[j]/dx[j]) # bin number         
+            if l>L[j]:
+                l= L[j]             
+            p_y3_x *= p_k3[j][l-1]
+            p_y8_x *= p_k8[j][l-1]           
+        # end for j
 
-        l_y3_d2 = np.floor(x[1]/dx[1])+1 # bin number
-        p_x_y3_d2 = p_k3[1,l_y3_d2-1]
-        
-        p_y3_x = p_x_y3_d1*p_x_y3_d2*p3
-        
-        # p(y = 8| x)
-
-        l_y8_d1 = np.floor(x[0]/dx[0])+1 # bin number
-        p_x_y8_d1 = p_k8[0,l_y8_d1-1]
-
-        l_y8_d2 = np.floor(x[1]/dx[1])+1 # bin number
-        p_x_y8_d2 = p_k8[1,l_y8_d2-1]
-        
-        p_y8_x = p_x_y8_d1*p_x_y8_d2*p8
-        
         # argmax (p_y3_x, p_y8_x) 
-        #print p_y3_x
         if p_y3_x>p_y8_x :
             prediction[i] = 3
         else:
@@ -236,7 +242,7 @@ def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, dx):
 To construct a new digits we applied our learning algorithm to the full dimension training set ($81$ dimension) to get the likelihood for the class of threes. The sampling algorithm we used is : 
 	\begin{itemize}
 	\item Since we assumed, that all features are independent, we can sample in each dimension separately
-	\item So for each dimension calculate the cumulative distribution function (CDF); pick the uniform distributed number 	in $\alpha\in[0,1)$; calculate for each $CDF_j, j=1\dots d$, $\alpha$-quantil; return the rounded value of the $\alpha$-quantil as the $j{th}$ component of the new number.
+	\item So for each dimension calculate from 1D histogram the cumulative distribution function (CDF); pick the uniform distributed number 	in $\alpha\in[0,1)$; calculate for each $CDF_j, j=1\dots d$, $\alpha$-quantil; return the rounded value of the $\alpha$-quantil as the $j{th}$ component of the new number.
 	\end{itemize}	
 
 Here are some results of the described generation function and the code of the function:
@@ -258,27 +264,27 @@ Here are some results of the described generation function and the code of the f
 \FloatBarrier
 
 \begin{lstlisting}[language=Python]
-# Generate Number from the given pdf
+## Generate Number from the given pdf
 # samply in each of d dimensions independently
 def generate_number(pdf,dx):
     
-    d = pdf.shape[0]    # number of dimension
+    d = len(pdf)    # number of dimension
     
     newnumber = np.zeros(d, dtype = np.int32)
     # calculate cumulative distribution function (cdf) from pdf
-    cdf = np.zeros(pdf.shape, dtype = np.float32)
+    cdf = []
     for j in range(0, d):
-        cdf[j,:] = np.cumsum(pdf[j,:])
+        cdf.append(np.cumsum(np.sort(pdf[j])) )
     # end for
         
     for j in range(0,d):
         # randomly select a uniformly distribut number in range [0., 1.)
-        alpha = random.random()
+        alpha = random.uniform(0,1)    
         # calculate quantile on the level alpha
-        dist = abs(cdf[j,:] - alpha)
+        dist = abs(cdf[j] - alpha)
         binx = np.argsort(dist)
         
-        newnumber[j] = np.floor(dx[j]*binx[0])+1
+        newnumber[j] = np.floor(dx[j]*binx[0])
     # for j    
     return newnumber
 # def generate_number(pdf)
@@ -291,20 +297,17 @@ The whole code to the naive Bayes part can be found in the file $naiveBayes.py$.
 As opposite to the naive Bayes method density tree method should keep the possible interactions between features.
 
 \subsection{Building the DT}
-We wrote recursive function $DT\_cut$, which split each node of the tree in two parts and call itself in each of two new nodes. The inputs arguments are the whole number of points in the training set, list of the leaves nodes, current node, depth of the current node and split method.
+We wrote a function $DT\_learning$, which starts with the single node containing all points of the training set and splits on the each iteration each node of the tree in two parts. The inputs arguments are labelled training set and splitting criteria (naive or clever).
 
-The first call is made from the function $DT\_learning(trainingx, trainingy, c, splitmethod)$ which creates the root node - node containing all points of the training set.
+The result of the learning are prior of the class and the list of the leaves nodes of the built density tree.
 
-The result of the learning is returned in form of the list with leaves nodes.
-
-We tried out different termination criteria, such as restriction of the allowed depth or minimum density/number of points in the leaf nodes, but were not satisfied with none of them. The restriction of the allowed depth was often not sufficient to obtain a good probability distribution. Condition on minimum density/number of points led sometimes to overflow of the stack in cases of few points in a big bin. So we chose a combination of the minimum density condition supported with the condition, that $N_{bin}/N$ is not already to small. The idea is, that if $N_{bin}/N$ is already too small, the probability $N_{bin}/NV_{bin}$ would be even smaller and that would lead at the end to the distribution with values around zero.
+We tried out different termination criteria, such as restriction of the allowed depth or minimum density/ maximum number of points in the leaf nodes. The best results were achieved when we used the restriction with maximum number of points in leaf nodes. We also forbade splits which are two close to the region boundary. 
 
 \begin{lstlisting}[language=Python]
 #               Learning DT         
 # we consider one class at time    
-
 def DT_learning(trainingx, trainingy, c, splitmethod):
-    # in this version wir use naive split criterion on the nodes of the DT
+    
     print "Learning DT for the class {}". format(c)
     
     n = trainingx.shape[0]      # size of the training set
@@ -323,150 +326,209 @@ def DT_learning(trainingx, trainingy, c, splitmethod):
         region[j,0] = np.min(xc[:,j])
         region[j,1] = np.max(xc[:,j])
     # end j   
-        
-    leavesnodes = []
-#     build recursively a Density Tree and get all it's leaves  
-    rootnode = DTnode(xc, 1/volume(region), region)
-    DT_cut(nc, leavesnodes, rootnode, 0, splitmethod)
+      
+    # build  a Density Tree and get all it's leaves  
+      
+    rootnode = DTnode(0, xc, 1/volume(region), region) #(depth, points, p, region)
+    leaveslist = []
 
-    return prior,leavesnodes
+    stack = []
+    stack.append(rootnode)
+    
+    while stack:
+        currentnode = stack.pop()
+  
+        # if termination condition is satisfied (min number of points in bin):
+        if currentnode.points.shape[0] < 200: 
+            leaveslist.append(currentnode)
+        else: # if split further
+        
+            if splitmethod == 'naive':
+                # split value : split on the middle of two samples
+                splitval, splitdim = splitnaive(currentnode) 
+            else :
+                # select theoretically best split
+                splitval, splitdim = splitclever(currentnode, 0.5)            
+            # end if clever
+                 
+            # new regions
+            regionL = np.copy(currentnode.region)
+            regionL[splitdim,:] = [regionL[splitdim,0], splitval]
+            
+            regionR = np.copy(currentnode.region)       
+            regionR[splitdim,:] = [splitval, regionR[splitdim,1] ]           
+            
+            # split poins of the node according to the new regions
+            pointsL, pointsR = splitpoints(currentnode.points,currentnode.region, \
+                                                    splitval, splitdim)
+                
+            nleft = pointsL.shape[0]                  
+            nright = pointsR.shape[0]                
+                    
+            # calculate density of the new nodes
+            pL = nleft/float(nc) /volume(regionL)
+            pR = nright/float(nc)/volume(regionR)        
+                                   
+            # create two new nodes      (depth, points, p, region)
+            nodeL = DTnode(currentnode.depth + 1, pointsL, pL, regionL)
+            nodeR = DTnode(currentnode.depth + 1, pointsR, pR, regionR)
+
+            l = currentnode.region[splitdim,1]-currentnode.region[splitdim,0]   
+            
+            # check, if we try to split too close to region bounds
+            if (splitval-currentnode.region[splitdim,0] >= 1 \
+             and splitval-currentnode.region[splitdim,0] < l ):
+                stack.append(nodeL) # if not add node to stack                
+            else :
+                leaveslist.append(nodeL) # else set node to a leaf node
+
+            
+            # check, if we try to split too close to region bounds
+            if (currentnode.region[splitdim,1]-splitval >= 1 
+                and currentnode.region[splitdim,1]-splitval < l ):
+                stack.append(nodeR) # if not add node to stack                
+            else :
+                leaveslist.append(nodeR) # else set node to a leaf node
+
+                
+        # end if        
+    # end while stack
+    return prior,leaveslist
 #end def DT_learning_naive
 \end{lstlisting}
 
-\begin{lstlisting}[language=Python]
-# Recursive call for node splitting
-def DT_cut(n, leaveslist, parentnode, depth, splitmethod):
+The task of the exercise was to implement two splitting methods: naive one and the theoretically best one (we called it clever splitting). 
 
-    # if termination condition is satisfied:    
-    pointsdensity = parentnode.points.shape[0]/float(n)
-    # if min density is reached or region has only few points 
-    if parentnode.p>=0.0001 or pointsdensity<0.001: 
-        leaveslist.append(parentnode)
-        return
-    else: # if split further
-        if splitmethod == 'naive':
-            # split value : split on the middle of the interval
-            splitval, splitdim = splitnaive(parentnode, depth)
-        # end if naive
-        else :
-            # select theoretically best split
-            splitval, splitdim = splitclever(parentnode)            
-        # end if clever   
-        
-        # new regions
-        regionL = np.copy(parentnode.region)
-        regionL[splitdim,:] = [regionL[splitdim,0], splitval]
-        
-        regionR = np.copy(parentnode.region)       
-        regionR[splitdim,:] = [splitval, regionR[splitdim,1] ]           
-        
-        # split poins of the node according to the new regions
-        pointsL, pointsR = splitpoints(parentnode.points,parentnode.region, \
-                                                splitval, splitdim)
-        if pointsL.size ==0:
-            nleft = 0
-        else:
-            nleft = pointsL.shape[0]
-        # end if    
+The theoretically best criterion tries by each splitting $d(2N_c-2)$ possible split values and selects one, that maximizes the loss function (the algorithm was taken from the lecture notes). The naive splitting is a simplification of this algorithm. It tries to split in our case only at $d\times 40$ points, where $40$ points in each direction are selected as a centres of $41$ intervals of the same length along the region boundary.
 
-        if pointsR.size ==0:
-            nright = 0
-        else:
-            nright = pointsR.shape[0]
-        # end if    
-                
-        # calculate density of the new nodes
-        pL = nleft/float(n)/volume(regionL)
-        pR = nright/float(n)/volume(regionR)        
-        
-        # create two new nodes        
-        nodeL = DTnode(pointsL, pL, regionL)
-        nodeR = DTnode(pointsR, pR, regionR)
+Unfortunately our implementation of the theoretically best splitting is very slow, so we provide the classification results only for naive splitting method, because it is significantly faster, but we included the code for both splitting methods.
 
-        DT_cut(n, leaveslist, nodeL, depth+1, splitmethod)
-        DT_cut(n, leaveslist, nodeR, depth+1, splitmethod)   
-    # end if    
-# end DT_cut()
-    
-\end{lstlisting}
-
-The task of the exercise was to implement two splitting methods: naive one and the theoretically best one. 
-The naive splitting method split each node in the middle (dimension of the splitting is changed in circle from $1$ to $d$). The theoretically best criterion tries by each splitting $d(2N_c-2)$ possible split values and selects one, that maximizes the loss function (the algorithm was taken from the lecture notes).
-
-Unfortunately our implementation of the theoretically best splitting is very slow, so we provide the classification results only for naive splitting method, but include the code for the theoretically best splitting as well.
- 
 \begin{lstlisting}[language=Python]
 #                            Splitting criteria
-# split on the middle of the interval in next dimension
-def splitnaive(node, depth):
-    d = node.points.shape[1]
+# Naive splitting method
+def splitnaive(node):
+    points = node.points
+    d = points.shape[1]
+    n = points.shape[0]
     
-    splitdim = depth%d;
-    splitval =  np.sum(node.region[splitdim,:])/2.   
-    
-    return splitval, splitdim
+    nr = 40;
+   
+    loss = np.zeros((nr-1,d), dtype = np.float32 )
+    splitvalues = np.zeros((nr-1,d), dtype = np.float32)
+
+    for j in range(0,d):
+        ind = np.argsort(points[:,j])
+
+        dx = (points[ind[n-1],j]-points[ind[0],j])/float(nr + 1)
+
+        for ii in range(0,nr-1):           
+
+            splitval = points[ind[0],j] + dx*(ii+1);
+            splitvalues[ii,j] = splitval
+            
+            # new regions
+            regionL = np.copy(node.region)
+            regionL[j,:] = [node.region[j,0], splitval]
+
+            if volume(regionL)<=0.1:
+                continue
+                
+            regionR = np.copy(node.region)       
+            regionR[j,:] = [splitval, node.region[j,1] ]           
+
+            if volume(regionR<=0.1):
+                continue
+                
+            # split poins of the node according to the new regions
+            pointsL, pointsR = splitpoints(points,node.region, \
+                                                    splitval, j)
+            nleft = pointsL.shape[0]
+            nright = pointsR.shape[0]
+                                
+            loss[ii,j] = np.square(nleft /float(n))* \ 
+            					(volume(node.region)/volume(regionL)) \
+                       + np.square(nright/float(n))* \
+                         		(volume(node.region)/volume(regionR))
+        # end for i    
+    #end for j
+                   
+    maxval = loss.max()
+    valInd, dimInd  = np.where(loss==maxval)       
+    splitval = splitvalues[valInd[0], dimInd[0]]    
+       
+    return splitval, dimInd[0]    
 # end splitnaive
-    
+
 # select theoretically best split
-def splitclever(node):
+def splitclever(node, eps):
     x = node.points
     d = x.shape[1]
     n = x.shape[0]
-    eps = 0.001
     
     loss = np.zeros((2*n,d), dtype = np.float32 )
+    splitvalues = np.zeros((2*n,d), dtype = np.float32)
     for j in range(0,d):
-        splitdim = j
+        
         ind = np.argsort(node.points[:,j])
         for i in range(0,n):
             for s in [-1,1]:
-                splitval = x[ind[i],j]+s*eps
+                splitval = x[ind[2*i],j]+s*eps
+                splitvalues[2*i+(s+1)/2,j] = splitval
+                
                 # new regions
                 regionL = np.copy(node.region)
-                regionL[splitdim,:] = [regionL[splitdim,0], splitval]
-            
-                regionR = np.copy(node.region)       
-                regionR[splitdim,:] = [splitval, regionR[splitdim,1] ]           
+                regionL[j,:] = [regionL[j,0], splitval]
                 
-                if volume(regionL)==0 or volume(regionR==0):
+                if volume(regionL)<=0.1:
+                    continue
+                
+                regionR = np.copy(node.region)       
+                regionR[j,:] = [splitval, regionR[j,1] ]           
+                
+                if volume(regionR<=0.1):
                     continue
                 
                 # split poins of the node according to the new regions
                 pointsL, pointsR = splitpoints(x,node.region, \
-                                                    splitval, splitdim)
-                if pointsL.size ==0:
-                    nleft = 0
-                else:
-                    nleft = pointsL.shape[0]
-                # end if    
-    
-                if pointsR.size ==0:
-                    nright = 0
-                else:
-                    nright = pointsR.shape[0]
-                # end if    
-                
-                
+                                                    splitval, j)
+                nleft = pointsL.shape[0]
+                nright = pointsR.shape[0]
+                    
                 loss[2*i+(s+1)/2,j] = np.square(nleft/float(n))/volume(regionL) + \
                             np.square(nright/float(n))/volume(regionR)
             # end for s
         # end for i    
-    #end for j
+    #end for j                      
+
     maxval = loss.max()
-    splitval, splitdim  = np.where(loss==maxval[0])       
-    print maxval
-    print splitval, splitdim
+    valInd, dimInd  = np.where(loss==maxval)       
+    splitval = splitvalues[valInd[0], dimInd[0]]        
     
-    return splitval, splitdim
-# end splitnaive
+    return splitval, dimInd
+# end splitclever
 \end{lstlisting}
 
 \subsection{Classification}
 
-The classification task by the density trees as by naive Bayes consist of the calculation of the probability $p(y=k|x)$ and selecting $k$, which maximizes this value. But in opposite to the naive Bayes method 
-$$p(y=k|x)=\frac{p(x|y=k) p(y=k)}{p(x)}$$. To calculate the probability $p(x|y=k)$ we traverse all leaf nodes of the density tree to find for a given $x$ a bin, where it belongs to. In this case $p(x|y=k) = N_{bin}/{NV_{bin}}$, where $N_{bin}$ is the number of points in the found bin and $V_{bin}$ is its volume.
+The classification task by the density trees as by naive Bayes is to calculate the probability $p(y=k|x)$ and select $k$, which maximizes this value. But in opposite to the naive Bayes method 
+$$p(y=k|x)=\frac{p(x|y=k) p(y=k)}{p(x)}$$ To calculate the probability $p(x|y=k)$ we traverse all leaf nodes of the density tree to find for a given $x$ a bin, where it belongs to. In this case $p(x|y=k) = N_{bin}/{NV_{bin}}$, where $N_{bin}$ is the number of points in the found bin and $V_{bin}$ is its volume.
 
-For the given test set we obtained the correct classification rate $0.8353$ ( error rate $0.1647$). 
+For the given test set we obtained the correct classification rate $79.39\%$ ( error rate $20.61\%$, for confusion table see Table \ref{Table2}). 
+
+\begin{table}[hbt]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline
+		 & $3$ & $8$ \\ \hline
+		$3$ & $8768$ & $3496$  \\ 
+		$8$ & $1442$ & $10256$ \\ \hline 
+	\end{tabular}
+\caption{Confusion table of the density tree Classifier}
+\label{Table2}
+\end{table}
+\FloatBarrier
+
+On the picture \ref{img3} you can see the visualization of the adaptive bin of our density trees for each class. As we know from the previous section, the points of the class of threes have exponential distribution, that means we should have according to the termination criterion a lot small bins on the left top corner on the first image (see picture \ref{img3}), that are unfortunately difficult to recognize. That is why we included all images as an attachment to submitted homework.
 
 \begin{figure}[ht]
         \centering
@@ -479,14 +541,19 @@ For the given test set we obtained the correct classification rate $0.8353$ ( er
                 \caption{Class of handwritten eights}
         \end{subfigure}
         \caption{Adaptive bins for the density trees with naive splitting criterion}
-        \label{img4}
+        \label{img3}
 \end{figure}
 
 
 \FloatBarrier
 
+The classification function for two classes:
+
 \begin{lstlisting}[language=Python]
 def DT_Classifier_2classes(testx, prior1, prior2, DT1, DT2, c = [3,8]):
+    
+    print "start classifier"
+    
     n = testx.shape[0]
     
     prediction = np.zeros(n, dtype = np.int8)
@@ -523,8 +590,7 @@ def DT_Classifier_2classes(testx, prior1, prior2, DT1, DT2, c = [3,8]):
             prediction[i] = c[1]
         # end if        
            
-    # end for i
-    
+    # end for i    
     return prediction
 # end DT_Classifier
 \end{lstlisting}
@@ -535,49 +601,42 @@ For generation of new digits from the given likelihood function we implemented t
 \begin{itemize}
 \item use the whole dimensional training set to train the density tree for the digit $3$
 \item start from the root node of the DT
-\item with the selected probability $q$ go left in the tree and with probability $1-q$ go right; set $q=q*N_left/N$
+\item with the selected probability $q$ go left in the tree and with probability $1-q$ go right; set $q=q*N_{left}/N$
 \item repeat selection of the next node until a leaf node is reached
 \item in the reached leaf node sample the points uniformly for each dimension
 \end{itemize}
 
 Here is the code to the described algorithm:
-The traversal of the tree is done recursive with function $DT\_traverse$.
+The traversal of the tree is done with function $DT\_traverse$, which does the same as the learning function, just doesn't return the list of leaf nodes, but a single leaf. That's why we don't call the learning function extra before.
 
 \begin{lstlisting}[language=Python]
 ## Generate Number from the given pdf
 # samply in each of d dimensions independently
-def generate_number(DT, trainingx,trainingy, c):
+def generate_number(trainingx, trainingy, c):
     # find  in training set all members of the class c
     xc = trainingx[trainingy==c, :]        
-    N = xc.shape[0]
-    d = xc.shape[1]
-
+    d = trainingx.shape[1]      # size of the feature space
+    
     ## Root node
     region = np.zeros((d,2), dtype = np.float32)
     for j in range(0,d):
         region[j,0] = np.min(xc[:,j])
         region[j,1] = np.max(xc[:,j])
     # end j   
-        
-    rootnode = DTnode(xc, 1/volume(region), region)
-    pmin = 1.
-    pmax = 0.
-    for node in DT:
-        if node.p>pmax:
-            pmax = node.p
-        if node.p<pmin:
-            pmin = node.p
-    #end for    
-        
-    # number of all points, probability to go left, root node, depth
-    selectednode = DT_traverse(N, pmin, pmax, 0.5, rootnode, 0) 
+    
+    # build  a Density Tree and traverse it into depth    
+    rootnode = DTnode(0, xc, 1/volume(region), region) #(depth, points, p, region)
+    
+    selectednode = DT_traverse(rootnode)
+
+
     # in the leaf node sample uniformly in each direction
     newnumber = np.zeros(d, dtype = np.int32) 
     for j in range(0,d):
         a = selectednode.region[j,0]
         b = selectednode.region[j,1]
         
-        alpha = random.random()
+        alpha = random.uniform(0,1)
         # transforme random number in [0,1) in random number in [a,b)
         newnumber[j] = np.floor(a + alpha*(b-a))
     # for j    
@@ -588,41 +647,59 @@ def generate_number(DT, trainingx,trainingy, c):
 \begin{lstlisting}[language=Python]
 # traverse the density tree: go left with probability q and right with 
 # probability 1-q, generate a uniform distributed number in range [qmin, qmax)
-def DT_traverse(N, qmin, qmax, q, parentnode, depth):
-
-    # if termination condition is satisfied (same as in construction of DT)
-    pointsdensity = parentnode.points.shape[0]/float(N)
-    if parentnode.p>=0.0001 or pointsdensity<0.001: 
-        return parentnode
-    else:
-        # split value : split on the middle of the interval
+def DT_traverse(rootnode):
     
-        splitval, splitdim = splitnaive(parentnode, depth)
+    n = rootnode.points.shape[0]
+    
+    stack = []
+    stack.append(rootnode)
+    q = 0.5
+                
+    while stack:
+        
+        currentnode = stack.pop()
+  
+        # if termination condition is satisfied (min number of points in bin):
+        if currentnode.points.shape[0] < 200:
+            return currentnode
+        else: # if split further
+        
+            splitval, splitdim = splitnaive(currentnode) 
 
-        # split poins of the node according to the new regions
-        pointsL, pointsR = splitpoints(parentnode.points,parentnode.region,\
-        					splitval, splitdim)
+            # split poins of the node according to the new regions
+            pointsL, pointsR = splitpoints(currentnode.points,currentnode.region, \
+                                                    splitval, splitdim)
+            q = pointsL.shape[0]/float(currentnode.points.shape[0]) 
+            x = random.uniform(0,1)        
+            if x<=q:
+                # split region
+                region = np.copy(currentnode.region)
+                region[splitdim,:] = [region[splitdim,0], splitval]            
+                points = pointsL
+            else:
+                # split region
+                region = np.copy(currentnode.region)       
+                region[splitdim,:] = [splitval, region[splitdim,1] ]
+                points = pointsR
+            # end if
+                
+            # calculate new p
+            p =  points.shape[0]/float(n) /volume(region)
         
-        x = random.uniform(qmin,qmax)        
-        if x<=q:
-            # split region
-            region = np.copy(parentnode.region)
-            region[splitdim,:] = [region[splitdim,0], splitval]            
-            points = pointsL
-        else:
-            # split region
-            region = np.copy(parentnode.region)       
-            region[splitdim,:] = [splitval, region[splitdim,1] ]
-            points = pointsR
-        # else if
+            # go deeper
+            node = DTnode(currentnode.depth+1, points, p, region)
         
-        # calculate new p
-        q *= points.shape[0]/float(N)
-        
-        # go deeper
-        node = DTnode(points, points.shape[0]/float(N)/volume(region), region)
-        return DT_traverse(N, qmin, qmax, q, node, depth+1)
-    # end if    
+            l = currentnode.region[splitdim,1]-currentnode.region[splitdim,0]   
+            
+            # check, if we try to split too close to region bounds
+            if (splitval-currentnode.region[splitdim,0] >= 1 \
+             and splitval-currentnode.region[splitdim,0] < l ):
+                stack.append(node) # if not add node to stack
+            else:
+                return node
+            # end if
+        # end if        
+    # end while stack
 # end DT_traverse()
 \end{lstlisting}        
  
@@ -647,29 +724,46 @@ All function from this section can be found in the $densityTree.py$ file in atta
 
 
 \section{Combination of the density tree and Naive Bayes}
-Unfortunately we didn't finished the implementation of the tasks in this section. That is why we provide only learning step for the method, that combines density tree with the naive Bayes method.
+
+In the last section we want to combine naive Bayes and density trees methods. That should lead us to better modelling results.
+
+We used the algorithms provided on the lecture to implement this part of the task
 
 \begin{lstlisting}[language=Python]
     print    
-    print "Classification"
-    print    
+    print "3 Combine DT and Naive Bayes"
+    print
     
-   # train 1D-histogramms for each feature and class      
+    n = images_train_38.shape[0]
+    d = images_train_38.shape[1]
+
+    print    
+    print "Learning phase"
+    print
+    
+    # train 1D-histogramms for each feature and class      
     
     tstart = time.time() 
     L, dx = chooseBinSize(images_train_38) # number of bins, bins size
     
-    # pdf d x L matrices                  
+    # pdf dxL matrices                  
     prior3, pdf3 = naiveBayes_train_single_class(images_train_38, \
-                                                  labels_train_38, 3, dx, L)    
+                                                  labels_train_38, 3, L, dx)    
     prior8, pdf8 = naiveBayes_train_single_class(images_train_38, \
-                                                  labels_train_38, 8, dx, L)    
+                                                  labels_train_38, 8, L, dx)    
     # compute the cdf of each histogramm
-    cdf3 = np.zeros(pdf3.shape, dtype = np.float32)   
-    cdf8 = np.zeros(pdf8.shape, dtype = np.float32)   
+    cdf3 = [] 
+    cdf8 = []
+    pdf3sorted = []
+    pdf8sorted = []
     for j in range(0, d):
-        cdf3[j,:] = np.cumsum(pdf3[j,:])
-        cdf8[j,:] = np.cumsum(pdf8[j,:])
+        tmp = np.sort(pdf3[j])
+        pdf3sorted.append(tmp)
+        cdf3.append(np.cumsum(tmp) )
+
+        tmp = np.sort(pdf8[j])
+        pdf8sorted.append(tmp)        
+        cdf8.append(np.cumsum(tmp) )
     # end for                                               
 
     tstop = time.time()
@@ -679,77 +773,210 @@ Unfortunately we didn't finished the implementation of the tasks in this section
     # map data to copula using rank order transformation
     u = np.zeros(images_train_38.shape, dtype = np.float32)
     for j in range(0,d):
-        ind = np.sort(images_train_38[:,j])
+        ind = np.argsort(images_train_38[:,j])
         u[:,j] = ind[:]/float(n+1)
     # end for j    
     
-    # train a DT on u
-    tstart = time.time() 
+    print
+    print "Generate threes"
     
-    prior3, DT3 = DT_learning(u, labels_train_38, 3, 'naive') 
-    prior8, DT8 = DT_learning(u, labels_train_38, 8, 'naive') 
-    
-    tstop = time.time()
-    print "Learning DTs took {} sec". format(tstop-tstart)    
-    
-    print    
-    print "Classification"
-    print    
-    
-    ntest = images_test.shape[0]
-    prediction = np.zeros(ntest, dtype = np.int8)
-        
-    for i in range(0,n):
-        x = images_test[i,:]
-        // u_j = F_j(x_j) 
-        u3 = np.zeros(d, dtype = np.float32)        
-        u8 = np.zeros(d, dtype = np.float32)                
-        
-        # compute density according to naive Bayes method
-        naiveBayesDensity3 = 1.
-        naiveBayesDensity8 = 1.        
-        for j in range(0, d):
-            l= np.floor(x[j]/dx[j])+1 # bin number
-            if l>L-1:
-                l=L-1
-            naiveBayesDensity3 *= pdf3[j,l]            
-            naiveBayesDensity8 *= pdf8[j,l]                      
-            
-            u3[j]= cdf3[j,l]
-            u8[j]= cdf8[j,l]
+    new3th = np.zeros((3,d), dtype = np.int32)  
+    for i in range(0,3) :
+
+        u1 = generate3(u, labels_train_38 , 3 )
+
+        for j in range(0,d):
+            dist =abs(cdf3[j] - u1[j])
+            binx = np.argsort(dist)
+            new3th[i,j] = np.floor(dx[j]*binx[0]/2.)
         # end for j
+        img = new3th[i,:].reshape(np.sqrt(d),np.sqrt(d))
         
-        copulaDensity3 = 0
-        for node in DT3:
-            if point_in_region(u3, node.region):
-                copulaDensity3 = node.p
-                break 
-            # end if
-        # end for node
-                
-        copulaDensity8 = 0
-        for node in DT8:
-            if point_in_region(u8, node.region):
-                copulaDensity8 = node.p
-                break 
-            # end if
-        # end for node
-                
-        p_y3_x = naiveBayesDensity3*copulaDensity3*prior3
-        p_y8_x = naiveBayesDensity8*copulaDensity8*prior8
-        
-        # argmax (p_y3_x, p_y8_x) 
-        #print p_y3_x
-        if p_y3_x>p_y8_x :
-            prediction[i] = 3
-        else:
-            prediction[i] = 8
-        # end if        
-    # end for i    
+        plot.figure()
+        plot.gray()
+        plot.imshow(img);
+        plot.show()
+     #end for i
 \end{lstlisting}    
+
+The function to generate new threes is similar to the one we used for the density trees (see file $naiveBayesAndDT.py$ for implementation):
+
+\begin{lstlisting}[language=Python]
+# traverse the density tree: go left with probability q and right with 
+# probability 1-q
+
+# Generate Number from the given pdf
+# samply in each of d dimensions independently
+def generate_number(trainingx, trainingy, c):
+    # find  in training set all members of the class c
+    xc = trainingx[trainingy==c, :]        
+    d = trainingx.shape[1]      # size of the feature space
+    
+    ## Root node
+    region = np.zeros((d,2), dtype = np.float32)
+    for j in range(0,d):
+        region[j,0] = np.min(xc[:,j])
+        region[j,1] = np.max(xc[:,j])
+    # end j   
+    
+    # build  a Density Tree and traverse it into depth    
+    rootnode = DTnode(0, xc, 1/volume(region), region) #(depth, points, p, region)
+    
+    selectednode = DT_traverse(rootnode)
+
+
+    # in the leaf node sample uniformly in each direction
+    newnumber = np.zeros(d, dtype = np.float32) 
+    for j in range(0,d):
+        a = selectednode.region[j,0]
+        b = selectednode.region[j,1]
+        
+        alpha = random.uniform(0,1)
+        # transforme random number in [0,1) in random number in [a,b)
+        newnumber[j] = a + alpha*(b-a)
+    # for j    
+    return newnumber
+# def generate_number(pdf)    
+\end{lstlisting}    
+
+On the next image we provide some results of modelling for this approach:
+\begin{figure}[ht]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{../combined_1.png}
+        \end{subfigure}%
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{../combined_2.png}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{../combined_3.png}
+        \end{subfigure}        
+        \caption{Generated threes}
+\end{figure}
+
+\FloatBarrier
+
+As we have supposed the results of the modelling are much better as they were before.
+
 
 
 \section{Complete code}
+\subsection{Visualization functions}
+
+Visualization of $1D$ histograms and likelihood function for the naive Bayes method ($ex04.py$):
+\begin{lstlisting}[language=Python]
+#                   Plot 1D histograms
+def plot_histogram(pdf,dx, title = 'Histograms for each of d dimensions',\
+                                             imageName = 'histogram.png'):
+    
+    f, (ax1, ax2) = plot.subplots(1, 2, sharey=True)
+    
+    f.suptitle(title, fontsize=14)
+    ax1.set_xlabel('x')
+    ax1.set_ylabel('Probability') 
+    
+    ax2.set_xlabel('x')
+    ax1.set_ylabel('Probability') 
+    
+    ax1.set_title('d=1')
+    ax2.set_title('d=2')
+    
+    
+    for i in range(0,len(pdf[0])):
+        # subplot 1
+        ax1.plot([i*dx[0], i*dx[0], (i+1)*dx[0],(i+1)*dx[0]], \
+                 [0, pdf[0][i], pdf[0][i], 0 ], 'r-')
+        ax1.set_xlim([0,len(pdf[0])*dx[0]])                 
+    for i in range(0,len(pdf[1])):        
+        # subplot 2
+        ax2.plot([i*dx[1], i*dx[1], (i+1)*dx[1],(i+1)*dx[1]], \
+                 [0, pdf[1][i], pdf[1][i], 0 ], 'b-')
+        ax2.set_xlim([0,len(pdf[0])*dx[1]])
+    # end for
+
+    plot.show()
+    
+    f.savefig(imageName)    
+#end def      
+#-----------------------------------------------------------------------------
+#                   Plot 2D Likelihood
+def plot_likelihood(pdf, dx, title = 'likelihood',\
+                                             imageName = 'likelihood.png'):
+    L1 = len(pdf[0]) # number of bins in the first histogram
+    L2 = len(pdf[1]) # number of bins in the second histogram    
+    
+    img = np.zeros((np.ceil(L1*dx[0]),np.ceil(L2*dx[1])), dtype = np.float64)
+
+    for i in range(0,L1):
+        for j in range(0,L2):
+            img[np.ceil(i*dx[0]):np.ceil((i+1)*dx[0]),\
+                np.ceil(j*dx[1]):np.ceil((j+1)*dx[1])] = pdf[0][i]*pdf[1][j]
+        #end for j    
+    #end for i
+        
+    f = plot.figure() 
+    plot.gray()
+    plot.imshow(img.transpose(), interpolation = 'nearest')       
+    plot.title(title)
+    plot.xlabel('d1')
+    plot.ylabel('d2')    
+
+    plot.show()
+    
+    f.savefig(imageName)    
+#end def      
+\end{lstlisting}    
+
+\FloatBarrier
+
+Visualization of the adaptive bin for the density trees ($densityTree.py$):
+
+\begin{lstlisting}[language=Python]
+def DT_visualize2D(leaveslist, trainingx, trainingy, c, saveName):
+
+    d = trainingx.shape[1]      # size of the feature space
+    
+    assert d==2, 'I can visualize density trees only for two features :('
+    
+    # find  in training set all members of the class c
+    xc = trainingx[trainingy==c, :]        
+    
+    d1min = np.ceil(np.min(xc[:,0]))
+    d1max = np.ceil(np.max(xc[:,0]))
+    
+    d2min = np.ceil(np.min(xc[:,1]))
+    d2max = np.ceil(np.max(xc[:,1]))
+    
+    img = np.zeros((d1max-d1min, d2max-d2min), dtype = np.float64)
+
+    pmax = 0.  
+    for node in leaveslist:
+        if node.p>pmax:
+            pmax = node.p
+        xmin = np.ceil(node.region[0,0])
+        xmax = np.ceil(node.region[0,1])
+        
+        ymin = np.ceil(node.region[1,0])
+        ymax = np.ceil(node.region[1,1])
+
+        img[xmin:xmax, ymin:ymax] = node.p
+    #end for    
+    
+    im = np.array(img * 255/pmax, dtype = np.uint8)
+    
+    f = plot.figure() 
+    plot.gray()
+    plot.imshow(im.transpose(), interpolation = 'nearest')       
+    plot.title("2D Density tree for class %d" %c)
+    plot.xlabel('d1')
+    plot.ylabel('d2')    
+
+    plot.show()
+   
+    f.savefig(saveName)  
+# end DT_visualize(DT)
+\end{lstlisting}
+
 \subsection{Naive Bayes method}
 \lstinputlisting[language=Python]{../naiveBayes.py}
 \subsection{Density tree method}

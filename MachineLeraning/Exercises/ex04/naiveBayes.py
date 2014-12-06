@@ -33,7 +33,7 @@ def chooseBinSize(trainingx):
 #-----------------------------------------------------------------------------
 ##                          Naive Bayes Training
 # determine priors  and likelihoods (for each feature and class individual 
-# histogram <=> 4 histogramms   ) 
+# histogram <=> 4 histogramms  for two classes and two dimensions ) 
 def naiveBayes_train_single_class(trainingx, trainingy, c, L, dx):
     # we consider one class c
     #    
@@ -76,7 +76,8 @@ def naiveBayes_train_single_class(trainingx, trainingy, c, L, dx):
     
 #-----------------------------------------------------------------------------  
 ##                          Naive Bayes Classifier
-#
+# p3(8) priors
+# p_k3(8): d rows correspond to 1D histograms pro class and dimension
 def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, L, dx):
     n = testx.shape[0]
     d = testx.shape[1]
@@ -87,7 +88,7 @@ def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, L, dx):
         x = testx[i,:]
         
         # p(y = 3| x)
-        
+        # p(y = 8| x)        
         p_y3_x = p3;
         p_y8_x = p8;
         for j in range(0,d):
@@ -98,8 +99,7 @@ def naiveBayesClassifier(testx, p3, p8, p_k3, p_k8, L, dx):
             p_y8_x *= p_k8[j][l-1]           
         # end for j
 
-        # argmax (p_y3_x, p_y8_x) 
-        #print p_y3_x
+        # argmax (p_y3_x, p_y8_x)
         if p_y3_x>p_y8_x :
             prediction[i] = 3
         else:

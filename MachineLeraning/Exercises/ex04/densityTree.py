@@ -69,7 +69,6 @@ def splitnaive(node):
     d = points.shape[1]
     n = points.shape[0]
     
-#    loss = np.zeros((n-1,d), dtype = np.float32 )
     nr = 40;
    
     loss = np.zeros((nr-1,d), dtype = np.float32 )
@@ -79,11 +78,9 @@ def splitnaive(node):
         ind = np.argsort(points[:,j])
 
         dx = (points[ind[n-1],j]-points[ind[0],j])/float(nr + 1)
-#        for i in range(0,n-1):
+
         for ii in range(0,nr-1):           
-#            i = np.random.randint(0,n-1);    
-#            eps = (points[ind[i+1],j]-points[ind[i],j])/2.
-#            splitval = (points[ind[i],j]+points[ind[i+1],j])/2.
+
             splitval = points[ind[0],j] + dx*(ii+1);
             splitvalues[ii,j] = splitval
             
@@ -105,8 +102,7 @@ def splitnaive(node):
                                                     splitval, j)
             nleft = pointsL.shape[0]
             nright = pointsR.shape[0]
-                
-                
+                                
             loss[ii,j] = np.square(nleft /float(n))*(volume(node.region)/volume(regionL)) + \
                          np.square(nright/float(n))*(volume(node.region)/volume(regionR))
         # end for i    
@@ -116,8 +112,7 @@ def splitnaive(node):
     valInd, dimInd  = np.where(loss==maxval)       
     splitval = splitvalues[valInd[0], dimInd[0]]    
        
-    return splitval, dimInd[0]
-    
+    return splitval, dimInd[0]    
 # end splitnaive
 
     
@@ -168,7 +163,8 @@ def splitclever(node, eps):
     
     return splitval, dimInd
 # end splitclever
-    
+#-----------------------------------------------------------------------------        
+#               Learn DT
 def DT_learning(trainingx, trainingy, c, splitmethod):
     
     print "Learning DT for the class {}". format(c)
@@ -215,11 +211,6 @@ def DT_learning(trainingx, trainingy, c, splitmethod):
                 splitval, splitdim = splitclever(currentnode, 0.5)            
             # end if clever
                  
-#            print "region {}". format([currentnode.region[0,0], \
-#                                        currentnode.region[0,1]])            
-#            print "       {}". format([currentnode.region[1,0], \
-#                                        currentnode.region[1,1]])                                                    
-#            print "split at {}, dim {}". format(splitval, splitdim)
 
             # new regions
             regionL = np.copy(currentnode.region)

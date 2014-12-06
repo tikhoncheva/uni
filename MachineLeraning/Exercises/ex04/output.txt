@@ -22,10 +22,10 @@ Size of the test set of 3s and 8s: (23964, 2)
 
 
 Confusion Matrix 
-[[ 9904.  2356.]
- [ 1796.  9904.]]
-Correct Classification rate on the test set:0.826573193123
-Error rate on the test set:0.173426806877
+[[ 9864.  2396.]
+ [ 1844.  9856.]]
+Correct Classification rate on the test set:0.822567184109
+Error rate on the test set:0.177432815891
 
 1.2 Generate Threes
 
@@ -36,38 +36,18 @@ Naive splitting
 
 Learning DT for the class 3
 Learning DT for the class 8
-DT learning time (naive splitting) 1.50906896591
-DT classification time (naive splitting) 24.8323800564
+DT learning time (naive splitting) 41.4063301086
+start classifier
+DT classification time (naive splitting) 2.90078306198
 
 Confusion Matrix 
-[[ 10008.   2252.]
- [  1694.  10008.]]
-Correct Classification rate on the test set:0.835252879319
-Error rate on the test set:0.164747120681
+[[  8768.   3496.]
+ [  1442.  10256.]]
+Correct Classification rate on the test set:0.793857452846
+Error rate on the test set:0.206142547154
 
 Generate new threes: 
 
-Learning DT for the class 3
-
 Clever splitting
 
-
-3 Combine DT and Naive Bayes
-
-
-Learning phase
-
-Learning 1D histograms and computing cdf's took 34.8788039684 sec
-Learning DT for the class 3
-Learning DT for the class 8
-Learning DTs took 0.0317490100861 sec
-
-Classification
-
-
-Confusion Matrix 
-[[     0.  10176.]
- [     0.   9664.]]
-Correct Classification rate on the test set:0.403271574028
-Error rate on the test set:0.596728425972
 >>> 
