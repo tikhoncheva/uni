@@ -68,16 +68,22 @@ def makeA_numpyArray(shape, alphas):
             indMin1 = np.argmin(dist)        
             dist1 = np.delete(dist, [indMin1])
             indMin2 = np.argmin(dist1)
+            
+            A[a*K+indMin1][i] += pixelcontribution*dist1[indMin2]/ \
+                                            (dist[indMin1]+dist1[indMin2])
+            A[a*K+indMin2][i] += pixelcontribution*dist[indMin1]/ \
+                                                (dist[indMin1]+dist1[indMin2])  
 
-            if np.abs(dist[indMin1]-0.5)> 0.1:
-                A[a*K+indMin1][i] += pixelcontribution
-            else :
-                # if ray meets sensor in between of two sensor pixels                          
-                # intensity of the ray is devided between those pixels
-                A[a*K+indMin1][i] += pixelcontribution*(dist[indMin1]/ \
-                                                (dist[indMin1]+dist1[indMin2]))
-                A[a*K+indMin2][i] += pixelcontribution*(dist1[indMin2]/ \
-                                                (dist[indMin1]+dist1[indMin2]))
+#            if np.abs(dist[indMin1] - 0.5)<= 0.1:
+#                # if ray meets sensor in between of two sensor pixels                          
+#                # intensity of the ray is devided between those pixels
+#               
+#                A[a*K+indMin1][i] += pixelcontribution*dist1[indMin2]/ \
+#                                                (dist[indMin1]+dist1[indMin2])
+#                A[a*K+indMin2][i] += pixelcontribution*dist[indMin1]/ \
+#                                                (dist[indMin1]+dist1[indMin2])                                                
+#            else :                                
+#                A[a*K+indMin1][i] += pixelcontribution                
             #end if                
         #end for i
     #end for alpha  
@@ -132,7 +138,7 @@ def makeA(shape, alphas):
             distToProj = np.abs(x*np.tan(ralpha)-y)/ \
                          np.sqrt(np.tan(ralpha)*np.tan(ralpha) + 1)
                          
-            pixelcontribution = N-distToProj
+            pixelcontribution = N-distToProj            
             
             #distance between projection of (x,y) and centers of the sensorpixel
             dist =  np.zeros(K, dtype = np.float32)            
@@ -143,17 +149,23 @@ def makeA(shape, alphas):
             indMin1 = np.argmin(dist)        
             dist1 = np.delete(dist, [indMin1])
             indMin2 = np.argmin(dist1)
+            
+            A[a*K+indMin1, i] += pixelcontribution*dist1[indMin2]/ \
+                                            (dist[indMin1]+dist1[indMin2])
+            A[a*K+indMin2, i] += pixelcontribution*dist[indMin1]/ \
+                                                (dist[indMin1]+dist1[indMin2])  
 
-            if np.abs(dist[indMin1]-0.5)> 0.1:
-                A[a*K+indMin1, i] += pixelcontribution
-            else :
-                # if ray meets sensor in between of two sensor pixels                          
-                # intensity of the ray is devided between those pixels
-                A[a*K+indMin1, i] += pixelcontribution*(dist[indMin1]/ \
-                                                (dist[indMin1]+dist1[indMin2]))
-                A[a*K+indMin2, i] += pixelcontribution*(dist1[indMin2]/ \
-                                                (dist[indMin1]+dist1[indMin2]))
-            #end if                
+#            if np.abs(dist[indMin1] - 0.5)<= 0.1:
+#                # if ray meets sensor in between of two sensor pixels                          
+#                # intensity of the ray is devided between those pixels
+#               
+#                A[a*K+indMin1, i] += pixelcontribution*dist1[indMin2]/ \
+#                                                (dist[indMin1]+dist1[indMin2])
+#                A[a*K+indMin2, i] += pixelcontribution*dist[indMin1]/ \
+#                                                (dist[indMin1]+dist1[indMin2])                                                
+#            else :                                
+#                A[a*K+indMin1][i] += pixelcontribution                
+            #end if                 
         #end for i
     #end for alpha  
                 
@@ -175,7 +187,7 @@ def main():
     plot.imshow(Atest, interpolation = 'nearest')
     plot.title("Matrix A")    
     plot.show()
-#    f.savefig("matrixA.png")
+    f.savefig("matrixA.png")
     
     
     print
@@ -189,14 +201,12 @@ def main():
     alphas_77 = np.load('y_77_alphas.npy')
     
     # construct matrix A
-    tstart = time.time()
-    
-    A_77 = makeA([N,N], alphas_77)
-    
+    tstart = time.time()    
+    A_77 = makeA([N,N], alphas_77)    
     tstop = time.time()
     print "makeA 77 took {} sec". format(tstop-tstart)
     
-    np.save('A_77_2.npy', A_77)
+    np.save('A_77.npy', A_77)
     
     # reconstruct x
     tstart = time.time()
@@ -206,51 +216,87 @@ def main():
     
     x_77 = resultLSQR[0]
     x_77 = np.reshape(x_77, (N,N))
-    np.save('x_77_2.npy', x_77)
+    np.save('x_77.npy', x_77)
     
     f = plot.figure()
     plot.gray()
     plot.imshow(x_77, interpolation = 'nearest')
     plot.title("Reconstructed x (77x77)")    
     plot.show()
-    f.savefig("x_77_2.png")
+    f.savefig("x_77.png")
     
-#    print "Experiment 2: x = 195x195"
-#  
-#    N = 195
-#    y_195 = np.load('y_195_195.npy')
-#    alphas_195 = np.load('y_195_195_alphas.npy')
-#    
-#    # construct matrix A
-#    tstart = time.time()    
-#    A_195 = makeA([N,N], alphas_195)    
-#    tstop = time.time()
-#    print "makeA 195 took {} sec". format(tstop-tstart)
-#    
-#    np.save('A_195.npy', A_195)
-#    
-#    # reconstruct x
-#    tstart = time.time()
-#    resultLSQR = lsqr(A_195, y_195)
-#    tstop = time.time()
-#    
-#    print "reconstruct x 195 took {} sec". format(tstop-tstart)
-#
-#    x_195 = resultLSQR[0]
-#    x_195 = np.reshape(x_195, (N,N))
-#    np.save('x_195.npy', x_195)
-#
-#    f = plot.figure()
-#    plot.gray()
-#    plot.imshow(x_195, interpolation = 'nearest')
-#    plot.title("Reconstructed x (195x195)")    
-#    plot.show()
-#    f.savefig("x_195.png")
+    print "Experiment 2: x = 195x195"
+  
+    N = 195
+    y_195 = np.load('y_195_195.npy')
+    alphas_195 = np.load('y_195_195_alphas.npy')
+    
+    # construct matrix A
+    tstart = time.time()    
+    A_195 = makeA([N,N], alphas_195)    
+    tstop = time.time()
+    print "makeA 195 took {} sec". format(tstop-tstart)
+    
+    np.save('A_195.npy', A_195)
+    
+    # reconstruct x
+    tstart = time.time()
+    resultLSQR = lsqr(A_195, y_195)
+    tstop = time.time()
+    
+    print "reconstruct x 195 took {} sec". format(tstop-tstart)
+
+    x_195 = resultLSQR[0]
+    x_195 = np.reshape(x_195, (N,N))
+    np.save('x_195.npy', x_195)
+
+    f = plot.figure()
+    plot.gray()
+    plot.imshow(x_195, interpolation = 'nearest')
+    plot.title("Reconstructed x (195x195)")    
+    plot.show()
+    f.savefig("x_195.png")
     
     print
     print "Minimization of the radiation dose"
     print
+
+    print "Experiment 1: x = 77x77"
     
+    N = 77 
+    y_77 = np.load('y_77_77.npy')
+    
+    alphas_77 = np.load('y_77_alphas.npy')
+    alphas_77 = alphas_77[0:alphas_77.shape[0]:2]
+    
+    y_77 = y_77[0:y_77.shape[0]:2]
+
+    # construct matrix A
+    tstart = time.time()    
+    A_77 = makeA([N,N], alphas_77)    
+    tstop = time.time()
+    
+    print "makeA 77 took {} sec". format(tstop-tstart)
+    
+    np.save('A_77r.npy', A_77)
+    
+    # reconstruct x
+    tstart = time.time()
+    resultLSQR = lsqr(A_77, y_77)
+    tstop = time.time()
+    print "reconstruct x 77 took {} sec". format(tstop-tstart)
+    
+    x_77 = resultLSQR[0]
+    x_77 = np.reshape(x_77, (N,N))
+    np.save('x_77r.npy', x_77)
+    
+    f = plot.figure()
+    plot.gray()
+    plot.imshow(x_77, interpolation = 'nearest')
+    plot.title("Reconstructed x (77x77)")    
+    plot.show()
+    f.savefig("x_77r.png")
+#    
  #end main
 
    

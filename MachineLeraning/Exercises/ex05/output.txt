@@ -1,0 +1,12 @@
+Construction of A
+
+Reconstruction of the Image
+
+Experiment 1: x = 77x77
+makeA 77 took 61.8150918484 sec
+reconstruct x 77 took 1.78464913368 sec
+Experiment 2: x = 195x195
+makeA 195 took 820.124564886 sec
+reconstruct x 195 took 535.404772997 sec
+
+Minimization of the radiation dose 

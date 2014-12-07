@@ -66,7 +66,7 @@ py = \tan(180^\circ-\alpha) px
 
 According to the values $(px,py)$ one decides, which sensor pixel receives the corresponding ray passing through the pixel $(x,y)$. The sensor pixel, which is the closest to the projection point, is selected. The value of this sensor pixel will be increased by the intensity of the ray. The intensity of the ray is a function of the distance between image pixel and sensor pixel. We used the function $f(dist) = N - dist$.
 
-If an ray crosses the sensor in between of two sensor pixels, than it's intensity is divided between those sensor pixel and absorbed value is calculated by the formula $\frac{intensity*dist_{s_i}}{dist_{s_1}+dist_{s_2}}$, where $intensity$ is the intensity of the ray, $dist_{s_i}$ is the distance between projection $(px, py)$ and center of the sensor pixel $s_i, i=1,2$.
+If an ray crosses the sensor in between of two centres of the sensor pixels, than it's intensity is divided between those sensor pixel and absorbed value is calculated by the formula $\frac{intensity*(dist_{s_1}+dist_{s_2} - dist_{s_i})}{dist_{s_1}+dist_{s_2}}$, where $intensity$ is the intensity of the ray, $dist_{s_i}$ is the distance between projection $(px, py)$ and center of the sensor pixel $s_i, i=1,2$.
 
 The listing of the function $makeA(shape, alphas)$ with $numpy$ arrays can be found below:
 
@@ -163,24 +163,37 @@ def makeA_numpyArray(shape, alphas):
 
 The results of the image reconstruction for two sets of arrays $(y,\alpha)$ are shown on the images \ref{img2} and \ref{img3}.
 
-\begin{figure}[ht]
+\begin{figure}[hb]
         \centering
-        \includegraphics[width=\textwidth]{../x_77.png}
+        \includegraphics[width=0.3\textwidth]{../x_77.png}
         \caption{Reconstruction of the image x ($77\times77$)}
         \label{img2}
 \end{figure}
+
 \FloatBarrier
 
 \begin{figure}[ht]
         \centering
-        %\includegraphics[width=\textwidth]{../x_195.png}
+        \includegraphics[width=0.3\textwidth]{../x_195.png}
         \caption{Reconstruction of the image x ($195\times195$)}
         \label{img3}
 \end{figure}
 \FloatBarrier
 
+From the first image we can recognize the patient H.S., but because of the image quality we cann't state the cause of the headache by the patient.
+Probably the reason for this is the calculation of the Ray intensity. We used simple line function (see section $1$).
 
 \section{Minimization of the radiation doze}
+
+By the image size $77\times 77$ we tried to reduce in half projection number. In this case it was not possible to recognize anything (see image \ref{img4}).
+
+\begin{figure}[htb]
+        \centering
+        \includegraphics[width=0.3\textwidth]{../x_77r.png}
+        \caption{Reconstruction of the image x ($77\times77$)}
+        \label{img4}
+\end{figure}
+\FloatBarrier
 
 \section{Listing $ex05.py$}
 \lstinputlisting[language=Python]{../ex05.py}
