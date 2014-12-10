@@ -34,7 +34,8 @@ for i=1:size(L1,1)
     d1(L1(i,2), L1(i,1)) = G1(i);
 end
 sigma1 = sum(d1(:))/size(find(d1(:)>0),1);
-d1 = exp(-d1./sigma1).*AdjM1;
+% d1 = exp(-d1./sigma1).*AdjM1;
+d1 = d1./sigma1;
 
 % distance matrix of the second graph
 d2 = zeros(nV2, nV2);
@@ -42,7 +43,8 @@ for i=1:size(L2,1)
     d2(L2(i,2), L2(i,1)) = G2(i);
 end
 sigma2 = sum(d2(:))/size(find(d2(:)>0),1);
-d2 = exp(-d2./sigma2).*AdjM2;
+% d2 = exp(-d2./sigma2).*AdjM2;
+d2 = d2./sigma2;
 
 ratio = sigma1/sigma2;
 
@@ -56,11 +58,12 @@ for ia=1:nAffMatrix
         j = L12(jb, 1);
         b = L12(jb, 2);
         
-        D(ia,jb) = exp(-(d1(i,j)-d2(a,b))^2)*0.5;
+        D(ia,jb) = exp(-(d1(i,j)-d2(a,b))^2/0.15);
     end
 end
 
-D(1:(nAffMatrix+1):end)= ones(size(matchInfo.sim)) - matchInfo.sim;
+D(1:(nAffMatrix+1):end)= zeros(nAffMatrix,1);
+% D(1:(nAffMatrix+1):end)= matchInfo.sim;
 
 % scale_2D = sum(D(:))/size(find(D(:)>0),1);
 % scale_2D = 0.5
