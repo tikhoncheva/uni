@@ -22,7 +22,7 @@ function varargout = ui1(varargin)
 
 % Edit the above text to modify the response to help ui1
 
-% Last Modified by GUIDE v2.5 10-Dec-2014 18:00:27
+% Last Modified by GUIDE v2.5 11-Dec-2014 18:37:17
 clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,32 +54,9 @@ function ui1_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for ui1
 handles.output = hObject;
-handles.img1selected = false;
-handles.img2selected = false;
 
-N = 2;
-% cell of the key points
-framesCell = cell(1,N); % Nx(6xK1) matrices
-framesCell{1} = [];
-framesCell{2} = [];
-% cell of the descriptors
-descrCell = cell(1,N); % Nx(128xK1) matrices
-descrCell{1} = [];
-descrCell{2} = [];
-% number of interest points in each image
-nV= zeros(N,1);
-
-matchInfo.match = [];
-matchInfo.dist = [];
-matchInfo.sim = [];
-
-handles.frames = framesCell;
-handles.descr = descrCell;
-handles.nV = nV;
-handles.matchInfo = matchInfo;
-handles.savepoints = false;
-
-% handles.matchInfo = matchInfo;
+resetcontrols(handles);
+resetaxes(handles);
 
 guidata(hObject,handles); 
 
@@ -89,7 +66,6 @@ guidata(hObject,handles);
 addpath('../../edges-master/');
 addpath(genpath('../../piotr_toolbox_V3.26/'));
 
-
 % VL_Library
 %  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
 addpath('/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/');
@@ -98,8 +74,6 @@ run vl_setup.m
 addpath([ '.' filesep 'Matching' ]);
 
 addpath(genpath(['..' filesep '..' filesep 'RRWM_release_v1.22']));
-
-set(handles.axes3,'Visible','off');   % Show Matching results
 
 % UIWAIT makes ui1 wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -133,56 +107,28 @@ function mOpenImg1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 [filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'File Selector');
 %global img1;
 if  ~strcmp(filename,'')
     set(handles.filename1, 'String', filename);
     img1 = imread([pathname filesep filename]);
-%     img1 = single(rgb2gray(img1));  % Convert the image to gray scale
+    
     handles.img1 = img1;
-
-%     img1 = repmat(img1,[1 1 3]);
-%     img1 = ind2rgb(img1, jet(256));
-    
-    axes(handles.axes1);
-    cla reset
-    imagesc(img1), axis off;
-
     handles.img1selected = 1;
-       
-    handles.matched = 0;
-    handles.matchInfo.match = [];
-    handles.matchInfo.dist = [];
-    handles.matchInfo.sim = [];
-
-    handles.frames{1} = [];
-    handles.frames{2} = [];
-    handles.descr{2} = [];
-    handles.descr{3} = [];    
     
-    guidata(hObject,handles); 
-    
-    axes(handles.axes3);
-    cla reset
-    axes(handles.axes4);
-    cla reset
-    axes(handles.axes5);
-    cla reset
-    axes(handles.axes6);
-    cla reset
-    
+    replotaxes(handles.axes1, img1);
     % if both images are selected
     if (handles.img2selected)
         set(handles.pushbuttonGetFeauters,'enable','on');
         
         % Plot two images together
         img2 = handles.img2;
-        axes(handles.axes6); 
         img3 = combine2images(img1, img2);
-        imagesc(img3);
+        replotaxes(handles.axes6, img3);
     end  
 end
+
+guidata(hObject,handles);
 % --------------------------------------------------------------------
 %
 %   Open image 2
@@ -197,45 +143,24 @@ function mOpenImg2_Callback(hObject, eventdata, handles)
 if  ~strcmp(filename,'')
     set(handles.filename2, 'String', filename);
     img2 = imread([pathname filesep filename]);
+
     handles.img2 = img2;
-
-    
-    axes(handles.axes2);
-    cla reset
-    imagesc(img2), axis off;
-
     handles.img2selected = 1;  
     
-    handles.matched = 0;
-    handles.matchInfo.match = [];
-    handles.matchInfo.dist = [];
-    handles.matchInfo.sim = [];
-
-    handles.frames{1} = [];
-    handles.frames{2} = [];
-    handles.descr{2} = [];
-    handles.descr{3} = [];
+    resetcontrols(handles);
+    resetaxes(handles);
 
     guidata(hObject,handles); 
     
-    axes(handles.axes3);
-    cla reset
-    axes(handles.axes4);
-    cla reset
-    axes(handles.axes5);
-    cla reset
-    axes(handles.axes6);
-    cla reset
-    
+    replotaxes(handles.axes2, img2);   
     % if both images are selected
     if (handles.img1selected)
         set(handles.pushbuttonGetFeauters,'enable','on');
         
         % Plot two images together
         img1 = handles.img1;
-        axes(handles.axes6); 
         img3 = combine2images(img1, img2);
-        imagesc(img3);
+        replotaxes(handles.axes6, img3);
     end  
 end
       
@@ -246,46 +171,21 @@ end
 %
 function pushbuttonGetFeauters_Callback(hObject, eventdata, handles)
 
-axes(handles.axes6);
-cla reset
-
-handles.matched = 0;
-guidata(hObject,handles); 
-
-
-set(handles.checkShowDG,'Value', 0);   % Show Dependency Graph
-set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
-set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
-
-set(handles.axes6,'Visible', 'on');
-set(handles.axes3,'Visible','off');   % Show Matching results
-set(handles.pushbuttonInitialMatch,'enable','on');
-set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
-set(handles.pbMatchingAlg,'Enable','off');   % Enable matching 
-
-% ---------------------------------------------------------------
-
-N = 2; % number of images
+handles = guidata(hObject);
+ 
 img1 = handles.img1;
 img2 = handles.img2;
 
-axes(handles.axes1);
-cla reset
-imagesc(img1), axis off;
-
-axes(handles.axes2);
-cla reset
-imagesc(img2), axis off;
+replotaxes(handles.axes1, img1);
+replotaxes(handles.axes2, img2);
 
 % edge points on each images
-edgesCell = cell(1,N);
+edgesCell = cell(1,2);
 
 % descriptors of the edge points on each images
-edgeDescrCell = cell(1,N);
+edgeDescrCell = cell(1,2);
 
 % Extract edge points
-
-
 [F1, D1] = computeDenseSIFT(img1);
 [F2, D2] = computeDenseSIFT(img2);
 
@@ -300,34 +200,41 @@ handles.edgeDescr = edgeDescrCell;
 handles.matched = 0;
 
 handles.savepoints = 0;
-
-guidata(hObject,handles);
+guidata(hObject,handles); 
 
 % Plot two images together
-axes(handles.axes6); 
-img3 = combine2images(img1, img2);
-imagesc(img3);
+% img3 = combine2images(img1, img2);
+% replotaxes(handles.axes6, img3); 
 
+% ---------------------------------------------------------------
+
+set(handles.axes3, 'Visible', 'off');
+set(handles.axes6,'Visible', 'on');    
+
+img3 = combine2images(img1,img2);
+replotaxes(handles.axes6, img3);
+
+set(handles.checkShowDG,'Value', 0);   % Show Dependency Graph
+set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
+
+
+set(handles.pbSelectPoints,'enable','on');
+set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
+% set(handles.pbMatchingAlg,'Enable','off');   % Enable matching 
+
+axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 
 
-% --- Executes on button press in pushbuttonInitialMatch.
+% --- Executes on button press in pbSelectPoints.
 % 
 % Show candidate matches py clicking on the point
 % (see also axes6_ButtonDownFcn)
 % 
-function pushbuttonInitialMatch_Callback(hObject, eventdata, handles)
-
-set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
-set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
-set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
-
-% ---------------------------------------------------------------
-
+function pbSelectPoints_Callback(hObject, eventdata, handles)
 handles = guidata(hObject);
-
-handles.matched = 0;
 
 % delete old points
 handles.matchInfo.match = [];
@@ -345,25 +252,17 @@ guidata(hObject,handles);
 
 img1 = handles.img1;
 img2 = handles.img2;
+img3 = combine2images(img1,img2);
+replotaxes(handles.axes6, img3);
+
+% ---------------------------------------------------------------
+set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
 
 axes(handles.axes6);
-cla reset
-% combine two images in one by putting them one next to the other
-ihight = max(size(img1,1),size(img2,1));
-if size(img1,1) < ihight
-    img1(ihight,1,1) = 0;
-end
-if size(img2,1) < ihight
-    img2(ihight,1,1) = 0;
-end
-
-img3 = cat(2,img1,img2);
-imagesc(img3);
-
 set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
-
 
 
 % --- Executes on mouse press over axes background.
@@ -372,9 +271,6 @@ set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
 % (see also axes6_ButtonDownFcn)
 % 
 function axes6_ButtonDownFcn(hObject, eventdata, handles)
-
-set(handles.axes3,'Visible','off');   % Show Matching results
-axes(handles.axes6);
 
 SetParameters;
 str=get(handles.edit3, 'String');
@@ -413,19 +309,10 @@ y = 2*floor(y/2) + 1;
 %  replot if user dont want to save points
 if ~handles.savepoints
     % replot background
-    cla reset
-    % combine two images in one by putting them one next to the other
-    ihight = max(size(img1,1),size(img2,1));
-    if size(img1,1) < ihight
-      img1(ihight,1,1) = 0;
-    end
-    if size(img2,1) < ihight
-      img2(ihight,1,1) = 0;
-    end
-
-    img3 = cat(2,img1,img2);
-    imagesc(img3)
+    img3 = combine2images(img1, img2);
+    replotaxes(handles.axes6, img3)
     
+    axes(handles.axes6);
     set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
     set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 end
@@ -520,6 +407,8 @@ if handles.savepoints
     handles.frames = framesCell;
     handles.descr = descrCell;
     handles.matchInfo = matchInfo; 
+    
+    guidata(hObject,handles); 
 end
 
 
@@ -529,13 +418,6 @@ end
 % Do matching algorithm on the selected points
 %
 function pbMatchingAlg_Callback(hObject, eventdata, handles)
-
-set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
-set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
-set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
-
-% ---------------------------------------------------------------
-
 handles = guidata(hObject);
 
 img1 = handles.img1;
@@ -622,16 +504,6 @@ for i=1:size(L12,1)
 end    
 
 
-% visialize results of matching
-set(handles.axes6,'Visible', 'off');   % Hide plot with selected points
-
-axes(handles.axes3);
-set(handles.axes3,'Visible','on');   % Show Matching results
-cla reset
-
-plotMatches(img1,img2, v1', v2', newCorrMatrix);     
-
-% ---------------------------------------------------------------
 handles.frames = framesCell;
 handles.descr = descrCell;
 handles.DG = DG;
@@ -641,15 +513,29 @@ handles.matched = 1;
 
 guidata(hObject,handles);
 
+% ---------------------------------------------------------------
 
-handles = guidata(hObject);
+% visialize results of matching
+set(handles.axes6,'Visible', 'off');   % Hide plot with selected points
+set(handles.axes3,'Visible','on');   % Show Matching results
+
+axes(handles.axes3);
+cla reset
+plotMatches(img1,img2, v1', v2', newCorrMatrix);     
+
+
 set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 
+set(handles.checkShowDG,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowInitM,'Value', 0);   % Show Initial Matches
+set(handles.checkboxShowNeighbors,'Value', 0);   % Show Neighbors
 
+set(handles.checkShowDG,'Enable','on');   % Show Initial Matches
 set(handles.checkboxShowInitM,'Enable','on');   % Show Initial Matches
 set(handles.checkboxShowNeighbors,'Enable','on');   % Show Neighbors
 set(handles.pushbuttonClearAll,'Enable','on');   % Show Matching results
+
 
 
 % --- Executes on mouse press over axes background.
@@ -664,8 +550,8 @@ function axes3_ButtonDownFcn(hObject, eventdata, handles)
 
 img1 = handles.img1;
 img2 = handles.img2;
+
 f = handles.frames;
-d = handles.descr;
 
 v1 = f{1}(1:2,:);
 v2 = f{2}(1:2,:);
@@ -675,8 +561,7 @@ nV2 = size(v2,2);
 
 initMatches = handles.InitialMatching;
 newMatches = handles.newMatching;
-      
-           
+                 
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
 m = cP(1,2);
@@ -729,13 +614,9 @@ else
     feature_nn_2 = feature_nn;     
     nn = find(matchNew(:,nn_2));
     feature_nn = f{1}(:,nn);
-end   
-      
-% vl_plotsiftdescriptor( d{1}(:,nn), feature_nn) ;
-% vl_plotsiftdescriptor( d{2}(:,nn_2), feature_nn_2) ;
-%       
+end      
 
-% cut patches
+% show patches
 R  = 15; % from vl_feat
 
 % second image
@@ -771,10 +652,6 @@ if showNeighbors
    nf1(nn,:) = DG{1}(nn,:);
     
    draw_graph(img, 'img1', f{1}, nf1);
-   
-   set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
-   set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})  
-   
 end
 
 axes(handles.axes3);
@@ -805,15 +682,9 @@ if checked
     draw_graph(img2, 'Image 2', framesCell{2}(1:2,:), DG{2});                                                  
                                                  
 else
-    
-    axes(handles.axes1);
-    imagesc(img1),colormap(gray), axis off;
-
-    axes(handles.axes2);
-    imagesc(img2),colormap(gray), axis off;
+    replotaxes(handles.axes1, img1);
+    replotaxes(handles.axes2, img2);
 end
-
-
 
 
 % --- Executes on button press in checkboxShowInitM.
@@ -854,7 +725,6 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 function pushbuttonClearAll_Callback(hObject, eventdata, handles)
 
 handles = guidata(hObject);
-set(handles.axes6, 'Visible', 'off');
 axes(handles.axes3);
 cla reset
 
@@ -871,23 +741,13 @@ if (handles.matched)
     plotMatches(img1,img2, v1', v2', newMatching);
 
 else
-    ihight = max(size(img1,1),size(img2,1));
-    if size(img1,1) < ihight
-        img1(ihight,1,1) = 0;
-    end
-    if size(img2,1) < ihight
-        img2(ihight,1,1) = 0;
-    end
-
-    img3 = cat(2,img1,img2);
-
-    imagesc(img3)
+    img3 = combine2images(img1, img2);
+    replotaxes(handles.axes3, img3);
 end
 
 set(gca,'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes3_ButtonDownFcn, handles})
 guidata(hObject,handles);
-% set(handles.axes6,'Visible', 'off');   % Hide plot with selected points
 
 
 % --- Executes on button press in pbSaveCurrentPoint.
@@ -931,33 +791,20 @@ guidata(hObject,handles);
 
 
 % --- Executes on button press in pbClear.
+%
+% plot combined image3
+%
 function pbClear_Callback(hObject, eventdata, handles)
-% hObject    handle to pbClear (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 handles = guidata(hObject);
-set(handles.axes3, 'Visible', 'off');
-axes(handles.axes6);
-cla reset
 
 img1 = handles.img1;
 img2 = handles.img2;
+img3 = combine2images(img1,img2);
 
+replotaxes(handles.axes6, img3);
 
-ihight = max(size(img1,1),size(img2,1));
-if size(img1,1) < ihight
-    img1(ihight,1,1) = 0;
-end
-
-if size(img2,1) < ihight
-    img2(ihight,1,1) = 0;
-end
-
-img3 = cat(2,img1,img2);
-
-imagesc(img3)
-
+axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 
@@ -980,9 +827,15 @@ matchInfo = handles.matchInfo;
 
 n = size(framesCell{1},2)
 
-save(sprintf('graph_n%d.mat', n) ,'framesCell',...
+[filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
+
+save([pathname filesep filename] ,'framesCell',...
                                   'descrCell', ...
                                   'matchInfo');
+
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 
 % --- Executes on button press in pbLoadPoints.
 %
@@ -1012,17 +865,6 @@ if  ~strcmp(filename,'')
     
     img1 = handles.img1;
     img2 = handles.img2;
-
-    ihight = max(size(img1,1),size(img2,1));
-    if size(img1,1) < ihight
-        img1(ihight,1,1) = 0;
-    end
-    if size(img2,1) < ihight
-        img2(ihight,1,1) = 0;
-    end
-
-    img3 = cat(2,img1,img2);
-    imagesc(img3);
     
     nV1 = size(framesCell{1},2);
     nV2 = size(framesCell{2},2);
@@ -1039,3 +881,85 @@ if  ~strcmp(filename,'')
     
     set(handles.pbMatchingAlg,'Enable','on');   % Enable matching 
 end
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+
+
+% --- Executes on button press in pbDeleteAllsPoints.
+%
+% Delete all selected points
+%
+function pbDeleteAllsPoints_Callback(hObject, eventdata, handles)
+
+% load current values
+handles = guidata(hObject);
+
+resetcontrols(handles);
+
+% update handles
+guidata(hObject,handles);
+
+
+% replot image
+img1 = handles.img1;
+img2 = handles.img2;
+img3 = combine2images(img1,img2);
+
+replotaxes(handles.axes6, img3);
+
+set(handles.pushbuttonGetFeauters,'enable','on');
+set(handles.pbSelectPoints,'enable','on');
+
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+
+
+
+% --- Executes on button press in pbShowsPoints.
+%
+% Show all selected points
+%
+function pbShowsPoints_Callback(hObject, eventdata, handles)
+
+% load current values
+handles = guidata(hObject);
+ 
+img1 = handles.img1;
+img2 = handles.img2;
+img3 = combine2images(img1,img2);
+
+v1 = handles.frames{1}(1:2,:);
+v2 = handles.frames{2}(1:2,:);
+
+imagesc(img3), hold on
+
+for i = 1:size(v1,2)
+    X1 = v1(1,i);
+    Y1 = v1(2,i);
+    rectangle('Position',[X1-1,Y1-1,3,3],'FaceColor','r');
+end 
+
+for i = 1:size(v2,2)
+    X2 = v2(1,i)+ size(img1,2);
+    Y2 = v2(2,i);
+    rectangle('Position',[X2-1,Y2-1,3,3],'FaceColor','r');
+end 
+
+
+% nV1 = size(handles.frames{1},2);
+% nV2 = size(handles.frames{2},2);
+% 
+% corrMatrix = zeros(nV1,nV2);
+% for ii = 1:size(matchInfo.match,2)
+%     corrMatrix(matchInfo.match(1,ii), matchInfo.match(2,ii) ) = 1;
+% end
+% 
+% plotMatches(img1,img2, v1', v2', corrMatrix);
+
+set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
+ 
+ 
+ 
