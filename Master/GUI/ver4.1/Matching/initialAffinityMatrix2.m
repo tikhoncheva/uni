@@ -1,8 +1,9 @@
 %% Function to compute initial affinity matrix between two graphs
 %
-%
+% v1 : 2 x nV1
+% v2 : 2 x nV2
 
-function [D, ratio] = initialAffinityMatrix(v1, v2, AdjM1, AdjM2, matchInfo)
+function [D, ratio] = initialAffinityMatri2(v1, v2, AdjM1, AdjM2, matchInfo)
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);
@@ -34,8 +35,6 @@ for i=1:size(L1,1)
     d1(L1(i,2), L1(i,1)) = G1(i);
 end
 sigma1 = sum(d1(:))/nV1/nV1;
-% sigma1 = sum(d1(:))/size(find(d1(:)>0),1);
-% d1 = exp(-d1./sigma1).*AdjM1;
 d1 = d1./sigma1;
 
 % distance matrix of the second graph
@@ -44,34 +43,34 @@ for i=1:size(L2,1)
     d2(L2(i,2), L2(i,1)) = G2(i);
 end
 sigma2 = sum(d2(:))/nV2/nV2;
-% sigma2 = sum(d2(:))/size(find(d2(:)>0),1);
-% d2 = exp(-d2./sigma2).*AdjM2;
 d2 = d2./sigma2;
-
-ratio = sigma1/sigma2
 
 % Affinity Matrix
 nAffMatrix = size(L12,1);
 D = zeros(nAffMatrix);
+D1 = zeros(nAffMatrix);
 for ia=1:nAffMatrix
     i = L12(ia, 1);
     a = L12(ia, 2);
     for jb=1:nAffMatrix
         j = L12(jb, 1);
         b = L12(jb, 2);
-        d1(i,j)
-        d2(a,b)
-%         D(ia,jb) = 0.5*exp(-(d1(i,j)-d2(a,b))^2/2500.);
-        D(ia,jb) = (d1(i,j)-d2(a,b))^2;
+        
+        D(ia,jb) = (dotsimilarity(v1(:,i)', v2(:,a)') ...
+                 + dotsimilarity(v1(:,j)', v2(:,b)') )/2.;  
+        D1(ia,jb) = exp(-(d1(i,j)-d2(a,b))^2/4.);     
     end
 end
 
-scale_2D = 1;
-D = exp(-(D)/scale_2D);
+% D = D1;
+D1 = max(D1(:)) - D1;
 
-D(1:(nAffMatrix+1):end)= zeros(nAffMatrix,1);
-% D(1:(nAffMatrix+1):end)= matchInfo.sim;
-% D(1:(nAffMatrix+1):end)= 1-(matchInfo.sim-min(matchInfo.sim(:)));
+D = D - D1;
+D(find(D<0)) = 0;
+
+%  D(1:(nAffMatrix+1):end)= zeros(nAffMatrix,1);
+%  D(1:(nAffMatrix+1):end)= matchInfo.sim;
+D(1:(nAffMatrix+1):end)= 1-(matchInfo.sim-min(matchInfo.sim(:)));
 
 D = D.*~full(conflictMatrix);
 

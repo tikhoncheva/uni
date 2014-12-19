@@ -106,9 +106,6 @@ function mOpen_Callback(hObject, eventdata, handles)
 %   open image 1
 %
 function mOpenImg1_Callback(hObject, eventdata, handles)
-% hObject    handle to mOpenImg2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 [filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
 %global img1;
@@ -130,6 +127,8 @@ if filename~=0
         replotaxes(handles.axes6, img3);
         
     end  
+    
+    set(handles.pbSaveCurrentPoint,'Enable','off');   % Save current point
 end
 
 guidata(hObject,handles);
@@ -138,9 +137,6 @@ guidata(hObject,handles);
 %   Open image 2
 %
 function mOpenImg2_Callback(hObject, eventdata, handles)
-% hObject    handle to mOpenImg2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 [filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'Select second image');
 
@@ -166,6 +162,8 @@ if  filename~=0
         img3 = combine2images(img1, img2);
         replotaxes(handles.axes6, img3);
     end  
+    
+    set(handles.pbSaveCurrentPoint,'Enable','off');   % Save current point
 end
       
 
@@ -198,6 +196,9 @@ edgesCell{2} = F2;
 
 edgeDescrCell{1} = D1;
 edgeDescrCell{2} = D2;
+
+% edgeDescrCell{2}(:, all( ~any(edgeDescrCell{2}), 1)) = []; % remove zero columns
+% edgesCell{2}(:, all( ~any(edgeDescrCell{2}), 1)) = []; % remove zero columns
 
 % load( 'frames.mat' , 'edgesCell', 'edgeDescrCell');
  
@@ -346,9 +347,8 @@ if (x <= size(img1,2) && y <= size(img1,1))
 %         [matches, sim] = matchSIFTdescr( double(edgeDesc{1}(:,ind(j))),...
 %                                            double(edgeDesc{2}),...
 %                                            mparam.kNN);
-                                       
-% N.B. : According to the similarity function we eliminate later
-% points with the biggest or smallest similarity values
+
+% Euclidian distance between descriptors
         diff = bsxfun(@minus,double(edgeDesc{2}),...
                              double(edgeDesc{1}(:,ind(j))));
         dist = sqrt(sum(diff.^2));
@@ -357,6 +357,18 @@ if (x <= size(img1,2) && y <= size(img1,1))
         
         sim = val(1:mparam.kNN);
         matches = nnInd(1:mparam.kNN);
+
+%         similarityVec = dotsimilarity( double(edgeDesc{1}(:,ind(j))'),...
+%                                            double(edgeDesc{2}'));                                  
+%         [val,nnInd] = sort(similarityVec, 'descend'); 
+%         
+%         sim = val(1:mparam.kNN);
+%         matches = nnInd(1:mparam.kNN);                                       
+
+
+% N.B. : According to the similarity function we eliminate later
+% points with the biggest or smallest similarity values
+
 %         dist = sum(abs(bsxfun(@minus,double(edgeDesc{2}),...
 %                                                double(edgeDesc{1}(:,ind(j))))));
 %         
@@ -462,9 +474,8 @@ set(handles.checkShowDG,'Enable','on');   % Show Dependency graph
     
 % compute initial affinity matrix
 
-[AffMatrix,ratio] = initialAffinityMatrix(v1, v2, DG{1}, DG{2}, matchInfo);
-% set(handles.editRatio,'String',ratio); 
-
+% [AffMatrix,ratio] = initialAffinityMatrix1(v1, v2, DG{1}, DG{2}, matchInfo);
+AffMatrix = initialAffinityMatrix2(v1, v2, DG{1}, DG{2}, matchInfo);
 
 
 % conflict groups
@@ -848,10 +859,11 @@ n = size(framesCell{1},2);
 
 [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 
-save([pathname filesep filename] ,'framesCell',...
-                                  'descrCell', ...
-                                  'matchInfo');
-
+if  filename~=0
+    save([pathname filesep filename] ,'framesCell',...
+                                      'descrCell', ...
+                                      'matchInfo');
+end
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
@@ -865,7 +877,7 @@ function pbLoadPoints_Callback(hObject, eventdata, handles)
 
 [filename, pathname] = uigetfile({'*.mat'}, 'File Selector');
 %global img1;
-if  ~strcmp(filename,'')
+if  filename~=0
     % read data from file
     load( [pathname filesep filename] ,'-mat', 'framesCell',...
                            'descrCell', ...

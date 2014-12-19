@@ -22,7 +22,7 @@ function remaining_features = eliminate_closed_features(coord, val)
         saveInd = equalP(ind);
         remaining_features(equalP(equalP~=saveInd)) = 0;
     end    
-% % 
+
 % %     % delete points that are too close to each other
 % %     % 
 % %     % distance matrix    
