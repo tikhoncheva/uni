@@ -22,7 +22,7 @@ function varargout = ui1(varargin)
 
 % Edit the above text to modify the response to help ui1
 
-% Last Modified by GUIDE v2.5 16-Jan-2015 17:45:16
+% Last Modified by GUIDE v2.5 16-Jan-2015 16:23:00
 clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -135,17 +135,14 @@ if filename~=0
         % Plot two images together
         img2 = handles.img2;
         img3 = combine2images(img1, img2);
-        
-        handles.img12SP = combine2images(handles.img1SP.boundary, ...
-                                         handles.img2SP.boundary);
         replotaxes(handles.axes6, img3);
         
     end  
     
-    guidata(hObject,handles); 
     set(handles.pbSaveCurrentPoint,'Enable','off');   % Save current point
 end
 
+guidata(hObject,handles);
 % --------------------------------------------------------------------
 %
 %   Open image 2
@@ -167,6 +164,8 @@ if  filename~=0
     
     handles = resetcontrols(handles);
     resetaxes(handles);
+
+    guidata(hObject,handles); 
     
     replotaxes(handles.axes2, img2);   
     % if both images are selected
@@ -176,14 +175,9 @@ if  filename~=0
         % Plot two images together
         img1 = handles.img1;
         img3 = combine2images(img1, img2);
-        
-        handles.img12SP = combine2images(handles.img1SP.boundary, ...
-                                         handles.img2SP.boundary);
-                                     
         replotaxes(handles.axes6, img3);
     end  
-   
-    guidata(hObject,handles); 
+    
     set(handles.pbSaveCurrentPoint,'Enable','off');   % Save current point
 end
       
@@ -308,7 +302,6 @@ mparam.kNN= str2num(str);
 knn = mparam.kNN;
 
 handles = guidata(hObject);
-
 % images
 img1 = handles.img1;
 img2 = handles.img2;
@@ -358,14 +351,11 @@ if (x <= size(img1,2) && y <= size(img1,1))
     vallist = []; %zeros(1, numel(ind)*knn);
   
     % do votig to stabilize the algorithm
-    [best_neighbors, best_neighbors_vals, img12SP] = votingSLIC([x,y], edges, edgeDesc,...
+    [best_neighbors, best_neighbors_vals] = votingSLIC([x,y], edges, edgeDesc,...
                                                        handles.img1SP, ...
                                                        handles.img2SP, ...
                                                        mparam);
-                                                      
-    handles.img12SP = img12SP;
     
-    axes(handles.axes6);
     for j = 1:numel(ind)
 %         [matches, sim] = crosscorelation( double(edgeDesc{1}(:,ind(j))),...
 %                                            double(edgeDesc{2}),...
@@ -448,7 +438,7 @@ if (x <= size(img1,2) && y <= size(img1,1))
     rectangle('Position',[x-3,y-3,6,6],'FaceColor','r');  
     
 end    
-
+    
 set(handles.pbSaveCurrentPoint,'Enable','on');   % Save current point
 
 
@@ -1050,18 +1040,19 @@ handles = guidata(hObject);
 
 img1 = handles.img1;
 img2 = handles.img2;
-img3 = combine2images(img1, img2);
+img3 = combine2images(img1SP.boundary, img2.boundary);
+
+img1SP = handles.img1SP;
+img2SP = handles.img2SP;
+img3SP = combine2images(img1SP.boundary, img2SP.boundary);
 
 checked = get(hObject,'Value');
 
 if checked 
-    replotaxes(handles.axes6, handles.img12SP);              
+    replotaxes(handles.axes6, img3SP);               
 else
     replotaxes(handles.axes6, img3);
 end
-
-set(gca,'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes6_ButtonDownFcn, handles})
 
 
 
@@ -1092,11 +1083,9 @@ nSP2 = str2num(str);
  img2SP.label, ...
  img2SP.boundary] = SLIC_Superpixels(im2uint8(img2), nSP2, 20);
 
-handles.img12SP = combine2images(img1SP.boundary, img2SP.boundary);
-
 % save new SP
 handles.img1SP = img1SP;   
-handles.img2SP = img2SP;   
+handles.img1SP = img1SP;   
 
 % delete frames
 handles.frames = cell(1,2);
@@ -1117,9 +1106,4 @@ handles.matchInfo.sim = [];
 
 set(handles.pbMatchingAlg,'Enable','off');   % Enable matching 
 
-if get(handles.checkboxSP,'Value'); 
-    replotaxes(handles.axes6, handles.img12SP);   
-end;    
-
 guidata(hObject,handles);
-
