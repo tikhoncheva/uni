@@ -1,4 +1,4 @@
-function votingSCLIC( point, edges, edgeDescr, SP1, SP2, mparam)
+function [best_neighbors, vals] = votingSCLIC( point, edges, edgeDescr, SP1, SP2, mparam)
 
 display('Voting');
 
@@ -56,26 +56,33 @@ linearInd = sub2ind(size(SP2.label), labels_coord(2,:), labels_coord(1,:));
 
 label_list = SP2.label(linearInd);
 
-for i=1:numel(neighborlist)
-    point_label2 = SP2.label(edges{2}(2, neighborlist(i)),edges{2}(1,neighborlist(i)));
- 
-    if isKey(votes,point_label2)
-        votes(point_label2) = votes(point_label2) + 1;
-    else     
-        votes(point_label2) = 1;
-    end
-    
-    [sameSP2x, sameSP2y] = find(SP2.label == point_label2);
+% for i=1:numel(neighborlist)
+%     point_label2 = SP2.label(edges{2}(2, neighborlist(i)),edges{2}(1,neighborlist(i)));
+%    
+%     [sameSP2x, sameSP2y] = find(SP2.label == point_label2);
+% 
+%     for j=1:size(sameSP2x,1)
+%         SP2.boundary(sameSP2x(j), sameSP2y(j), 1) = 255;
+%         SP2.boundary(sameSP2x(j), sameSP2y(j), 2:3) = 0;
+%     end
+% end
 
-    for j=1:size(sameSP2x,1)
-        SP2.boundary(sameSP2x(j), sameSP2y(j), 1) = 255;
-        SP2.boundary(sameSP2x(j), sameSP2y(j), 2:3) = 0;
-    end
+votes_labels = unique(label_list);
+votes_val = zeros(1, numel(votes_labels));
+for i = 1:numel(votes_labels)
+    votes_val(i) = numel( find(label_list==votes_labels(i)));
+end
+[val, I] = sort(votes_val, 'descend');
+
+best_votes = votes_labels(I(1:mparam.kNN));
+
+best_neighbors_ID = [];
+for l = 1:numel(best_votes)    
+    best_neighbors_ID = [best_neighbors_ID, find(label_list == best_votes(l) )];
 end
 
-votes = unique(label_list)
+best_neighbors = neighborlist(best_neighbors_ID);
+vals = vallist (best_neighbors_ID);
 
-
-% figure, imshow(SP2.boundary);
 
 end

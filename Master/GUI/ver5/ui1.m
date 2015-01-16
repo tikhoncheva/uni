@@ -351,7 +351,10 @@ if (x <= size(img1,2) && y <= size(img1,1))
     vallist = []; %zeros(1, numel(ind)*knn);
   
     % do votig to stabilize the algorithm
-    votingSLIC([x,y], edges, edgeDesc, handles.img1SP, handles.img2SP,mparam);
+    [best_neighbors, best_neighbors_vals] = votingSLIC([x,y], edges, edgeDesc,...
+                                                       handles.img1SP, ...
+                                                       handles.img2SP, ...
+                                                       mparam);
     
     for j = 1:numel(ind)
 %         [matches, sim] = crosscorelation( double(edgeDesc{1}(:,ind(j))),...
@@ -409,11 +412,16 @@ if (x <= size(img1,2) && y <= size(img1,1))
     end
     
     
+   
+    nnInd = eliminate_closed_features(edges{2}(1:2,best_neighbors), best_neighbors_vals);
+%     nnInd = eliminate_closed_features(edges{2}(1:2,neighborlist), vallist);
     
-    nnInd = eliminate_closed_features(edges{2}(1:2,neighborlist), vallist);
+%     newPoint.neighbors = neighborlist(nnInd);
+%     newPoint.simvals =  vallist(nnInd)';
     
-    newPoint.neighbors = neighborlist(nnInd);
-    newPoint.simvals =  vallist(nnInd)';
+
+    newPoint.neighbors = best_neighbors(nnInd);
+    newPoint.simvals =  best_neighbors_vals(nnInd)';
     
     newPoint.frame = edges{1}(:,nn);
     newPoint.descr = edgeDesc{1}(:,nn);
@@ -421,8 +429,8 @@ if (x <= size(img1,2) && y <= size(img1,1))
     newPoint.neighborsDescrs = edgeDesc{2}(:,newPoint.neighbors);
     
     for i = 1:numel(nnInd)
-        X2 = edges{2}(1,neighborlist(nnInd(i)))+ size(img1,2);
-        Y2 = edges{2}(2,neighborlist(nnInd(i)));
+        X2 = edges{2}(1,best_neighbors(nnInd(i)))+ size(img1,2);
+        Y2 = edges{2}(2,best_neighbors(nnInd(i)));
 
         line([x,X2],[y,Y2],'LineWidth',1,'Color','g');
         rectangle('Position',[X2-3,Y2-3,6,6],'FaceColor','r');
@@ -782,14 +790,14 @@ framesCell = handles.frames;
 descrCell = handles.descr;
 matchInfo = handles.matchInfo; 
 
-F1 = size(framesCell{1},2)+1;
-D2 = size(descrCell{2},2)+1;
+F1 = size(framesCell{1},2)+1;   % increase the number of frames
+D2 = size(descrCell{2},2)+1;    % increase the number of descr
 
 global newPoint
 
 % add new point to frames and descr on the first images
 framesCell{1} = [framesCell{1}, newPoint.frame];      
-descrCell{1} = [descrCell{1}, newPoint.descr];
+descrCell{1} =  [ descrCell{1}, newPoint.descr];
     
 nNewMatches = numel(newPoint.neighbors);
 maxsimval = 1; % max(newPoint.simvals(:));
