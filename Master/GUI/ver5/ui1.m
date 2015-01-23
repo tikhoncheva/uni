@@ -23,7 +23,7 @@ function varargout = ui1(varargin)
 % Edit the above text to modify the response to help ui1
 
 % Last Modified by GUIDE v2.5 16-Jan-2015 17:45:16
-clc;
+% clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -61,23 +61,25 @@ guidata(hObject,handles);
 % set parameters
 
 % Piotr Dollar toolbox
-addpath('../../edges-master/');
-addpath('../../edges-master/');
-addpath(genpath('../../piotr_toolbox_V3.26/'));
+addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
+
+% Edge extraction
+addpath(genpath('../../Tools/edges-master/'));
+
 
 % VL_Library
-%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
-addpath('/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/');
+addpath(genpath('../../Tools/vlfeat-0.9.20/toolbox/'));
 run vl_setup.m
 
 % SLIC 
-addpath('/export/home/etikhonc/Documents/SLIC_MATLAB/');
+addpath(genpath('../../Tools/SLIC_MATLAB/'));
 
+% Matching routines
+addpath(genpath([ './Matching' ]));
 
+% Graph matching algorithm
+addpath(genpath(['../../Tools/RRWM_release_v1.22']));
 
-addpath([ '.' filesep 'Matching' ]);
-
-addpath(genpath(['..' filesep '..' filesep 'RRWM_release_v1.22']));
 
 set(handles.axes3,'XTick',[]);
 set(handles.axes3,'YTick',[]);
