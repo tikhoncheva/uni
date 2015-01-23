@@ -62,7 +62,7 @@ end
 
 % select top kNN candidates
 [~, I] = sort(votes, 'descend');
-best_votes = unique_labels(I(1:mparam.kNN));
+best_votes = unique_labels(I(1:min(mparam.kNN, numel(I))));
 
 best_neighbors_ID = [];
 for i = 1:numel(best_votes)    

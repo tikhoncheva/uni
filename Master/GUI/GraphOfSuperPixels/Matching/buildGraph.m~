@@ -1,0 +1,29 @@
+% Construct dependency graph of a given image
+% 
+function G = buildGraph(edges, descr, imgSP)
+
+G.V = [];
+G.E = [];
+
+nV = size(edges,2);
+
+Labels = unique(imgSP.label);
+nLabels = numel(Labels);
+
+correspondenceMatrix = zeros(nLabels, nV);
+for i=1:nV
+    label = imgSP.label(edges(1,i), edges(2,i));
+    correspondenceMatrix(label,i) = 1;
+end
+correspondenceMatrix = sparse(correspondenceMatrix);
+
+% compute centers of superpixels
+for l = 1:nLabels
+    ind = find(correspondenceMatrix(l,:));
+    x = sum()/
+    y = sum()
+    
+    
+end
+
+end

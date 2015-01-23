@@ -22,8 +22,8 @@ function varargout = ui1(varargin)
 
 % Edit the above text to modify the response to help ui1
 
-% Last Modified by GUIDE v2.5 16-Jan-2015 17:45:16
-% clc;
+% Last Modified by GUIDE v2.5 23-Jan-2015 16:11:54
+clc;
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -70,16 +70,19 @@ addpath(genpath('../../Tools/edges-master/'));
 % VL_Library
 addpath(genpath('../../Tools/vlfeat-0.9.20/toolbox/'));
 run vl_setup.m
+clc;
 
 % SLIC 
 addpath(genpath('../../Tools/SLIC_MATLAB/'));
+clc;
 
 % Matching routines
-addpath(genpath([ './Matching' ]));
+addpath(genpath( './Matching' ));
+clc;
 
 % Graph matching algorithm
-addpath(genpath(['../../Tools/RRWM_release_v1.22']));
-
+addpath(genpath('../../Tools/RRWM_release_v1.22'));
+clc;
 
 set(handles.axes3,'XTick',[]);
 set(handles.axes3,'YTick',[]);
@@ -1124,4 +1127,3 @@ if get(handles.checkboxSP,'Value');
 end;    
 
 guidata(hObject,handles);
-
