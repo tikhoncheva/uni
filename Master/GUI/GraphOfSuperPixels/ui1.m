@@ -1,29 +1,9 @@
 function varargout = ui1(varargin)
-% UI1 MATLAB code for ui1.fig
-%      UI1, by itself, creates a new UI1 or raises the existing
-%      singleton*.
-%
-%      H = UI1 returns the handle to a new UI1 or the handle to
-%      the existing singleton*.
-%
-%      UI1('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in UI1.M with the given input arguments.
-%
-%      UI1('Property','Value',...) creates a new UI1 or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before ui1_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to ui1_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help ui1
+% Last Modified by GUIDE v2.5 28-Jan-2015 11:12:53
 
-% Last Modified by GUIDE v2.5 23-Jan-2015 16:23:30
 clc;
+
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -916,3 +896,14 @@ if get(handles.checkboxSP,'Value');
 end;    
 
 guidata(hObject,handles);
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+delete(hObject);
+close all force
