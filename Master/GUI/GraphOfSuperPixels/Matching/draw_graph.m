@@ -1,22 +1,19 @@
-function draw_graph(img, imgName, frames, adjMatrix, varargin)
+function draw_graph(img, imgName, G, varargin)
 
-    [v1,v2] = find(adjMatrix);
-    
-    %f1 = figure ; 
     if (ndims(img)>1)
         imagesc(img) ;
     end
         colormap(gray); 
         hold on ;
         axis off;
-       
-        for j = 1 : size(v1,1)
-            line([frames(1,v1(j)) frames(1,v2(j)) ],...
-                 [frames(2,v1(j)) frames(2,v2(j)) ],... % edges
-                                                            'Color', 'g');  
+        
+        for i=1:size(G.E, 1)
+            line([G.V(G.E(i,1),1) G.V(G.E(i,2),1) ],...
+                 [G.V(G.E(i,1),2) G.V(G.E(i,2),2) ], 'Color', 'b');  
         end
-        plot(frames(1,:),frames(2,:), 'r*')
-   % hold off;     
+       
+        plot(G.V(:,1),G.V(:,2), 'r*')
+   hold off;     
     
     % optionaly: save the image
     if nargin == 7 && strcmp(varargin{2}, 'true')
