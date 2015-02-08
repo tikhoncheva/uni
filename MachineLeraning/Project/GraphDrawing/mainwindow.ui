@@ -254,7 +254,7 @@ QGroupBox::title {
         </rect>
        </property>
        <property name="text">
-        <string>Step</string>
+        <string>Save img</string>
        </property>
       </widget>
      </widget>
@@ -325,7 +325,7 @@ QGroupBox::title {
   <customwidget>
    <class>matplotlibWidget</class>
    <extends>QWidget</extends>
-   <header>matplotlibwidgetDef.py</header>
+   <header>matplotlibwidged.py</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

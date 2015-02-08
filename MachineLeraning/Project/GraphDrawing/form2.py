@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Fri Feb  6 16:12:00 2015
+# Created: Sun Feb  8 19:15:45 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -187,7 +187,7 @@ class Ui_MainWindow(object):
         self.groupBox_GDrawing.setTitle(_translate("MainWindow", "Draw graph", None))
         self.pbuttonStart.setText(_translate("MainWindow", "Start", None))
         self.pbuttonStep.setText(_translate("MainWindow", "Step", None))
-        self.pbuttonSave.setText(_translate("MainWindow", "Step", None))
+        self.pbuttonSave.setText(_translate("MainWindow", "Save img", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
 
 from matplotlibwidged import matplotlibWidget
