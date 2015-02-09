@@ -13,6 +13,7 @@
 \usepackage{amsmath,amsfonts,amssymb}
 
 \usepackage{algorithm,algorithmic}
+\floatname{algorithm}{Algorithmus}
 
 \usepackage{tikz}
 	\usetikzlibrary[topaths,arrows,calc]
@@ -119,7 +120,7 @@
 \item Man möchte die angesehensten Seiten (Authorities) aus der Menge aller zu der Anfrage relevanten Seiten finden
 \item Mögliche Hindernisse:
 	\begin{itemize}
-	\item die meist relevanten Seiten werden nicht unbedingt durch ein textbasiertes Ranking vorgezogen
+	\item die höchst relevanten Seiten werden nicht unbedingt durch ein textbasiertes Ranking vorgezogen
 	\item es kann sein,  dass die relevanten Seiten die Wörter aus der Suchanfrage gar nicht enthalten
 	\end{itemize}
 \end{itemize}
@@ -135,7 +136,7 @@ Die Relevanz zwischen zwei Seiten wurde vom Ersteller des Links zwischen diesen 
 Stimmt im Allgemeinen nicht (z.B. Navigationslinks, Werbung)
 \vspace{10pt}
 
-Aber unter dieser Annahme reicht es nur die Linkstruktur des WWW zu betrachten, um die Autorität einer Seite im Bezug auf eine andere zu bestimmen
+Aber unter dieser Annahme reicht es, nur die Linkstruktur des WWW zu betrachten, um die Autorität einer Seite im Bezug auf eine andere zu bestimmen
 
 \frametitle{Authorities und Hubs}
 
@@ -204,7 +205,7 @@ Der Algorithmus besteht aus zwei Schritten:
 
 \subsection{Schritt $1$} 
 \begin{frame}
-\frametitle{Teilgraph vom WWW}
+\frametitle{Teilgraph des WWW}
 Wir stellen das ganze Web als gerichteten Graphen $G=(V,E)$ dar. Gesucht wird ein auf der Anfrage basierter Teilgraph des WWW
 
 \vspace{10pt}
@@ -229,7 +230,7 @@ Gesucht wird eine Menge $\mathbf{S_\sigma}$ von Seiten, die
 
 \begin{minipage}[0.2\textheight]{\textwidth}
 	\begin{columns}[T]
-		\begin{column}{0.6\textwidth}
+		\begin{column}{0.7\textwidth}
 
 			\begin{algorithm}[H]
 				\begin{algorithmic}[1]
@@ -249,7 +250,7 @@ Gesucht wird eine Menge $\mathbf{S_\sigma}$ von Seiten, die
 		\end{column}
 	\begin{column}{0.3\textwidth}
 		\begin{figure}
-		\vbox{ \begin{tikzpicture}
+		\vbox{ \begin{tikzpicture}[scale = 0.8]
 			\filldraw[red!45] (0.3, 0.2) ellipse(1cm and 0.8 cm);
 			
 			\node[] (v1) at ( 0.0, 0.0) {};\fill (v1) circle (2pt);
@@ -299,10 +300,9 @@ Gesucht wird eine Menge $\mathbf{S_\sigma}$ von Seiten, die
 
 \begin{minipage}[0.2\textheight]{\textwidth}
 	\begin{columns}[T]
-		\begin{column}{0.6\textwidth}
+		\begin{column}{0.7\textwidth}
 
 			\begin{algorithm}[H]
-				\renewcommand\thealgorithm{}
 				\begin{algorithmic}[1]
 				\fontsize{11pt}{7.2}\selectfont
 				\STATE $R_\sigma$ ist die Menge der \textcolor{maroon}{$\mathbf{t}$} besten Ergebnisse\\
@@ -313,6 +313,7 @@ Gesucht wird eine Menge $\mathbf{S_\sigma}$ von Seiten, die
 				\STATE $S_\sigma = S_\sigma \cup \{Menge\ der\ Seiten,\ auf\ die\ p\ zeigt \} $ \STATE $S_\sigma = S_\sigma \cup \{Menge\ der\ \textcolor{maroon}{\mathbf{d}}\ Seiten,\ die\ auf\ p\ zeigen \}$
 				\ENDFOR
 				\end{algorithmic}
+				\addtocounter{algorithm}{-1} 
 				\caption{Teilgraphen($\sigma$, $E$, $t$, $d$)\cite{Kleinberg} }
 
 			\end{algorithm}
@@ -451,7 +452,7 @@ Es werden zwei Operationen definiert:\\
 		\end{algorithm}
 		
 		
-		$x_i, y_i\in{\mathbb{R}^n}$ bezeichnen Authority- und Hubgewichte nach der $i-te$ Iteration des Algorithmus
+		$x_i, y_i\in{\mathbb{R}^n}$ bezeichnen Authority- und Hubgewichte nach der $i-ten$ Iteration des Algorithmus
 		
 		\centering
 		\vspace{5pt}
@@ -530,7 +531,7 @@ Aus dem Algorithmus folgt $\textcolor{maroon}{y_k = (AA^T)^kz}$\\
 \vspace{10pt}
 Sei $w_1(AA^T)$ der Haupteigenvektor von $AA^T$, d.h. Vektor zu dem betragsgrößten Eigenwert
 
-Man kann zeigen, dass der Vektor $z$ zu $w_1(AA^T)$ nicht orthogonal ist, und da die Matrix $AA^T$ symmetrisch ist, konvergiert die Folge $\{y_k\}$ gegen $w_1(AA^T)$ (Power Iteration, Potenzmethode \cite{PowerIteration}). Außerdem hat $w_1(AA^T)$ nur positive Einträge (siehe Peron-Frobenius Theorem)\\
+Man kann zeigen, dass der Vektor $z$ zu $w_1(AA^T)$ nicht orthogonal ist, und da die Matrix $AA^T$ symmetrisch ist, konvergiert die Folge $\{y_k\}$ gegen $w_1(AA^T)$ (Power Iteration, Potenzmethode \cite{PowerIteration}). Außerdem hat $w_1(AA^T)$ nur positive Einträge (siehe Perron-Frobenius Theorem)\\
 \vspace{10pt}
 Analog konvergiert $\textcolor{maroon}{x_k = (A^TA)^{k-1}A^Tz}$ gegen $w_1(A^TA)$\\
 
