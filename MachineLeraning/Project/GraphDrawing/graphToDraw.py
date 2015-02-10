@@ -14,6 +14,12 @@ class Graph():
     def display(self):
         for i in range(0,self.nV):
             print self.AdjM[i,:]
+            
+    def get_A(self):
+        return self.AdjM
+        
+    def get_n(self):
+        return self.nV
 # --------------------------------------------------------------------
             
 testMpaper = np.array([[np.Infinity,1,np.Infinity,np.Infinity,1,np.Infinity],

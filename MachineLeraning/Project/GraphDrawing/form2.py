@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sun Feb  8 19:15:45 2015
+# Created: Tue Feb 10 12:51:34 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -37,14 +37,14 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.labelResult_2 = QtGui.QLabel(self.centralwidget)
+        self.labelStart = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelResult_2.sizePolicy().hasHeightForWidth())
-        self.labelResult_2.setSizePolicy(sizePolicy)
-        self.labelResult_2.setObjectName(_fromUtf8("labelResult_2"))
-        self.gridLayout.addWidget(self.labelResult_2, 0, 1, 1, 1)
+        sizePolicy.setHeightForWidth(self.labelStart.sizePolicy().hasHeightForWidth())
+        self.labelStart.setSizePolicy(sizePolicy)
+        self.labelStart.setObjectName(_fromUtf8("labelStart"))
+        self.gridLayout.addWidget(self.labelStart, 0, 1, 1, 1)
         self.groupBox_InitialG = QtGui.QGroupBox(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
 "     subcontrol-origin: margin;\n"
 "     subcontrol-position: top center; /* position at the top center */\n"
 "     padding: 0 3px;\n"
-"    margin-top: 2px;\n"
+"    margin-top: 0px;\n"
 " }"))
         self.groupBox_InitialG.setObjectName(_fromUtf8("groupBox_InitialG"))
         self.textEdit_nV = QtGui.QTextEdit(self.groupBox_InitialG)
@@ -91,8 +91,11 @@ class Ui_MainWindow(object):
         self.textEdit_nE.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.textEdit_nE.setObjectName(_fromUtf8("textEdit_nE"))
         self.pButton_generateG = QtGui.QPushButton(self.groupBox_InitialG)
-        self.pButton_generateG.setGeometry(QtCore.QRect(30, 100, 81, 23))
+        self.pButton_generateG.setGeometry(QtCore.QRect(30, 90, 81, 23))
         self.pButton_generateG.setObjectName(_fromUtf8("pButton_generateG"))
+        self.pbuttonSave_InitialG = QtGui.QPushButton(self.groupBox_InitialG)
+        self.pbuttonSave_InitialG.setGeometry(QtCore.QRect(30, 120, 81, 23))
+        self.pbuttonSave_InitialG.setObjectName(_fromUtf8("pbuttonSave_InitialG"))
         self.gridLayout.addWidget(self.groupBox_InitialG, 1, 0, 1, 1)
         self.labelResult = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -103,6 +106,7 @@ class Ui_MainWindow(object):
         self.labelResult.setObjectName(_fromUtf8("labelResult"))
         self.gridLayout.addWidget(self.labelResult, 2, 1, 1, 1)
         self.groupBox_GDrawing = QtGui.QGroupBox(self.centralwidget)
+        self.groupBox_GDrawing.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -121,16 +125,19 @@ class Ui_MainWindow(object):
 "     subcontrol-origin: margin;\n"
 "     subcontrol-position: top center; /* position at the top center */\n"
 "     padding: 0 3px;\n"
-"    margin-top: 2px;\n"
+"    margin-top: 0px;\n"
 " }"))
         self.groupBox_GDrawing.setObjectName(_fromUtf8("groupBox_GDrawing"))
         self.pbuttonStart = QtGui.QPushButton(self.groupBox_GDrawing)
+        self.pbuttonStart.setEnabled(False)
         self.pbuttonStart.setGeometry(QtCore.QRect(40, 40, 61, 23))
         self.pbuttonStart.setObjectName(_fromUtf8("pbuttonStart"))
         self.pbuttonStep = QtGui.QPushButton(self.groupBox_GDrawing)
+        self.pbuttonStep.setEnabled(False)
         self.pbuttonStep.setGeometry(QtCore.QRect(40, 70, 61, 23))
         self.pbuttonStep.setObjectName(_fromUtf8("pbuttonStep"))
         self.pbuttonSave = QtGui.QPushButton(self.groupBox_GDrawing)
+        self.pbuttonSave.setEnabled(False)
         self.pbuttonSave.setGeometry(QtCore.QRect(40, 100, 61, 23))
         self.pbuttonSave.setObjectName(_fromUtf8("pbuttonSave"))
         self.gridLayout.addWidget(self.groupBox_GDrawing, 3, 0, 1, 1)
@@ -168,7 +175,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Force-directed graph drawing", None))
-        self.labelResult_2.setText(_translate("MainWindow", "Start", None))
+        self.labelStart.setText(_translate("MainWindow", "Start", None))
         self.groupBox_InitialG.setTitle(_translate("MainWindow", "Initial graph", None))
         self.textEdit_nV.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -183,6 +190,7 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">7</p></body></html>", None))
         self.pButton_generateG.setText(_translate("MainWindow", "generate", None))
+        self.pbuttonSave_InitialG.setText(_translate("MainWindow", "Save img", None))
         self.labelResult.setText(_translate("MainWindow", "Result: Step 0", None))
         self.groupBox_GDrawing.setTitle(_translate("MainWindow", "Draw graph", None))
         self.pbuttonStart.setText(_translate("MainWindow", "Start", None))
