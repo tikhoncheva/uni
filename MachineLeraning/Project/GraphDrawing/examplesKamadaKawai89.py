@@ -29,3 +29,18 @@ def examplePicture3a():
     return A
 # end examplePicture3a
     
+def examplePicture5a():
+    A = np.array([[np.Infinity,1,np.Infinity,np.Infinity,1,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity],
+                  [1,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,1,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,1,1],
+                  [np.Infinity,np.Infinity,1,np.Infinity,1,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity],
+                  [1,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity],
+                  [1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,np.Infinity,np.Infinity,1,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity,1],
+                  [np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity]])
+ 
+    return A
+# end examplePicture5
+    

@@ -47,29 +47,29 @@ def moveNode_m(n, p, k, l, eps, Ex, Ey, Delta_m, m):
             #end for i 
             Delta_m = np.sqrt(Ex[m]**2 + Ey[m]**2)
         # end while(Delta[m] > eps):
+            
     return p
 #End modeNode_m    
 
 
 # ---------------------------------------------------------------------------        
-def mainAlgorithm(n, p, k, l, eps):
-    nInterations = 0
+def mainAlgorithm(n, p, k, l, eps, nit):
+    maxit_outer=0 
     #compute the partial derivatives of energy function
-    Ex, Ey = dEnergyOfSprings(n, p, k, l)
-    
+    Ex, Ey = dEnergyOfSprings(n, p, k, l)    
     Delta = np.sqrt(Ex*Ex + Ey*Ey)
-
-    while(np.max(Delta)>eps):
+    
+    while(np.max(Delta)>eps and maxit_outer< nit):
         m = np.argmax(Delta)
         
         # 
         p = moveNode_m(n, p, k, l, eps, Ex, Ey, Delta[m], m)
         
-        nInterations += 1
+        maxit_outer += 1
         
         #recompute the partial derivatives of energy function
         Ex, Ey = dEnergyOfSprings(n, p, k, l)
         Delta = np.sqrt(Ex*Ex + Ey*Ey)    
     # end while(np.max(Delta)>eps):   
-    return p, nInterations
+    return p, maxit_outer
 # end newtonraphson    
