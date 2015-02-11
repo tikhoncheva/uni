@@ -47,6 +47,10 @@ addpath(genpath('../../Tools/SLIC_MATLAB/'));
 clc;
 
 
+% Additional functions
+addpath(genpath('./Matching'));
+clc;
+
 set(handles.axes1,'XTick',[]);
 set(handles.axes1,'YTick',[]);
 
@@ -79,7 +83,7 @@ if filename~=0
     
     [img1SP.num, ... 
      img1SP.label, ...
-     img1SP.boundary] = SLIC_Superpixels(im2uint8(img1), 1000, 20);
+     img1SP.boundary] = SLIC_Superpixels(im2uint8(img1),1000, 20);
  
     handles.img1 = img1;
     handles.img1SP = img1SP;   
@@ -118,6 +122,61 @@ edges(:, zerocol_ind) = [];
 handles.edges = edges;
 handles.edgeDescr = descr;
 
+
+
+% descr_dist = squareform(pdist(descr'));
+% size(descr_dist)
+% 
+% descr_dist_g_0 = descr_dist>0;
+% min_dist = min(descr_dist(descr_dist_g_0));
+% max_dist = max(descr_dist(descr_dist_g_0));
+% threshold = min_dist + 0.05*(max_dist - min_dist);
+% descr_dist2 = ~logical(descr_dist > threshold);
+% 
+% ind = [];
+% for j=1:size(descr_dist2,2)
+%    if (numel(find(descr_dist2(:,j)==0))>0)
+%        ind = [ind, j];
+%    end
+% end
+% 
+% CC = bwconncomp(descr_dist2);
+
+    
+% figure,
+%     imagesc(img1), hold on;
+%     plot(edges(1,:), edges(2, :), '*r')
+%     for cc=2:CC.NumObjects
+%         [x,y] = ind2sub(size(descr_dist2),CC.PixelIdxList{1,cc});
+%         for i=1:size(x, 1)
+%             line([edges(1,x(i)) edges(1,y(i)) ],...
+%                  [edges(2,x(i)) edges(2,y(i)) ], 'Color', 'b')
+%         end     
+%     end
+% 
+% hold off    
+
+
+% use knn - clustering algorithm to get rid of uninteresting points  
+
+% descr = double(descr);
+% colnorm = sqrt(sum(descr.^2,1));
+% for j=1:size(descr,2)
+%     descr(:,j) = descr(:,j) ./ colnorm(j);
+% end
+
+% k = 10;
+% [~, assignments] = vl_kmeans(G.D, k, 'verbose', 'distance', 'l2', 'algorithm', 'ann');
+% 
+% group1 = find(assignments==1);
+% group2 = find(assignments==2);
+% group3 = find(assignments==3);
+
+% figure, imagesc(imgSP.boundary), hold on;
+%     plot(G.V(group1,1),G.V(group1,2), 'r*')
+%     plot(G.V(group2,1),G.V(group2,2), 'g*')
+%     plot(G.V(group3,1),G.V(group3,2), 'b*')
+% hold off;
 % Build dependency graph
 
 DG1 = buildGraph(edges, descr, img1SP);
@@ -131,6 +190,50 @@ if get(handles.checkboxShowSP,'Value')
 else
     draw_graph(img1, 'Image 1', DG1);
 end
+
+% [IX,IY] = vl_grad(rgb2gray(img1));
+% img2 = IX.*IX + IY.*IY;
+% figure, imagesc(img2);
+% 
+% v1 = edges(1,:);
+% v2 = edges(2,:);
+% 
+% img3 = zeros(size(img2));
+% img3(sub2ind(size(img3),v2,v1))=img2(sub2ind(size(img2),v2,v1));
+% figure, imagesc(img3);
+% 
+% maxgradval = max(find(img3>0))
+
+% % v1 = DG1.E(:,1);
+% % v2 = DG1.E(:,2);
+% % n = size(DG1.V,1);
+% % % Adjazent matrix of the graph
+% % AdjM = zeros(n,n);
+% % AdjM(sub2ind([n,n],v1,v2))=1;
+% % 
+% % % find recursively rows with one 1 and set it to 0 until no such rows are
+% % % found
+% % flagDo = true;
+% % while flagDo
+% %     flagDo = false;
+% %     for i=1:n
+% %        nones = numel(find(AdjM(i,:)>0));
+% %        if nones <1
+% %           flagDo = true;
+% %           j = find(AdjM(i,:)>0);
+% %           AdjM(i,j) = 0; 
+% %           AdjM(j,i) = 0;
+% %        end
+% %     end    
+% %     
+% % end
+% % 
+% % [v1,v2] = find(AdjM>0);
+% % DG1.E = [v1,v2];
+% % 
+% % figure,
+% %     draw_graph(img1, 'Image 1', DG1);
+% % hold off;
 
 % Save all data
 guidata(hObject,handles);

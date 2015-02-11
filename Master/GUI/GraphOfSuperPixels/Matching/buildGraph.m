@@ -1,6 +1,10 @@
 % Construct dependency graph of a given image
 % 
 function G = buildGraph(edges, descr, imgSP)
+% edges 2x nEdgePoints
+% descr 128 x nEdgePoints
+% imgSP. boundary
+%      . labels
 
 % G = ((V,D),E) dependency graph
 G.V = [];   % vertices
@@ -74,6 +78,8 @@ dist(distNeg) = 0;
 [v1,v2] = find(dist>0);
 G.E = [v1,v2];
 
+
+
 % use knn - clustering algorithm to get rid of uninteresting points  
 
 % descr = double(descr);
@@ -82,18 +88,18 @@ G.E = [v1,v2];
 %     descr(:,j) = descr(:,j) ./ colnorm(j);
 % end
 
-k = 3;
-[~, assignments] = vl_kmeans(G.D, k, 'verbose', 'distance', 'l2', 'algorithm', 'ann');
+% k = 10;
+% [~, assignments] = vl_kmeans(G.D, k, 'verbose', 'distance', 'l2', 'algorithm', 'ann');
+% 
+% group1 = find(assignments==1);
+% group2 = find(assignments==2);
+% group3 = find(assignments==3);
 
-group1 = find(assignments==1);
-group2 = find(assignments==2);
-group3 = find(assignments==3);
-
-figure, imagesc(imgSP.boundary), hold on;
-    plot(G.V(group1,1),G.V(group1,2), 'r*')
-    plot(G.V(group2,1),G.V(group2,2), 'g*')
-    plot(G.V(group3,1),G.V(group3,2), 'b*')
-hold off;  
+% figure, imagesc(imgSP.boundary), hold on;
+%     plot(G.V(group1,1),G.V(group1,2), 'r*')
+%     plot(G.V(group2,1),G.V(group2,2), 'g*')
+%     plot(G.V(group3,1),G.V(group3,2), 'b*')
+% hold off;    
 
 
 end
