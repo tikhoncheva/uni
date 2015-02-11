@@ -2,8 +2,8 @@ function [F,D] = computeDenseSIFT(img)
     
 clc
 
-radius = 6 %2;
-thr = 0.0%0.05;
+radius = 2;
+thr = 0.05;
 
 load ../../Tools/edges-master/edgesModel.mat
 
