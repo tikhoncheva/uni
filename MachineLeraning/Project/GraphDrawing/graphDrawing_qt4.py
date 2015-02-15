@@ -8,11 +8,11 @@ from mainform import Ui_MainWindow
 import numpy as np
 import matplotlib.pyplot as plot  
 import random 
-      
-from floyed import *
 
-from graphToDraw import Graph
+from graphToDraw import *
 import examplesKamadaKawai89 
+
+from Algorithm_HarelKoren2002 import Algorithm_HarelKoren
 
 from Algorithm_KamadaKawai89 import mainAlgorithm as newtonraphson1
 from Algorithm_KamadaKawai89 import dEnergyOfSprings
@@ -97,14 +97,17 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.maxit = int(self.ui.textEdit_maxit.toPlainText())
         
         # calculate graph distance
-        self.dist = floyed(A,n)
+#        self.dist = floyed(A,n)
+        self.dist = dist_with_DijkstraAlg(A)
+
         
         # calculate desirable length of single edge
+        print np.max(self.dist)
         L = self.L_0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
-        self.k = self.K * 1./(self.dist**2) # ttention, infinity on diagonals, we dont need them so i dont care atm
+        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         
         # init coordinates
         self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
@@ -131,8 +134,9 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     def pButtonStart_clicked(self):
         
         self.pnew = (self.p).copy()
-#        self.pnew, self.step = newtonraphson1(self.l, self.p, self.k, self.G.get_n(), 0.0001)
-        self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
+        
+        self.pnew, self.step = Algorithm_HarelKoren(self.G, self.pnew)
+#        self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -195,7 +199,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
-        self.k = self.K * 1./(self.dist**2) # ttention, infinity on diagonals, we dont need them so i dont care atm
+        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         
         # init coordinates
         self.p = init_particles(self.G.get_n(), self.L_0)  #particles p1, ... ,pn
@@ -307,7 +311,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
-        self.k = self.K * 1./(self.dist**2) # ttention, infinity on diagonals, we dont need them so i dont care atm
+        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         
         # init coordinates
         self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
@@ -348,8 +352,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         L = self.L_0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
-        # calculate strength of spring between two nodes
-        self.k = self.K * 1./(self.dist**2) # ttention, infinity on diagonals, we dont need them so i dont care atm
+        # calculate strength of spring between two nodes        
+        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         
         # init coordinates
         self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
@@ -391,7 +395,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
-        self.k = self.K * 1./(self.dist**2) # ttention, infinity on diagonals, we dont need them so i dont care atm
+        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         
         # init coordinates
         self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
