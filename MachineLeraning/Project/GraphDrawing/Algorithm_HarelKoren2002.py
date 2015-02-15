@@ -78,13 +78,8 @@ def KCenters(G, dist, k):
 # L         current coordinates of nodes
 # radius    radius of neighborhood
 # maxit     maximum number of iterations
-def LocalLayouts(dist, p, radius, maxit):
+def LocalLayouts(dist, p, radius, K, L_0, eps, maxit):
     n = p.shape[1]     
-    
-    # constants
-    L_0 = 8
-    K   = 4
-    eps = 0.001
 
     pnew, step = Algorithm_KamadaKawai(n, p, radius, dist, K, L_0, eps, maxit)
     
@@ -97,7 +92,7 @@ def LocalLayouts(dist, p, radius, maxit):
 # L  random start layout (2xn)
 #
 #
-def Algorithm_HarelKoren(G, L):
+def Algorithm_HarelKoren(G, L, K, L_0, eps, maxit):
     print "Start Algorithm of Harel & Koren..."
 
     # constants
@@ -127,7 +122,7 @@ def Algorithm_HarelKoren(G, L):
         radius = max_min_dist(dist_local) * rad        
         
         # local refinement       
-        L_local =  LocalLayouts(dist_local, L_local, radius, it*n)
+        L_local =  LocalLayouts(dist_local, L_local, radius, K, L_0, eps, it*n)
         
         L[:, centers] = L_local
         for v in range(0,n):

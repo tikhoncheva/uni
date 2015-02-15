@@ -7,7 +7,7 @@ from mainform import Ui_MainWindow
 
 import numpy as np
 import matplotlib.pyplot as plot  
-import random 
+import time
 
 from graphToDraw import *
 import examplesKamadaKawai89 
@@ -77,6 +77,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.textEdit_L0.textChanged.connect(self.L0_changed)
         self.ui.textEdit_maxit.textChanged.connect(self.maxit_changed)
         
+        # select Algorithm
+        self.Alg_KamadaKawai = True
+        self.Alg_HarelKoren = False
+        self.connect(self.ui.rB_KamadaKawai, QtCore.SIGNAL('toggled(bool)'), self.select_Alg_KamadaKawai)
+        self.connect(self.ui.rB_HarelKoren, QtCore.SIGNAL('toggled(bool)'), self.select_Alg_HarelKoren)
     # end __init__
         
     # --------------------------------------------------------------------                 
@@ -97,12 +102,14 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.maxit = int(self.ui.textEdit_maxit.toPlainText())
         
         # calculate graph distance
+        starttime = time.time()
 #        self.dist = floyed(A,n)
         self.dist = dist_with_DijkstraAlg(A)
-
+        stoptime = time.time()
+        print "Time spent to calculate distance matrix of the graph ({0:5d} nodes): {1:0.6f} sec". format(n, stoptime-starttime)        
         
         # calculate desirable length of single edge
-        print np.max(self.dist)
+        
         L = self.L_0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
@@ -135,8 +142,13 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
         self.pnew = (self.p).copy()
         
-        self.pnew, self.step = Algorithm_HarelKoren(self.G, self.pnew)
-#        self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
+        starttime = time.time()
+        if self.Alg_KamadaKawai:
+            self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
+        else:
+            self.pnew, self.step = Algorithm_HarelKoren(self.G, self.pnew, self.K, self.L_0, self.eps, self.maxit)
+        stoptime = time.time()
+        print "Time spent to draw the graph ({0:5d} nodes): {1:0.6f} sec". format(self.G.get_n(), stoptime-starttime)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -437,7 +449,30 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     def maxit_changed(self):
         self.ui.pbuttonStart.setEnabled(False)
         self.ui.pbuttonStep.setEnabled(False)    
-    #end maxit_changed    
+    #end maxit_changed 
+        
+    # -------------------------------------------------------------------- 
+    # select Algorithm
+    # --------------------------------------------------------------------      
+        
+    def select_Alg_KamadaKawai(self):
+        if self.ui.rB_KamadaKawai.isChecked():
+            self.Alg_KamadaKawai = True
+            self.Alg_HarelKoren = False
+        else:
+            self.Alg_KamadaKawai = False
+            self.Alg_HarelKoren = True
+    #end select_Alg_KamadaKawai(self):
+    
+    def select_Alg_HarelKoren(self):
+        if self.ui.rB_HarelKoren.isChecked():
+            self.Alg_KamadaKawai = False
+            self.Alg_HarelKoren = True
+        else:
+            self.Alg_KamadaKawai = True
+            self.Alg_HarelKoren = False    #end select_Alg_HarelKoren(self):    
+        
+    
 # end class MyWindowClass
 # ---------------------------------------------------------------------------
 

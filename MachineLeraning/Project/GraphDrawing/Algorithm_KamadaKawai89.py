@@ -1,7 +1,8 @@
-
+# -*- coding: utf-8 -*-
 """
-Graph Drawing Algorithm from T.Kamada & S.Kawai "An Algorithm for drawing general
-undirected graphs", 1988 
+Created on Tue Feb 10 08:43:24 2015
+
+@author: kitty
 """
 
 import numpy as np
