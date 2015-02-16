@@ -3,6 +3,7 @@
 #
 
 import numpy as np
+import time
 
 def k_neighborhood(v, dist, k):
 
@@ -13,6 +14,7 @@ def k_neighborhood(v, dist, k):
     
     
 def floyed(A,n):
+    starttime = time.time()
     
     dist = np.array(A)  #A is given as Gewichtsmatrix 
     for k in range(n):
@@ -20,6 +22,9 @@ def floyed(A,n):
             for j in range(n):
                 dist[i,j] = min(dist[i,j],dist[i,k]+dist[k,j])
     dist[range(n),range(n)] = 0
+    
+    stoptime = time.time()
+    print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Floyed Alg: {1:0.6f} sec". format(n, stoptime-starttime)    
     
     return dist
 # end floyed
@@ -50,11 +55,17 @@ def dijkstra(A,start):
 #end dijkstra    
     
 def dist_with_DijkstraAlg(A):
+    starttime = time.time()
+    
     n = A.shape[0]
     dist = np.zeros((n,n), dtype = np.float32)
     for i in range(0,n):
         dist[i] = dijkstra(A,i) 
     # end for i
+        
+    stoptime = time.time()
+    print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
+    
     return dist
 #end dist_with_DijkstraAlg(A):
     

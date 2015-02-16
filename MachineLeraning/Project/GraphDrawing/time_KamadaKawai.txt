@@ -1,0 +1,16 @@
+ Example1
+ Time spent to draw the graph (    6 nodes): 0.092868 sec
+ 
+ Example2
+ Time spent to draw the graph (   10 nodes): 0.221373 sec
+ 
+ Example3 (maxit lim)
+ Time spent to draw the graph (   10 nodes): 4.170833 sec
+ 
+ TTime spent to draw the graph (    3 nodes): 0.007920 sec and    6 steps
+ Time spent to draw the graph (    7 nodes): 0.081720 sec and   30 steps
+ Time spent to draw the graph (   15 nodes): 1.176438 sec and  131 steps
+ Time spent to draw the graph (   31 nodes): 10.930632 sec and  323 steps
+ Time spent to draw the graph (   63 nodes): 87.323984 sec and  772 steps
+ 
+Time spent to draw the graph (  255 nodes): 2017.661579 sec and 1000 steps

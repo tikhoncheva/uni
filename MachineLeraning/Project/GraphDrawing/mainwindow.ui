@@ -134,9 +134,9 @@ QGroupBox::title {
  }</string>
       </property>
       <property name="title">
-       <string>Initial graph</string>
+       <string>Initial binary tree</string>
       </property>
-      <widget class="QTextEdit" name="textEdit_nV">
+      <widget class="QTextEdit" name="textEdit_h">
        <property name="geometry">
         <rect>
          <x>60</x>
@@ -178,7 +178,7 @@ p, li { white-space: pre-wrap; }
         </rect>
        </property>
        <property name="text">
-        <string>|V| = </string>
+        <string>Height</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_2">
@@ -191,10 +191,13 @@ p, li { white-space: pre-wrap; }
         </rect>
        </property>
        <property name="text">
-        <string>|E| = </string>
+        <string>|V| = </string>
        </property>
       </widget>
-      <widget class="QTextEdit" name="textEdit_nE">
+      <widget class="QTextEdit" name="textEdit_nV">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>60</x>
@@ -247,6 +250,9 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
       <widget class="QGroupBox" name="groupBox_Algorithm">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -321,6 +327,22 @@ QGroupBox::title {
          <string>Harel_Koren</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QCheckBox" name="cBox_ShowLabels">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>125</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>show labels</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </widget>
     </item>
@@ -668,14 +690,29 @@ p, li { white-space: pre-wrap; }
      <height>20</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar{
+background: rgb(199, 199, 199)
+}</string>
+   </property>
    <widget class="QMenu" name="menuExamples">
     <property name="title">
      <string>Examples</string>
     </property>
+    <widget class="QMenu" name="menuScotch_collection">
+     <property name="title">
+      <string>Scotch collection</string>
+     </property>
+     <addaction name="action3elt_Graph"/>
+     <addaction name="action4elt_Graph"/>
+     <addaction name="actionCrack"/>
+    </widget>
     <addaction name="actionExample_1"/>
     <addaction name="actionExample_2"/>
     <addaction name="separator"/>
     <addaction name="actionExample_3"/>
+    <addaction name="separator"/>
+    <addaction name="menuScotch_collection"/>
    </widget>
    <addaction name="menuExamples"/>
   </widget>
@@ -704,6 +741,21 @@ p, li { white-space: pre-wrap; }
   <action name="actionExample_3">
    <property name="text">
     <string>Example 3</string>
+   </property>
+  </action>
+  <action name="action3elt_Graph">
+   <property name="text">
+    <string>3elt Graph</string>
+   </property>
+  </action>
+  <action name="action4elt_Graph">
+   <property name="text">
+    <string>4elt Graph</string>
+   </property>
+  </action>
+  <action name="actionCrack">
+   <property name="text">
+    <string>Crack</string>
    </property>
   </action>
  </widget>

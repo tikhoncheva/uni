@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sun Feb 15 20:35:34 2015
+# Created: Mon Feb 16 21:30:53 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,29 +97,30 @@ class Ui_MainWindow(object):
 "    margin-top: 0px;\n"
 " }"))
         self.groupBox_InitialG.setObjectName(_fromUtf8("groupBox_InitialG"))
-        self.textEdit_nV = QtGui.QTextEdit(self.groupBox_InitialG)
-        self.textEdit_nV.setGeometry(QtCore.QRect(60, 20, 61, 21))
+        self.textEdit_h = QtGui.QTextEdit(self.groupBox_InitialG)
+        self.textEdit_h.setGeometry(QtCore.QRect(60, 20, 61, 21))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.textEdit_nV.sizePolicy().hasHeightForWidth())
-        self.textEdit_nV.setSizePolicy(sizePolicy)
-        self.textEdit_nV.setInputMethodHints(QtCore.Qt.ImhDigitsOnly)
-        self.textEdit_nV.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEdit_nV.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEdit_nV.setObjectName(_fromUtf8("textEdit_nV"))
+        sizePolicy.setHeightForWidth(self.textEdit_h.sizePolicy().hasHeightForWidth())
+        self.textEdit_h.setSizePolicy(sizePolicy)
+        self.textEdit_h.setInputMethodHints(QtCore.Qt.ImhDigitsOnly)
+        self.textEdit_h.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEdit_h.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEdit_h.setObjectName(_fromUtf8("textEdit_h"))
         self.label = QtGui.QLabel(self.groupBox_InitialG)
         self.label.setGeometry(QtCore.QRect(10, 20, 41, 21))
         self.label.setObjectName(_fromUtf8("label"))
         self.label_2 = QtGui.QLabel(self.groupBox_InitialG)
         self.label_2.setGeometry(QtCore.QRect(10, 40, 41, 21))
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.textEdit_nE = QtGui.QTextEdit(self.groupBox_InitialG)
-        self.textEdit_nE.setGeometry(QtCore.QRect(60, 40, 61, 21))
-        self.textEdit_nE.setInputMethodHints(QtCore.Qt.ImhDigitsOnly)
-        self.textEdit_nE.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEdit_nE.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textEdit_nE.setObjectName(_fromUtf8("textEdit_nE"))
+        self.textEdit_nV = QtGui.QTextEdit(self.groupBox_InitialG)
+        self.textEdit_nV.setEnabled(False)
+        self.textEdit_nV.setGeometry(QtCore.QRect(60, 40, 61, 21))
+        self.textEdit_nV.setInputMethodHints(QtCore.Qt.ImhDigitsOnly)
+        self.textEdit_nV.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEdit_nV.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textEdit_nV.setObjectName(_fromUtf8("textEdit_nV"))
         self.pButton_generateG = QtGui.QPushButton(self.groupBox_InitialG)
         self.pButton_generateG.setGeometry(QtCore.QRect(30, 70, 81, 23))
         self.pButton_generateG.setObjectName(_fromUtf8("pButton_generateG"))
@@ -127,6 +128,7 @@ class Ui_MainWindow(object):
         self.pbuttonSave_InitialG.setGeometry(QtCore.QRect(30, 100, 81, 23))
         self.pbuttonSave_InitialG.setObjectName(_fromUtf8("pbuttonSave_InitialG"))
         self.groupBox_Algorithm = QtGui.QGroupBox(self.groupBox_InitialG)
+        self.groupBox_Algorithm.setEnabled(False)
         self.groupBox_Algorithm.setGeometry(QtCore.QRect(0, 150, 150, 100))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -157,6 +159,10 @@ class Ui_MainWindow(object):
         self.rB_HarelKoren = QtGui.QRadioButton(self.groupBox_Algorithm)
         self.rB_HarelKoren.setGeometry(QtCore.QRect(10, 50, 121, 21))
         self.rB_HarelKoren.setObjectName(_fromUtf8("rB_HarelKoren"))
+        self.cBox_ShowLabels = QtGui.QCheckBox(self.groupBox_InitialG)
+        self.cBox_ShowLabels.setGeometry(QtCore.QRect(10, 125, 111, 21))
+        self.cBox_ShowLabels.setChecked(True)
+        self.cBox_ShowLabels.setObjectName(_fromUtf8("cBox_ShowLabels"))
         self.gridLayout.addWidget(self.groupBox_InitialG, 1, 0, 1, 1)
         self.groupBox_GDrawing = QtGui.QGroupBox(self.centralwidget)
         self.groupBox_GDrawing.setEnabled(True)
@@ -271,9 +277,14 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 530, 20))
+        self.menubar.setStyleSheet(_fromUtf8("QMenuBar{\n"
+"background: rgb(199, 199, 199)\n"
+"}"))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuExamples = QtGui.QMenu(self.menubar)
         self.menuExamples.setObjectName(_fromUtf8("menuExamples"))
+        self.menuScotch_collection = QtGui.QMenu(self.menuExamples)
+        self.menuScotch_collection.setObjectName(_fromUtf8("menuScotch_collection"))
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
@@ -284,10 +295,21 @@ class Ui_MainWindow(object):
         self.actionExample_2.setObjectName(_fromUtf8("actionExample_2"))
         self.actionExample_3 = QtGui.QAction(MainWindow)
         self.actionExample_3.setObjectName(_fromUtf8("actionExample_3"))
+        self.action3elt_Graph = QtGui.QAction(MainWindow)
+        self.action3elt_Graph.setObjectName(_fromUtf8("action3elt_Graph"))
+        self.action4elt_Graph = QtGui.QAction(MainWindow)
+        self.action4elt_Graph.setObjectName(_fromUtf8("action4elt_Graph"))
+        self.actionCrack = QtGui.QAction(MainWindow)
+        self.actionCrack.setObjectName(_fromUtf8("actionCrack"))
+        self.menuScotch_collection.addAction(self.action3elt_Graph)
+        self.menuScotch_collection.addAction(self.action4elt_Graph)
+        self.menuScotch_collection.addAction(self.actionCrack)
         self.menuExamples.addAction(self.actionExample_1)
         self.menuExamples.addAction(self.actionExample_2)
         self.menuExamples.addSeparator()
         self.menuExamples.addAction(self.actionExample_3)
+        self.menuExamples.addSeparator()
+        self.menuExamples.addAction(self.menuScotch_collection.menuAction())
         self.menubar.addAction(self.menuExamples.menuAction())
         self.toolBar.addSeparator()
 
@@ -298,15 +320,15 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Force-directed graph drawing", None))
         self.labelStart.setText(_translate("MainWindow", "Start", None))
         self.labelResult.setText(_translate("MainWindow", "Result: Step 0", None))
-        self.groupBox_InitialG.setTitle(_translate("MainWindow", "Initial graph", None))
-        self.textEdit_nV.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.groupBox_InitialG.setTitle(_translate("MainWindow", "Initial binary tree", None))
+        self.textEdit_h.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">6</p></body></html>", None))
-        self.label.setText(_translate("MainWindow", "|V| = ", None))
-        self.label_2.setText(_translate("MainWindow", "|E| = ", None))
-        self.textEdit_nE.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.label.setText(_translate("MainWindow", "Height", None))
+        self.label_2.setText(_translate("MainWindow", "|V| = ", None))
+        self.textEdit_nV.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
@@ -316,6 +338,7 @@ class Ui_MainWindow(object):
         self.groupBox_Algorithm.setTitle(_translate("MainWindow", "Algorithm", None))
         self.rB_KamadaKawai.setText(_translate("MainWindow", "Kamada_Kawai", None))
         self.rB_HarelKoren.setText(_translate("MainWindow", "Harel_Koren", None))
+        self.cBox_ShowLabels.setText(_translate("MainWindow", "show labels", None))
         self.groupBox_GDrawing.setTitle(_translate("MainWindow", "Draw graph", None))
         self.pbuttonStart.setText(_translate("MainWindow", "Run", None))
         self.pbuttonStep.setText(_translate("MainWindow", "Step", None))
@@ -348,10 +371,14 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1000</p></body></html>", None))
         self.label_max_it.setText(_translate("MainWindow", "maxit", None))
         self.menuExamples.setTitle(_translate("MainWindow", "Examples", None))
+        self.menuScotch_collection.setTitle(_translate("MainWindow", "Scotch collection", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.actionExample_1.setText(_translate("MainWindow", "Example 1", None))
         self.actionExample_2.setText(_translate("MainWindow", "Example 2", None))
         self.actionExample_3.setText(_translate("MainWindow", "Example 3", None))
+        self.action3elt_Graph.setText(_translate("MainWindow", "3elt Graph", None))
+        self.action4elt_Graph.setText(_translate("MainWindow", "4elt Graph", None))
+        self.actionCrack.setText(_translate("MainWindow", "Crack", None))
 
 from matplotlibwidged import matplotlibWidget
 

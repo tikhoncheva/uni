@@ -26,61 +26,53 @@ def dEnergyOfSprings(n, p, radius, dist, k, l):
 
 
 # ---------------------------------------------------------------------------
-def moveNode_m(n, p, radius, dist, k, l, eps, Ex, Ey, Delta_m, m):
-    
-    while(Delta_m > eps):
-            Hess = np.zeros([2,2])
-            for i in k_neighborhood(m, dist, radius):
-                Hess[0,0] += k[m,i] * (1 - l[m,i] *(p[1,m] - p[1,i])**2                / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 )  
-                Hess[1,1] += k[m,i] * (1 - l[m,i] *(p[0,m] - p[0,i])**2                / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 )  
-                Hess[0,1] += k[m,i] * (    l[m,i] *(p[1,m] - p[1,i])*(p[0,m] - p[0,i]) / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 ) 
-            # end for i
-            Hess[1,0]=Hess[0,1]
+def moveNode_m(n, p, radius, dist, k, l, Ex, Ey, Delta_m, m):
+        
+    Hess = np.zeros([2,2])
+    for i in k_neighborhood(m, dist, radius):
+        Hess[0,0] += k[m,i] * (1 - l[m,i] *(p[1,m] - p[1,i])**2                / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 )  
+        Hess[1,1] += k[m,i] * (1 - l[m,i] *(p[0,m] - p[0,i])**2                / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 )  
+        Hess[0,1] += k[m,i] * (    l[m,i] *(p[1,m] - p[1,i])*(p[0,m] - p[0,i]) / ((p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)**1.5 ) 
+    # end for i
+    Hess[1,0]=Hess[0,1]
             
-            incr = np.linalg.solve(Hess, np.array([-Ex[m],-Ey[m]]))
-            p[:,m] = p[:,m] + incr.T
+    incr = np.linalg.solve(Hess, np.array([-Ex[m],-Ey[m]]))
+    p[:,m] = p[:,m] + incr.T
 
-            # recalculate Delta[m]
-            Ex[m] = 0  
-            Ey[m] = 0
-            for i in k_neighborhood(m, dist, radius):
-                Ex[m] += k[m,i] * ((p[0,m] - p[0,i]) - l[m,i] *(p[0,m] - p[0,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) ) 
-                Ey[m] += k[m,i] * ((p[1,m] - p[1,i]) - l[m,i] *(p[1,m] - p[1,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) )
-            #end for i 
-            Delta_m = np.sqrt(Ex[m]**2 + Ey[m]**2)
-        # end while(Delta[m] > eps):
             
     return p
 #End modeNode_m    
 
 
 # ---------------------------------------------------------------------------        
-def mainAlgorithm(n, p, radius, dist, K, L_0 , eps, nit):
+def mainAlgorithm(n, p, radius, dist, K, L_0 , nit):
     maxit_outer=0 
 
-    
+    K = 2*K     # in original algorithm of Kamada&Kawai there is a constant 1/2
     # calculate desirable length of single edge
     L = L_0 / np.max(dist)   
     # calculate length of edges
     l = L * dist    
     # calculate strength of spring between two nodes
-    k = K * 1./(dist**2) # attention, infinity on diagonals, but we dont need diagonal elements
+    dist[range(n), range(n)] = np.Infinity         # just to get rif of division by zero error
+    k = K * 1./(dist**2) # attention, infinity on diagonals, but we dont need diagonal element
+    dist[range(n), range(n)] = 0        # just to get rif of division by zero error
     
     #compute the partial derivatives of energy function
     Ex, Ey = dEnergyOfSprings(n, p, radius, dist, k, l)    
     Delta = np.sqrt(Ex*Ex + Ey*Ey)
     
-    while(np.max(Delta)>eps and maxit_outer< nit):
+    while(maxit_outer< nit):
         m = np.argmax(Delta)
         
         # move one node
-        p = moveNode_m(n, p, radius, dist, k, l, eps, Ex, Ey, Delta[m], m)
-        
-        maxit_outer += 1
-        
+        p = moveNode_m(n, p, radius, dist, k, l, Ex, Ey, Delta[m], m)
+
         #recompute the partial derivatives of energy function
         Ex, Ey = dEnergyOfSprings(n, p, radius, dist, k, l)  
         Delta = np.sqrt(Ex*Ex + Ey*Ey)    
+        
+        maxit_outer += 1
     # end while(np.max(Delta)>eps):   
     return p, maxit_outer
 # end newtonraphson    

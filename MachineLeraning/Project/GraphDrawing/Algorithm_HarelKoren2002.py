@@ -5,6 +5,7 @@ drawing large graphs", 2002
 """
 
 import random 
+import time
 import numpy as np
 
 from Algorithm_KamadaKawai89_kN import mainAlgorithm as Algorithm_KamadaKawai
@@ -75,13 +76,16 @@ def KCenters(G, dist, k):
 ## LocalLayout : find a locally nice layout (modification of Algorithm of T.Kamada & S.Kawai)
 #----------------------------------------------------------------------------   
 # dist      disantce matrix between all pairs of nodes
-# L         current coordinates of nodes
+# p         current coordinates of nodes
 # radius    radius of neighborhood
 # maxit     maximum number of iterations
-def LocalLayouts(dist, p, radius, K, L_0, eps, maxit):
+# K         strength of spring
+# L_0       side of the display area
+   
+def LocalLayouts(dist, p, radius, K, L_0, maxit):
     n = p.shape[1]     
 
-    pnew, step = Algorithm_KamadaKawai(n, p, radius, dist, K, L_0, eps, maxit)
+    pnew, step = Algorithm_KamadaKawai(n, p, radius, dist, K, L_0, maxit)
     
     return pnew
 #end  LocalLayouts
@@ -92,23 +96,19 @@ def LocalLayouts(dist, p, radius, K, L_0, eps, maxit):
 # L  random start layout (2xn)
 #
 #
-def Algorithm_HarelKoren(G, L, K, L_0, eps, maxit):
-    print "Start Algorithm of Harel & Koren..."
-
+def Algorithm_HarelKoren(G, L, dist, K, L_0, maxit):
+    starttime = time.time()
     # constants
     rad = 7         # radius of local neighborhoods
     it = 4          # number of iterations for the Kamada's and Kawai's algorithm 
     ratio = 3      # ratio between vertices of two consecutive levels
-    minSize = 2    # size of the coarsest graph
+    minSize = 10    # size of the coarsest graph
+    
     maxit = 1000
     steps = 0
     
     # number of nodes in the graph
     n = G.get_n()
-    # get adjacency matrix of the Graph
-    A = G.get_A()
-    # calculate graph distance
-    dist = floyed(A,n)
     
     k = minSize
     
@@ -122,17 +122,20 @@ def Algorithm_HarelKoren(G, L, K, L_0, eps, maxit):
         radius = max_min_dist(dist_local) * rad        
         
         # local refinement       
-        L_local =  LocalLayouts(dist_local, L_local, radius, K, L_0, eps, it*n)
+        L_local =  LocalLayouts(dist_local, L_local, radius, K, L_0, it*n)
         
         L[:, centers] = L_local
         for v in range(0,n):
-            rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)   
-            L[0,v] = L[0,affinity[v]] + rand[0]
-            L[1,v] = L[1,affinity[v]] + rand[1]
+            rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
+            L[0,v] = L[0,affinity[v]] + 0.1*rand[0]
+            L[1,v] = L[1,affinity[v]] + 0.1*rand[1]
         #end for v
         k = k * ratio
         steps +=1
     #end while loop    
-    print "................. end"
+        
+    stoptime = time.time()
+    print "Draw the graph ({0:5d} nodes) with Algorithm of HarelKoren: {1:0.6f} sec and {2:4d} steps". format(n, stoptime-starttime, steps)
+    
     return L, steps
 # end Algorithm_HarelKoren():

@@ -6,6 +6,7 @@ Created on Tue Feb 10 08:43:24 2015
 """
 
 import numpy as np
+import time
 
 def dEnergyOfSprings(n, p, k, l):
     #compute the partial derivatives of energy function
@@ -54,6 +55,8 @@ def moveNode_m(n, p, k, l, eps, Ex, Ey, Delta_m, m):
 
 # ---------------------------------------------------------------------------        
 def mainAlgorithm(n, p, k, l, eps, nit):
+    starttime = time.time()    
+    
     maxit_outer=0 
     #compute the partial derivatives of energy function
     Ex, Ey = dEnergyOfSprings(n, p, k, l)    
@@ -70,6 +73,10 @@ def mainAlgorithm(n, p, k, l, eps, nit):
         #recompute the partial derivatives of energy function
         Ex, Ey = dEnergyOfSprings(n, p, k, l)
         Delta = np.sqrt(Ex*Ex + Ey*Ey)    
-    # end while(np.max(Delta)>eps):   
+    # end while(np.max(Delta)>eps):  
+
+    stoptime = time.time()
+    print "Draw the graph ({0:5d} nodes) with Algorithm of KamadaKawai: {1:0.6f} sec and {2:4d} steps". format(n, stoptime-starttime, maxit_outer) 
+    
     return p, maxit_outer
 # end newtonraphson    

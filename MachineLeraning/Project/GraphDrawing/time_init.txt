@@ -1,0 +1,16 @@
+ Example1
+ Time spent to calculate distance matrix of the graph (    6 nodes): 0.001714 s
+ Example2
+ Time spent to calculate distance matrix of the graph (   10 nodes): 0.005290 sec
+ Example3
+ Time spent to calculate distance matrix of the graph (   10 nodes): 0.004589 sec
+ 
+Time spent to calculate distance matrix of the graph (    3 nodes): 0.000377 sec
+Time spent to calculate distance matrix of the graph (    7 nodes): 0.001803 sec
+Time spent to calculate distance matrix of the graph (   15 nodes): 0.007989 sec
+Time spent to calculate distance matrix of the graph (   31 nodes): 0.023032 sec 
+Time spent to calculate distance matrix of the graph (   63 nodes): 0.125470 sec
+Time spent to calculate distance matrix of the graph (  127 nodes): 0.860263 sec
+Time spent to calculate distance matrix of the graph (  255 nodes): 6.361219 sec
+Time spent to calculate distance matrix of the graph (  511 nodes): 51.427749 sec
+
