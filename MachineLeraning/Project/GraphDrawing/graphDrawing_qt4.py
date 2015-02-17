@@ -127,7 +127,6 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
      
         
         # calculate desirable length of single edge
-        
         L = self.L_0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
@@ -167,7 +166,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
         else:
-            self.pnew, self.step = Algorithm_HarelKoren(self.G, self.pnew, self.dist, self.K, self.L_0, self.maxit)
+            self.pnew, self.step = Algorithm_HarelKoren(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.maxit)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -189,9 +188,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 
             self.step += 1
         # end if
-        
+        # plot result of the step
         self.plotGraph_Step()
-        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step))) 
+        
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))         
+        self.ui.pbuttonStart.setEnabled(False)
         self.ui.pbuttonContinue.setEnabled(True)
     # end pButtonStep_clicked
 
@@ -202,12 +203,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
 #        self.pnew, self.step = newtonraphson1(self.l, self.p, self.k, self.G.get_n(), 0.0001)
         
-        
         starttime = time.time()
         if self.Alg_KamadaKawai:
             self.pnew, nContSteps = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps,self.maxit)
         else:
-            self.pnew, nContSteps  = Algorithm_HarelKoren(self.G, self.pnew, self.dist, self.K, self.L_0, self.maxit)
+            self.pnew, nContSteps  = Algorithm_HarelKoren(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.maxit)
         stoptime = time.time()
         
         self.step += nContSteps
@@ -216,6 +216,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step() 
         
+        self.ui.pbuttonStart.setEnabled(True)
     # end pButtonStep_clicked
 
     # --------------------------------------------------------------------                 
@@ -450,8 +451,15 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
 
 #        self.dist = floyed(A,n)
-        self.dist = dist_with_DijkstraAlg(A)
-        np.save('3elt_dist',self.dist)
+#        self.dist = dist_with_DijkstraAlg(A)
+        
+#        starttime = time.time()
+#        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
+#        stoptime = time.time()        
+#        print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
+        
+#        np.save('3elt_dist',self.dist)
+        self.dist = np.load('3elt_dist.npy')
                               
         self.plotGraph_onStart()    
         self.plotGraph_Step()
@@ -532,7 +540,17 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
             self.Alg_KamadaKawai = True
             self.Alg_HarelKoren = False    #end select_Alg_HarelKoren(self):    
         #end if
-        self.pButtonReset_clicked()     # reset the algorithm
+                              
+        self.step = 0
+        self.pnew = (self.p).copy()
+#        self.plotGraph_onStart()
+#        self.plotGraph_Step()
+        
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
+        
+        self.ui.pbuttonStart.setEnabled(True)
+        self.ui.pbuttonStep.setEnabled(True)  
+        self.ui.pbuttonContinue.setEnabled(False)
         
     
 # end class MyWindowClass

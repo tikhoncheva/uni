@@ -33,16 +33,14 @@ def max_min_dist(dist):
 #----------------------------------------------------------------------------
 ## KCenters clustering
 #---------------------------------------------------------------------------- 
-# G         G = (V,E)
+# n         number of nodes in the graph
 # dist      distance Matrix 
 # k         number of clusters
 #
 # S          Subset of V, |S|=k, indices of k cluster centers
 # affinity   array, that for each vertex from V contains index of the cluster
 #            this vertex belongs to
-def KCenters(G, dist, k):
-  
-    n = G.get_n()
+def KCenters(n, dist, k):
     
     # copy of dist matrix with zeros on the main diagonal
     cdist = dist.copy()
@@ -82,60 +80,62 @@ def KCenters(G, dist, k):
 # K         strength of spring
 # L_0       side of the display area
    
-def LocalLayouts(dist, p, radius, K, L_0, maxit):
+def LocalLayouts(radius, p, dist, k, l, maxit):
+    
     n = p.shape[1]     
 
-    pnew, step = Algorithm_KamadaKawai(n, p, radius, dist, K, L_0, maxit)
+    pnew, it = Algorithm_KamadaKawai(radius, n, p, dist, k, l, maxit)
     
-    return pnew
+    return pnew, it
 #end  LocalLayouts
 
 
 ## Algorithm from Harel & Korel
-# G  given graph, |V| = n
-# L  random start layout (2xn)
+# n  number of nodes in the given graph G, |V| = n
+# p  random start layout (2xn)
 #
 #
-def Algorithm_HarelKoren(G, L, dist, K, L_0, maxit):
+def Algorithm_HarelKoren(n, p, dist, k, l, maxit):
     starttime = time.time()
+    
     # constants
     rad = 7         # radius of local neighborhoods
     it = 4          # number of iterations for the Kamada's and Kawai's algorithm 
-    ratio = 3      # ratio between vertices of two consecutive levels
+    ratio = 3       # ratio between vertices of two consecutive levels
     minSize = 10    # size of the coarsest graph
+
+    steps = 0       # number of iterations
+    stepsKK = 0     # number of local beautifications
+    maxit = 1000    # maximal number of iterations
     
-    maxit = 1000
-    steps = 0
+    m = minSize
     
-    # number of nodes in the graph
-    n = G.get_n()
-    
-    k = minSize
-    
-    while (k<=n and steps<maxit):
-        centers, affinity = KCenters(G, dist, k)
+    while (m<=n and steps<maxit):
+        centers, affinity = KCenters(n, dist, m)
 
         # coarser graph
-        L_local = L[:,centers]
-        dist_local = np.asarray(dist[np.ix_(centers,centers)])
+        p_local = p[:,centers]
         
+        dist_local = np.asarray(dist[np.ix_(centers,centers)])
+        k_local =  np.asarray(k[np.ix_(centers,centers)])       
+        l_local =  np.asarray(l[np.ix_(centers,centers)])       
         radius = max_min_dist(dist_local) * rad        
         
         # local refinement       
-        L_local =  LocalLayouts(dist_local, L_local, radius, K, L_0, it*n)
+        p_local, stepsKK =  LocalLayouts(radius, p_local, dist_local, k_local, l_local, it*n)
         
-        L[:, centers] = L_local
+        p[:, centers] = p_local
         for v in range(0,n):
             rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
-            L[0,v] = L[0,affinity[v]] + 0.1*rand[0]
-            L[1,v] = L[1,affinity[v]] + 0.1*rand[1]
+            p[0,v] = p[0,affinity[v]] + 0.1*rand[0]
+            p[1,v] = p[1,affinity[v]] + 0.1*rand[1]
         #end for v
-        k = k * ratio
+        m = m * ratio
         steps +=1
     #end while loop    
         
     stoptime = time.time()
     print "Draw the graph ({0:5d} nodes) with Algorithm of HarelKoren: {1:0.6f} sec and {2:4d} steps". format(n, stoptime-starttime, steps)
     
-    return L, steps
+    return p, steps
 # end Algorithm_HarelKoren():

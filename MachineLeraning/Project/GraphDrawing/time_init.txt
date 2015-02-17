@@ -14,3 +14,6 @@ Time spent to calculate distance matrix of the graph (  127 nodes): 0.860263 sec
 Time spent to calculate distance matrix of the graph (  255 nodes): 6.361219 sec
 Time spent to calculate distance matrix of the graph (  511 nodes): 51.427749 sec
 
+
+
+Time spent to calculate distance matrix of the graph( 4720 nodes) with Scipy Dijkstra Alg: 8.496513 sec

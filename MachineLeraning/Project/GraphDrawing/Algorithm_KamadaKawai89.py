@@ -65,14 +65,14 @@ def mainAlgorithm(n, p, k, l, eps, nit):
     while(np.max(Delta)>eps and maxit_outer< nit):
         m = np.argmax(Delta)
         
-        # 
+        # move one node to its optimal position
         p = moveNode_m(n, p, k, l, eps, Ex, Ey, Delta[m], m)
-        
-        maxit_outer += 1
-        
+                
         #recompute the partial derivatives of energy function
         Ex, Ey = dEnergyOfSprings(n, p, k, l)
         Delta = np.sqrt(Ex*Ex + Ey*Ey)    
+        
+        maxit_outer += 1
     # end while(np.max(Delta)>eps):  
 
     stoptime = time.time()
