@@ -1,23 +1,45 @@
 
 import sys
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 #from form2 import Ui_MainWindow
 from mainform import Ui_MainWindow
 
 import numpy as np
+import scipy.sparse
 import matplotlib.pyplot as plot  
 
 from graphToDraw import *
-from generate_graphs import *
+
+from generate_graphs import generate_full_binary_tree
 
 import examplesKamadaKawai89 
+import examplesHarelKoren02
 
 from Algorithm_HarelKoren2002 import Algorithm_HarelKoren
 
-from Algorithm_KamadaKawai89 import mainAlgorithm as newtonraphson1
-from Algorithm_KamadaKawai89 import dEnergyOfSprings
-from Algorithm_KamadaKawai89 import moveNode_m
+from Algorithm_KamadaKawai89 import Algorithm_KamadaKawai
+from Algorithm_KamadaKawai89 import dEnergyOfSprings#_loops
+from Algorithm_KamadaKawai89 import moveNode_m#_loops
+
+
+
+
+class sparamKK:              # parameters of KamadaKawai Algorithm
+    def __init__(self, _K, _L0, _eps):
+        self.K = _K     # constant (needed for strength of the springs)
+        self.L0 = _L0   # side of display are
+        self.eps = _eps # convergence parameter
+# end class def        
+
+class sparamHK:              # parameters of HarelKoren Algorithm
+    def __init__(self, _Rad, _It, _Ratio, _Minsize):
+        self.Rad = _Rad         # radius of local neighborhood
+        self.It = _It           # number of iterations of local beautification
+        self.Ratio = _Ratio     # ration between number of nodes in two censecutive levels
+        self.Minsize = _Minsize # min size of the coarsest graph
+# end class def        
+        
 # ---------------------------------------------------------------------------
 # Class MyWindow defines behavior of the main application
 
@@ -42,9 +64,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.step = 0   # iteration step
         
         # constants
-        self.L_0 = 1
-        self.K = 1
-        self.eps = 0.0001
+        self.paramKK = sparamKK(1,1, 0.0001)
+        self.paramHK = sparamHK(7, 4, 3, 10)
         self.maxit = 1000
         
         self.k = np.zeros((0,0), dtype = np.int32)
@@ -76,9 +97,12 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.connect(self.ui.actionExample_3, QtCore.SIGNAL('triggered()'), self.startExample_3)  
 
         self.readFromFile = False
-        self.connect(self.ui.action3elt_Graph, QtCore.SIGNAL('triggered()'), self.startExample_3elt)
+        self.connect(self.ui.action_3eltGraph, QtCore.SIGNAL('triggered()'), self.startExample_3elt)
 #        self.connect(self.ui.actionExample_2, QtCore.SIGNAL('triggered()'), self.startExample_2)
 #        self.connect(self.ui.actionExample_3, QtCore.SIGNAL('triggered()'), self.startExample_3)  
+        
+        self.connect(self.ui.action_grid32x32, QtCore.SIGNAL('triggered()'), self.startExample_grid_32)
+        self.connect(self.ui.action_grid55x55, QtCore.SIGNAL('triggered()'), self.startExample_grid_55)
         
         # on parameter changed
         self.ui.textEdit_h.textChanged.connect(self.h_changed)
@@ -86,6 +110,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.textEdit_K.textChanged.connect(self.K_changed)
         self.ui.textEdit_L0.textChanged.connect(self.L0_changed)
         self.ui.textEdit_maxit.textChanged.connect(self.maxit_changed)
+        
+        self.ui.textEdit_radius.textChanged.connect(self.Radius_changed)
+        self.ui.textEdit_iterator.textChanged.connect(self.It_changed)
+        self.ui.textEdit_ratio.textChanged.connect(self.Ratio_changed)
+        self.ui.textEdit_minsize.textChanged.connect(self.Minsize_changed)
         
         # select Algorithm
         self.Alg_KamadaKawai = True
@@ -114,30 +143,37 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
         self.G = Graph(n, A)
         
+        # get values of the parameters
+        self.paramKK.L0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
+        self.paramKK.K   = int(self.ui.textEdit_K.toPlainText())
+        self.paramKK.eps = float(self.ui.textEdit_eps.toPlainText())
         
-        # get parameter values
-        self.L_0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
-        self.K   = int(self.ui.textEdit_K.toPlainText())
-        self.eps = float(self.ui.textEdit_eps.toPlainText())
-        self.maxit = int(self.ui.textEdit_maxit.toPlainText())
+        self.paramHK.Rad     = int(self.ui.textEdit_radius.toPlainText())   # radius of local neighborhood
+        self.paramHK.It      = int(self.ui.textEdit_iterator.toPlainText()) # number of iterations of local beautification
+        self.paramHK.Ratio   = int(self.ui.textEdit_ratio.toPlainText())    # ration between number of nodes in two censecutive levels
+        self.paramHK.Minsize = int(self.ui.textEdit_minsize.toPlainText())  # min size of the coarsest graph
+        
+        self.maxit = int(self.ui.textEdit_maxit.toPlainText())       
         
         # calculate graph distance
 #        self.dist = floyed(A,n)
-        self.dist = dist_with_DijkstraAlg(A)
+#        self.dist = dist_with_DijkstraAlg(A)
+        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
      
         
         # calculate desirable length of single edge
-        L = self.L_0 / np.max(self.dist)
+        L = self.paramKK.L0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
         self.dist[range(n), range(n)] = np.Infinity         # just to get rif of division by zero error
-        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
+        self.k = self.paramKK.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
+        
         self.dist[range(n), range(n)] = 0        # just to get rif of division by zero error
         
         # init coordinates
         self.readFromFile = False
-        self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
+        self.p = init_particles(n, self.paramKK.L0)  #particles p1, ... ,pn
         self.pnew = (self.p).copy()
         
         # plot initial graph
@@ -161,12 +197,18 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # --------------------------------------------------------------------                   
     def pButtonStart_clicked(self):
         
+        # pnew      coordinates of the nodes
+        # dist      distance matrix of the graph
+        # k         strength of the edges
+        # l         desired length of the edges
+        # maxit     maximal number of iterations 
+        
         self.pnew = (self.p).copy()
         
         if self.Alg_KamadaKawai:
-            self.pnew, self.step = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps, self.maxit)
+            self.pnew, self.step = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, self.step = Algorithm_HarelKoren(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.maxit)
+            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK,     self.maxit)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -177,14 +219,14 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # --------------------------------------------------------------------         
     def pButtonStep_clicked(self):
         
-        Ex, Ey = dEnergyOfSprings(self.G.get_n(), self.pnew, self.k, self.l)   
+        Ex, Ey = dEnergyOfSprings_loops(self.G.get_n(), self.pnew, self.k, self.l)   
         Delta = np.sqrt(Ex*Ex + Ey*Ey)
         
-        if np.max(Delta) > self.eps:            
+        if np.max(Delta) > self.paramKK.eps:            
             m = np.argmax(Delta)
-     
-            self.pnew = moveNode_m(self.G.get_n(), self.pnew, self.k, self.l, \
-                                   self.eps, Ex, Ey, Delta[m], m)  
+            rhs = np.array([-Ex[m],-Ey[m]])
+            self.pnew = moveNode_m_loops(self.G.get_n(), self.pnew, self.k, self.l, \
+                                   self.paramKK.eps, rhs, Delta[m], m)  
 
             self.step += 1
         # end if
@@ -201,17 +243,18 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # --------------------------------------------------------------------         
     def pButtonContinue_clicked(self):
         
-#        self.pnew, self.step = newtonraphson1(self.l, self.p, self.k, self.G.get_n(), 0.0001)
+        # pnew      coordinates of the nodes
+        # dist      distance matrix of the graph
+        # k         strength of the edges
+        # l         desired length of the edges
+        # maxit     maximal number of iterations
         
-        starttime = time.time()
         if self.Alg_KamadaKawai:
-            self.pnew, nContSteps = newtonraphson1(self.G.get_n(), self.pnew, self.k, self.l, self.eps,self.maxit)
+            self.pnew, nContSteps = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, nContSteps  = Algorithm_HarelKoren(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.maxit)
-        stoptime = time.time()
+            self.pnew, nContSteps = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK,     self.maxit)
         
         self.step += nContSteps
-        print "Time spent to draw the graph ({0:5d} nodes): {1:0.6f} sec and {2:4d} steps". format(self.G.get_n(), stoptime-starttime, self.step)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step() 
@@ -223,32 +266,32 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # Delete result of algorithms 
     # --------------------------------------------------------------------  
     def pButtonReset_clicked(self):
-        
-        self.ui.MatplotlibWidget2.canvas.ax.clear()
-        self.ui.MatplotlibWidget2.canvas.draw() 
-        
-        n = self.G.get_n()
-        
+               
+        n = self.G.get_n()        
         self.step = 0
         
-        # get parameter values
-        self.L_0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
-        self.K   = int(self.ui.textEdit_K.toPlainText())
-        self.eps = float(self.ui.textEdit_eps.toPlainText())
-        self.maxit = int(self.ui.textEdit_maxit.toPlainText())
+        # get values of the parameters
+        self.paramKK.L0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
+        self.paramKK.K   = int(self.ui.textEdit_K.toPlainText())
+        self.paramKK.eps = float(self.ui.textEdit_eps.toPlainText())
+        
+        self.paramHK.Rad     = int(self.ui.textEdit_radius.toPlainText())   # radius of local neighborhood
+        self.paramHK.It      = int(self.ui.textEdit_iterator.toPlainText()) # number of iterations of local beautification
+        self.paramHK.Ratio   = int(self.ui.textEdit_ratio.toPlainText())    # ration between number of nodes in two censecutive levels
+        self.paramHK.Minsize = int(self.ui.textEdit_minsize.toPlainText())  # min size of the coarsest graph
                
         # calculate desirable length of single edge
-        L = self.L_0 / np.max(self.dist)
+        L = self.paramKK.L0 / np.max(self.dist)
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
         self.dist[range(n), range(n)] = np.Infinity         # just to get rif of division by zero error
-        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
+        self.k = self.paramKK.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
         self.dist[range(n), range(n)] = 0        # just to get rif of division by zero error
         
         # init coordinates
         if not self.readFromFile :
-            self.p = init_particles(self.G.get_n(), self.L_0)  #particles p1, ... ,pn
+            self.p = init_particles(self.G.get_n(), self.paramKK.L0)  #particles p1, ... ,pn
         self.pnew = (self.p).copy()
         
         self.plotGraph_onStart()
@@ -362,9 +405,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 
 #        self.dist = floyed(A,n)
         self.dist = dist_with_DijkstraAlg(A)    
-        
-        self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn        
-        self.plotGraph_onStart()
+                 
         self.pButtonReset_clicked()     # reset the algorithm
 
         # set buttons enabled        
@@ -390,8 +431,6 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 #        self.dist = floyed(A,n)
         self.dist = dist_with_DijkstraAlg(A)  
 
-        self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn        
-        self.plotGraph_onStart()
         self.pButtonReset_clicked()     # reset the algorithm
 
         # set buttons enabled        
@@ -415,12 +454,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
 #        self.dist = floyed(A,n)
         self.dist = dist_with_DijkstraAlg(A)
-
-        
-        self.p = init_particles(n, self.L_0)  #particles p1, ... ,pn
-        self.plotGraph_onStart()    
+ 
         self.pButtonReset_clicked()     # reset the algorithm
-    
 
         # set buttons enabled        
         self.ui.pbuttonStart.setEnabled(True)
@@ -442,11 +477,12 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.cBox_ShowLabels.setChecked(False)                
         
         # init graph (load adjacency matrix and read coordinates of nodes)
-        A = load_adjM('../instances/3elt.rmf')
+        A, p = examplesHarelKoren02.example_3elt()
+        
         n = np.size(A,0)   
-        A = A[0:n,0:n]
         self.G = Graph(n, A)
-        self.p = load_coord('../instances/3elt.xyz',n)
+
+        self.p = p
         self.pnew = (self.p).copy()
         
 
@@ -460,26 +496,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
 #        np.save('3elt_dist',self.dist)
         self.dist = np.load('3elt_dist.npy')
-                              
-        self.plotGraph_onStart()    
-        self.plotGraph_Step()
-        
-        self.step = 0
-        
-        # get parameter values
-        self.L_0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
-        self.K   = int(self.ui.textEdit_K.toPlainText())
-        self.eps = float(self.ui.textEdit_eps.toPlainText())
-        self.maxit = int(self.ui.textEdit_maxit.toPlainText())
-               
-        # calculate desirable length of single edge
-        L = self.L_0 / np.max(self.dist)
-        # calculate length of edges
-        self.l = L * self.dist
-        # calculate strength of spring between two nodes
-        self.dist[range(n), range(n)] = np.Infinity         # just to get rif of division by zero error
-        self.k = self.K * 1./(self.dist**2) # attention, infinity on diagonals, but we dont need diagonal element
-        self.dist[range(n), range(n)] = 0        # just to get rif of division by zero error
+                            
+        self.pButtonReset_clicked()     # reset the algorithm
         
         # set buttons enabled        
         self.ui.pbuttonStart.setEnabled(True)
@@ -493,7 +511,53 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.ui.groupBox_Algorithm.setEnabled(True)
     # end startExample_3elt
+
+    def startExample_grid_32(self):
+#        self.startExample_grid(32*32)
+        self.startExample_grid(8*8)    
+    #end startExample_grid_32:
+
+    def startExample_grid_55(self):
+        self.startExample_grid(55*55)
+    #end startExample_grid_55:
         
+        
+    def startExample_grid(self, n):
+
+        self.readFromFile = False
+        
+        # not show labels by plotting
+        self.showLabels = False
+        self.ui.cBox_ShowLabels.setChecked(False)                
+        
+        # init graph (load adjacency matrix)
+        A = examplesHarelKoren02.example_grid(n)
+        self.G = Graph(n, A)
+
+#        self.dist = floyed(A,n)
+#        self.dist = dist_with_DijkstraAlg(A)
+
+        starttime = time.time()
+        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
+        stoptime = time.time()        
+        print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
+
+ 
+        self.pButtonReset_clicked()     # reset the algorithm
+ 
+        # set buttons enabled        
+        self.ui.pbuttonStart.setEnabled(True)
+        self.ui.pbuttonStep.setEnabled(True)
+        self.ui.pbuttonContinue.setEnabled(False)
+
+        self.ui.pbuttonSave.setEnabled(True)
+        self.ui.pbuttonReset.setEnabled(True)        
+        
+        self.ui.labelStart.setText(QtCore.QString("Start: Grid Graph|V|="+str(n)))
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
+        self.ui.groupBox_Algorithm.setEnabled(True)
+    # end startExample_grid        
+    
     # -------------------------------------------------------------------- 
     # If parameter were changed
     # --------------------------------------------------------------------      
@@ -517,6 +581,29 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.pbuttonStep.setEnabled(False)    
     #end maxit_changed 
         
+    def Radius_changed(self):
+        self.ui.pbuttonStart.setEnabled(False)
+        self.ui.pbuttonStep.setEnabled(False)    
+    #end maxit_changed     
+        
+    def It_changed(self):
+        self.ui.pbuttonStart.setEnabled(False)
+        self.ui.pbuttonStep.setEnabled(False)    
+    #end maxit_changed     
+        
+    def Ratio_changed(self):
+        self.ui.pbuttonStart.setEnabled(False)
+        self.ui.pbuttonStep.setEnabled(False)    
+    #end maxit_changed     
+    def Minsize_changed(self):
+        self.ui.pbuttonStart.setEnabled(False)
+        self.ui.pbuttonStep.setEnabled(False)    
+        if self.ui.textEdit_minsize.toPlainText() != '' and  \
+                                    int(self.ui.textEdit_minsize.toPlainText()<2):
+            self.ui.textEdit_minsize.setText(QtCore.QString(str(2)))
+            
+    #end maxit_changed     
+        
     # -------------------------------------------------------------------- 
     # select Algorithm
     # --------------------------------------------------------------------      
@@ -529,7 +616,18 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
             self.Alg_KamadaKawai = False
             self.Alg_HarelKoren = True
         #end if
-        self.pButtonReset_clicked()     # reset the algorithm
+#        self.pButtonReset_clicked()     # reset the algorithm
+
+        self.step = 0
+        self.pnew = (self.p).copy()
+#        self.plotGraph_onStart()
+#        self.plotGraph_Step()
+        
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
+        
+        self.ui.pbuttonStart.setEnabled(True)
+        self.ui.pbuttonStep.setEnabled(True)  
+        self.ui.pbuttonContinue.setEnabled(False)        
     #end select_Alg_KamadaKawai(self)
     
     def select_Alg_HarelKoren(self):
