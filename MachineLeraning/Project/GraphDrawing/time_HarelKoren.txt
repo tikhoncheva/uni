@@ -1,1 +1,10 @@
- 
+
+BTree
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 30527.096519 sec and    5 steps 
+
+Grid Graph 16x16
+Draw the graph (  256 nodes) with Algorithm of HarelKoren: 20.249187 sec and    4 steps
+
+Grid Graph 32x32
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1435.489302 sec and    5 steps
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1391.992509 sec and    5 steps

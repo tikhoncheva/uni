@@ -31,7 +31,8 @@ class sparamKK:              # parameters of KamadaKawai Algorithm
 # end class def        
 
 class sparamHK:              # parameters of HarelKoren Algorithm
-    def __init__(self, _Rad, _It, _Ratio, _Minsize):
+    def __init__(self,_L, _Rad, _It, _Ratio, _Minsize):
+        self.L   = _L
         self.Rad = _Rad         # radius of local neighborhood
         self.It = _It           # number of iterations of local beautification
         self.Ratio = _Ratio     # ration between number of nodes in two censecutive levels
@@ -63,8 +64,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.step = 0   # iteration step
         
         # constants
-        self.paramKK = sparamKK(1,1, 0.0001)
-        self.paramHK = sparamHK(7, 4, 3, 10)
+        self.paramKK = sparamKK(1,1, 0.0001) # K, L0, eps
+        self.paramHK = sparamHK(1, 7, 4, 3, 10) # L, Rad, It, Ratio, Minsize
         self.maxit = 1000
         
         self.k = np.zeros((0,0), dtype = np.int32)
@@ -110,6 +111,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.textEdit_L0.textChanged.connect(self.L0_changed)
         self.ui.textEdit_maxit.textChanged.connect(self.maxit_changed)
         
+        self.ui.textEdit_l.textChanged.connect(self.L_changed)
         self.ui.textEdit_radius.textChanged.connect(self.Radius_changed)
         self.ui.textEdit_iterator.textChanged.connect(self.It_changed)
         self.ui.textEdit_ratio.textChanged.connect(self.Ratio_changed)
@@ -147,6 +149,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.paramKK.K   = int(self.ui.textEdit_K.toPlainText())
         self.paramKK.eps = float(self.ui.textEdit_eps.toPlainText())
         
+        
+        self.paramHK.L       = int(self.ui.textEdit_l.toPlainText())        # desired length of the edges
         self.paramHK.Rad     = int(self.ui.textEdit_radius.toPlainText())   # radius of local neighborhood
         self.paramHK.It      = int(self.ui.textEdit_iterator.toPlainText()) # number of iterations of local beautification
         self.paramHK.Ratio   = int(self.ui.textEdit_ratio.toPlainText())    # ration between number of nodes in two censecutive levels
@@ -161,7 +165,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
      
         
         # calculate desirable length of single edge
-        L = self.paramKK.L0 / np.max(self.dist)
+        if self.Alg_HarelKoren:
+            L = self.paramHK.L  
+        else:
+            L = self.paramKK.L0 / np.max(self.dist)           
+
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
@@ -207,7 +215,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew, self.step = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
+            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK, self.G.get_A())
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -221,8 +229,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew = Algorithm_KamadaKawai_step(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            kNN, self.pnew = Algorithm_HarelKoren_step(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
-            self.paramHK.Startsize = kNN # new start size of the neighborhood
+            self.pnew = Algorithm_HarelKoren_step(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
         # end if
         # plot result of the step
         self.plotGraph_Step()
@@ -267,10 +274,12 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.step = 0
         
         # get values of the parameters
-        self.paramKK.L0 = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
+        self.paramKK.L0  = int(self.ui.textEdit_L0.toPlainText())   # length of rectangle side of display area
         self.paramKK.K   = int(self.ui.textEdit_K.toPlainText())
         self.paramKK.eps = float(self.ui.textEdit_eps.toPlainText())
+        self.maxit       = int(self.ui.textEdit_maxit.toPlainText())
         
+        self.paramHK.L       = int(self.ui.textEdit_l.toPlainText())        # desired length of the edges
         self.paramHK.Rad     = int(self.ui.textEdit_radius.toPlainText())   # radius of local neighborhood
         self.paramHK.It      = int(self.ui.textEdit_iterator.toPlainText()) # number of iterations of local beautification
         self.paramHK.Ratio   = int(self.ui.textEdit_ratio.toPlainText())    # ration between number of nodes in two censecutive levels
@@ -278,7 +287,12 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.paramHK.Startsize = self.paramHK.Minsize
                
         # calculate desirable length of single edge
-        L = self.paramKK.L0 / np.max(self.dist)
+        if self.Alg_HarelKoren:
+            L = self.paramHK.L  
+        else:
+            L = self.paramKK.L0 / np.max(self.dist)            
+        # calculate length of edges
+        self.l = L * self.dist
         # calculate length of edges
         self.l = L * self.dist
         # calculate strength of spring between two nodes
@@ -510,8 +524,9 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # end startExample_3elt
 
     def startExample_grid_32(self):
-#        self.startExample_grid(32*32)
-        self.startExample_grid(8*8)    
+        self.startExample_grid(32*32)
+        self.startExample_grid(16*16)
+#        self.startExample_grid(8*8)    
     #end startExample_grid_32:
 
     def startExample_grid_55(self):
@@ -577,6 +592,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.pbuttonStart.setEnabled(False)
         self.ui.pbuttonStep.setEnabled(False)    
     #end maxit_changed 
+
+    def L_changed(self):
+        self.ui.pbuttonStart.setEnabled(False)
+        self.ui.pbuttonStep.setEnabled(False)    
+    #end maxit_changed  
         
     def Radius_changed(self):
         self.ui.pbuttonStart.setEnabled(False)
@@ -612,11 +632,21 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         else:
             self.Alg_KamadaKawai = False
             self.Alg_HarelKoren = True
+            self.paramHK.Startsize = self.paramHK.Minsize# start size of the neighborhood
         #end if
-#        self.pButtonReset_clicked()     # reset the algorithm
+        
 
         self.step = 0
         self.pnew = (self.p).copy()
+        
+        # calculate desirable length of single edge
+        if self.Alg_HarelKoren:
+            L = self.paramHK.L  
+        else:
+            L = self.paramKK.L0 / np.max(self.dist)           
+        # calculate length of edges
+        self.l = L * self.dist
+        
 #        self.plotGraph_onStart()
 #        self.plotGraph_Step()
         
@@ -631,6 +661,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.ui.rB_HarelKoren.isChecked():
             self.Alg_KamadaKawai = False
             self.Alg_HarelKoren = True
+            self.paramHK.Startsize = self.paramHK.Minsize# start size of the neighborhood
         else:
             self.Alg_KamadaKawai = True
             self.Alg_HarelKoren = False    #end select_Alg_HarelKoren(self):    
@@ -638,6 +669,16 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
                               
         self.step = 0
         self.pnew = (self.p).copy()
+        
+        # calculate desirable length of single edge
+        if self.Alg_HarelKoren:
+            L = self.paramHK.L  
+        else:
+            L = self.paramKK.L0 / np.max(self.dist)           
+
+        # calculate length of edges
+        self.l = L * self.dist
+        
 #        self.plotGraph_onStart()
 #        self.plotGraph_Step()
         

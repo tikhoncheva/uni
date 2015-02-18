@@ -9,8 +9,12 @@ local beatification used in algorithm from D.Harel and Y.Koren,
 import numpy as np
 from graphToDraw import *
 
-def dEnergyOfSprings(radius, n, p, dist, k, l):
-    #compute the partial derivatives of energy function
+# ---------------------------------------------------------------------------
+# Slow implementation with loops
+# ---------------------------------------------------------------------------
+
+#compute the partial derivatives of energy function
+def dEnergyOfSprings_loop(radius, n, p, dist, k, l):
     dEx=np.zeros([n,1])
     dEy=np.zeros([n,1])
     # thats inefficient (use slicing, numpy sum ect.), but since its only O(n^2) and we already have O(n^3) it stays for now
@@ -26,7 +30,7 @@ def dEnergyOfSprings(radius, n, p, dist, k, l):
 
 
 # ---------------------------------------------------------------------------
-def moveNode_m(radius, p, dist_m, k_m, l_m, Ex_m, Ey_m, m ):
+def moveNode_m_loop(radius, p, dist_m, k_m, l_m, Ex_m, Ey_m, m ):
         
     Hess = np.zeros([2,2])
     for i in k_neighborhood(dist_m, radius):
@@ -43,27 +47,98 @@ def moveNode_m(radius, p, dist_m, k_m, l_m, Ex_m, Ey_m, m ):
     return p
 #End modeNode_m    
 
+# ---------------------------------------------------------------------------
+# Faster implementation without loops
+# ---------------------------------------------------------------------------
 
+# pairwise euclidean distance between points in 2D
+# points    array of n points in R^2
+
+# pdiff     pairwise difference between coordinates (pdiff[:,m] = x_m*1-x)
+# dist      pairwise euclidean distance
+def pdist(points):
+    d, n = points.shape
+    assert n != 0, "Empty set of points"
+    assert d == 2, "Points are not in 2D"
+    
+    x = points[0,:]
+    y = points[1,:]
+    
+    nx = np.tile(x,(n,1))
+    ny = np.tile(y,(n,1))
+    
+    pdiff_x = nx - nx.transpose() 
+    pdiff_y = ny - ny.transpose() 
+    
+    dist = np.square(pdiff_x) + np.square(pdiff_y)
+    dist = np.sqrt(dist)
+    
+    dist[range(n), range(n)] = np.Infinity  # to avoid nan, because we nedd to divide by dist
+
+    return dist, pdiff_x, pdiff_y
+# end pdist   
+    
+# ---------------------------------------------------------------------------    
+# compute the partial derivatives of energy function 
+def dEnergyOfSprings(radius, n, pdist_xy, pdiff_x, pdiff_y, k, l):
+      
+    C = np.divide(l, pdist_xy.T)   # elementwise division  
+    dEx = np.diag(np.dot(k, pdiff_x) - np.dot(k, np.multiply(C, pdiff_x)) )
+    dEy = np.diag(np.dot(k, pdiff_y) - np.dot(k, np.multiply(C, pdiff_y)) )
+    return dEx, dEy
+#end EnergyOfSprings
+
+# ---------------------------------------------------------------------------
+# move one node to it optimal position
+
+def moveNode_m(radius, p, pdist_xy, pdiff_x, pdiff_y, k, l, rhs, m ):
+    
+    pdist_xy3 = np.power(pdist_xy,3)
+    C = np.divide(l[m,:], pdist_xy3[:,m])   # const
+            
+    Hess = np.zeros([2,2])
+    Hess[0,0] = np.sum(k[m,:]) - np.dot(k[m,:], np.multiply(C, pdiff_y[:,m] * pdiff_y[:,m]))
+    Hess[1,1] = np.sum(k[m,:]) - np.dot(k[m,:], np.multiply(C, pdiff_x[:,m] * pdiff_x[:,m]))
+    Hess[0,1] =                  np.dot(k[m,:], np.multiply(C, pdiff_x[:,m] * pdiff_y[:,m]))
+    Hess[1,0] = Hess[0,1]
+                                       
+    incr = np.linalg.solve(Hess, rhs)
+    p[:,m] = p[:,m] + incr.T
+            
+    return p
+#End modeNode_m    
+# ---------------------------------------------------------------------------            
 # ---------------------------------------------------------------------------        
 def Algorithm_KamadaKawai_kN(radius, n, p, dist, k, l , nit):
     
-    maxit_outer=0 
+    it=0 
+    neighborhood = (dist<radius)
+    
+    k1 = k.copy()
+    k1[~neighborhood] = 0
+    l1 = l.copy()
+    l1[~neighborhood] = 0
     
     #compute the partial derivatives of energy function
-    Ex, Ey = dEnergyOfSprings(radius, n, p, dist, k, l)    
-    Delta = np.sqrt(Ex*Ex + Ey*Ey)
+    pdist_xy, pdiff_x,pdiff_y = pdist(p)  
+       
+    #compute the partial derivatives of energy function
+    Ex, Ey = dEnergyOfSprings(radius, n, pdist_xy, pdiff_x, pdiff_y, k1, l1)
+    Delta = np.sqrt(np.square(Ex) + np.square(Ey))
     
-    while(maxit_outer< nit):
+    while(it< nit):
         m = np.argmax(Delta)
         
         # move one node
-        p = moveNode_m(radius, p, dist[m], k[m], l[m], Ex[m], Ey[m], m)
-
-        #recompute the partial derivatives of energy function
-        Ex, Ey = dEnergyOfSprings(radius, n, p, dist, k, l)  
-        Delta = np.sqrt(Ex*Ex + Ey*Ey)    
-    
-        maxit_outer += 1
+        rhs = np.array([-Ex[m],-Ey[m]])
+        p = moveNode_m(radius, p, pdist_xy, pdiff_x, pdiff_y, k1, l1, rhs, m)
+        
+        #recompute the partial derivatives of energy function      
+        pdist_xy, pdiff_x,pdiff_y = pdist(p)  
+        Ex, Ey = dEnergyOfSprings(radius, n, pdist_xy, pdiff_x, pdiff_y, k1, l1)
+        Delta = np.sqrt(np.square(Ex) + np.square(Ey))
+        
+        it += 1
     # end while(np.max(Delta)>eps):   
-    return p, maxit_outer
+    return p, it
 # end newtonraphson    

@@ -11,6 +11,14 @@
  Time spent to draw the graph (    7 nodes): 0.081720 sec and   30 steps
  Time spent to draw the graph (   15 nodes): 1.176438 sec and  131 steps
  Time spent to draw the graph (   31 nodes): 10.930632 sec and  323 steps
+Draw the graph (   31 nodes) with Algorithm of KamadaKawai: 0.264435 sec and  366 steps
+
  Time spent to draw the graph (   63 nodes): 87.323984 sec and  772 steps
+ Draw the graph (   63 nodes) with Algorithm of KamadaKawai: 1.684722 sec and 1000 steps
  
 Time spent to draw the graph (  255 nodes): 2017.661579 sec and 1000 steps
+Draw the graph (  255 nodes) with Algorithm of KamadaKawai: 33.537920 sec and 1000 steps (eps = 0.01)
+
+
+Grid Graphs 8x8
+Draw the graph (   64 nodes) with Algorithm of KamadaKawai: 1.097292 sec and  730 steps

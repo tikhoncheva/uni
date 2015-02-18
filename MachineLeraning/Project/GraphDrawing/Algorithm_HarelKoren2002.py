@@ -11,6 +11,7 @@ import numpy as np
 from Algorithm_KamadaKawai89_kN import Algorithm_KamadaKawai_kN
 from graphToDraw import *
 
+import matplotlib.pyplot as plot 
 
 #----------------------------------------------------------------------------
 ## return max_{v in S} min_{u in S} dist[v][u]
@@ -55,7 +56,7 @@ def KCenters(n, dist, k):
 
     for i in range(1,k):
         #u = argmax_{w in V} min{s in S} d_ws
-        dist_to_S = np.min(dist[:,S], axis=1)
+        dist_to_S = np.min(cdist[:,S], axis=1)
         u = np.argmax(dist_to_S)
 
         S.append(u)
@@ -105,35 +106,39 @@ def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
 
     kNN = param.Startsize       # start with kNN clusters
     stepsKK = 0                 # number of local beautifications
+
     
     if (kNN<=n):
         centers, affinity = KCenters(n, dist, kNN)
 
         # coarser graph
         p_local = p[:,centers]
-        
+
         dist_local = np.asarray(dist[np.ix_(centers,centers)])
         k_local =  np.asarray(k[np.ix_(centers,centers)])       
         l_local =  np.asarray(l[np.ix_(centers,centers)]) 
         
         radius = max_min_dist(dist_local) * rad        
-        
+#        radius = n
         # local refinement       
         p_local, stepsKK =  LocalLayouts(radius, p_local, dist_local, k_local, l_local, it)
         
         p[:, centers] = p_local
         for v in range(0,n):
             rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
-            p[0,v] = p[0,affinity[v]] + 0.01*rand[0]
-            p[1,v] = p[1,affinity[v]] + 0.01*   rand[1]
+            p[0,v] = p[0,affinity[v]] + 0.1*rand[0]
+            p[1,v] = p[1,affinity[v]] + 0.1*rand[1]
         #end for v
         kNN = kNN * ratio
     #end if loop    
         
     stoptime = time.time()
-    print "One step of the HarelKoren algorithm took {0:0.6f} sec and {1:5d} steps of KamadaKawai Algorithm". format(stoptime-starttime, stepsKK)
+    print "One step of the HarelKoren algorithm ({0:5d} Clusters) took {1:0.6f} sec and {2:5d} steps of KamadaKawai Algorithm".\
+            format(param.Startsize,stoptime-starttime, stepsKK)
     
-    return kNN, p
+    param.Startsize = kNN # new start size of the neighborhood
+    
+    return p
 # end Algorithm_HarelKoren_step
     
 
@@ -143,7 +148,7 @@ def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
 # p  random start layout (2xn)
 #
 #
-def Algorithm_HarelKoren(n, p, dist, k, l, param):
+def Algorithm_HarelKoren(n, p, dist, k, l, param,A):
     starttime = time.time()
     
     # constants
@@ -163,26 +168,35 @@ def Algorithm_HarelKoren(n, p, dist, k, l, param):
         p_local = p[:,centers]
         
         dist_local = np.asarray(dist[np.ix_(centers,centers)])
+        
         k_local =  np.asarray(k[np.ix_(centers,centers)])       
         l_local =  np.asarray(l[np.ix_(centers,centers)]) 
         
         radius = max_min_dist(dist_local) * rad        
         
-        # local refinement       
+        # local refinement  
+        starttime1 = time.time()
         p_local, stepsKK =  LocalLayouts(radius, p_local, dist_local, k_local, l_local, it)
-        
-        print 'step {0:2d}: {1:5d} Clusters, {2:5d} steps of the KamdaKawai Algorithm'. format(steps, kNN, stepsKK)
+        stoptime1 = time.time()
+        print 'step {0:2d}: {1:5d} Clusters, {2:5d} steps of the KamdaKawai Algorithm   {3:0.6f} sec'. format(steps, kNN, stepsKK, stoptime1 - starttime1)
         
         p[:, centers] = p_local
         for v in range(0,n):
             rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
-            p[0,v] = p[0,affinity[v]] + 0.01*rand[0]
-            p[1,v] = p[1,affinity[v]] + 0.01*   rand[1]
+            p[0,v] = p[0,affinity[v]] + 0.1*rand[0]
+            p[1,v] = p[1,affinity[v]] + 0.1*rand[1]
         #end for v
         kNN = kNN * ratio
         steps +=1
-    #end while loop    
+
         
+    #end while loop    
+    param.Startsize = n       
+    
+    # make one addition step
+    Algorithm_HarelKoren_step(n, p, dist, k, l, param)
+    
+    
     stoptime = time.time()
     print "Draw the graph ({0:5d} nodes) with Algorithm of HarelKoren: {1:0.6f} sec and {2:4d} steps". format(n, stoptime-starttime, steps)
     

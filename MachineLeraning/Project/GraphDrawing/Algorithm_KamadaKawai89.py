@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 """
-Created on Tue Feb 10 08:43:24 2015
+Graph drawing Algorithm from T.Kamada & S.Kawai f, 
+"An Algorithm for drawing general undirected graphs", 1989 
 
-@author: kitty
 """
+
 
 import numpy as np
 import time
@@ -89,10 +89,10 @@ def pdist(points):
 # end pdist   
     
    
-def dEnergyOfSprings(n, pdist, pdiff_x, pdiff_y, k, l):
-    #compute the partial derivatives of energy function
-      
-    C = np.divide(l, pdist.T)   # elementwise division  
+#compute the partial derivatives of energy function   
+def dEnergyOfSprings(n, pdist_xy, pdiff_x, pdiff_y, k, l):
+          
+    C = np.divide(l, pdist_xy.T)   # elementwise division  
     dEx = np.diag(np.dot(k, pdiff_x) - np.dot(k, np.multiply(C, pdiff_x)) )
     dEy = np.diag(np.dot(k, pdiff_y) - np.dot(k, np.multiply(C, pdiff_y)) )
     return dEx, dEy
