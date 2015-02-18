@@ -17,12 +17,10 @@ import examplesKamadaKawai89
 import examplesHarelKoren02
 
 from Algorithm_HarelKoren2002 import Algorithm_HarelKoren
+from Algorithm_HarelKoren2002 import Algorithm_HarelKoren_step
 
 from Algorithm_KamadaKawai89 import Algorithm_KamadaKawai
-from Algorithm_KamadaKawai89 import dEnergyOfSprings#_loops
-from Algorithm_KamadaKawai89 import moveNode_m#_loops
-
-
+from Algorithm_KamadaKawai89 import Algorithm_KamadaKawai_step
 
 
 class sparamKK:              # parameters of KamadaKawai Algorithm
@@ -38,6 +36,7 @@ class sparamHK:              # parameters of HarelKoren Algorithm
         self.It = _It           # number of iterations of local beautification
         self.Ratio = _Ratio     # ration between number of nodes in two censecutive levels
         self.Minsize = _Minsize # min size of the coarsest graph
+        self.Startsize = _Minsize# start size of the neighborhood
 # end class def        
         
 # ---------------------------------------------------------------------------
@@ -208,7 +207,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew, self.step = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK,     self.maxit)
+            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -219,19 +218,16 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # --------------------------------------------------------------------         
     def pButtonStep_clicked(self):
         
-        Ex, Ey = dEnergyOfSprings_loops(self.G.get_n(), self.pnew, self.k, self.l)   
-        Delta = np.sqrt(Ex*Ex + Ey*Ey)
-        
-        if np.max(Delta) > self.paramKK.eps:            
-            m = np.argmax(Delta)
-            rhs = np.array([-Ex[m],-Ey[m]])
-            self.pnew = moveNode_m_loops(self.G.get_n(), self.pnew, self.k, self.l, \
-                                   self.paramKK.eps, rhs, Delta[m], m)  
-
-            self.step += 1
+        if self.Alg_KamadaKawai:
+            self.pnew = Algorithm_KamadaKawai_step(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
+        else:
+            kNN, self.pnew = Algorithm_HarelKoren_step(self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
+            self.paramHK.Startsize = kNN # new start size of the neighborhood
         # end if
         # plot result of the step
         self.plotGraph_Step()
+        
+        self.step += 1
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))         
         self.ui.pbuttonStart.setEnabled(False)
@@ -252,7 +248,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew, nContSteps = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, nContSteps = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK,     self.maxit)
+            self.pnew, nContSteps = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
         
         self.step += nContSteps
         
@@ -279,6 +275,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.paramHK.It      = int(self.ui.textEdit_iterator.toPlainText()) # number of iterations of local beautification
         self.paramHK.Ratio   = int(self.ui.textEdit_ratio.toPlainText())    # ration between number of nodes in two censecutive levels
         self.paramHK.Minsize = int(self.ui.textEdit_minsize.toPlainText())  # min size of the coarsest graph
+        self.paramHK.Startsize = self.paramHK.Minsize
                
         # calculate desirable length of single edge
         L = self.paramKK.L0 / np.max(self.dist)

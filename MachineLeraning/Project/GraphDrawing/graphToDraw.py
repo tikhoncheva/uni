@@ -4,12 +4,12 @@
 
 import numpy as np
 import time
+import random
 
-def k_neighborhood(v, dist, k):
+def k_neighborhood(dist_v, k):
 
-    Nk = np.where(dist[v,:]<=k )
-    
-    return np.delete(Nk, v)
+    Nk = np.where( (dist_v[:]>0) & (dist_v[:]<k) )
+    return Nk[0]
 #end k_neighborhood
     
     
@@ -32,6 +32,7 @@ def floyed(A,n):
 def dijkstra(A,start):    
     n = A.shape[0] 
     shortest_dist = np.zeros(n, dtype = np.float32)
+    tmp = np.zeros(n, dtype = np.float32)
     V = range(0,n)
     
     for i in V:
@@ -40,7 +41,7 @@ def dijkstra(A,start):
     shortest_dist[start] = 0
     
     while len(V)!=0:
-        i = V.pop(np.argmin(shortest_dist[V]))  # vertex with the smallest distance up to now
+        i = V.pop(np.argmin(shortest_dist[V]))  # vertex with the smallest distance up to now        
         for j in V:
             if A[i,j]==1:   # j is a neighbor of i in V
                 tmp = shortest_dist[i] + A[i,j]
@@ -72,6 +73,7 @@ def dist_with_DijkstraAlg(A):
    
 def init_particles(n,L_0):
     #Initializing p_1, ..., p_n as 2 x n array particles
+#    particles = np.zeros((2,n), dtype = np.float16)
     particles = np.zeros([2,n])
     for k in range(n):
         particles[0,k] = L_0 * np.cos(2*np.pi*k/n)        
