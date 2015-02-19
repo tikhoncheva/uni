@@ -76,8 +76,11 @@ def init_particles(n,L_0):
 #    particles = np.zeros((2,n), dtype = np.float16)
     particles = np.zeros([2,n])
     for k in range(n):
+#        particles[0,k] = L_0 * random.random() #np.cos(2*np.pi*k/n)        
+#        particles[1,k] = L_0 * random.random() #np.sin(2*np.pi*k/n)
         particles[0,k] = L_0 * np.cos(2*np.pi*k/n)        
         particles[1,k] = L_0 * np.sin(2*np.pi*k/n)
+    
     return particles
 # end def init_particles(n,L_0)
 

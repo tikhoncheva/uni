@@ -4,7 +4,12 @@ Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 30527.096519 sec and 
 
 Grid Graph 16x16
 Draw the graph (  256 nodes) with Algorithm of HarelKoren: 20.249187 sec and    4 steps
+Draw the graph (  256 nodes) with Algorithm of HarelKoren: 19.697578 sec and    8 steps (min size 2 , ratio 2)
 
 Grid Graph 32x32
 Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1435.489302 sec and    5 steps
 Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1391.992509 sec and    5 steps
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 4724.338798 sec and    5 steps
+
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 3729.407801 sec and   10 steps
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1441.002282 sec and    5 steps

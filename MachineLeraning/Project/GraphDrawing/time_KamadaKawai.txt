@@ -22,3 +22,9 @@ Draw the graph (  255 nodes) with Algorithm of KamadaKawai: 33.537920 sec and 10
 
 Grid Graphs 8x8
 Draw the graph (   64 nodes) with Algorithm of KamadaKawai: 1.097292 sec and  730 steps
+
+Grid Graphs 16x16
+Draw the graph (  256 nodes) with Algorithm of KamadaKawai: 38.618277 sec and 1000 steps
+
+Grid Graph 32x32
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 3729.407801 sec and   10 steps

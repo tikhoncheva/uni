@@ -43,29 +43,31 @@ def max_min_dist(dist):
 #            this vertex belongs to
 def KCenters(n, dist, k):
 
-    # copy of dist matrix with zeros on the main diagonal
-    cdist = dist.copy()
-    cdist[range(n), range(n)] = 0
-
     S = []      
     V = range(0,n)
     
-    u= random.randint(0,n-1) # return random node in V(G)    
+#    u= random.randint(0,n-1) # return random node in V(G)    
+    u = 0
     S.append(u) 
     V.remove(u)
 
-    for i in range(1,k):
-        #u = argmax_{w in V} min{s in S} d_ws
-        dist_to_S = np.min(cdist[:,S], axis=1)
-        u = np.argmax(dist_to_S)
+#    print cdist
 
+    for i in range(1,k):
+        
+        dist_to_S = np.min(dist[S,:], axis=0)
+        u = np.argmax(dist_to_S)
+ 
         S.append(u)
-        V.remove(u)
+        if u in V:
+            V.remove(u)
+        else:
+            print 'try to delete element not in list'        
     #end for i 
     
-    affinity = np.zeros(n, dtype = np.int8)
+    affinity = np.zeros(n, dtype = np.int32)
     for i in range(0,n):
-        affinity[i] = S[np.argmin(cdist[i,S])]
+        affinity[i] = S[np.argmin(dist[i,S])]
     #end for i    
     
     return S, affinity
@@ -97,6 +99,8 @@ def LocalLayouts(radius, p, dist, k, l, maxit):
 #
 #
 def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
+    
+    random.seed(0)
     starttime = time.time()
     
     # constants
@@ -110,25 +114,30 @@ def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
     
     if (kNN<=n):
         centers, affinity = KCenters(n, dist, kNN)
-
+        
         # coarser graph
         p_local = p[:,centers]
 
         dist_local = np.asarray(dist[np.ix_(centers,centers)])
+   
         k_local =  np.asarray(k[np.ix_(centers,centers)])       
         l_local =  np.asarray(l[np.ix_(centers,centers)]) 
+
         
         radius = max_min_dist(dist_local) * rad        
 #        radius = n
         # local refinement       
         p_local, stepsKK =  LocalLayouts(radius, p_local, dist_local, k_local, l_local, it)
         
+       
         p[:, centers] = p_local
+
         for v in range(0,n):
             rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
-            p[0,v] = p[0,affinity[v]] + 0.1*rand[0]
-            p[1,v] = p[1,affinity[v]] + 0.1*rand[1]
+            p[0,v] = p[0,affinity[v]] + rand[0]
+            p[1,v] = p[1,affinity[v]] + rand[1]
         #end for v
+    
         kNN = kNN * ratio
     #end if loop    
         
@@ -148,7 +157,7 @@ def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
 # p  random start layout (2xn)
 #
 #
-def Algorithm_HarelKoren(n, p, dist, k, l, param,A):
+def Algorithm_HarelKoren(n, p, dist, k, l, param):
     starttime = time.time()
     
     # constants
@@ -157,8 +166,7 @@ def Algorithm_HarelKoren(n, p, dist, k, l, param,A):
     ratio   = param.Ratio       # ratio between vertices of two consecutive levels
 #    minSize = param.Minsize    # size of the coarsest graph
     
-    kNN = param.Startsize
-#    kNN = minSize  to make complete run of the algorithm knn should be equal to minSize
+    kNN = param.Startsize # = minSize  to make complete run of the algorithm knn should be equal to minSize
     steps = 0       # number of iterations
 
     while (kNN<=n):
@@ -194,7 +202,7 @@ def Algorithm_HarelKoren(n, p, dist, k, l, param,A):
     param.Startsize = n       
     
     # make one addition step
-    Algorithm_HarelKoren_step(n, p, dist, k, l, param)
+#    Algorithm_HarelKoren_step(n, p, dist, k, l, param)
     
     
     stoptime = time.time()

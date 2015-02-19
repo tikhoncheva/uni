@@ -101,6 +101,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 #        self.connect(self.ui.actionExample_2, QtCore.SIGNAL('triggered()'), self.startExample_2)
 #        self.connect(self.ui.actionExample_3, QtCore.SIGNAL('triggered()'), self.startExample_3)  
         
+        self.connect(self.ui.action_16x16, QtCore.SIGNAL('triggered()'), self.startExample_grid_16)
         self.connect(self.ui.action_grid32x32, QtCore.SIGNAL('triggered()'), self.startExample_grid_32)
         self.connect(self.ui.action_grid55x55, QtCore.SIGNAL('triggered()'), self.startExample_grid_55)
         
@@ -215,7 +216,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         if self.Alg_KamadaKawai:
             self.pnew, self.step = Algorithm_KamadaKawai(self.G.get_n(), self.pnew,            self.k, self.l, self.paramKK.eps, self.maxit)
         else:
-            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK, self.G.get_A())
+            self.pnew, self.step = Algorithm_HarelKoren (self.G.get_n(), self.pnew, self.dist, self.k, self.l, self.paramHK)
         
         self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
         self.plotGraph_Step()        
@@ -384,11 +385,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         particls = self.pnew
         
         self.ui.MatplotlibWidget2.canvas.ax.clear()
-        plot.scatter(particls[0,],particls[1,])
+        plot.scatter(particls[0,:],particls[1,:])
         self.ui.MatplotlibWidget2.canvas.ax.scatter(particls[0,],particls[1,])
         for i in range(n):
             for j in range(i+1,n):
-                if A[i,j] < np.Infinity :
+                if i!=j and A[i,j] < np.Infinity :
                     self.ui.MatplotlibWidget2.canvas.ax.plot([particls[0,i],particls[0,j]],
                                                              [particls[1,i],particls[1,j]])
                 # end if
@@ -416,7 +417,7 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 
 #        self.dist = floyed(A,n)
         self.dist = dist_with_DijkstraAlg(A)    
-                 
+                        
         self.pButtonReset_clicked()     # reset the algorithm
 
         # set buttons enabled        
@@ -523,10 +524,13 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.groupBox_Algorithm.setEnabled(True)
     # end startExample_3elt
 
-    def startExample_grid_32(self):
-        self.startExample_grid(32*32)
+    def startExample_grid_16(self):
         self.startExample_grid(16*16)
 #        self.startExample_grid(8*8)    
+    #end startExample_grid_32:
+        
+    def startExample_grid_32(self):
+        self.startExample_grid(32*32)
     #end startExample_grid_32:
 
     def startExample_grid_55(self):
