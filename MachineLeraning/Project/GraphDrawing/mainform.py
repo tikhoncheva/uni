@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Fri Feb 20 13:02:52 2015
+# Created: Fri Feb 20 22:45:30 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -513,7 +513,7 @@ class Ui_MainWindow(object):
         self.pbuttonSave.setText(_translate("MainWindow", "Save image", None))
         self.cBox_ShowLabels.setText(_translate("MainWindow", "show labels", None))
         self.menuExamples.setTitle(_translate("MainWindow", "Examples", None))
-        self.menuScotch_collection.setTitle(_translate("MainWindow", "Scotch collection", None))
+        self.menuScotch_collection.setTitle(_translate("MainWindow", "Collection of Jordi Petit", None))
         self.menuGrid_graph.setTitle(_translate("MainWindow", "Square Grid", None))
         self.menuSparse_grid_graph.setTitle(_translate("MainWindow", "Sparse Square Grid", None))
         self.actionExample_1.setText(_translate("MainWindow", "Example 1", None))

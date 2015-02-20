@@ -1025,7 +1025,7 @@ background: rgb(199, 199, 199)
     </property>
     <widget class="QMenu" name="menuScotch_collection">
      <property name="title">
-      <string>Scotch collection</string>
+      <string>Collection of Jordi Petit</string>
      </property>
      <addaction name="action_3eltGraph"/>
      <addaction name="action4elt_Graph"/>

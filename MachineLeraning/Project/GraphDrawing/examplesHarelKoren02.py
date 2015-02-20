@@ -76,6 +76,13 @@ def example_sgrid(nn):
         A[rande] = 0
     #end    
     A = np.reshape(A, (nn,nn))
+    for i in range(0,n):
+        for j in range (0,n):
+            if A[i,j]==0:
+                A[j,i]=0
+            #end if
+        #end for j
+    #end for i
         
     A[np.where(A==0)] = np.Infinity
     
