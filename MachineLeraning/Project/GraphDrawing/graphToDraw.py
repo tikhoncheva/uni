@@ -1,5 +1,6 @@
 #
-## Definition of a graph G + additional functions to initialise nodes of the graph on the plane and calculate graph distances
+## Definition of a graph G + additional functions to initialise nodes of the graph
+## on the plane and calculate graph distances
 #
 
 import numpy as np

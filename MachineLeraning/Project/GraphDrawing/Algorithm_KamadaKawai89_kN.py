@@ -81,10 +81,11 @@ def pdist(points):
 # ---------------------------------------------------------------------------    
 # compute the partial derivatives of energy function 
 def dEnergyOfSprings(radius, n, pdist_xy, pdiff_x, pdiff_y, k, l):
-      
+         
     C = np.divide(l, pdist_xy.T)   # elementwise division  
-    dEx = np.diag(np.dot(k, pdiff_x) - np.dot(k, np.multiply(C, pdiff_x)) )
-    dEy = np.diag(np.dot(k, pdiff_y) - np.dot(k, np.multiply(C, pdiff_y)) )
+    dEx = np.diag(np.dot(k, pdiff_x) -np.dot(k, np.transpose(np.multiply(C, pdiff_x.T))) )
+    dEy = np.diag(np.dot(k, pdiff_y) -np.dot(k, np.transpose(np.multiply(C, pdiff_y.T))) )
+    
     return dEx, dEy
 #end EnergyOfSprings
 

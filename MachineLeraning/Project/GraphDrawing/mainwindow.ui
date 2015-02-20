@@ -1033,11 +1033,19 @@ background: rgb(199, 199, 199)
     </widget>
     <widget class="QMenu" name="menuGrid_graph">
      <property name="title">
-      <string>Grid graph</string>
+      <string>Square Grid</string>
      </property>
      <addaction name="action_16x16"/>
      <addaction name="action_grid32x32"/>
      <addaction name="action_grid55x55"/>
+    </widget>
+    <widget class="QMenu" name="menuSparse_grid_graph">
+     <property name="title">
+      <string>Sparse Square Grid</string>
+     </property>
+     <addaction name="action_sgrid16x16"/>
+     <addaction name="action_sgrid32x32"/>
+     <addaction name="action_sgrid40x40"/>
     </widget>
     <addaction name="actionExample_1"/>
     <addaction name="actionExample_2"/>
@@ -1045,6 +1053,7 @@ background: rgb(199, 199, 199)
     <addaction name="actionExample_3"/>
     <addaction name="separator"/>
     <addaction name="menuGrid_graph"/>
+    <addaction name="menuSparse_grid_graph"/>
     <addaction name="menuScotch_collection"/>
    </widget>
    <addaction name="menuExamples"/>
@@ -1090,6 +1099,26 @@ background: rgb(199, 199, 199)
    </property>
   </action>
   <action name="action_16x16">
+   <property name="text">
+    <string>16x16</string>
+   </property>
+  </action>
+  <action name="action_sgrid32x32">
+   <property name="text">
+    <string>32x32</string>
+   </property>
+  </action>
+  <action name="action_sgrid40x40">
+   <property name="text">
+    <string>40x40</string>
+   </property>
+  </action>
+  <action name="actionExample_4">
+   <property name="text">
+    <string>Example 4</string>
+   </property>
+  </action>
+  <action name="action_sgrid16x16">
    <property name="text">
     <string>16x16</string>
    </property>

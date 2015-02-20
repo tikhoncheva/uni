@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Thu Feb 19 15:16:15 2015
+# Created: Fri Feb 20 13:02:52 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -375,6 +375,8 @@ class Ui_MainWindow(object):
         self.menuScotch_collection.setObjectName(_fromUtf8("menuScotch_collection"))
         self.menuGrid_graph = QtGui.QMenu(self.menuExamples)
         self.menuGrid_graph.setObjectName(_fromUtf8("menuGrid_graph"))
+        self.menuSparse_grid_graph = QtGui.QMenu(self.menuExamples)
+        self.menuSparse_grid_graph.setObjectName(_fromUtf8("menuSparse_grid_graph"))
         MainWindow.setMenuBar(self.menubar)
         self.actionExample_1 = QtGui.QAction(MainWindow)
         self.actionExample_1.setObjectName(_fromUtf8("actionExample_1"))
@@ -394,18 +396,30 @@ class Ui_MainWindow(object):
         self.action_grid55x55.setObjectName(_fromUtf8("action_grid55x55"))
         self.action_16x16 = QtGui.QAction(MainWindow)
         self.action_16x16.setObjectName(_fromUtf8("action_16x16"))
+        self.action_sgrid32x32 = QtGui.QAction(MainWindow)
+        self.action_sgrid32x32.setObjectName(_fromUtf8("action_sgrid32x32"))
+        self.action_sgrid40x40 = QtGui.QAction(MainWindow)
+        self.action_sgrid40x40.setObjectName(_fromUtf8("action_sgrid40x40"))
+        self.actionExample_4 = QtGui.QAction(MainWindow)
+        self.actionExample_4.setObjectName(_fromUtf8("actionExample_4"))
+        self.action_sgrid16x16 = QtGui.QAction(MainWindow)
+        self.action_sgrid16x16.setObjectName(_fromUtf8("action_sgrid16x16"))
         self.menuScotch_collection.addAction(self.action_3eltGraph)
         self.menuScotch_collection.addAction(self.action4elt_Graph)
         self.menuScotch_collection.addAction(self.actionCrack)
         self.menuGrid_graph.addAction(self.action_16x16)
         self.menuGrid_graph.addAction(self.action_grid32x32)
         self.menuGrid_graph.addAction(self.action_grid55x55)
+        self.menuSparse_grid_graph.addAction(self.action_sgrid16x16)
+        self.menuSparse_grid_graph.addAction(self.action_sgrid32x32)
+        self.menuSparse_grid_graph.addAction(self.action_sgrid40x40)
         self.menuExamples.addAction(self.actionExample_1)
         self.menuExamples.addAction(self.actionExample_2)
         self.menuExamples.addSeparator()
         self.menuExamples.addAction(self.actionExample_3)
         self.menuExamples.addSeparator()
         self.menuExamples.addAction(self.menuGrid_graph.menuAction())
+        self.menuExamples.addAction(self.menuSparse_grid_graph.menuAction())
         self.menuExamples.addAction(self.menuScotch_collection.menuAction())
         self.menubar.addAction(self.menuExamples.menuAction())
 
@@ -500,7 +514,8 @@ class Ui_MainWindow(object):
         self.cBox_ShowLabels.setText(_translate("MainWindow", "show labels", None))
         self.menuExamples.setTitle(_translate("MainWindow", "Examples", None))
         self.menuScotch_collection.setTitle(_translate("MainWindow", "Scotch collection", None))
-        self.menuGrid_graph.setTitle(_translate("MainWindow", "Grid graph", None))
+        self.menuGrid_graph.setTitle(_translate("MainWindow", "Square Grid", None))
+        self.menuSparse_grid_graph.setTitle(_translate("MainWindow", "Sparse Square Grid", None))
         self.actionExample_1.setText(_translate("MainWindow", "Example 1", None))
         self.actionExample_2.setText(_translate("MainWindow", "Example 2", None))
         self.actionExample_3.setText(_translate("MainWindow", "Example 3", None))
@@ -510,6 +525,10 @@ class Ui_MainWindow(object):
         self.action_grid32x32.setText(_translate("MainWindow", "32x32", None))
         self.action_grid55x55.setText(_translate("MainWindow", "55x55", None))
         self.action_16x16.setText(_translate("MainWindow", "16x16", None))
+        self.action_sgrid32x32.setText(_translate("MainWindow", "32x32", None))
+        self.action_sgrid40x40.setText(_translate("MainWindow", "40x40", None))
+        self.actionExample_4.setText(_translate("MainWindow", "Example 4", None))
+        self.action_sgrid16x16.setText(_translate("MainWindow", "16x16", None))
 
 from matplotlibwidged import matplotlibWidget
 

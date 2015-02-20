@@ -43,4 +43,16 @@ def examplePicture5a():
  
     return A
 # end examplePicture5
+
+def example_edgecrossing():
+    A = np.array([[np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity,np.Infinity],
+                  [1,np.Infinity,np.Infinity,1,np.Infinity,1,np.Infinity,np.Infinity],
+                  [np.Infinity,1,1,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,1,1,np.Infinity],
+                  [np.Infinity,np.Infinity,1,np.Infinity,1,np.Infinity,np.Infinity,1],
+                  [np.Infinity,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity,np.Infinity],
+                  [np.Infinity,np.Infinity,np.Infinity,np.Infinity,np.Infinity,1,np.Infinity,np.Infinity]])
+    return A
+# end example_edgecrossing    
     

@@ -11,7 +11,6 @@ import numpy as np
 from Algorithm_KamadaKawai89_kN import Algorithm_KamadaKawai_kN
 from graphToDraw import *
 
-import matplotlib.pyplot as plot 
 
 #----------------------------------------------------------------------------
 ## return max_{v in S} min_{u in S} dist[v][u]
@@ -134,8 +133,8 @@ def Algorithm_HarelKoren_step(n, p, dist, k, l, param):
 
         for v in range(0,n):
             rand  = [random.random(), random.random()] # random noise  (0,0)<rand<(1,1)
-            p[0,v] = p[0,affinity[v]] + rand[0]
-            p[1,v] = p[1,affinity[v]] + rand[1]
+            p[0,v] = p[0,affinity[v]] + 0.1*rand[0]
+            p[1,v] = p[1,affinity[v]] + 0.1*rand[1]
         #end for v
     
         kNN = kNN * ratio

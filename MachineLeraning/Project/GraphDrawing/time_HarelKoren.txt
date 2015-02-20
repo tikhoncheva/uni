@@ -1,5 +1,13 @@
 
 BTree
+
+
+
+
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 1449.992217 sec and    5 steps (radius 7)
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 1527.301540 sec and    5 steps (radius 16)
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 1528.564209 sec and    5 steps (radius 18)
+
 Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 30527.096519 sec and    5 steps 
 
 Grid Graph 16x16

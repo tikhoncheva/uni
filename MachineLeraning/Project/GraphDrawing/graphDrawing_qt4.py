@@ -1,3 +1,13 @@
+"""
+Project : Force Directed Graph Drawing (Main file)
+
+Authors:
+    Elias Roeger
+    Ekaterina Tikhoncheva
+
+University of Heidelberg, February 2015    
+
+"""
 
 import sys
 from PyQt4 import QtCore, QtGui
@@ -104,6 +114,10 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.connect(self.ui.action_16x16, QtCore.SIGNAL('triggered()'), self.startExample_grid_16)
         self.connect(self.ui.action_grid32x32, QtCore.SIGNAL('triggered()'), self.startExample_grid_32)
         self.connect(self.ui.action_grid55x55, QtCore.SIGNAL('triggered()'), self.startExample_grid_55)
+        
+        self.connect(self.ui.action_sgrid16x16, QtCore.SIGNAL('triggered()'), self.startExample_sgrid_16)
+        self.connect(self.ui.action_sgrid32x32, QtCore.SIGNAL('triggered()'), self.startExample_sgrid_32)
+        self.connect(self.ui.action_sgrid40x40, QtCore.SIGNAL('triggered()'), self.startExample_sgrid_40)
         
         # on parameter changed
         self.ui.textEdit_h.textChanged.connect(self.h_changed)
@@ -407,6 +421,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     # -------------------------------------------------------------------- 
     # Hard coded examples
     # --------------------------------------------------------------------     
+
+    #                           Example 1            
     def startExample_1(self):
         self.readFromFile = False
         
@@ -431,7 +447,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.labelStart.setText(QtCore.QString("Start: example1"))
         self.ui.groupBox_Algorithm.setEnabled(True)
     # end startExample_1
-        
+    
+    #                           Example 2
     def startExample_2(self):
         self.readFromFile = False
         
@@ -456,7 +473,8 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.labelStart.setText(QtCore.QString("Start: example2"))
         self.ui.groupBox_Algorithm.setEnabled(True)
     # end startExample_2
-        
+       
+    #                           Example 3
     def startExample_3(self):
         self.readFromFile = False                
         # init graph
@@ -479,54 +497,11 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         
         self.ui.labelStart.setText(QtCore.QString("Start: example3"))
         self.ui.groupBox_Algorithm.setEnabled(True)
-    # end startExample_3    
+    # end startExample_3               
     
-    def startExample_3elt(self):
-        self.readFromFile = True
-        
-        # not show labels by plotting
-        self.showLabels = False
-        self.ui.cBox_ShowLabels.setChecked(False)                
-        
-        # init graph (load adjacency matrix and read coordinates of nodes)
-        A, p = examplesHarelKoren02.example_3elt()
-        
-        n = np.size(A,0)   
-        self.G = Graph(n, A)
-
-        self.p = p
-        self.pnew = (self.p).copy()
-        
-
-#        self.dist = floyed(A,n)
-#        self.dist = dist_with_DijkstraAlg(A)
-        
-#        starttime = time.time()
-#        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
-#        stoptime = time.time()        
-#        print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
-        
-#        np.save('3elt_dist',self.dist)
-        self.dist = np.load('3elt_dist.npy')
-                            
-        self.pButtonReset_clicked()     # reset the algorithm
-        
-        # set buttons enabled        
-        self.ui.pbuttonStart.setEnabled(True)
-        self.ui.pbuttonStep.setEnabled(True)
-        self.ui.pbuttonContinue.setEnabled(False)
-
-        self.ui.pbuttonSave.setEnabled(True)
-        self.ui.pbuttonReset.setEnabled(True)        
-        
-        self.ui.labelStart.setText(QtCore.QString("Start: 3elt |V|="+str(n)))
-        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
-        self.ui.groupBox_Algorithm.setEnabled(True)
-    # end startExample_3elt
-
+     #                           Example Grid Graphs
     def startExample_grid_16(self):
         self.startExample_grid(16*16)
-#        self.startExample_grid(8*8)    
     #end startExample_grid_32:
         
     def startExample_grid_32(self):
@@ -536,12 +511,9 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
     def startExample_grid_55(self):
         self.startExample_grid(55*55)
     #end startExample_grid_55:
-        
-        
+    
     def startExample_grid(self, n):
-
-        self.readFromFile = False
-        
+        self.readFromFile = False        
         # not show labels by plotting
         self.showLabels = False
         self.ui.cBox_ShowLabels.setChecked(False)                
@@ -552,15 +524,56 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
 
 #        self.dist = floyed(A,n)
 #        self.dist = dist_with_DijkstraAlg(A)
-
         starttime = time.time()
         self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
         stoptime = time.time()        
         print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
 
- 
         self.pButtonReset_clicked()     # reset the algorithm
- 
+        # set buttons enabled        
+        self.ui.pbuttonStart.setEnabled(True)
+        self.ui.pbuttonStep.setEnabled(True)
+        self.ui.pbuttonContinue.setEnabled(False)
+
+        self.ui.pbuttonSave.setEnabled(True)
+        self.ui.pbuttonReset.setEnabled(True)        
+        
+        self.ui.labelStart.setText(QtCore.QString("Start: Grid Graph|V|="+str(n)))
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
+        self.ui.groupBox_Algorithm.setEnabled(True)
+    # end startExample_grid              
+        
+         #                           Example Sparse Grid Graphs    
+    def startExample_sgrid_16(self):
+        self.startExample_sgrid(16*16)
+    #end startExample_grid_32:    
+
+    def startExample_sgrid_32(self):
+        self.startExample_sgrid(32*32)
+    #end startExample_grid_32:
+
+    def startExample_sgrid_40(self):
+        self.startExample_sgrid(40*40)
+    #end startExample_grid_55:    
+        
+    def startExample_sgrid(self, n):
+        self.readFromFile = False
+        # not show labels by plotting
+        self.showLabels = False
+        self.ui.cBox_ShowLabels.setChecked(False)                
+        
+        # init graph (load adjacency matrix)
+        A = examplesHarelKoren02.example_sgrid(n)
+        self.G = Graph(n, A)
+
+#        self.dist = floyed(A,n)
+#        self.dist = dist_with_DijkstraAlg(A)
+        starttime = time.time()
+        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
+        stoptime = time.time()        
+        print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
+
+        self.pButtonReset_clicked()     # reset the algorithm
         # set buttons enabled        
         self.ui.pbuttonStart.setEnabled(True)
         self.ui.pbuttonStep.setEnabled(True)
@@ -574,6 +587,42 @@ class MyWindowClass(QtGui.QMainWindow):#, form_class):
         self.ui.groupBox_Algorithm.setEnabled(True)
     # end startExample_grid        
     
+    #                           Example_3elt
+    def startExample_3elt(self):
+        self.readFromFile = True
+        
+        # not show labels by plotting
+        self.showLabels = False
+        self.ui.cBox_ShowLabels.setChecked(False)                
+        
+        # init graph (load adjacency matrix and read coordinates of nodes)
+        A, p = examplesHarelKoren02.example_3elt() 
+        n = np.size(A,0)   
+        self.G = Graph(n, A)
+        self.p = p
+        self.pnew = (self.p).copy()
+        
+#        self.dist = floyed(A,n)
+#        self.dist = dist_with_DijkstraAlg(A) 
+        starttime = time.time()
+        self.dist = scipy.sparse.csgraph.dijkstra(A, directed = False, return_predecessors = False, unweighted = True)
+        stoptime = time.time()        
+        print "Time spent to calculate distance matrix of the graph({0:5d} nodes) with Scipy Dijkstra Alg: {1:0.6f} sec". format(n, stoptime-starttime)          
+        
+        self.pButtonReset_clicked()     # reset the algorithm     
+        # set buttons enabled        
+        self.ui.pbuttonStart.setEnabled(True)
+        self.ui.pbuttonStep.setEnabled(True)
+        self.ui.pbuttonContinue.setEnabled(False)
+
+        self.ui.pbuttonSave.setEnabled(True)
+        self.ui.pbuttonReset.setEnabled(True)        
+        
+        self.ui.labelStart.setText(QtCore.QString("Start: 3elt |V|="+str(n)))
+        self.ui.labelResult.setText(QtCore.QString("Result: Step " + str(self.step)))
+        self.ui.groupBox_Algorithm.setEnabled(True)
+    # end startExample_3elt
+        
     # -------------------------------------------------------------------- 
     # If parameter were changed
     # --------------------------------------------------------------------      

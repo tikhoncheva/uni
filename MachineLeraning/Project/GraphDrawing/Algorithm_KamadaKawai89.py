@@ -22,7 +22,8 @@ def dEnergyOfSprings_loops(n, p, k, l):
         for i in np.delete(range(n),m):
             dEx[m] += k[m,i] * ((p[0,m] - p[0,i]) - l[m,i] *(p[0,m] - p[0,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) ) 
             dEy[m] += k[m,i] * ((p[1,m] - p[1,i]) - l[m,i] *(p[1,m] - p[1,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) ) 
-        # end for i
+
+        # end for i        
     # end for m      
     return dEx, dEy
 #end EnergyOfSprings
@@ -46,7 +47,7 @@ def moveNode_m_loops(n, p, k, l, eps, rhs, Delta_m, m):
             Ex_m = 0  
             Ey_m= 0
             for i in np.delete(range(n),m):
-                Ex_m += k[m,i] * ((p[0,m] - p[0,i]) - l[m,i] *(p[0,m] - p[0,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) ) 
+                Ex_m += k[m,i] * ((p[0,m] - p[0,i])- l[m,i] *(p[0,m] - p[0,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) ) 
                 Ey_m += k[m,i] * ((p[1,m] - p[1,i]) - l[m,i] *(p[1,m] - p[1,i]) / np.sqrt(( (p[0,m] - p[0,i])**2 + (p[1,m] - p[1,i])**2)) )
             #end for i 
             rhs = np.array([-Ex_m,-Ey_m])                    
@@ -93,15 +94,17 @@ def pdist(points):
 def dEnergyOfSprings(n, pdist_xy, pdiff_x, pdiff_y, k, l):
           
     C = np.divide(l, pdist_xy.T)   # elementwise division  
-    dEx = np.diag(np.dot(k, pdiff_x) - np.dot(k, np.multiply(C, pdiff_x)) )
-    dEy = np.diag(np.dot(k, pdiff_y) - np.dot(k, np.multiply(C, pdiff_y)) )
+    dEx = np.diag(np.dot(k, pdiff_x) -np.dot(k, np.transpose(np.multiply(C, pdiff_x.T))) )
+    dEy = np.diag(np.dot(k, pdiff_y) -np.dot(k, np.transpose(np.multiply(C, pdiff_y.T))) )
+
     return dEx, dEy
 #end EnergyOfSprings
     
 # faster implementation without for loops    
 def moveNode_m(n, p, pdist_xy, pdiff_x, pdiff_y, k, l, eps, rhs, Delta_m, m):
-    
-    while(Delta_m > eps):
+    maxit = 100
+    it = 0
+    while(Delta_m > eps and it<=maxit):
             pdist_xy3 = np.power(pdist_xy,3)
             C = np.divide(l[m,:], pdist_xy3[:,m])   # const
             
@@ -123,6 +126,7 @@ def moveNode_m(n, p, pdist_xy, pdiff_x, pdiff_y, k, l, eps, rhs, Delta_m, m):
             Delta_m = np.sqrt(Ex_m **2 + Ey_m**2)
             rhs = np.array([-Ex_m,-Ey_m])  
             
+            it +=1
         # end while(Delta[m] > eps):
             
     return p
@@ -138,9 +142,9 @@ def Algorithm_KamadaKawai_step(n, p, k, l, eps, nit):
     Ex, Ey = dEnergyOfSprings(n, pdist_xy, pdiff_x, pdiff_y, k, l)
     Delta = np.sqrt(np.square(Ex) + np.square(Ey))
 
-
     if np.max(Delta) > eps: 
-        m = np.argmax(Delta)                
+        m = np.argmax(Delta) 
+        print 'max delta', np.max(Delta)
         # move node  m to its optimal position
         rhs = np.array([-Ex[m],-Ey[m]])
         p = moveNode_m(n, p, pdist_xy, pdiff_x, pdiff_y, k, l, eps, rhs, Delta[m], m)
@@ -166,9 +170,8 @@ def Algorithm_KamadaKawai(n, p, k, l, eps, nit):
     Ex, Ey = dEnergyOfSprings(n, pdist_xy, pdiff_x, pdiff_y, k, l)
     Delta = np.sqrt(np.square(Ex) + np.square(Ey))
 
-
     while(np.max(Delta)>eps and maxit_outer< nit):
-
+ 
         m = np.argmax(Delta)        
         
         # move node  m to its optimal position
