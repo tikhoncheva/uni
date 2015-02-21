@@ -1,0 +1,47 @@
+
+BTREE 255 m10 r3
+step  0:    10 Clusters,    40 steps of the KamdaKawai Algorithm   0.009228 sec
+step  1:    30 Clusters,   120 steps of the KamdaKawai Algorithm   0.039016 sec
+step  2:    90 Clusters,   360 steps of the KamdaKawai Algorithm   0.535055 sec
+Draw the graph (  255 nodes) with Algorithm of HarelKoren: 0.626503 sec and    3 steps 
+
+BTREE 1023 m10 r3 rad7
+
+BTREE 1023 m10 r3 rad16
+
+BTREE 1023 m10 r3 rad18
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 1402.674150 sec and    5 steps
+
+BTREE 1023 m2 r2 rad16
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 261.451171 sec and    9 steps		??????
+BTREE 1023 m2 r2 rad18
+Draw the graph ( 1023 nodes) with Algorithm of HarelKoren: 261.274154 sec and    9 steps		??????
+
+
+
+SQUARE GRID 
+
+16x16 m2 r2
+Draw the graph (  256 nodes) with Algorithm of HarelKoren: 20.029714 sec and    8 steps
+16x16 m10 r3
+Draw the graph (  256 nodes) with Algorithm of HarelKoren: 0.615102 sec and    3 steps 
+
+32x32 m2 r2
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 3854.181407 sec and   10 steps
+
+32x32 m10 r3
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1403.437832 sec and    5 steps
+
+40x40 m2 r2
+
+40x40 m10 r3
+
+SPARSE SQUARE GRID
+
+16x16 m2 r2
+Draw the graph (  256 nodes) with Algorithm of HarelKoren: 20.168194 sec and    8 steps
+
+32x32 m2 r2
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 3703.984918 sec and   10 steps
+32x32 m10 r3
+Draw the graph ( 1024 nodes) with Algorithm of HarelKoren: 1439.099359 sec and    5 steps

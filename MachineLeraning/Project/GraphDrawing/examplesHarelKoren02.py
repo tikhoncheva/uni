@@ -68,9 +68,9 @@ def example_sgrid(nn):
     #end for i        
     
     #delete ramdomly 1/4 of edges
-    nedges = n*n - 2*n
+    nedges = 2*n*n - 2*n
     A = np.reshape(A, (nn*nn))
-    for e in range(0, int(nedges/4)):
+    for e in range(0, int(nedges/3)):
         edgelist = np.where(A==1)[0]
         rande = edgelist[random.randint(0,len(edgelist)-1)]
         A[rande] = 0

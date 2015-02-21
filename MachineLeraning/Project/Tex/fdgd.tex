@@ -4,7 +4,10 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+
 \usepackage{graphicx}
+\usepackage{subcaption}
+
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 
 \usepackage[]{algorithm}
@@ -121,7 +124,7 @@ The algorithm \ref{kclusters} provides a simple heuristic approach for the $k$-c
 \end{algorithmic}
 \end{algorithm}
 
-For local layout beatification the algorithm of the Kamada and Kawai (see section \ref{section1}) with two small changes was selected. First, the algorithm is running predefined number of iterations without testing the condition in row $5$, see algorithm \ref{KKA}. Second change is, that we consider only $r$-neighbourhood of each vertex, where $r$-neighbourhood of a vertex v is defined as $N^r(v)=\{u\in V| 0\le d_{uv}<r\}$. That means, that formula (\ref{energyf}) in the modified version has the form:
+For local layout beatification the algorithm of the Kamada and Kawai (see section \ref{section1}) with two small changes was selected. First, the algorithm is running predefined number of iterations without testing the condition in line $5$, see algorithm \ref{KKA}. Second change is, that we consider only $r$-neighbourhood of each vertex, where $r$-neighbourhood of a vertex v is defined as $N^r(v)=\{u\in V| 0\le d_{uv}<r\}$. That means, that formula (\ref{energyf}) in the modified version has the form:
 \begin{align}
 \label{energyf_HK}
 E(p_1 , \dots, p_n) = \sum_{i\in V} \sum_{j\in N^r(i)} \frac{1}{2} k_{ij} \lbrace | p_i - p_j | - l_{ij} \rbrace^2
@@ -166,6 +169,7 @@ The complete algorithm of Harel and Koren is listed below:
 \end{algorithmic}
 \end{algorithm}
 
+Notice a random noise ($(0,0)<rand<(1,1)$) added at line $10$ to coordinates of vertices.
 In the following section we represent the result of evaluation both algorithms in our implementation on the examples from corresponding papers.
 
 \section{Implementation}
@@ -173,7 +177,7 @@ The both described algorithms were implemented with Python (version 2.7.6) and i
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.2]{interface.png}
+	\includegraphics[scale=0.4]{interface.png}
 	\caption{GUI}\label{fig: 0}
 \end{figure}
 
@@ -189,7 +193,15 @@ p_m =L_0 \times e^{2 pi*i*m /n}
 \end{align*}
 For some examples we load the initial positions of vertices from corresponding input file (example of the 3elt graph from Scotch collection \cite{JordiPetit})\\
 
-We tested both algorithm with different graphs from \cite{TomihisaKamada1989} and \cite{DavidHarel2002}. In figure \ref{fig: 1} we show the initial state of a graph, the first two steps\footnote{we refer to one iteration of the outer loop as one step}  and the state the graph converges to after 49 steps. In the first step the vertex $v_2$ gets moved to the middle. In the second step vertex $v_6$ gets moved. After this we already have a graph without edge crossing. In the following steps the movements are smaller and lead to a symmetric graph, where all the edges have the same length.
+We tested both algorithm with different graphs from \cite{TomihisaKamada1989} and \cite{DavidHarel2002}. 
+
+\FloatBarrier 
+
+\subsubsection*{Algorithm of Kamada and Kawai}
+
+In figure \ref{fig: 1} we show the initial state of a graph, the first two steps \footnote{we refer to one iteration of the outer loop as one step}  and the state the graph converges to after 49 steps. In the first step the vertex $v_2$ gets moved to the middle. In the second step vertex $v_6$ gets moved. After this we already have a graph without edge crossing. In the following steps the movements are smaller and lead to a symmetric graph, where all the edges have the same length.
+
+\FloatBarrier 
 
 \begin{figure}
 			\begin{minipage}[b]{.24\textwidth}
@@ -213,9 +225,6 @@ We tested both algorithm with different graphs from \cite{TomihisaKamada1989} an
 \end{figure}
 
 
-
-
-\newpage
 Our results with KKA can be seen in the following table. Run time on an  Intel Core i3-2310M CPU @ 2.10GHz $\times$ 4 . Parameter $K=1, \ L_0 = 1, \ \epsilon = 0.001$.
 \begin{table}
 
@@ -243,6 +252,142 @@ Binary Graph (5) & 31 & 17.745s & 323 &7.021915s & 2 \\
 \end{table}
 The Non Symmetric graph reaches the maximum number of iterations (FC failed to converge). But the drawing can be seen as good. For these small graphs, the multi scale algorithm is very fast, but it also doesn't reach acceptable drawings for our standard parametrisation.
 
+
+\FloatBarrier 
+\subsubsection*{Algorithm of Harel and Koren}
+
+Comparing with the Algorithm of Kamada and Kawai the algorithm of Harel and Koren includes 4 parameters: minimal size of the coarsest graph ($\it MinSize$), ratio between number of vertices in two consecutive levels ($Ratio$), number of iterations of local beautification ($Iterations$), size of the neighbourhood ($Rad$) (as further parameter one can consider the desired length of graph edges ($L$), but author do not mention it specially). The authors claim, that for all examples in paper they used following parameters: $MinSize=10$, $Ratio=3$, $Iterations=4$, $Rad = 7$ (for complete binary tree $Rad$ was set to $16$ or $17$) and achieved reasonable results.
+
+Unfortunately, it was not always the case in our evaluation. So on figure \ref{fig: difMinSize} one can see that in case of square grid graphs some vertices stay clustered after final iteration of the algorithm with the default settings. On the other hand, in case of complete binary tree default setting deliver better drawing results (compare \ref{fig: btrees}).
+
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Harel/HK_grid32x32_m2r2.png}
+           \caption{$MinSize=2$, $Ratio=2$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Harel/HK_grid32x32_m10_r3.png}
+            \caption{$MinSize=10$, $Ratio=3$}
+     \end{subfigure}
+     \caption{Square grid graph $32\times 32$ (compare figure $1$ in \cite{DavidHarel2002})}
+     \label{fig: difMinSize}
+\end{figure}     
+
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Harel/HK_btree1023_m2_r2_rad18.png}
+           \caption{$MinSize=2$, $Ratio=2$, $Rad =18$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Harel/HK_btree1023_m10_r3_rad18.png}
+            \caption{$MinSize=10$, $Ratio=3$, $Rad =18$}
+     \end{subfigure}
+     \caption{Complete binary tree with $1023$ vertices (compare figure $6$ in \cite{DavidHarel2002})}
+     \label{fig: btrees}
+\end{figure}     
+
+\FloatBarrier 
+
+We also find out, that a random noise added to vertex coordinates (see line $10$ in algorithm \ref{HK}) has some impact on the end result. On the fig. \ref{fig: compareRand} one can see that adding smaller noise ( for example from $(0,0)$ to $(0.1, 0.1)$) leads to better drawing result in our implementation.
+
+
+\begin{figure}
+\begin{minipage}[0.2\textheight]{\textwidth}	%step3
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.4]{results_Harel/rand1/HK_step3_eps1.png}
+           \caption{Step $3$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+            \includegraphics[scale=0.4]{results_Harel/rand01/HK_step3_eps01.png}
+            \caption{Step $3$}
+     \end{subfigure}        
+\end{minipage}
+
+\begin{minipage}[0.2\textheight]{\textwidth}	%step5
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.4]{results_Harel/rand1/HK_step5_eps1.png}
+           \caption{Step $5$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+	 			\centering
+            \includegraphics[scale=0.4]{results_Harel/rand01/HK_step5_eps01.png}
+            \caption{Step $5$}
+     \end{subfigure}        
+\end{minipage}
+\begin{minipage}[0.2\textheight]{\textwidth}	%step8
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.4]{results_Harel/rand1/HK_step8_eps1.png}
+           \caption{Step $8$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+	 	    \centering
+            \includegraphics[scale=0.4]{results_Harel/rand01/HK_step8_eps01.png}
+            \caption{Step $8$}
+     \end{subfigure}        
+\end{minipage}
+
+\caption{Influence of the random noise added to coordinates of vertices on the example of grid graph $16\times16$. Left column : $(0,0)<rand<(1,1)$, right column - $(0,0)<rand<(0.1,0.1)$}
+\label{fig: compareRand}
+\end{figure}	
+
+\FloatBarrier
+
+On the figure \ref{fig: sgrid} we show the result of applying the HKA to the sparse grid graphs ($1/3$ of edges were omitted). Unfortunately, the images do not look so spectacular as in original paper (see figure $4$ in \cite{DavidHarel2002}).
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Harel/HK_sgrid16x16_m2r2.png}
+           \caption{Sparse square grid graph $16\times 16$ ($256$ vertices), $MinSize=2$, $Ratio=2$}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Harel/HK_sgrid32x32_m10_r3.png}
+            \caption{Sparse square grid graph $32\times 32$ ($1024$ vertices), $MinSize=10$, $Ratio=3$}
+     \end{subfigure}
+     \label{fig: sgrid}
+\end{figure}     
+
+\newpage
+
+The performance of our implementation of HKA can be seen in the table below. Computations were maid on an Intel Core i7-3520M CPU @ 2.90GHz.
+
+\begin{table}[htb]
+
+\begin{tabular}{|c|c||c|c|c|c|c|}
+\hline
+Algorithm: & & \multicolumn{2}{|c|}{Kamda Kawai} &  \multicolumn{2}{|c|}{Multi Scale} & Parameters \\
+\hline
+\hline 
+Complete Binary Graph & 255  & & & $0.626503$s    & $3$ & $MinSize=10$, $Ratio=3$\\ 
+\hline 
+Complete Binary Graph & 1023 & & & $1402.674150$s & $5$ & $MinSize=10$, $Ratio=3$\\ 
+\hline 
+Complete Binary Graph & 1023 & & & $??????$s & $9$ & $MinSize=2$, $Ratio=2$\\ 
+\hline \hline
+Square Grid Graph     & 256 & & & $20.029714$s & $8$ & $MinSize=2$, $Ratio=2$\\ 
+\hline
+Square Grid Graph     & 256 & & & $0.615102$s & $3$ & $MinSize=10$, $Ratio=3$\\ 
+\hline
+Square Grid Graph     & 1024 & & & $3854.181407$s & $10$ & $MinSize=2$, $Ratio=2$\\ 
+\hline
+Square Grid Graph     & 1024 & & & $1403.437832$s & $5$ & $MinSize=10$, $Ratio=3$\\ 
+\hline\hline
+Sparse Square Grid Graph & 256 & & & $20.168194$s & $8$ & $MinSize=2$, $Ratio=2$\\ 
+\hline
+Sparse Square Grid Graph & 1024 & & & $1439.099359$s & $5$ & $MinSize=10$, $Ratio=3$\\ 
+
+\hline 
+\end{tabular} 
+\end{table}
+\FloatBarrier 
 
 \section{Conclusions}
 

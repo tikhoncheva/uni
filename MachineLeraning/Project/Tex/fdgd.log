@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.5.12)  20 FEB 2015 22:33
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.5.12)  21 FEB 2015 01:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -355,6 +355,28 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \Gin@req@height=\dimen113
 \Gin@req@width=\dimen114
 )
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2013/02/03 v1.1-62 Sub-captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2013/05/02 v3.3-89 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2013/05/02 v1.6-88 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 57.
+\captionmargin=\dimen115
+\captionmargin@=\dimen116
+\captionwidth=\dimen117
+\caption@tempdima=\dimen118
+\caption@indent=\dimen119
+\caption@parindent=\dimen120
+\caption@hangindent=\dimen121
+)
+\c@ContinuedFloat=\count101
+)
+\c@subfigure=\count102
+\c@subtable=\count103
+)
 (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2010/09/12 v5.6 Page Geometry
 
@@ -369,17 +391,17 @@ Package ifvtex Info: VTeX not detected.
 (/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
-\Gm@cnth=\count101
-\Gm@cntv=\count102
-\c@Gm@tempcnt=\count103
-\Gm@bindingoffset=\dimen115
-\Gm@wd@mp=\dimen116
-\Gm@odd@mp=\dimen117
-\Gm@even@mp=\dimen118
-\Gm@layoutwidth=\dimen119
-\Gm@layoutheight=\dimen120
-\Gm@layouthoffset=\dimen121
-\Gm@layoutvoffset=\dimen122
+\Gm@cnth=\count104
+\Gm@cntv=\count105
+\c@Gm@tempcnt=\count106
+\Gm@bindingoffset=\dimen122
+\Gm@wd@mp=\dimen123
+\Gm@odd@mp=\dimen124
+\Gm@even@mp=\dimen125
+\Gm@layoutwidth=\dimen126
+\Gm@layoutheight=\dimen127
+\Gm@layouthoffset=\dimen128
+\Gm@layoutvoffset=\dimen129
 \Gm@dimlist=\toks22
 )
 (/usr/share/texlive/texmf-dist/tex/latex/algorithms/algorithm.sty
@@ -388,7 +410,7 @@ nment
 
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count104
+\c@float@type=\count107
 \float@exts=\toks23
 \float@box=\box28
 \@float@everytoks=\toks24
@@ -398,7 +420,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
 \@float@every@algorithm=\toks25
-\c@algorithm=\count105
+\c@algorithm=\count108
 )
 (/usr/share/texlive/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
 Package: algpseudocode 
@@ -407,15 +429,15 @@ Package: algpseudocode
 Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
 
 Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
-\c@ALG@line=\count106
-\c@ALG@rem=\count107
-\c@ALG@nested=\count108
+\c@ALG@line=\count109
+\c@ALG@rem=\count110
+\c@ALG@nested=\count111
 \ALG@tlm=\skip46
 \ALG@thistlm=\skip47
-\c@ALG@Lnr=\count109
-\c@ALG@blocknr=\count110
-\c@ALG@storecount=\count111
-\c@ALG@tmpcounter=\count112
+\c@ALG@Lnr=\count112
+\c@ALG@blocknr=\count113
+\c@ALG@storecount=\count114
+\c@ALG@tmpcounter=\count115
 \ALG@tmplength=\skip48
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
@@ -424,31 +446,31 @@ Package: placeins 2005/04/18  v 2.2
 ) (./fdgd.aux)
 \openout1 = `fdgd.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
-LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count113
-\scratchdimen=\dimen123
+\scratchcounter=\count116
+\scratchdimen=\dimen130
 \scratchbox=\box30
-\nofMPsegments=\count114
-\nofMParguments=\count115
+\nofMPsegments=\count117
+\nofMParguments=\count118
 \everyMPshowfont=\toks26
-\MPscratchCnt=\count116
-\MPscratchDim=\dimen124
-\MPnumerator=\count117
-\makeMPintoPDFobject=\count118
+\MPscratchCnt=\count119
+\MPscratchDim=\dimen131
+\MPnumerator=\count120
+\makeMPintoPDFobject=\count121
 \everyMPtoPDFconversion=\toks27
 ) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
@@ -494,6 +516,10 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: End \AtBeginDocument code.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -528,157 +554,224 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 23.
+LaTeX Font Info:    Try loading font information for U+msa on input line 26.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 23.
+LaTeX Font Info:    Try loading font information for U+msb on input line 26.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
+) [1
 
-LaTeX Warning: Citation `Kobouro' on page 1 undefined on input line 28.
-
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 1 undefined on input line 
-28.
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 1 undefined on input line 28.
-
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 1 undefined on input line 
-34.
-
-[1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 2 undefined on input line 
-77.
-
-[2]
-
-LaTeX Warning: Citation `DavidHarel2002' on page 3 undefined on input line 100.
-
-
-
-LaTeX Warning: Citation `HadanyHarel2001' on page 3 undefined on input line 102
-.
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 3 undefined on input line 104.
-
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 3 undefined on input line 112.
-
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 3 undefined on input line 133.
-
-
-[3]
-
-LaTeX Warning: Citation `DavidHarel2002' on page 4 undefined on input line 149.
-
-
-<interface.png, id=26, 1028.34187pt x 578.16pt>
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
+<interface.png, id=26, 712.91344pt x 368.1253pt>
 File: interface.png Graphic file (type png)
  <use interface.png>
-Package pdftex.def Info: interface.png used on input line 176.
-(pdftex.def)             Requested size: 205.66473pt x 115.62994pt.
- [4 <./interface.png>]
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 5 undefined on input line 
-182.
-
-
-LaTeX Warning: Citation `Floyd1962' on page 5 undefined on input line 182.
-
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 5 undefined on input line 
-182.
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 5 undefined on input line 182.
-
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 190--192
+Package pdftex.def Info: interface.png used on input line 180.
+(pdftex.def)             Requested size: 285.16032pt x 147.24751pt.
+ [4]
+Underfull \hbox (badness 10000) in paragraph at lines 193--195
 
  []
-
-
-LaTeX Warning: Citation `TomihisaKamada1989' on page 5 undefined on input line 
-193.
-
-
-LaTeX Warning: Citation `DavidHarel2002' on page 5 undefined on input line 193.
-
 
 <ex1p0.png, id=30, 469.755pt x 463.9734pt>
 File: ex1p0.png Graphic file (type png)
  <use ex1p0.png>
-Package pdftex.def Info: ex1p0.png used on input line 198.
+Package pdftex.def Info: ex1p0.png used on input line 209.
 (pdftex.def)             Requested size: 116.0899pt x 114.655pt.
 
 <ex1p1.png, id=32, 468.3096pt x 463.9734pt>
 File: ex1p1.png Graphic file (type png)
  <use ex1p1.png>
-Package pdftex.def Info: ex1p1.png used on input line 202.
+Package pdftex.def Info: ex1p1.png used on input line 213.
 (pdftex.def)             Requested size: 116.0899pt x 115.00899pt.
 
 <ex1p2.png, id=33, 468.3096pt x 463.9734pt>
 File: ex1p2.png Graphic file (type png)
  <use ex1p2.png>
-Package pdftex.def Info: ex1p2.png used on input line 206.
+Package pdftex.def Info: ex1p2.png used on input line 217.
 (pdftex.def)             Requested size: 116.0899pt x 115.00899pt.
 
 <ex1p49.png, id=34, 468.3096pt x 463.9734pt>
 File: ex1p49.png Graphic file (type png)
  <use ex1p49.png>
-Package pdftex.def Info: ex1p49.png used on input line 210.
+Package pdftex.def Info: ex1p49.png used on input line 221.
 (pdftex.def)             Requested size: 116.0899pt x 115.00899pt.
+ [5 <./interface.png> <./ex1p0.png> <./ex1p1.png> <./ex1p2.png> <./ex1p49.png>]
+
+<results_Harel/HK_grid32x32_m2r2.png, id=43, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_grid32x32_m2r2.png Graphic file (type png)
+
+<use results_Harel/HK_grid32x32_m2r2.png>
+Package pdftex.def Info: results_Harel/HK_grid32x32_m2r2.png used on input line
+ 266.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+<results_Harel/HK_grid32x32_m10_r3.png, id=44, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_grid32x32_m10_r3.png Graphic file (type png)
+
+<use results_Harel/HK_grid32x32_m10_r3.png>
+Package pdftex.def Info: results_Harel/HK_grid32x32_m10_r3.png used on input li
+ne 271.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 264--274
+[]$[]$ $[]$ 
+ []
+
+<results_Harel/HK_btree1023_m2_r2_rad18.png, id=45, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_btree1023_m2_r2_rad18.png Graphic file (type png)
+
+<use results_Harel/HK_btree1023_m2_r2_rad18.png>
+Package pdftex.def Info: results_Harel/HK_btree1023_m2_r2_rad18.png used on inp
+ut line 281.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+<results_Harel/HK_btree1023_m10_r3_rad18.png, id=46, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_btree1023_m10_r3_rad18.png Graphic file (type png)
+
+<use results_Harel/HK_btree1023_m10_r3_rad18.png>
+Package pdftex.def Info: results_Harel/HK_btree1023_m10_r3_rad18.png used on in
+put line 286.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 279--289
+[]$[]$ $[]$ 
+ []
+
+[6 <./results_Harel/HK_grid32x32_m2r2.png> <./results_Harel/HK_grid32x32_m10_r3
+.png>] <results_Harel/rand1/HK_step3_eps1.png, id=53, 477.7047pt x 473.3685pt>
+File: results_Harel/rand1/HK_step3_eps1.png Graphic file (type png)
+
+<use results_Harel/rand1/HK_step3_eps1.png>
+Package pdftex.def Info: results_Harel/rand1/HK_step3_eps1.png used on input li
+ne 302.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+<results_Harel/rand01/HK_step3_eps01.png, id=54, 477.7047pt x 473.3685pt>
+File: results_Harel/rand01/HK_step3_eps01.png Graphic file (type png)
+
+<use results_Harel/rand01/HK_step3_eps01.png>
+Package pdftex.def Info: results_Harel/rand01/HK_step3_eps01.png used on input 
+line 307.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 300--310
+[]$[]$ $[]$ 
+ []
+
+<results_Harel/rand1/HK_step5_eps1.png, id=55, 477.7047pt x 473.3685pt>
+File: results_Harel/rand1/HK_step5_eps1.png Graphic file (type png)
+
+<use results_Harel/rand1/HK_step5_eps1.png>
+Package pdftex.def Info: results_Harel/rand1/HK_step5_eps1.png used on input li
+ne 315.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+<results_Harel/rand01/HK_step5_eps01.png, id=56, 477.7047pt x 473.3685pt>
+File: results_Harel/rand01/HK_step5_eps01.png Graphic file (type png)
+
+<use results_Harel/rand01/HK_step5_eps01.png>
+Package pdftex.def Info: results_Harel/rand01/HK_step5_eps01.png used on input 
+line 320.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 313--323
+[]$[]$ $[]$ 
+ []
+
+<results_Harel/rand1/HK_step8_eps1.png, id=57, 477.7047pt x 473.3685pt>
+File: results_Harel/rand1/HK_step8_eps1.png Graphic file (type png)
+
+<use results_Harel/rand1/HK_step8_eps1.png>
+Package pdftex.def Info: results_Harel/rand1/HK_step8_eps1.png used on input li
+ne 327.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+<results_Harel/rand01/HK_step8_eps01.png, id=58, 477.7047pt x 473.3685pt>
+File: results_Harel/rand01/HK_step8_eps01.png Graphic file (type png)
+
+<use results_Harel/rand01/HK_step8_eps01.png>
+Package pdftex.def Info: results_Harel/rand01/HK_step8_eps01.png used on input 
+line 332.
+(pdftex.def)             Requested size: 191.07849pt x 189.34404pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 325--335
+[]$[]$ $[]$ 
+ []
+
+[7 <./results_Harel/HK_btree1023_m2_r2_rad18.png> <./results_Harel/HK_btree1023
+_m10_r3_rad18.png>] [8 <./results_Harel/rand1/HK_step3_eps1.png> <./results_Har
+el/rand01/HK_step3_eps01.png> <./results_Harel/rand1/HK_step5_eps1.png> <./resu
+lts_Harel/rand01/HK_step5_eps01.png> <./results_Harel/rand1/HK_step8_eps1.png> 
+<./results_Harel/rand01/HK_step8_eps01.png>]
+
+Package caption Warning: \label without proper \caption on input line 355.
+See the caption package documentation for explanation.
 
 
-LaTeX Warning: Citation `TomihisaKamada1989' on page 5 undefined on input line 
-213.
+LaTeX Warning: Reference `fig: sgrid' on page 9 undefined on input line 343.
 
-[5 <./ex1p0.png> <./ex1p1.png> <./ex1p2.png> <./ex1p49.png>]
-No file fdgd.bbl.
-[6] (./fdgd.aux)
+<results_Harel/HK_sgrid16x16_m2r2.png, id=74, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_sgrid16x16_m2r2.png Graphic file (type png)
+
+<use results_Harel/HK_sgrid16x16_m2r2.png>
+Package pdftex.def Info: results_Harel/HK_sgrid16x16_m2r2.png used on input lin
+e 347.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+<results_Harel/HK_sgrid32x32_m10_r3.png, id=75, 477.7047pt x 473.3685pt>
+File: results_Harel/HK_sgrid32x32_m10_r3.png Graphic file (type png)
+
+<use results_Harel/HK_sgrid32x32_m10_r3.png>
+Package pdftex.def Info: results_Harel/HK_sgrid32x32_m10_r3.png used on input l
+ine 352.
+(pdftex.def)             Requested size: 214.96512pt x 213.01385pt.
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 345--356
+[]$[]$ $[]$
+ []
+
+[9 <./results_Harel/HK_sgrid16x16_m2r2.png> <./results_Harel/HK_sgrid32x32_m10_
+r3.png>]
+Overfull \hbox (34.1732pt too wide) in paragraph at lines 364--389
+[][] 
+ []
+
+(./fdgd.bbl) [10] (./fdgd.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 4144 strings out of 493304
- 54801 string characters out of 6139871
- 131209 words of memory out of 5000000
- 7505 multiletter control sequences out of 15000+600000
- 14636 words of font info for 56 fonts, out of 8000000 for 9000
+ 5320 strings out of 493304
+ 77227 string characters out of 6139871
+ 150220 words of memory out of 5000000
+ 8651 multiletter control sequences out of 15000+600000
+ 17840 words of font info for 67 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 38i,14n,24p,867b,296s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,14n,40p,867b,487s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on fdgd.pdf (6 pages, 432040 bytes).
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on fdgd.pdf (10 pages, 1981504 bytes).
 PDF statistics:
- 93 PDF objects out of 1000 (max. 8388607)
- 60 compressed objects within 1 object stream
+ 139 PDF objects out of 1000 (max. 8388607)
+ 76 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 86 words of extra memory for PDF output out of 10000 (max. 10000000)
 
