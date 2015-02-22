@@ -15,6 +15,8 @@
 
 \usepackage{placeins}	% Floatbarrier
 
+\usepackage{hyperref}
+
 
 \author{Elias Röger, Ekaterina Tikhoncheva}
 \title{Force Directed Graph Drawing Algorithms}
@@ -104,7 +106,7 @@ The second algorithm we tested is the algorithm by D. Harel and Y. Koren \cite{D
 
 The issue, the authors were dealing with, is the low speed of the most at the time force-directed drawing algorithms due to optimization of the quadratic energy function, which makes them almost inapplicable for the large graphs with more than $1000$ vertices. To cope with the speed problem authors continued the approach from \cite{HadanyHarel2001} and suggested new faster multi-scale algorithm.
 
-The idea of the their algorithm is very simple: instead of consider the whole graph $G$ at ones one builds an approximation sequence of coarse graphs $G^{k_1}, G^{k_2}, \dots, G^{k_l},\ k_1<k_2<\dots<k_l=|V|$ ({\it multi-scale representation of G}), and applies one of the simple force-directed drawing algorithm to draw those graphs nicely. Beatification of each scale provides a locally nice layout of $G$ and sequence of all locally nice layouts approximates the nice layout of $G$. We refer to the paper \cite{DavidHarel2002} for theoretical background of multi-scale representation of a graph, locally and globally nice layouts and describe here only the algorithm presented by authors.
+The idea of the their algorithm is very simple: instead of considering the whole graph $G$ at ones one builds an approximation sequence of coarse graphs $G^{k_1}, G^{k_2}, \dots, G^{k_l},\ k_1<k_2<\dots<k_l=|V|$ ({\it multi-scale representation of G}), and applies one of the simple force-directed drawing algorithm to draw those graphs nicely. Beautification of each scale provides a locally nice layout of $G$ and the sequence of all locally nice layouts approximates the nice layout of $G$. We refer to the paper \cite{DavidHarel2002} for theoretical background of multi-scale representation of a graph, locally and globally nice layouts and describe here only the algorithm presented by authors.
 
 \subsubsection*{Algorithm}
 To build a coarse graph of a given graph $G$ authors suggest to cluster vertices of $G$ in $k$ groups, so that the distance between vertices in the same group is minimized. This corresponds to the simple observation, that the vertices, which are close to each other according to graph distances, should also be drawn closer.
@@ -173,17 +175,17 @@ Notice a random noise ($(0,0)<rand<(1,1)$) added at line $10$ to coordinates of 
 In the following section we represent the result of evaluation both algorithms in our implementation on the examples from corresponding papers.
 
 \section{Implementation}
-The both described algorithms were implemented with Python (version 2.7.6) and included in simple GUI for better visualisation proposes (see Fig. \ref{fig: 0}). The GUI was designed with QT Creator 3.2.2 and then bound with Python using PyQt version 4.11. The results of evaluation were obtained on two different laptops, but we mention by each table with performance results the hardware specification of the corresponding laptop.
+The both described algorithms were implemented with Python (version 2.7.6) and included in simple GUI for better visualisation proposes (see Fig. \ref{fig: interface}). The GUI was designed with QT Creator 3.2.2 and then bound with Python using PyQt version 4.11. The results of evaluation were obtained on two different laptops, but we mention by each table with performance results the hardware specification of the corresponding laptop.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.4]{interface.png}
-	\caption{GUI}\label{fig: 0}
+	\caption{GUI}\label{fig: interface}
 \end{figure}
 
-In our code we used the following additional libraries : numpy (version 1.8.2) and scipy (version 0.13.3). Our implementation is unfortunately pure optimized, so that the better optimized version will probably perform better. But we did some optimization, because the initial implementation contained a lot of loops, which are rather slow in Python. So we used a vectorization to get rid of loops in the realisation of described algorithms.
+In our code we used the following additional libraries : numpy (version 1.8.2) and scipy (version 0.13.3). Our implementation is unfortunately poorly optimized, so that the better optimized version will probably perform better. But we did some optimization, because the initial implementation contained a lot of loops, which are rather slow in Python. So we used a vectorization to get rid of loops in the realisation of described algorithms.
 
-It is also worth to mention that calculation of pairwise distance between all vertices of a given graph is extremely time consuming. In our implementation we first followed the idea in \cite{TomihisaKamada1989} and used Floyd's algorithm for shortest paths \cite{Floyd1962}. Since this has complexity $ O(|V|^3)$ we also implemented a version of Dijkstras algorithm. For graphs with more than 1000 vertices we decided to use a heavily optimized version of Dijkstras algorithm from the scipy library. In the both papers \cite{TomihisaKamada1989} and \cite{DavidHarel2002} this problem did not arise, because the first one considers the graphs with fewer vertices and in the second an additional library for efficient algorithm on graphs was used.
+It is also worth mentioning that the calculation of pairwise distance between all vertices of a given graph is extremely time consuming. In our implementation we first followed the idea in \cite{TomihisaKamada1989} and used Floyd's algorithm for shortest paths \cite{Floyd1962}. Since this has complexity $ O(|V|^3)$ we also implemented a version of Dijkstras algorithm. For graphs with more than 1000 vertices we decided to use a heavily optimized version of Dijkstras algorithm from the scipy library. In both papers \cite{TomihisaKamada1989} and \cite{DavidHarel2002} this problem did not arise, because the first one only considers graphs with fewer vertices and in the second paper an additional library for efficient algorithms on graphs was used.
 
 \section{Evaluation results}
 
@@ -199,66 +201,120 @@ We tested both algorithm with different graphs from \cite{TomihisaKamada1989} an
 
 \subsubsection*{Algorithm of Kamada and Kawai}
 
-In figure \ref{fig: 1} we show the initial state of a graph, the first two steps \footnote{we refer to one iteration of the outer loop as one step}  and the state the graph converges to after 49 steps. In the first step the vertex $v_2$ gets moved to the middle. In the second step vertex $v_6$ gets moved. After this we already have a graph without edge crossing. In the following steps the movements are smaller and lead to a symmetric graph, where all the edges have the same length.
+In Fig. \ref{fig: 1} we show the initial state of a graph, the first two steps \footnote{we refer to one iteration of the outer loop as one step}  and the state the graph converges to after 49 steps. In the first step the vertex $v_2$ gets moved to the middle. In the second step vertex $v_6$ gets moved. After this we already have a graph without edge crossing. In the following steps the movements are smaller and lead to a symmetric graph, where all the edges have the same length. \\
+We also replicated the results from Fig.3 b and Fig. 5 in \cite{TomihisaKamada1989} (compare Fig. \ref{fig: triangGraph} and Fig. \ref{fig: nonsym}). It is interesting to see that the non symmetric graph in Fig \ref{fig: nonsym} is not a minimum. The drawing of the graph rotates along its center. 
+In Fig. \ref{fig: bincomp} we plotted the result drawings of a binary tree achieved by both algorithms. The result achieved by KKA looks slightly better. We believe that for graphs with less than $100$ vertices KKA is generally preferable.
 
 \FloatBarrier 
 
 \begin{figure}
-			\begin{minipage}[b]{.24\textwidth}
+			\begin{subfigure}{.5\textwidth}
 			\centering
-			\includegraphics[width=1.\textwidth]{ex1p0}\\
-			\end{minipage}\hfill
-			\begin{minipage}[b]{.24\textwidth}
+			\includegraphics[scale=0.45]{results_Kawai/ex1p0}\\
+			\caption{Initial State}
+			\end{subfigure}\hfill
+			\begin{subfigure}{.5\textwidth}
 			\centering
-			\includegraphics[width=1.\textwidth]{ex1p1}\\
-			\end{minipage}
-			\begin{minipage}[b]{.24\textwidth}
+			\includegraphics[scale=0.45]{results_Kawai/ex1p1}\\
+			\caption{Step 1}
+			\end{subfigure}
+			\begin{subfigure}{.5\textwidth}
 			\centering
-			\includegraphics[width=1.\textwidth]{ex1p2}\\
-			\end{minipage}\hfill
-			\begin{minipage}[b]{.24\textwidth}
+			\includegraphics[scale=0.45]{results_Kawai/ex1p2}\\
+			\caption{Step 2}
+			\end{subfigure}\hfill
+			\begin{subfigure}{.5\textwidth}
 			\centering
-			\includegraphics[width=1.\textwidth]{ex1p49}\\
-			\end{minipage}\hfill
+			\includegraphics[scale=0.45]{results_Kawai/ex1p49}\\
+			\caption{Step 49}
+			\end{subfigure}\hfill
 
 		\caption{Drawing of a small graph in 4 different states, compare Fig.2 in \cite{TomihisaKamada1989}}\label{fig: 1}
 \end{figure}
 
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Kawai/ex_triang_before}
+           \caption{Initial State}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Kawai/ex_triang_after}
+            \caption{State after 46 steps}
+     \end{subfigure}
+     \caption{Pyramid graph (compare figure $3 b$ in \cite{TomihisaKamada1989})}
+     \label{fig: triangGraph}
+\end{figure}    
 
-Our results with KKA can be seen in the following table. Run time on an  Intel Core i3-2310M CPU @ 2.10GHz $\times$ 4 . Parameter $K=1, \ L_0 = 1, \ \epsilon = 0.001$.
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Kawai/ex3_before}
+           \caption{Initial State}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Kawai/ex3_after}
+            \caption{State after $maxit=1000$ steps}
+     \end{subfigure}
+     \caption{Non symmetric graph (compare figure $5$ in \cite{TomihisaKamada1989})}
+     \label{fig: nonsym}
+\end{figure}    
+
+
+\begin{figure}[htb]
+	 \begin{subfigure}{0.5\textwidth}
+		   \centering
+           \includegraphics[scale=0.45]{results_Kawai/binary5kk}
+           \caption{Result with KKA}
+     \end{subfigure}
+	 \begin{subfigure}{0.5\textwidth}
+			\centering
+           \includegraphics[scale=0.45]{results_Kawai/binary5hk}
+            \caption{Result with HKA}
+     \end{subfigure}
+     \caption{Full Binary tree of depth $5$ for both algorithms }
+     \label{fig: bincomp}
+\end{figure}  
+
+
+Our results with KKA can be seen in table \ref{table: small}. Run time on an  Intel Core i3-2310M CPU @ 2.10GHz $\times$ 4 . Parameters were set to $K=1, \ L_0 = 1, \ \epsilon = 0.001$ for KKA and $MinSize=10$, $Ratio=3$, $Iterations=4$, $Rad = 7$ for HKA.
 \begin{table}
 
-\begin{tabular}{|c|c||c|c|c|c|}
+\begin{tabular}{|c|c||c|c|c|c|c|c|}
 \hline
-Algorithm: & & \multicolumn{2}{|c|}{Kamda Kawai} &  \multicolumn{2}{|c|}{Multi Scale}  \\
+Algorithm: & & \multicolumn{2}{|c|}{Kamada Kawai w. loops} &\multicolumn{2}{|c|}{K. K. optimized} &  \multicolumn{2}{|c|}{Multi Scale}  \\
 \hline
 \hline 
-Graph & $|V|$ & Time & Iterations & Time & Iterations\\ 
+Graph & $|V|$ & Time & Iterations & Time & Iterations & Time & Iterations\\ 
 \hline
-Small Graph & 6 & 0.169s & 47 &- & -\\ 
+Small Graph & 6 & 0.169s & 47& 0.05s & 53 &- & - \\ 
 \hline 
-Pyramid Graph & 10 & 0.370s & 45 &0.269s & 1 \\ 
+Pyramid Graph & 10 & 0.370s & 45& 0.05& 46 &0.021s & 1  \\ 
 \hline 
-Non Symmetric Graph & 10 & FC & FC & 0.279s & 1\\ 
+Non Symmetric Graph & 10 & FC  &FC & FC& FC & 0.024s & 1\\ 
 \hline 
-Binary Graph(3) & 7 & 0.136s & 30 & -&-\\ 
+Binary Graph(3) & 7 & 0.136s & 30 & 0.038s& 31 & -&-\\ 
 \hline 
-Binary Graph (4) & 15 & 1.97s & 131 & 0.373s& 1 \\ 
+Binary Graph (4) & 15 & 1.97s & 131 & 0.11s& 100 & -& - \\ 
 \hline 
-Binary Graph (5) & 31 & 17.745s & 323 &7.021915s & 2 \\ 
-\hline  & a & a & a	& & \\ 
+Binary Graph (5) & 31 & 17.745s & 323& 0.50s & 366 & 0.032s & 1 \\ 
 \hline 
 \end{tabular} 
+\caption{Results for small graphs}
+\label{table: small}
 \end{table}
-The Non Symmetric graph reaches the maximum number of iterations (FC failed to converge). But the drawing can be seen as good. For these small graphs, the multi scale algorithm is very fast, but it also doesn't reach acceptable drawings for our standard parametrisation.
+The Non Symmetric graph reaches the maximum number of iterations (FC failed to converge). But the drawing can be seen as good. For these small graphs, the multi scale algorithm is very fast, but it doesn't reach nice drawings for our standard parametrisation. In these cases we omitted the results.
+The table also illustrates the importance of vectorisation when working in python.
 
 
 \FloatBarrier 
 \subsubsection*{Algorithm of Harel and Koren}
 
-Comparing with the Algorithm of Kamada and Kawai the algorithm of Harel and Koren includes 4 parameters: minimal size of the coarsest graph ($\it MinSize$), ratio between number of vertices in two consecutive levels ($Ratio$), number of iterations of local beautification ($Iterations$), size of the neighbourhood ($Rad$) (as further parameter one can consider the desired length of graph edges ($L$), but author do not mention it specially). The authors claim, that for all examples in paper they used following parameters: $MinSize=10$, $Ratio=3$, $Iterations=4$, $Rad = 7$ (for complete binary tree $Rad$ was set to $16$ or $17$) and achieved reasonable results.
+Compared with the Algorithm of Kamada and Kawai the algorithm of Harel and Koren includes 4 parameters: minimal size of the coarsest graph ($\it MinSize$), ratio between number of vertices in two consecutive levels ($Ratio$), number of iterations of local beautification ($Iterations$), size of the neighbourhood ($Rad$) (as a further parameter one can consider the desired length of graph edges ($L$), but the authors do not mention it specially). The authors claim, that for all examples in their paper they used the following parameters: $MinSize=10$, $Ratio=3$, $Iterations=4$, $Rad = 7$ (for the complete binary tree $Rad$ was set to $16$ or $17$) and achieved reasonable results.
 
-Unfortunately, it was not always the case in our evaluation. So on figure \ref{fig: difMinSize} one can see that in case of square grid graphs some vertices stay clustered after final iteration of the algorithm with the default settings. On the other hand, in case of complete binary tree default setting deliver better drawing results (compare \ref{fig: btrees}).
+Unfortunately, that was not always the case in our evaluation. So on figure \ref{fig: difMinSize} one can see that in case of square grid graphs some vertices stay clustered after the final iteration of the algorithm with the default settings. On the other hand, in case of complete binary tree default setting deliver better drawing results (compare \ref{fig: btrees}).
 
 \begin{figure}[htb]
 	 \begin{subfigure}{0.5\textwidth}
@@ -340,7 +396,7 @@ We also find out, that a random noise added to vertex coordinates (see line $10$
 
 \FloatBarrier
 
-On the figure \ref{fig: sgrid} we show the result of applying the HKA to the sparse grid graphs ($1/3$ of edges were omitted). Unfortunately, the images do not look so spectacular as in original paper (see figure $4$ in \cite{DavidHarel2002}).
+In figure \ref{fig: sgrid} we show the result of applying the HKA to the sparse grid graphs ($1/3$ of edges were omitted). Unfortunately, the images do not look so spectacular as in original paper (see figure $4$ in \cite{DavidHarel2002}).
 \begin{figure}[htb]
 	 \begin{subfigure}{0.5\textwidth}
 		   \centering
@@ -357,20 +413,20 @@ On the figure \ref{fig: sgrid} we show the result of applying the HKA to the spa
 
 \newpage
 
-The performance of our implementation of HKA can be seen in the table below. Computations were maid on an Intel Core i7-3520M CPU @ 2.90GHz.
+The performance of our implementation of HKA can be seen in table \ref{table: large}. Computations were made on an Intel Core i7-3520M CPU @ 2.90GHz.
 
 \begin{table}[htb]
-
+\small
 \begin{tabular}{|c|c||c|c|c|c|c|}
 \hline
-Algorithm: & & \multicolumn{2}{|c|}{Kamda Kawai} &  \multicolumn{2}{|c|}{Multi Scale} & Parameters \\
+Algorithm: & & \multicolumn{2}{|c|}{Kamada Kawai} &  \multicolumn{2}{|c|}{Multi Scale} & Parameters \\
 \hline
 \hline 
-Complete Binary Graph & 255  & & & $0.626503$s    & $3$ & $MinSize=10$, $Ratio=3$\\ 
+Complete Binary Graph & 255  & & & $0.626503$s    & $3$ & $MinSize=10$, $Ratio=3$, $Rad = 18$\\ 
 \hline 
-Complete Binary Graph & 1023 & & & $1402.674150$s & $5$ & $MinSize=10$, $Ratio=3$\\ 
+Complete Binary Graph & 1023 & & & $1402.674150$s & $5$ & $MinSize=10$, $Ratio=3$,$Rad = 18$\\ 
 \hline 
-Complete Binary Graph & 1023 & & & $??????$s & $9$ & $MinSize=2$, $Ratio=2$\\ 
+Complete Binary Graph & 1023 & & & $??????$s & $9$ & $MinSize=2$, $Ratio=2$, $Rad = 18$\\ 
 \hline \hline
 Square Grid Graph     & 256 & & & $20.029714$s & $8$ & $MinSize=2$, $Ratio=2$\\ 
 \hline
@@ -383,13 +439,20 @@ Square Grid Graph     & 1024 & & & $1403.437832$s & $5$ & $MinSize=10$, $Ratio=3
 Sparse Square Grid Graph & 256 & & & $20.168194$s & $8$ & $MinSize=2$, $Ratio=2$\\ 
 \hline
 Sparse Square Grid Graph & 1024 & & & $1439.099359$s & $5$ & $MinSize=10$, $Ratio=3$\\ 
-
 \hline 
+
 \end{tabular} 
+\caption{Results for large graphs}
+\label{table: large}
 \end{table}
+
 \FloatBarrier 
 
 \section{Conclusions}
+
+We successfully implemented the algorithms described in \cite{TomihisaKamada1989} and \cite{DavidHarel2002} and were able to replicate most of their results. We found out that KKA is a good choice for drawing small graphs but takes too long for a high number of vertices. HKA is much better suited for handling larger graphs. But it also has the problem that we need to compute and store the complete distance matrix $d$, which is expensive. Hence, we encountered difficulties with the graphs that had more than $1024$ vertices. If we were to keep working on the graph drawing problem we see two possibilities. We could try to further optimize our implementation of HKA. However we might need to port it in a language like C++ to achieve the speed described in \cite{DavidHarel2002}. The more interesting thing to do would be to follow another idea by Harel and Koren and take a look at \cite{Harel2004}. Here the authors propose a new approach where they first embed the graph in a high dimensional space and then project it into 2D using principal component analysis. This would lead us back to the theory we encountered in our Machine Learning lecture.  
+
+
 
 \bibliography{literatur}
 \bibliographystyle{siam}
