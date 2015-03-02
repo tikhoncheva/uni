@@ -1,0 +1,11 @@
+Iterative Approach
+
+Graph matching as an iterative approach:
+
+graph -> coarse graph (anchor graph) -> coarse graph matching -> graph matching -> graph update
+
+
+------------------------------------------------------------------------------------------------------
+ver 0
+
+
