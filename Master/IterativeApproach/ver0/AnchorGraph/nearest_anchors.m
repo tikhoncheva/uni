@@ -23,6 +23,5 @@ function U = nearest_anchors(V, A, k)
         
        U(i, ind) = 1;
     end
-    U(1:3,:)
 
 end

@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 02-Mar-2015 17:26:35
+% Last Modified by GUIDE v2.5 04-Mar-2015 15:05:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -43,6 +43,9 @@ else
 end
 % End initialization code - DO NOT EDIT
 
+%-------------------------------------------------------------------------
+%       Before main window is made visible
+%-------------------------------------------------------------------------
 
 % --- Executes just before ia1 is made visible.
 function ia1_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -52,11 +55,15 @@ function ia1_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to ia1 (see VARARGIN)
 
+movegui(gcf,'center')
 % Choose default command line output for ia1
 handles.output = hObject;
 
 handles.img1selected = 0;
 handles.img2selected = 0;
+
+handles.AG1isBuilt = 0;
+handles.AG2isBuilt= 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -82,6 +89,8 @@ clc;
 % Additional functions
 addpath(genpath('./DependencyGraph'));
 addpath(genpath('./AnchorGraph'));
+addpath(genpath('./Matching'));
+
 clc;
 
 % UIWAIT makes ia1 wait for user response (see UIRESUME)
@@ -90,6 +99,10 @@ clc;
 %end
 
 
+
+%-------------------------------------------------------------------------
+%    Panel1 : select images and build corresponding dependency graphs
+%-------------------------------------------------------------------------
 
 % --- Outputs from this function are returned to the command line.
 function varargout = ia1_OutputFcn(hObject, eventdata, handles) 
@@ -129,15 +142,18 @@ if filename~=0
     % build dependency graph
     DG1 = buildDGraph(edges, descr, img1SP);
 
-    % Show it on the axis2
-    axes(handles.axes1);
-    draw_graph(img1, 'Image 2', DG1);
-    axes(handles.axes3);
-    draw_graph(img1, 'Image 2', DG1);
+    % Show it on the axis1
+    axes(handles.axes1);cla reset;
+    plot_graph(img1, 'Image 2', DG1);
+    % Show it on the axis3
+    axes(handles.axes3);cla reset;
+    plot_graph(img1, 'Image 2', DG1);
     if handles.img2selected
         img3 = combine2images(img1, handles.img2);
         axes(handles.axes5);
-        imagesc(img3)
+        imagesc(img3);
+        
+        handles.DGmatches = zeros(size(DG1.V,1), size(handles.DG2.V,1));
     end
         
     % update data
@@ -182,15 +198,17 @@ if filename~=0
     DG2 = buildDGraph(edges, descr, img2SP);
 
     % Show it on the axis2 and axis 4 
-    axes(handles.axes2);
-    draw_graph(img2, 'Image 2', DG2);
-    axes(handles.axes4);
-    draw_graph(img2, 'Image 2', DG2);
+    axes(handles.axes2);cla reset;
+    plot_graph(img2, 'Image 2', DG2);
+    axes(handles.axes4);cla reset;
+    plot_graph(img2, 'Image 2', DG2);
     
     if handles.img1selected
         img3 = combine2images(handles.img1, img2);
         axes(handles.axes5);
-        imagesc(img3)
+        imagesc(img3);
+        
+        handles.DGmatches = zeros(size(handles.DG1.V,1), size(DG2.V,1));
     end
     
 
@@ -201,43 +219,84 @@ if filename~=0
     
     guidata(hObject,handles); 
     
-    set(handles.pbSelectAnchors_img1, 'Enable', 'on');
+    set(handles.pbSelectAnchors_img2, 'Enable', 'on');
     set(handles.pbLoadAnchors_img2, 'Enable', 'on');
 end
 %end
 
+%-------------------------------------------------------------------------
+%       Panel2 : building anchor graphs
+%-------------------------------------------------------------------------
 
 % --- Executes on button press in pbSelectAnchors_img1.
 function pbSelectAnchors_img1_Callback(hObject, eventdata, handles)
-    handles.nAnchors = 5; %str2double(get(handles.editNAnchors,'string'));
-    handles.AG1.coord = [];
-    
+    handles.nAnchors = 5; %str2double(get(handles.editNAnchors,'string')); 
     guidata(hObject,handles); 
     
     set(handles.pbSaveAnchors_img1, 'Enable', 'off');
     set(handles.pbLoadAnchors_img1, 'Enable', 'off');
     
     axes(handles.axes3);
-    draw_graph(handles.img1, 'Image 1', handles.DG1);
-    set(gca,'ButtonDownFcn', {@axes3_SelectAnchors, handles})
-    set(get(gca,'Children'),'ButtonDownFcn', {@axes3_SelectAnchors, handles})
+    plot_graph(handles.img1, 'Image 1', handles.DG1);
+    
+    handles.AG1 = axes34_SelectAnchors(handles, handles.DG1);
+    handles.AG1isBuilt = 1;
+    
+    % plot anchor graph
+    show_DG = get(handles.cbShow_DG, 'Value');
+    show_AG = get(handles.cbShow_AG, 'Value');
+    cla reset;
+    plot_anchorgraph(handles.img1, handles.DG1, handles.AG1, show_DG, show_AG);
+    
+    set(handles.pbSaveAnchors_img1, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img1, 'Enable', 'on');
+    
+    if handles.AG2isBuilt 
+        axes(handles.axes5); cla reset;
+        handles.AGmatches = zeros(size(handles.AG1.V,1), size(handles.AG2.V,1));
+        plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, handles.AGmatches);
+        
+        set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
+    end
+    % update data
+    guidata(hObject,handles); 
 %end
 
 
 % --- Executes on button press in pbSelectAnchors_img1.
 function pbSelectAnchors_img2_Callback(hObject, eventdata, handles)
-    handles.nAnchors = str2double(get(handles.editNAnchors,'string'));
-    handles.AG2.coord = [];
-    
+    handles.nAnchors = 5; %str2double(get(handles.editNAnchors,'string')); 
     guidata(hObject,handles); 
-    
+
     set(handles.pbSaveAnchors_img2, 'Enable', 'off');
     set(handles.pbLoadAnchors_img2, 'Enable', 'off');
     
     axes(handles.axes4);
-    draw_graph(handles.img2, 'Image 2', handles.DG2);
-    set(gca,'ButtonDownFcn', {@axes4_SelectAnchors, handles})
-    set(get(gca,'Children'),'ButtonDownFcn', {@axes4_SelectAnchors, handles})
+    plot_graph(handles.img2, 'Image 2', handles.DG2);
+    
+    handles.AG2 = axes34_SelectAnchors(handles, handles.DG2);
+    handles.AG2isBuilt = 1;
+    
+    % plot anchor graph
+    show_DG = get(handles.cbShow_DG, 'Value');
+    show_AG = get(handles.cbShow_AG, 'Value');
+
+    cla reset;
+    plot_anchorgraph(handles.img2, handles.DG2, handles.AG2, show_DG, show_AG);
+    
+    set(handles.pbSaveAnchors_img2, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img2, 'Enable', 'on');
+    
+    if handles.AG1isBuilt 
+        axes(handles.axes5); cla reset;
+        handles.AGmatches = zeros(size(handles.AG1.V,1), size(handles.AG2.V,1));
+        plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, handles.AGmatches);
+        
+        set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
+    end
+    
+    % update data
+    guidata(hObject,handles); 
 %end
 
 
@@ -246,8 +305,10 @@ function pbSaveAnchors_img1_Callback(hObject, eventdata, handles)
 
 [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 
+AG = handles.AG1;
+
 if  filename~=0
-    save([pathname filesep filename] ,'handles.AG1');
+    save([pathname filesep filename] ,'AG');
 end
 %end
 
@@ -256,24 +317,75 @@ function pbSaveAnchors_img2_Callback(hObject, eventdata, handles)
 
 [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 
+AG = handles.AG2;
+
 if  filename~=0
-    save([pathname filesep filename] ,'handles.AG2');
+    save([pathname filesep filename] ,'AG');
 end
 %end
 
 % --- Executes on button press in pbLoadAnchors_img1.
 function pbLoadAnchors_img1_Callback(hObject, eventdata, handles)
-% hObject    handle to pbLoadAnchors_img1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
+[filename, pathname] = uigetfile({'*.mat'}, 'File Selector');
+
+if  filename~=0
+    % read data from file
+    load( [pathname filesep filename] ,'-mat', 'AG');
+end                       
+
+handles.AG1 = AG;
+handles.AG1isBuilt = 1;
+guidata(hObject, handles);
+
+%replot AG
+show_DG = get(handles.cbShow_DG, 'Value');
+show_AG = get(handles.cbShow_AG, 'Value');
+axes(handles.axes3);cla reset;
+plot_anchorgraph(handles.img1, handles.DG1, ...
+                  handles.AG1, show_DG, show_AG); 
+              
+if handles.AG2isBuilt  
+   axes(handles.axes5);cla reset;
+   handles.AGmatches = zeros(size(handles.AG1.V,1), size(handles.AG2.V,1)); 
+   plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, handles.AGmatches);
+   
+   set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
+end
+
+guidata(hObject, handles);
+%end
 
 % --- Executes on button press in pbLoadAnchors_img2.
 function pbLoadAnchors_img2_Callback(hObject, eventdata, handles)
-% hObject    handle to pbLoadAnchors_img2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+[filename, pathname] = uigetfile({'*.mat'}, 'File Selector');
 
+if  filename~=0
+    % read data from file
+    load( [pathname filesep filename] ,'-mat', 'AG');
+end        
+
+handles.AG2 = AG;
+handles.AG2isBuilt = 1;
+guidata(hObject, handles);
+
+%replot AG
+show_DG = get(handles.cbShow_DG, 'Value');
+show_AG = get(handles.cbShow_AG, 'Value');
+axes(handles.axes4);cla reset;
+plot_anchorgraph(handles.img2, handles.DG2, ...
+                 handles.AG2, show_DG, show_AG);   
+              
+if handles.AG1isBuilt
+   axes(handles.axes5);cla reset;
+   handles.AGmatches = zeros(size(handles.AG1.V,1), size(handles.AG2.V,1));
+   plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, handles.AGmatches);
+   
+   set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
+end    
+
+guidata(hObject, handles);
+%end
 
 % --- Executes on button press in cbShow_AG.
 function cbShow_AG_Callback(hObject, eventdata, handles)
@@ -282,13 +394,17 @@ show_DG = get(handles.cbShow_DG, 'Value');
 show_AG = get(handles.cbShow_AG, 'Value');
 
 % replot first anchor graph
-axes(handles.axes3);cla reset;
-plot_anchor_graph(handles.img1, handles.DG1, ...
+if (handles.AG1isBuilt)
+    axes(handles.axes3);cla reset;
+    plot_anchorgraph(handles.img1, handles.DG1, ...
                   handles.AG1, show_DG, show_AG);
+end
 % replot second anchor graph              
-axes(handles.axes4);cla reset;
-plot_anchor_graph(handles.img2, handles.DG2, ...
+if (handles.AG2isBuilt)
+    axes(handles.axes4);cla reset;
+    plot_anchorgraph(handles.img2, handles.DG2, ...
                   handles.AG2, show_DG, show_AG);              
+end
 
 
 % --- Executes on button press in cbShow_DG.
@@ -298,10 +414,29 @@ show_DG = get(handles.cbShow_DG, 'Value');
 show_AG = get(handles.cbShow_AG, 'Value');
 
 % replot first anchor graph
-axes(handles.axes3);cla reset;
-plot_anchor_graph(handles.img1, handles.DG1, ...
+if (handles.AG1isBuilt)
+    axes(handles.axes3);cla reset;
+    plot_anchorgraph(handles.img1, handles.DG1, ...
                   handles.AG1, show_DG, show_AG);
-% replot first second graph              
-axes(handles.axes4);cla reset;
-plot_anchor_graph(handles.img2, handles.DG2, ...
+end
+% replot first second graph       
+if (handles.AG2isBuilt)
+    axes(handles.axes4);cla reset;
+    plot_anchorgraph(handles.img2, handles.DG2, ...
                   handles.AG2, show_DG, show_AG);  
+end
+
+%-------------------------------------------------------------------------
+%       Panel3 : matching anchor graphs
+%-------------------------------------------------------------------------
+
+% --- Executes on button press in pbMatch_anchorgraphs.
+function pbMatch_anchorgraphs_Callback(hObject, eventdata, handles)
+%
+%
+%
+%end
+
+%-------------------------------------------------------------------------
+%       Panel4 : matching dependency graphs
+%-------------------------------------------------------------------------

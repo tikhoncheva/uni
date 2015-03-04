@@ -1,4 +1,4 @@
-function draw_graph(img, imgName, G, varargin)
+function plot_graph(img, imgName, G, varargin)
 
     if (ndims(img)>1)
         imagesc(img) ;

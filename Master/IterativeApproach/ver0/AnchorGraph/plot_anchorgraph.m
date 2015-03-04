@@ -8,14 +8,14 @@
 %  }
 %
 % AG =      anchor graph 
-%  { coord,    coordinates of the anchors (m x 2)
+%  {     V,    coordinates of the anchors (m x 2)
 %        U,    matrix of the nearest anchors for each point v_i \in V
 %  }
 %
 % show_AG   show edges of the AG
 % show_DG   show edges of the DG
 
-function plot_anchor_graph(img, DG, AG, show_DG, show_AG)
+function plot_anchorgraph(img, DG, AG, show_DG, show_AG)
 
     if (ndims(img)>1)
         imagesc(img) ;
@@ -25,17 +25,17 @@ function plot_anchor_graph(img, DG, AG, show_DG, show_AG)
     axis off;
     
     n = size(DG.V, 1);
-    m = size(AG.coord,1);
+    m = size(AG.V, 1);
     
     % edges between vertives and anchors
     [i, j] = find(AG.U);
     matchesInd = [i,j]';
 
     nans = NaN * ones(size(matchesInd,2),1) ;
-    xInit = [ DG.V(matchesInd(1,:),1) , AG.coord(matchesInd(2,:),1) , nans ] ;
-    yInit = [ DG.V(matchesInd(1,:),2) , AG.coord(matchesInd(2,:),2) , nans ] ;
+    xInit = [ DG.V(matchesInd(1,:),1) , AG.V(matchesInd(2,:),1) , nans ] ;
+    yInit = [ DG.V(matchesInd(1,:),2) , AG.V(matchesInd(2,:),2) , nans ] ;
     
-    line(xInit', yInit', 'Color','b', 'LineStyle', '--') ;
+    line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
       
     % vertices
     plot(DG.V(:,1), DG.V(:,2), 'b*');
@@ -44,23 +44,22 @@ function plot_anchor_graph(img, DG, AG, show_DG, show_AG)
     if show_DG
         for i=1:size(DG.E, 1)
         line([DG.V(DG.E(i,1),1) DG.V(DG.E(i,2),1) ],...
-             [DG.V(DG.E(i,1),2) DG.V(DG.E(i,2),2) ], 'Color', 'g');  
+             [DG.V(DG.E(i,1),2) DG.V(DG.E(i,2),2) ], 'Color', 'g', 'LineWidth', 2);  
         end
     end
     
     % anchors
-    plot(AG.coord(:,1), AG.coord(:,2), 'ys','MarkerSize', 9, 'MarkerFaceColor','y');
+    plot(AG.V(:,1), AG.V(:,2), 'yo','MarkerSize', 9, 'MarkerFaceColor','y');
     
     % edges between anchors
     if show_AG
-        [i, j] = find(ones(m, m));
-        matchesInd = [i,j]';
+        matchesInd = AG.E';
 
         nans = NaN * ones(size(matchesInd,2),1) ;
-        xInit = [ AG.coord(matchesInd(1,:),1) , AG.coord(matchesInd(2,:),1) , nans ] ;
-        yInit = [ AG.coord(matchesInd(1,:),2) , AG.coord(matchesInd(2,:),2) , nans ] ;
+        xInit = [ AG.V(matchesInd(1,:),1) , AG.V(matchesInd(2,:),1) , nans ] ;
+        yInit = [ AG.V(matchesInd(1,:),2) , AG.V(matchesInd(2,:),2) , nans ] ;
 
-        line(xInit', yInit', 'Color','y', 'LineStyle', '-') ;
+        line(xInit', yInit', 'Color','y', 'LineStyle', '-', 'LineWidth', 3) ;
     end
     
     
