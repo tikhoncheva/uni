@@ -42,9 +42,15 @@ function plot_anchorgraph(img, DG, AG, show_DG, show_AG)
     
     % edges between vertices
     if show_DG
+%         [i,j, ~] = find(DG.adjM);
+%         for k=1:size(i, 1)
+%             line([DG.V(i(k),1) DG.V(j(k),1) ],...
+%                  [DG.V(i(k),2) DG.V(j(k),2) ], 'Color', 'g');  
+%         end
+
         for i=1:size(DG.E, 1)
-        line([DG.V(DG.E(i,1),1) DG.V(DG.E(i,2),1) ],...
-             [DG.V(DG.E(i,1),2) DG.V(DG.E(i,2),2) ], 'Color', 'g', 'LineWidth', 2);  
+            line([DG.V(DG.E(i,1),1) DG.V(DG.E(i,2),1) ],...
+                 [DG.V(DG.E(i,1),2) DG.V(DG.E(i,2),2) ], 'Color', 'g');  
         end
     end
     

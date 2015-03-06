@@ -78,5 +78,11 @@ dist(distNeg) = 0;
 [v1,v2] = find(dist>0);
 G.E = [v1,v2];
 
+% % save adjacency matrix
+% G.adjM = sparse(logical(dist));
+
+% display('size of the adjacency matrix');
+% size(G.adjM);
+
 
 end

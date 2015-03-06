@@ -34,7 +34,8 @@ function AG = buildAGraph(DG, acoord, kNN)
     AG.U = nearest_anchors(DG.V, AG.V, kNN);
     
     % regression matrix
-    AG.Z = LocalAnchorEmbedding(DG.V, AG.U, AG.A);  % Local Anchor Embedding    
+    AG.Z = LocalAnchorEmbedding(DG.V', AG.V', AG.U );  % Local Anchor Embedding    
     
-    
+    % weight matrix
+    AG.W = weightMatrix(DG.E, AG.U);
 end

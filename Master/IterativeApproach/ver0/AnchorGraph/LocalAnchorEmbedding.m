@@ -1,4 +1,5 @@
-% Local Anchor Embedding function solves an QP to get the approximate given
+%% Local Anchor Embedding function
+% solves an QP to get the approximation of the given
 % vertex x_i through s nearest anchor points
 
 % Source:
@@ -6,32 +7,36 @@
 % "Graph construction for scalable semi-supervised learning"
 
 % Input: 
-% x       given set of vertices (n x 2)
+% dimension d = 2
+% x       given set of vertices (2 x n)
+% A       coordinates of the anchors (2 x m)
 % U       boolean matrix, U \in R^(n x m) 
-%         each row of U_i has exactly s non-zero entries 
-%         corresponding to the s nearest anchor points of x_i
-% A       coordinates of the anchors (m x 2)
+%         each row of Ui has exactly s non-zero entries,
+%         corresponding to the s nearest anchor points of xi
 
 % Output
 % obj     optimal objective value
-% z       corresponding optimal vector (z \in R^(m)) with s non-zero
-%         entries
+% Z       regression matrix
+%         each row Zi has exactly s non-zero entries,
+%         corresponding to the s nearest anchor points of xi
 
 % QP
 %     min 1/2|x - U*z|^2
 %     s.t. sum(z_j, j) = 1, z_j>=0
 
-function Z = LocalAnchorEmbedding(x, U, A)
+function Z = LocalAnchorEmbedding(x, A, U)
     
-    n = size(x, 1);
-    m = size(A, 1);
+    n = size(x, 2);
+    m = size(A, 2);
     
     Z = zeros(n,m);
     
     for i=1:n % for each vertex x_i
+        na_ind = find(U(i,:)>0);      % index set of the nearest anchors
+        s = length(na_ind);
         
-        nn_ind = find(U>0);      % index set of the nearest anchors
-        s = length(nn_ind);
+        Ai = A(:, na_ind);            % coordinates of the s nearest anchors (2 x s)
+        xi = x(:,i);                  % current vertex x (2 x 1)
         
         z_tm1 = ones(s,1)/s;
         z_t = z_tm1;
@@ -39,8 +44,7 @@ function Z = LocalAnchorEmbedding(x, U, A)
         sigma_tm2 = 0;
         sigma_tm1 = 1;
         
-        beta0 = 1;
-        beta_tm1 = beta0;
+        beta_tm1 = 1;
         
         t = 0;
         
@@ -50,60 +54,65 @@ function Z = LocalAnchorEmbedding(x, U, A)
             v_t = z_t + alpha_t *(z_t-z_tm1);  
             
             j = 0;
-            beta = 2^j * beta0;
-            z = simplexProjection(v_t - grad_g(v_t) / beta);
-            while (g(z)>g_new(z, v_t, beta))
-                beta = beta0;
-                z = z; ???
+            beta = 2^j * beta_tm1;
+            z = simplexProjection(v_t - grad_g(v_t, xi, Ai) / beta);
+            while (g(z, xi, Ai) > g_new(z, v_t, beta, xi, Ai))
                 j = j+1;
+                beta = 2^j * beta_tm1;
+                z = simplexProjection(v_t - grad_g(v_t, xi, Ai) / beta);
             end
+            
+            beta_tm1 = beta;
+            z_tm1 = z_t;
+            z_t = z;
             
             sigma_t = (1+sqrt(1+4*sigma_tm1^2))/2.;
             
-            sigma_tm2 = sigmae_tm1;
+            sigma_tm2 = sigma_tm1;
             sigma_tm1 = sigma_t;
-            t = t + 1;
-           
         end    
         
-    
-    
-        
+        zi = z_t;
+        Z(i, na_ind) = zi(:);
     end
 end
 
-% z (s x 1), x (2 x 1), A_i (2 x s)
+%% Value of the objective function in point z
+% z (s x 1), xi (2 x 1), Ai (2 x s)
 % val (2 x 1)
-function val = g(z, x_i, A_i)   % (1x2)
-    val = sum((x_i - A_i*z).^2) / 2.;
+function val = g(z, xi, Ai)   % (1x2)
+    val = sum((xi - Ai*z).^2) / 2.;
 end
 
-% z (s x 1), x (2 x 1), A_i (2 x s)
+%% Value of the gradient of the objective function in point z
+% z (s x 1), xi (2 x 1), Ai (2 x s)
 % val (s x 1)
-function val = grad_g(z, x_i, A_i)
-    val = A_i'*A_i*z - A_i'*x_i;
+function val = grad_g(z, xi, Ai)
+    val = Ai'*Ai*z - Ai'*xi;
 end
 
+%% Update objective
 % z (s x 1), v (s x 1), beta = const
-function val = g_new(z, v, beta)
-    val = g(v) + grad_g(v)'*(z-v) + beta* sum((z - v).^2) / 2.;
+function val = g_new(z, v, beta, xi, Ai)
+    val = g(v, xi, Ai) + grad_g(v, xi, Ai)'*(z-v) + beta* sum((z - v).^2) / 2.;
 end
 
-% Projection operator (see Duchi et al. "Efficient projecctions onto l_1-ball
+%% Projection operator 
+% (see Duchi et al. "Efficient projections onto l_1-ball
 %                                        for learning in high dimensions")
 % z    vector (s x 1)
-% pz   projection of z, such that pz = argmin|pz - z|
+% pz   projection of z, such that pz = argmin_{z'}|z' - z|
 function pz = simplexProjection(z)
+    s = size(z,1); 
     v = sort(z);
     
-    p = zeros(s,1);
-    for j=1:s
-       p(j) = v(j) - (sum(v(1:j)) - 1) / j; 
+    j = 1;
+    while (j<=s) && (v(j) - (sum(v(1:j)) - 1)/j >0) 
+        j = j+1;
     end
-    pp = p(p>0);
-    
-    jmax = max(pp);
-    theta = (sum(v(1:jmax)) - 1) / jmax;
+    p = j - 1;
+
+    theta = (sum(v(1:p)) - 1) / p;
     
     pz = bsxfun(@max, z-theta, zeros(s,1));
 end
