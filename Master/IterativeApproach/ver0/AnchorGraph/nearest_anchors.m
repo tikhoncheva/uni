@@ -23,5 +23,7 @@ function U = nearest_anchors(V, A, k)
         
        U(i, ind) = 1;
     end
+    
+    U = logical(U);
 
 end

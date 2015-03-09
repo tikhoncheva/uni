@@ -1,7 +1,7 @@
 % Calculate weights of the edges in the constructed anchor graph
 %
 % E         list of edges of the given DG graph
-% U         correspondences between vertices of the DG and anchor points
+% U         correspondences between vertices of the DG and anchor points (logical matrix)
 %
 % W         weights of the edges of the anchor graph
 
@@ -28,27 +28,13 @@ function W = weightMatrix(E, U)
     W = zeros(m,m);   
     
     for i=1:m
-        ai_xind = find(U(:,i)>0);
+        adjM_cutrows = adjM(U(:,i), :);
         for j=i+1:m
-            aj_xind = find(U(:,j)>0);
+            adjM_cut = adjM_cutrows(:, U(:,j)');
+            adjM_cut = triu(adjM_cut);
             
-            [v1,v2] = meshgrid(ai_xind, aj_xind);
-            % delete same edges, e.g. x1x3 and x3x1
-            v12 = [v1(:) v2(:)];
-            v21 = [v2(:) v1(:)];
-            
-            for k=1:size(v12,1);
-               equal_entries = all(bsxfun(@eq, v12(k,1:2), v21(:,1:2)),2);
-               if numel(find(equal_entries>0))
-                   v21(k - (size(v12,1)-size(v21,1)), :) = v12(k,1:2);
-                   v21(equal_entries>0, :) = [];
-               end
-            end
-          
-            % linear index of the edges
-            cutedges_ind = sub2ind(size(adjM),v21(:,1), v21(:,2));
-    
-            num = sum(adjM(cutedges_ind)); % here sum of the existing edges in DG, that connect clusters ai and aj
+            num = sum(adjM_cut(:));
+
             W(i,j) = num;   
             W(j,i) = num;
         end 

@@ -12,7 +12,7 @@
 % AG = {    anchor graph
 %       V,  coordinates of the vertices
 %       E,  list of the edges
-%       U,  correspondences between vertices of the DG and anchor points
+%       U,  correspondences between vertices of the DG and anchor points (logical matrix)
 %       Z,  regression matrix (weights of the correspondences between vertices of
 %           the initial graph DG and anchors)
 %       W   weights of the edges}

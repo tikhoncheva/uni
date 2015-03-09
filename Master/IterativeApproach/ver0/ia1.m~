@@ -156,8 +156,7 @@ if filename~=0
         axes(handles.axes5);
         imagesc(img3), axis off;
         
-        handles.DGmatches.objval  = 0.;
-        handles.DGmatches.matches = zeros(size(handles.DG1.V,1), size(DG2.V,1));
+        handles.DGmatches = zeros(size(DG1.V,1), size(handles.DG2.V,1));
     end
         
     % update data
@@ -215,8 +214,7 @@ if filename~=0
         axes(handles.axes5);
         imagesc(img3), axis off;
         
-        handles.DGmatches.objval  = 0.;
-        handles.DGmatches.matches = zeros(size(handles.DG1.V,1), size(DG2.V,1));
+        handles.DGmatches = zeros(size(handles.DG1.V,1), size(DG2.V,1));
     end
     
 
@@ -468,7 +466,7 @@ axes(handles.axes5); cla reset;
 plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, matches);
 
 axes(handles.axes6); cla reset;
-plot_DGmatches(handles.img1, handles.DG1, handles.img2, handles.DG2, handles.DGmatches.matches);
+plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, matches);
 
 set(handles.pbMatch_dependencygraphs, 'Enable', 'on');
 %update data
@@ -476,10 +474,6 @@ handles.AGmatches.objval = objval;
 handles.AGmatches.matches = matches;
 
 guidata(hObject, handles);
-
-axes(handles.axes5);
-set(gca,'ButtonDownFcn', {@axes5_highlightAG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightAG, handles}) 
 %end
 
 %-------------------------------------------------------------------------
@@ -488,17 +482,7 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightAG, handles})
 
 % --- Executes on button press in pbMatch_dependencygraphs.
 function pbMatch_dependencygraphs_Callback(hObject,  ~ , handles)
-
-[objval, matches] = matchDGraphs(handles.DG1, handles.DG2, ...
-                                 handles.AG1, handles.AG2, ...
-                                 handles.AGmatches.matches);
-
-axes(handles.axes6); cla reset;
-plot_DGmatches(handles.img1, handles.DG1, handles.img2, handles.DG2, handles.DGmatches.matches);
-
-%update data
-handles.DGmatches.objval = objval;
-handles.DGmatches.matches = matches;
-
-
+%
+%
+%
 %end
