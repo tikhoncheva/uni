@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 06-Mar-2015 16:58:52
+% Last Modified by GUIDE v2.5 11-Mar-2015 13:58:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -482,6 +482,13 @@ set(gca,'ButtonDownFcn', {@axes5_highlightAG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightAG, handles}) 
 %end
 
+% --- Executes on mouse press over axes background.
+function axes5_ButtonDownFcn(hObject, ~, handles)
+
+axes(handles.axes5);
+set(gca,'ButtonDownFcn', {@axes5_highlightAG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightAG, handles}) 
+    
 %-------------------------------------------------------------------------
 %       Panel4 : matching dependency graphs
 %-------------------------------------------------------------------------
@@ -493,12 +500,24 @@ function pbMatch_dependencygraphs_Callback(hObject,  ~ , handles)
                                  handles.AG1, handles.AG2, ...
                                  handles.AGmatches.matches);
 
-axes(handles.axes6); cla reset;
-plot_DGmatches(handles.img1, handles.DG1, handles.img2, handles.DG2, handles.DGmatches.matches);
-
 %update data
 handles.DGmatches.objval = objval;
 handles.DGmatches.matches = matches;
 
+%plotting
+axes(handles.axes6); cla reset;
+plot_DGmatches(handles.img1, handles.DG1, handles.img2, handles.DG2, handles.DGmatches.matches);
 
+% highlithin
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_highlightAG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightAG, handles})   
 %end
+
+
+% --- Executes on mouse press over axes background.
+function axes6_ButtonDownFcn(hObject, ~, handles)
+
+gaxes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_highlightAG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightAG, handles})   

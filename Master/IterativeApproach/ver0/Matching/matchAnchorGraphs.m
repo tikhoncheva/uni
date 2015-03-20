@@ -15,6 +15,8 @@
 
 function [objval, matches] = matchAnchorGraphs(AG1, AG2)
 
+fprintf('Match anchor graphs \n');
+
 v1 = AG1.V';  %2xnV1
 v2 = AG2.V';  %2xnV2
 
@@ -49,7 +51,8 @@ AffMatrix = initialAffinityMatrix3(v1, v2, adjM1, adjM2, AG1.W, AG2.W, corrMatri
 % run RRW Algorithm 
 tic
 x = RRWM(AffMatrix, group1, group2);
-sprintf('time spent for RRWM: %f sec', toc)
+fprintf('  time spent for the RRWM on the anchor graph: %f sec \n', toc)
+fprintf('------------------------------------------------\n');
 
 X = greedyMapping(x, group1, group2);
 
@@ -60,4 +63,5 @@ for i=1:size(L12,1)
 	matches(L12(i,1), L12(i,2)) = X(i);
 end  
 
+matches = logical(matches);
 end

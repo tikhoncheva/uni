@@ -58,19 +58,21 @@ for ia=1:nAffMatrix
         j = L12(jb, 1);
         b = L12(jb, 2);
         
-        D(ia,jb) = (dotsimilarity(v1(:,i)', v2(:,a)') ...       %
-                 +  dotsimilarity(v1(:,j)', v2(:,b)') )/2.;     %
+%         D(ia,jb) = (dotsimilarity(v1(:,i)', v2(:,a)') ...       %
+%                  +  dotsimilarity(v1(:,j)', v2(:,b)') )/2.;     %
         D1(ia,jb) = exp(-(d1(i,j)-d2(a,b))^2/4.);               % edge similarity
         
         D1(ia,jb) = D1(ia,jb) * W1(i,j) * W2(a,b);
+        
+%         D1(ia,jb) = exp(-(W1(i,j)-W2(a,b))^2/0.15);               % edge similarity
     end
 end
 
-% D = D1;
-D1 = max(D1(:)) - D1; % edge disimilarity
+D = D1;
 
-D = D - D1;
-D(find(D<0)) = 0;
+% D1 = max(D1(:)) - D1; % edge disimilarity
+% D = D - D1;
+% D(find(D<0)) = 0;
 
 D(1:(nAffMatrix+1):end)= zeros(nAffMatrix,1);
 D = D.*~full(conflictMatrix);

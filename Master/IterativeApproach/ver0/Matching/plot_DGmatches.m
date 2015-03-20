@@ -47,7 +47,7 @@ if (nargin == 6)
     nans = NaN * ones(size(matches2,2),1) ;
     x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
     y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
-    line(x', y', 'Color','g','LineWidth', 2) ;
+    line(x', y', 'Color','w','LineWidth', 2) ;
     
 end
 
