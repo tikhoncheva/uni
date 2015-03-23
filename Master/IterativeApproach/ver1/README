@@ -22,7 +22,7 @@ Anchor graph of a given image:
 
   Extract super pixels of a given image.
   For each edge point decide to which super pixel it belongs to.
-  Take weighted sum of the edge points inside one super pixel as it's center.
+  Take center of mass of the edge points inside one super pixel as it's center.
   Nodes of the anchor graph = center of the super pixels
   
   Connect vertices that correspond to the super pixels with a common edge
@@ -44,4 +44,23 @@ Matching of the original graphs (works not so good)
     select best match over all matches (max)
   
 ------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+Ver 1
+------------------------------------------------------------------------------------------------------
 
+ Use hierarchical structure of super pixels to constract initial graph and corresponding coarse graph:
+  for a given image img
+    extract edge points
+    calculate m super pixels of the selected region (???)
+    use a center of mass of the edge points inside of each coarse superpixel as it's center
+    anchor nodes = center of the superpixels
+    conect anchor nodes if the corresponding coarse super pixel have a common edge
+    
+    subdivide each of m super pixels in n(m) super pixels
+    center of each new finer super pixel = node of the fine graph
+    conect nodes if the corresponding fine super pixel have a common edge
+    
+    
+    
+    
+    
