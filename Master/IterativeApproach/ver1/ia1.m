@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 11-Mar-2015 13:58:34
+% Last Modified by GUIDE v2.5 23-Mar-2015 12:27:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -104,7 +104,8 @@ clc;
 
 
 %-------------------------------------------------------------------------
-%    Panel1 : select images and build corresponding dependency graphs
+%    Panel1 : select images and extract edge points with corresponding
+%    descriptors
 %-------------------------------------------------------------------------
 
 % --- Outputs from this function are returned to the command line.
@@ -125,12 +126,12 @@ function pbSelect_img1_Callback(hObject, ~, handles)
 if filename~=0
     img1 = imread([pathname filesep filename]);
     
-    [img1SP.num, ... 
-     img1SP.label, ...
-     img1SP.boundary] = SLIC_Superpixels(im2uint8(img1),1000, 20);
+%     [img1SP.num, ... 
+%      img1SP.label, ...
+%      img1SP.boundary] = SLIC_Superpixels(im2uint8(img1),1000, 20);
  
     handles.img1 = img1;
-    handles.img1SP = img1SP;   
+%     handles.img1SP = img1SP;   
     handles.img1selected = 1;
     
 %     replotaxes(handles.axes1, img1);
@@ -142,15 +143,14 @@ if filename~=0
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = []; %  and corresponding points
 
-    % build dependency graph
-    DG1 = buildDGraph(edges, descr, img1SP);
-
     % Show it on the axis1
     axes(handles.axes1);cla reset;
-    plot_graph(img1, 'Image 2', DG1);
+    imagesc(img1); % plot_graph(img1, 'Image 2', DG1);
+    
     % Show it on the axis3
     axes(handles.axes3);cla reset;
-    plot_graph(img1, 'Image 2', DG1);
+    imagesc(img1); % plot_graph(img1, 'Image 2', DG1);
+    
     if handles.img2selected
         img3 = combine2images(img1, handles.img2);
         axes(handles.axes5);
@@ -163,7 +163,6 @@ if filename~=0
     % update data
     handles.features1.edges = edges;
     handles.features1.descr = descr;
-    handles.DG1 = DG1;
     
     guidata(hObject,handles); 
     
@@ -201,9 +200,6 @@ if filename~=0
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = [];
 
-    % build dependency graph
-    DG2 = buildDGraph(edges, descr, img2SP);
-
     % Show it on the axis2 and axis 4 
     axes(handles.axes2);cla reset;
     plot_graph(img2, 'Image 2', DG2);
@@ -233,8 +229,52 @@ end
 %end
 
 %-------------------------------------------------------------------------
-%       Panel2 : building anchor graphs
+%       Panel2 : building coarse graphs (ancor graph) and fine graphs 
 %-------------------------------------------------------------------------
+
+% --- Executes on button press in pushbutton_constructGraphs.
+function pushbutton_constructGraphs_Callback(hObject, eventdata, handles)
+    handles.nAnchors = str2double(get(handles.editNAnchors,'string')); 
+    guidata(hObject,handles); 
+    
+    set(handles.pbSaveAnchors_img1, 'Enable', 'off');
+    set(handles.pbLoadAnchors_img1, 'Enable', 'off');
+    
+    axes(handles.axes3);
+    imagesc(handles.img1); % plot_graph(handles.img1, 'Image 1', handles.DG1);
+    
+    axes(handles.axes3);
+    % build coarse (Anchor Graph AG) and fine (Dependency Graph DG) graph    
+    [handles.AG1, handles.DG1, handles.img1SP] =  buildCoarseFineGraphs (handles);  
+    handles.AG1isBuilt = 1;
+    
+    % plot anchor graph
+%     show_DG = get(handles.cbShow_DG, 'Value');
+    show_DG = 0 ;
+    show_AG = get(handles.cbShow_AG, 'Value');
+    cla reset;
+
+    axes(handles.axes3);
+%     plot_anchorgraph(handles.img1, handles.DG1, handles.AG1, show_DG, show_AG);
+    plot_anchorgraph(handles.img1SP.boundary, handles.DG1, handles.AG1, show_DG, show_AG);
+
+    
+    set(handles.pbSaveAnchors_img1, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img1, 'Enable', 'on');
+    
+    if handles.AG2isBuilt 
+        handles.AGmatches.objval  = 0.;
+        handles.AGmatches.matches = zeros(size(handles.AG1.V,1), size(handles.AG2.V,1));
+   
+        axes(handles.axes5);cla reset;
+        plot_matches(handles.img1, handles.AG1, handles.img2, handles.AG2, handles.AGmatches.matches);
+        
+        set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
+    end
+    
+    % update data
+    guidata(hObject,handles); 
+% end
 
 % --- Executes on button press in pbSelectAnchors_img1.
 function pbSelectAnchors_img1_Callback(hObject, ~ , handles)
@@ -268,6 +308,9 @@ function pbSelectAnchors_img1_Callback(hObject, ~ , handles)
         
         set(handles.pbMatch_anchorgraphs, 'Enable', 'on');
     end
+    
+     % Build dependency graph
+    DG2 = buildDGraph(edges, descr, img2SP);
     % update data
     guidata(hObject,handles); 
 %end
@@ -422,7 +465,7 @@ show_AG = get(handles.cbShow_AG, 'Value');
 % replot first anchor graph
 if (handles.AG1isBuilt)
     axes(handles.axes3);cla reset;
-    plot_anchorgraph(handles.img1, handles.DG1, ...
+    plot_anchorgraph(handles.img1SP.boundary, handles.DG1, ...
                   handles.AG1, show_DG, show_AG);
 end
 % replot second anchor graph              
@@ -442,7 +485,7 @@ show_AG = get(handles.cbShow_AG, 'Value');
 % replot first anchor graph
 if (handles.AG1isBuilt)
     axes(handles.axes3);cla reset;
-    plot_anchorgraph(handles.img1, handles.DG1, ...
+    plot_anchorgraph(handles.img1SP.boundary, handles.DG1, ...
                   handles.AG1, show_DG, show_AG);
 end
 % replot first second graph       
@@ -521,3 +564,6 @@ function axes6_ButtonDownFcn(hObject, ~, handles)
 gaxes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlightAG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightAG, handles})   
+
+
+

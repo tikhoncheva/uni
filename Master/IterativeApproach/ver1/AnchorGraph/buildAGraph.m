@@ -1,41 +1,39 @@
-% Construct anchor graph of an image according to given dependeny graph and
-% coordinates of the selected anchors
-
-% Wei Liu, Junfeng He, Shih-Fu Chang Large 
-% "Graph construction for scalable semi-supervised learning"
-
-% 
-% DG        given dependency graph
-% acoord    coordinates of the selected anchors
-% kNN       number of nearest neighbors
+% Construct anchor graph of a given image
+% each of the given super pixels represent a node of an anchor graph
+% anchor node is a center of mass of the edge points inside corresponding 
+% super pixel
 %
-% AG = {    anchor graph
-%       V,  coordinates of the vertices
-%       E,  list of the edges
-%       U,  correspondences between vertices of the DG and anchor points (logical matrix)
-%       Z,  regression matrix (weights of the correspondences between vertices of
+% Input 
+% img     input image
+% edges   coordinates of the edge points of img (2 x nEdgePoints)
+% descr   descriptors of the edge points (128 x nEdgePoints)
+% imgSP   super pixels of img  imgSP = (num, labels, boundary)
+%
+% Output
+% AG = (V, D, E, U, Z, W) anchor graph
+%       V  coordinates of the vertices
+%       D  decriptors of the vertcies (HoG)
+%       E  list of the edges
+%       U  correspondences between vertices of the DG and anchor points (logical matrix)
+%       Z  regression matrix (weights of the correspondences between vertices of
 %           the initial graph DG and anchors)
 %       W   weights of the edges}
 
-% !!!!!!!!!!!!!! anchor graph is a complete graph !!!!!!!!!!!!!!
-function AG = buildAGraph(DG, acoord, kNN)
+function [AG, imgSP] = buildAGraph(img, edges, descr, imgSP)
+% edges 2x nEdgePoints
+% descr 128 x nEdgePoints
+% imgSP. boundary
+%      . labels
 
-    m = size(acoord, 1);  % number of anchor points
-    n = size(DG.V, 1);    % number of initial edges
-    
-    % coordinates of the anchor points
-    AG.V = acoord;
-    
-    % edges between the anchor points
-    [v1,v2] = meshgrid(1:m, 1:m);
-    AG.E = [v1(:) v2(:)];
-    
-    % correspondences to the vertices of the initial graph
-    AG.U = nearest_anchors(DG.V, AG.V, kNN);
-    
-    % regression matrix
-    AG.Z = LocalAnchorEmbedding(DG.V', AG.V', AG.U );  % Local Anchor Embedding    
-    
-    % weight matrix
-    AG.W = weightMatrix(DG.E, AG.U);
+AG.V = [];   % vertices
+AG.D = [];   % descriptors of the vertices
+AG.E = [];   % edges
+AG.U = [];
+AG.Z = [];
+AG.W = [];
+
+
+[AG, imgSP] = SPgraph( img, edges, descr, imgSP, AG);
+
+
 end

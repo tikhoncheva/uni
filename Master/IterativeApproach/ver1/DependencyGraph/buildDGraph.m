@@ -1,88 +1,53 @@
 % Construct dependency graph of a given image
-% 
-function G = buildDGraph(edges, descr, imgSP)
-% edges 2x nEdgePoints
-% descr 128 x nEdgePoints
-% imgSP. boundary
-%      . labels
+% subdivide each initial super pixel in n superpixels, which analog to the
+% anchor graph represent a nodes of a fine graph
+%
+% Input 
+% img     input image
+% edges   coordinates of the edge points of img (2 x nEdgePoints)
+% descr   descriptors of the edge points (128 x nEdgePoints)
+% imgSP   super pixels of img  imgSP = (num, labels, boundary)
+% m       m_i is the number of small super pixels inside given superpixel i
+%
+% Output
+% DG = (V, D, E) dependency graph
+%       V  coordinates of the vertices
+%       D  decriptors of the vertcies (HoG)
+%       E  list of the edges
 
-% G = ((V,D),E) dependency graph
+
+function G = buildDGraph(img, edges, descr, imgSP)
+
 G.V = [];   % vertices
 G.D = [];   % descriptors of the vertices
 G.E = [];   % edges
-% Radii of the graph vertices
-R = [];
 
-nEdgePoints = size(edges,2);
+for label=0:imgSP.num-1
+   SPxy = (imgSP.label == label);
+   if sum(SPxy(:))>0
+   
+       nV = 30;
+       
+       img_shadowed = img;
+       img_shadowed(repmat(~SPxy,[1 1 3]) ) = 0;
 
-% all labels of the image
-Labels = unique(imgSP.label);
-nLabels = numel(Labels);
-Labels = [];
+       G2.V = [];   % vertices
+       G2.D = [];   % descriptors of the vertices
+       G2.E = [];   % edges
 
-correspondenceMatrix = zeros(nLabels, nEdgePoints);
-
-for i=1:nEdgePoints
-    label_i = imgSP.label(edges(2,i), edges(1,i));    
-    Labels = [Labels, label_i];
-    correspondenceMatrix(label_i + 1, i) = 1;
+       [SP.num, SP.label, SP.boundary] = SLIC_Superpixels(im2uint8(img_shadowed), nV, 20);
+       
+       [G2, ~] = SPgraph( img_shadowed, edges, descr, SP, G2);
+       
+       G.V = [G.V; G2.V];  
+       G.D = [G.D, G2.D];   
+       G.E = [G.E; G2.E];   
+       
+   end
+    
 end
 
-% labels of super pixel, which contain edge points
-Labels = unique(Labels);
-nLabels = numel(Labels);
 
-correspondenceMatrix(all(~any(correspondenceMatrix, 2),2), :) = []; % remove zero rows
-
-% compute centers of superpixels and it' radii
-for i = 1:nLabels
-    
-    % find edge points inside selected SP
-    ind = find(correspondenceMatrix(i,:));
-    
-    x = sum(edges(1,ind))/numel(ind);
-    y = sum(edges(2,ind))/numel(ind);
-    
-    d = sum(descr(:,ind),2)/size(descr,1);
-    
-    G.V = [G.V; [x,y]];
-    G.D = [G.D, d];
-    clear d
-    
-    % radius of the super pixel with the center (x,y)
-    [sameSP(:,2), sameSP(:,1)] = find(imgSP.label == Labels(i)); 
-    diff = bsxfun(@minus,double([x;y]), sameSP(:,1:2)');
-    cityblock_dist = sqrt(sum(diff.^2)); % sum(abs(diff));
-    R = [R; max(cityblock_dist(:))];
-    
-    clear sameSP
-end
-clear correspondenceMatrix;
-
-%
-% connect super pixel that have a common edge
-
-n = size(G.V,1);
-
-% compute distance matrix (euclidean distance)
-dist = squareform(pdist(G.V, 'euclidean')); % n x n distance matrix
-
-% compute distance matrix (sum of two radii)
-distR = diag(R)*ones(n,n) + ones(n,n)*diag(R);
-distR(1:(n+1):end)= 0;
-
-dist = distR - dist;  clear distR;
-distNeg = dist<0;
-dist(distNeg) = 0;
-
-[v1,v2] = find(dist>0);
-G.E = [v1,v2];
-
-% % save adjacency matrix
-% G.adjM = sparse(logical(dist));
-
-% display('size of the adjacency matrix');
-% size(G.adjM);
 
 
 end
