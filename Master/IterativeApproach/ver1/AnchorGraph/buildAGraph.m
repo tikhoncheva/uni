@@ -20,10 +20,6 @@
 %       W   weights of the edges}
 
 function [AG, imgSP] = buildAGraph(img, edges, descr, imgSP)
-% edges 2x nEdgePoints
-% descr 128 x nEdgePoints
-% imgSP. boundary
-%      . labels
 
 AG.V = [];   % vertices
 AG.D = [];   % descriptors of the vertices
@@ -32,8 +28,7 @@ AG.U = [];
 AG.Z = [];
 AG.W = [];
 
-
+% calculate V,E
 [AG, imgSP] = SPgraph( img, edges, descr, imgSP, AG);
-
 
 end

@@ -14,37 +14,54 @@
 %       V  coordinates of the vertices
 %       D  decriptors of the vertcies (HoG)
 %       E  list of the edges
+% U     boolean matrix (n x nA): U[i,j] = 1 if v_i is inside super pixel of A_j
+%                                U[i,j] = 0 otherwise
 
 
-function G = buildDGraph(img, edges, descr, imgSP)
+function [G, U] = buildDGraph(img, edges, descr, imgSP, m)
 
 G.V = [];   % vertices
 G.D = [];   % descriptors of the vertices
 G.E = [];   % edges
 
+nA = imgSP.num;
+n = sum(m(:));
+
+s = 1;
+
+U = zeros(n, nA);
+
 for label=0:imgSP.num-1
+    
    SPxy = (imgSP.label == label);
-   if sum(SPxy(:))>0
    
-       nV = 30;
+   if sum(SPxy(:))>0
+       
+       nV = m(label + 1);
        
        img_shadowed = img;
        img_shadowed(repmat(~SPxy,[1 1 3]) ) = 0;
-
-       G2.V = [];   % vertices
-       G2.D = [];   % descriptors of the vertices
-       G2.E = [];   % edges
+       
+%        figure, imagesc(img_shadowed);
 
        [SP.num, SP.label, SP.boundary] = SLIC_Superpixels(im2uint8(img_shadowed), nV, 20);
        
-       [G2, ~] = SPgraph( img_shadowed, edges, descr, SP, G2);
+       U( s : s+nV - 1, label + 1) = 1;
+%        figure, imagesc(SP.boundary);
        
-       G.V = [G.V; G2.V];  
-       G.D = [G.D, G2.D];   
-       G.E = [G.E; G2.E];   
+       subG.V = [];   % vertices
+       subG.D = [];   % descriptors of the vertices
+       subG.E = [];   % edges
        
+       [subG, ~] = SPgraph( img_shadowed, edges, descr, SP, subG);
+       
+       G.V = [G.V; subG.V];  
+       G.D = [G.D, subG.D];   
+       G.E = [G.E; subG.E];   
+       
+       s = s + nV;
    end
-    
+   
 end
 
 

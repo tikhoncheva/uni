@@ -78,7 +78,7 @@ dist(distNeg) = 0;
 [v1,v2] = find(dist>0);
 G.E = [v1,v2];
 
-% color super pixel without edge points into black color
+% color super pixel without edge point into black color
 imgSP.label(~mask) = -1 ;
 imgSP.boundary(repmat(~mask,[1 1 3]) ) = 0;
 
