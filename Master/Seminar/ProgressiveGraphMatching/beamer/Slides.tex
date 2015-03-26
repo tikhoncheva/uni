@@ -58,7 +58,7 @@ $$X_{ia} = \begin{cases} 1 & \mbox{node}\ v_i\in \bar{V}^P \mbox{matches}\ v_a \
 General formulation:
 $$x^* = \arg\max S(x)$$
 $$ s.t. \begin{cases}
-									x\in{0,1}^{n^Pn^Q} \\
+									x\in\{0,1\}^{n^Pn^Q} \\
 								 \sum_{i=1}^{n^P}x_{ia}\le 1 \\
 								 \sum_{a=1}^{n^Q}x_{ia}\le 1  \end{cases}$$
 The objective function $S(x)$ measures the similarity between the graph attributes. 
@@ -81,7 +81,7 @@ $$\mbox{s.t}. \begin{cases}
 \begin{frame}
 \frametitle{Issues}
 \begin{itemize}
-\item Quadratic assignemnt problem is $NP$-complete
+\item Quadratic assignment problem is $NP$-complete
 \item Computation of $W$ for a large graph is almost infeasible
 \item Reduction of the complexity often leads to worse matching results
 \end{itemize}
@@ -90,7 +90,7 @@ $$\mbox{s.t}. \begin{cases}
 \begin{frame}
 \frametitle{Progressive Graph Matching}
 Refer to the initial graphs $\bar{G}^P$ and $\bar{G}^Q$ as \textcolor{red}{maximal graphs}. 
-For each maximal graph a subgraph induced by a reduced set of nodes is called \textcolor{red}{active graph} ($G^P$ and $G^Q$ respectively).
+For each maximal graph a sub-graph induced by a reduced set of nodes is called \textcolor{red}{active graph} ($G^P$ and $G^Q$ respectively).
 
 \vspace{10pt}
 Idea: match maximal graphs by iteratively matching their active graphs ($t=0,1,\dots$)
@@ -130,7 +130,7 @@ $p(v_i^P,v_a^Q|M_t)$	conditional probability of match $(v_i^P,v_a^Q)$ between tw
 
 Base on the probability distribution $p(V^P,V^Q|M_t)$ new candidate set $C_{t+1}$ consists of $N_c$ best matches. 
 
-Given new candidate set $C_{t+1}$ we obtain new active graphs $G_{t+1}^P$ and $G_{t+1}^P$.
+Given new candidate set $C_{t+1}$ we obtain new active graphs $G_{t+1}^P$ and $G_{t+1}^Q$.
 
 The condition $M_t\subset C_{t+1}$ ensures that $s_{t+1}\ge s_t$, if $M_t$ is an optimal matching. 
 
@@ -172,7 +172,7 @@ The condition $M_t\subset C_{t+1}$ ensures that $s_{t+1}\ge s_t$, if $M_t$ is an
 \frametitle{Matching of images}
 Given two images.
 \begin{itemize}
-\item Detected features of the images represent nodes of the maximal graphs (and their geometric relations as edges)
+\item Detected features of the images represent nodes of the maximal graphs (and their geometric relations edges)
 \item Node similarity  = similarity of feature descriptors of two graphs
 \item Edge similarity = Symmetric Transfer Error (STE) (see \cite{MinsuChoRRW})
 \end{itemize}
@@ -213,7 +213,7 @@ $$ \mathbf{p(V^P,V^Q|M_t) = \sum_{m_i\in M_t}p(V^Q|V^P,M=m_i,M_t)p(V^P|M=m_i, M_
 
   \begin{columns}[T]
     \begin{column}{0.75\textwidth}
-	\item Assuming $m_i=(v_{p_i}^P,v_{q_i}^Q)$ and use function $kNN(\cdot,k)$ to find $k$-nearest neighbors of a node\\
+	\item Assuming $m_i=(v_{p_i}^P,v_{q_i}^Q)$ and use function $kNN(\cdot,k)$ to find $k$-nearest neighbours of a node\\
 		$$\mathbf{p(V^P=v_j^P|M=m_i,M_t)} = \begin{cases}
 			1/k_{1} &, \ \mbox{if}\ v_j^P\in kNN(v_{p_i}^P, k_1)\\
 			0 &, \ \mbox{otherwise}
@@ -229,7 +229,7 @@ $$ \mathbf{p(V^P,V^Q|M_t) = \sum_{m_i\in M_t}p(V^Q|V^P,M=m_i,M_t)p(V^P|M=m_i, M_
 
   \begin{columns}[T]
     \begin{column}{0.75\textwidth}
-	\item Let $NN(\cdot)$ define a nearest neighbor of a node\\
+	\item Let $NN(\cdot)$ define a nearest neighbour of a node\\
 	      \vspace{10pt}
 	      $$\mathbf{p(V^Q=v_b^Q|V^P=v_j^P,M=m_i,M_t)} = $$
 	      $$\begin{cases}
@@ -266,8 +266,8 @@ $Z = \sum_{v_b^Q\in kNN(\tau_{m_i}(p_j^P),k_2)}\exp(-d_{jb|mi})$ is a normalizat
 \begin{itemize}
  \item Parameters of the affinity matrix $W$: $\mathbf{\alpha = 50}$, $\mathbf{k_1=25}$, $\mathbf{k_2=5}$
  \item Used Descriptors: {\bf MSER} \cite{MSER} and Harris-affine and Hessian-affine features \cite{HarrisAffine}
- \item used graph mathing methonds: \\
-      Graduate Assigment Algorithm ({\bf SM}) \cite{SM} \\
+ \item used graph matching methods: \\
+      Graduate Assignment Algorithm ({\bf SM}) \cite{SM} \\
       Spectral Matching with Affine Constraint ({\bf SMAC}) \cite{SMAC} \\
       Probabilistic Graph Matching ({\bf PM}) \cite{PM}\\
       Reweighted Random Walk Method ({\bf RRWM})\cite{MinsuChoRRW}\\
@@ -323,7 +323,7 @@ $Z = \sum_{v_b^Q\in kNN(\tau_{m_i}(p_j^P),k_2)}\exp(-d_{jb|mi})$ is a normalizat
 \begin{frame}
  \frametitle{Evaluation: Different matching algorithms}
  \begin{figure}
-  \includegraphics[scale=0.8]{fig_table1.png}
+  \includegraphics[scale=0.7]{fig_table1.png}
   \caption{Dataset of $30$ image pairs. Accuracy boost $3\%\sim 8\%$}
  \end{figure}
 
@@ -338,7 +338,7 @@ $Z = \sum_{v_b^Q\in kNN(\tau_{m_i}(p_j^P),k_2)}\exp(-d_{jb|mi})$ is a normalizat
   \item algorithm is suitable for large graphs
   \vspace{30pt}
   
-  \item (?) convergense of the algorithm
+  \item (?) convergence of the algorithm
   \item (?) selection of the candidate matches
   \item (?) number of the candidate matches
   \item (?) running time
