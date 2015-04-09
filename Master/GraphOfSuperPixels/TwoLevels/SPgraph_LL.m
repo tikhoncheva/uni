@@ -1,4 +1,20 @@
-function [ G, imgSP ] = SPgraph( img, edges, descr, imgSP, G)
+% Graph of Super Pixels
+
+% Input
+% img       given image
+% edges     edge points on the image
+% descr     descriptors of the edge points
+% imgSP = [num, label, boundary] superpixel segemntation of the given image
+
+% Output
+% G         Graph of Super Pixels
+% imgSP     same structure as in input with colored in black superpixels, that
+%           were not used for graph building
+% SPrect    rectangles around each used superpixel (#usedSP x 5)
+% SPrect_i = [xmin,ymin, width, height, label] 
+%           (xmin,ymin) left upper corner of the rectangle
+
+function [ G, imgSP, SPrect ] = SPgraph_LL( img, edges, descr, imgSP, G)
 
 % parameters of the HoG descriptor
 s = 9; % size of cells the HoG descriptor
@@ -41,66 +57,56 @@ for i = 1:nLabels
     % max width and height of the selected super pixel
     [SPxy(:,2), SPxy(:,1)] = find(mask_SP); 
     
-    diff_x = abs( bsxfun(@minus, SPxy(:,1), SPxy(:,1)') );
-    diff_y = abs( bsxfun(@minus, SPxy(:,2), SPxy(:,2)') );
+    SPxmin = min(SPxy(:,1));
+    SPymin = min(SPxy(:,2));
     
-    max_width = max(diff_x(:)); % maximal width of the rectangle around SP
-    max_height = max(diff_y(:));% maximal height of the rectangle around SP
+    max_width  = max(SPxy(:,1)) - SPxmin;   % maximal width of the rectangle around SP
+    max_height = max(SPxy(:,2)) - SPymin;   % maximal height of the rectangle around SP
     
-    SPx = min(SPxy(:,1)) + max_width/2;
-    SPy = min(SPxy(:,2)) + max_height/2;
-    
-    SPrect = [SPrect; [SPx, SPy, max_width, max_height]];
+    SPrect = [SPrect; single([SPxmin, SPymin, max_width, max_height, Labels(i)])];
        
     % find edge points inside selected SP
     ind = find(correspondenceMatrix(i,:));
-
-    x = round(sum(edges(1,ind))/numel(ind));
-    y = round(sum(edges(2,ind))/numel(ind));
-    
-    xy_hog = vl_hog( single(imcrop(im2uint8(img),[x-w/2 y-w/2 w w])), s) ;
-    
-    G.V = [G.V; [x,y]];
-    G.D = [G.D, xy_hog]; 
+    G.V = [G.V; edges(1:2,ind)'];
+    G.D = [G.D, descr(:,ind)]; 
     
     clear SPxy
     clear xy_hog
 end
 clear correspondenceMatrix;
 
-
 % % % ------------------------------------------------------------
-% % % figure, imagesc(imgSP.boundary), hold on;
-% % % for v=1:size(G.V,1)
-% % %     x = SPrect(v,1);
-% % %     y = SPrect(v,2);
-% % %     rectangle('Position', [x-0.5*SPrect(v,3), y-0.5*SPrect(v,4), SPrect(v,3), SPrect(v,4)]);
-% % %     plot(x,y, 'b*');
-% % % end
-% % % hold off;
+% figure, imagesc(imgSP.boundary), hold on;
+% for v=1:size(G.V,1)
+%     xmin = SPrect(v,1);
+%     ymin = SPrect(v,2);
+%     rectangle('Position', [xmin, ymin, SPrect(v,3), SPrect(v,4)]);
+%     plot(x,y, 'b*');
+% end
+% hold off;
 % % % ------------------------------------------------------------
 
 %
 % connect super pixel that have a common edge    
-n = size(G.V,1);
+n = size(SPrect,1);
 
 % compute distances between "centers" of the super pixels
-dist_x = abs( bsxfun(@minus, SPrect(:,1), SPrect(:,1)') );   % n x n difference matrix
-dist_y = abs( bsxfun(@minus, SPrect(:,2), SPrect(:,2)') );   % n x n difference matrix
+dist_x = abs( bsxfun(@minus, SPrect(:,1) + 0.5 * SPrect(:,3), SPrect(:,1)' + 0.5 * SPrect(:,3)') );   % n x n difference matrix
+dist_y = abs( bsxfun(@minus, SPrect(:,2) + 0.5 * SPrect(:,4), SPrect(:,2)' + 0.5 * SPrect(:,4)') );   % n x n difference matrix
 
 % distances between "centers" of super pixels if they would be neighbors
-distR_x = 0.5 * ( diag(SPrect(:,3))*ones(n,n) + ones(n,n)*diag(SPrect(:,3)) );
+distR_x = 0.5 * ( diag(SPrect(:,3))*ones(n,n) + double(ones(n,n))*diag(SPrect(:,3)) );
 distR_x(1:(n+1):end)= 0;
 distR_y = 0.5 * ( diag(SPrect(:,4))*ones(n,n) + ones(n,n)*diag(SPrect(:,4)) );
 distR_y(1:(n+1):end)= 0;
 
 % connenct SP if the corresponding rectangels intersect
 dist_x = distR_x - dist_x;             
-distNeg = dist_x < 0;
+distNeg = dist_x < 0;  %!!!
 dist_x(distNeg) = 0;
 
 dist_y = distR_y - dist_y; 
-distNeg = dist_y < 0;
+distNeg = dist_y < 0;  %!!!
 dist_y(distNeg) = 0;
 
 dist = dist_x .* dist_y;
@@ -111,7 +117,7 @@ G.E = [v1,v2];
 % color super pixel without edge points into black color
 imgSP.label(~mask_img) = -1 ;
 imgSP.boundary(repmat(~mask_img,[1 1 3]) ) = 0;
-imgSP.num = nLabels;    % we do not count negative labels
+% imgSP.num = nLabels;    % we do not count negative labels
 
 
 % % save adjacency matrix
@@ -121,12 +127,5 @@ imgSP.num = nLabels;    % we do not count negative labels
 % size(G.adjM);
 
 
-end
-
-function circle(x,y,r)
-ang=0:0.01:2*pi; 
-xp=r*cos(ang);
-yp=r*sin(ang);
-plot(x+xp,y+yp, 'LineWidth', 2);
 end
 

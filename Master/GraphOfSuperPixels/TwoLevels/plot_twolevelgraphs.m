@@ -11,6 +11,7 @@
 %  {    V,  coordinates of the vertices (n x 2)
 %       E,  eLLGes
 %       D  descriptors of the vertices
+%       U, matrix of dependences between nodes of HLGraph and those of LLGraph
 %  }
 %
 %
@@ -29,19 +30,19 @@ function plot_twolevelgraphs(img, HLG, LLG, show_HLG, show_LLG)
     n = size(LLG.V, 1);
     m = size(HLG.V, 1);
     
-    % eLLGes between vertives and anchors
-%     [i, j] = find(HLG.U);
-%     matchesInd = [i,j]';
-% 
-%     nans = NaN * ones(size(matchesInd,2),1) ;
-%     xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
-%     yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
-%     line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
-%       
+    % edges between vertives on two levels
+    [i, j] = find(LLG.U);
+    matchesInd = [i,j]';
+
+    nans = NaN * ones(size(matchesInd,2),1) ;
+    xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
+    yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
+    line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
+      
     % vertices
-%     plot(LLG.V(:,1), LLG.V(:,2), 'b*', 'MarkerSize',50);
+    plot(LLG.V(:,1), LLG.V(:,2), 'b*');
     
-    % eLLGes between vertices
+    % edges between vertices
     if show_LLG
 %         [i,j, ~] = find(LLG.adjM);
 %         for k=1:size(i, 1)
@@ -58,7 +59,7 @@ function plot_twolevelgraphs(img, HLG, LLG, show_HLG, show_LLG)
     % anchors
     plot(HLG.V(:,1), HLG.V(:,2), 'yo','MarkerSize', 9, 'MarkerFaceColor','y');
     
-    % eLLGes between anchors
+    % edges between anchors
     if show_HLG
         matchesInd = HLG.E';
 

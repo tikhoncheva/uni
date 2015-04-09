@@ -1,7 +1,7 @@
 function varargout = ui2(varargin)
 % UI2 MATLAB code for ui2.fig
 
-% Last Modified by GUIDE v2.5 08-Apr-2015 16:37:03
+% Last Modified by GUIDE v2.5 09-Apr-2015 14:11:43
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -118,6 +118,9 @@ features.edges = [];
 features.descr = [];
 [features.edges, features.descr] = computeDenseSIFT(img);
 
+% figure, imagesc(img), hold on;
+% plot(features.edges(1,:), features.edges(2,:), 'b*'), hold off;
+
 % number of SP to build Higher Leverl Graph
 nSP_hl = str2num( get(handles.editSP_HL, 'String') );
 % number of SP to build Lover Level Graph based on Higher Level Graph
@@ -125,19 +128,28 @@ nSP_ll = str2num( get(handles.editSP_LL, 'String') );
 
 % HLG - Higher Level Graph
 % LLG - Lower Level Graph
-[ HLGraph, LLGraph, imgSP ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
+[ HLGraph, LLGraph, imgSP_hl, imgSP_ll ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
 
 
 % Show result on the axis2
 showHLG = get(handles.chbox_Show_HLGraph,'Value');
 showLLG = get(handles.chbox_Show_LLGraph,'Value');
 axes(handles.axes2);
-plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+if get(handles.chbox_ShowSP_HL, 'Value')
+    plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+else
+    if get(handles.chbox_ShowSP_LL, 'Value')
+        plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else 
+        plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    end
+end
 
 % Update data
 handles.features = features;
 
-handles.imgSP = imgSP; 
+handles.imgSP_hl = imgSP_hl; 
+handles.imgSP_ll = imgSP_ll; 
 
 handles.HLGraph = HLGraph;
 handles.LLGraph = LLGraph;
@@ -159,6 +171,7 @@ set(handles.pb_Recalc_LL, 'Enable', 'On');
 
 % --- Executes on button press in chbox_Show_HLGraph.
 function chbox_Show_HLGraph_Callback(hObject, eventdata, handles)
+
 if handles.HLGraph_build
 
     handles = guidata(hObject);
@@ -167,12 +180,23 @@ if handles.HLGraph_build
 
     HLGraph = handles.HLGraph;
     LLGraph = handles.LLGraph;
+    
+    imgSP_hl = handles.imgSP_hl;
+    imgSP_ll = handles.imgSP_ll;
 
     % Show result on the axis2
     showHLG = get(handles.chbox_Show_HLGraph,'Value');
     showLLG = get(handles.chbox_Show_LLGraph,'Value');
     axes(handles.axes2);
-    plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    if get(handles.chbox_ShowSP_HL, 'Value')
+        plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else
+        if get(handles.chbox_ShowSP_LL, 'Value')
+            plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+        else 
+            plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+        end
+    end
     
 end
 %
@@ -187,12 +211,23 @@ if handles.LLGraph_build
 
     HLGraph = handles.HLGraph;
     LLGraph = handles.LLGraph;
+    
+    imgSP_hl = handles.imgSP_hl;
+    imgSP_ll = handles.imgSP_ll;
 
     % Show result on the axis2
     showHLG = get(handles.chbox_Show_HLGraph,'Value');
     showLLG = get(handles.chbox_Show_LLGraph,'Value');
     axes(handles.axes2);
-    plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    if get(handles.chbox_ShowSP_HL, 'Value')
+        plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else
+        if get(handles.chbox_ShowSP_LL, 'Value')
+            plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+        else 
+            plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+        end
+    end
     
 end
 %
@@ -211,12 +246,23 @@ if handles.HLGraph_build
 
     HLGraph = handles.HLGraph;
     LLGraph = handles.LLGraph;
+    
+    imgSP_hl = handles.imgSP_hl;
+    imgSP_ll = handles.imgSP_ll;
 
     % Show result on the axis2
     showHLG = get(handles.chbox_Show_HLGraph,'Value');
     showLLG = get(handles.chbox_Show_LLGraph,'Value');
     axes(handles.axes2);
-    plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    if get(handles.chbox_ShowSP_HL, 'Value')
+        plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else
+        if get(handles.chbox_ShowSP_LL, 'Value')
+            plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+        else 
+            plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+        end
+    end
 end
 
 % --- Executes on button press in chbox_ShowSP_LL.
@@ -229,12 +275,24 @@ if handles.LLGraph_build
 
     HLGraph = handles.HLGraph;
     LLGraph = handles.LLGraph;
+    
+    imgSP_hl = handles.imgSP_hl;
+    imgSP_ll = handles.imgSP_ll;
 
     % Show result on the axis2
     showHLG = get(handles.chbox_Show_HLGraph,'Value');
     showLLG = get(handles.chbox_Show_LLGraph,'Value');
+    
     axes(handles.axes2);
-    plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    if get(handles.chbox_ShowSP_HL, 'Value')
+        plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else
+        if get(handles.chbox_ShowSP_LL, 'Value')
+            plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+        else 
+            plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+        end
+    end
     
 end
 %
@@ -258,22 +316,31 @@ nSP_ll = str2num( get(handles.editSP_LL, 'String') );
 
 % HLG - Higher Level Graph
 % LLG - Lower Level Graph
-[ HLGraph, LLGraph, imgSP ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
+[ HLGraph, LLGraph, imgSP_hl, imgSP_ll ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
 
 
 % Show result on the axis2
 showHLG = get(handles.chbox_Show_HLGraph,'Value');
 showLLG = get(handles.chbox_Show_LLGraph,'Value');
 axes(handles.axes2);
-plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+if get(handles.chbox_ShowSP_HL, 'Value')
+    plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+else
+    if get(handles.chbox_ShowSP_LL, 'Value')
+        plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else 
+        plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    end
+end
 
 % Update data
 handles.features = features;
 
-handles.imgSP = imgSP; 
+handles.imgSP_hl = imgSP_hl; 
+handles.imgSP_ll = imgSP_ll; 
 
 handles.HLGraph = HLGraph;
-handles.LLGraph = HLLGraph;
+handles.LLGraph = LLGraph;
 
 handles.HLGraph_build = 1;
 handles.LLGraph_build = 1;
@@ -295,25 +362,33 @@ nSP_ll = str2num( get(handles.editSP_LL, 'String') );
 
 % HLG - Higher Level Graph
 % LLG - Lower Level Graph
-[ HLGraph, LLGraph, imgSP ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
+[ HLGraph, LLGraph, imgSP_hl, imgSP_ll ] = buildLowHighLevelGraphs(img, features, nSP_hl, nSP_ll);
 
 
 % Show result on the axis2
 showHLG = get(handles.chbox_Show_HLGraph,'Value');
 showLLG = get(handles.chbox_Show_LLGraph,'Value');
 axes(handles.axes2);
-plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+if get(handles.chbox_ShowSP_HL, 'Value')
+    plot_twolevelgraphs(imgSP_hl.boundary, HLGraph, LLGraph, showHLG, showLLG);
+else
+    if get(handles.chbox_ShowSP_LL, 'Value')
+        plot_twolevelgraphs(imgSP_ll.boundary, HLGraph, LLGraph, showHLG, showLLG);
+    else 
+        plot_twolevelgraphs(img, HLGraph, LLGraph, showHLG, showLLG);
+    end
+end
 
 % Update data
 handles.features = features;
 
-handles.imgSP = imgSP; 
+handles.imgSP_hl = imgSP_hl; 
+handles.imgSP_ll = imgSP_ll; 
 
 handles.HLGraph = HLGraph;
-handles.LLGraph = HLLGraph;
+handles.LLGraph = LLGraph;
 
 handles.HLGraph_build = 1;
 handles.LLGraph_build = 1;
 
 guidata(hObject,handles);
-
