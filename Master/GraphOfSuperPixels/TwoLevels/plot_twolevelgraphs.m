@@ -44,12 +44,6 @@ function plot_twolevelgraphs(img, HLG, LLG, show_HLG, show_LLG)
     
     % edges between vertices
     if show_LLG
-%         [i,j, ~] = find(LLG.adjM);
-%         for k=1:size(i, 1)
-%             line([LLG.V(i(k),1) LLG.V(j(k),1) ],...
-%                  [LLG.V(i(k),2) LLG.V(j(k),2) ], 'Color', 'g');  
-%         end
-
         for i=1:size(LLG.E, 1)
             line([LLG.V(LLG.E(i,1),1) LLG.V(LLG.E(i,2),1) ],...
                  [LLG.V(LLG.E(i,1),2) LLG.V(LLG.E(i,2),2) ], 'Color', 'g');  

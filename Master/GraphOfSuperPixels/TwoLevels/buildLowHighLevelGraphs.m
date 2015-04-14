@@ -14,6 +14,10 @@ function [ AG, DG, SP_hl, SP_ll ] = buildLowHighLevelGraphs( img, features, nSP_
     [DG, SP_ll] = buildLLGraph(img, features.edges, features.descr, SP_hl, SP_rectangles, nSP_ll);
     display(sprintf('%f sec to build lower level graph', toc));
     
+    % lower level graph should contain exactly same number of nodes as
+    % number of extracted edge points
+    assert(size(DG.V, 1) == size(features.edges,2), 'Lower level graph has wrong number of nodes');
+    
     display(sprintf(' ... finished (%f sec) ', toc));
 end
 

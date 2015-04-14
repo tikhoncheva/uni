@@ -163,6 +163,10 @@ guidata(hObject,handles);
 set(handles.pb_Recalc_HL, 'Enable', 'On');
 set(handles.pb_Recalc_LL, 'Enable', 'On');
 
+
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
+
 %
 
 % -----------------------------------------------------------------------
@@ -199,6 +203,9 @@ if handles.HLGraph_build
     end
     
 end
+
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
 %
 
 % --- Executes on button press in chbox_Show_LLGraph.
@@ -230,6 +237,8 @@ if handles.LLGraph_build
     end
     
 end
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
 %
 
 % -----------------------------------------------------------------------
@@ -264,6 +273,8 @@ if handles.HLGraph_build
         end
     end
 end
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
 
 % --- Executes on button press in chbox_ShowSP_LL.
 function chbox_ShowSP_LL_Callback(hObject, eventdata, handles)
@@ -295,6 +306,8 @@ if handles.LLGraph_build
     end
     
 end
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
 %
 
 
@@ -347,6 +360,9 @@ handles.LLGraph_build = 1;
 
 guidata(hObject,handles);
 
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    
+
 
 % --- Executes on button press in pb_Recalc_LL.
 function pb_Recalc_LL_Callback(hObject, eventdata, handles)
@@ -392,3 +408,6 @@ handles.HLGraph_build = 1;
 handles.LLGraph_build = 1;
 
 guidata(hObject,handles);
+
+set(gca,'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes2_highlightSubgraphs, handles})    

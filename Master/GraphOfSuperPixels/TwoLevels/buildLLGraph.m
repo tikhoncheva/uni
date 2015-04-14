@@ -24,10 +24,10 @@
 
 function [LLG, imgSP] = buildLLGraph(img, edges, descr, imgSP, imgSPrect, nSP_ll)
 
-LLG.V = [];   % vertices
-LLG.D = [];   % descriptors of the vertices
-LLG.E = [];   % edges
-LLG.U = [];   % dependencies between nodes of graphs on two levels
+V = [];   % vertices
+D = [];   % descriptors of the vertices
+E = [];   % edges
+U = [];   % dependencies between nodes of graphs on two levels
 
 nSP_hl = size(imgSPrect, 1);  % number of nodes in the higher level graph
 
@@ -59,7 +59,7 @@ for i=1:nSP_hl
     edges_part = edges(:,ind);
     edges_part(1,:) = edges_part(1,:) - xmin + 1;
     edges_part(2,:) = edges_part(2,:) - ymin + 1;
-    descr_part = descr(:,ind4);
+    descr_part = descr(:,ind);
     
     % segment the selected part in finer superpixels
     [SP.num, SP.label, SP.boundary] = SLIC_Superpixels(im2uint8(img_part), nSP_ll, 20);
@@ -79,21 +79,21 @@ for i=1:nSP_hl
     imgSP.boundary(ymin:ymin+height, xmin:xmin+width, :) = SP.boundary;
 %     figure, imagesc(imgSP.boundary)
     
-    U = zeros(size(subG.V,1), nSP_hl);
-    U(:, i) = 1;
+    subG.U = zeros(size(subG.V,1), nSP_hl);
+    subG.U(:, i) = 1;
     
     % global coordinates of edge points inside selected region
     subG.V(:,1) = subG.V(:,1) + xmin - 1;
     subG.V(:,2) = subG.V(:,2) + ymin - 1;
     
-    subG.E(:,1) = subG.E(:,1) + size(LLG.E,1);
-    subG.E(:,2) = subG.E(:,2) + size(LLG.E,1);
+    subG.E(:,1) = subG.E(:,1) + size(V,1);
+    subG.E(:,2) = subG.E(:,2) + size(V,1);
     
     % save local parts in global variables
-    LLG.U = [LLG.U; U];   
-    LLG.V = [LLG.V; subG.V];  
-    LLG.D = [LLG.D, subG.D];   
-    LLG.E = [LLG.E; subG.E]; 
+    U = [U; subG.U];   
+    V = [V; subG.V];  
+    D = [D, subG.D];   
+    E = [E; subG.E]; 
    
     display('...finished');
     
@@ -110,6 +110,26 @@ for i=1:nSP_hl
 %    end
    
 end
+
+[uniqueD, ia, ic] = unique(D', 'rows');
+uniqueD = uniqueD';
+newE = E;
+for i=1:size(V,1)
+    j = ic(i);
+     
+    ind = (E(:,1) == i);
+    newE(ind, 1) = j;
+
+    ind = (E(:,2) == i);
+    newE(ind, 2) = j;   
+    
+end
+
+U2 = U(ia, :);
+LLG.V = V(ia, :);  
+LLG.D = uniqueD;   
+LLG.E = newE; 
+LLG.U = U(ia, :); 
 
 
 end

@@ -62,11 +62,19 @@ for i = 1:nLabels
     
     max_width  = max(SPxy(:,1)) - SPxmin;   % maximal width of the rectangle around SP
     max_height = max(SPxy(:,2)) - SPymin;   % maximal height of the rectangle around SP
-    
-    SPrect = [SPrect; single([SPxmin, SPymin, max_width, max_height, Labels(i)])];
        
     % find edge points inside selected SP
     ind = find(correspondenceMatrix(i,:));
+    
+    SPrect = [SPrect; single(repmat([SPxmin, SPymin, max_width, max_height, Labels(i)], numel(ind),1))];
+    
+    AdjM_local = ones(numel(ind));
+    AdjM_local = triu(AdjM_local,1);
+    [v1,v2] = find(AdjM_local>0);
+    E_local = [v1,v2];
+    E_local = E_local + size(G.V,1);
+    G.E = [G.E; E_local];
+    
     G.V = [G.V; edges(1:2,ind)'];
     G.D = [G.D, descr(:,ind)]; 
     
@@ -75,16 +83,7 @@ for i = 1:nLabels
 end
 clear correspondenceMatrix;
 
-% % % ------------------------------------------------------------
-% figure, imagesc(imgSP.boundary), hold on;
-% for v=1:size(G.V,1)
-%     xmin = SPrect(v,1);
-%     ymin = SPrect(v,2);
-%     rectangle('Position', [xmin, ymin, SPrect(v,3), SPrect(v,4)]);
-%     plot(x,y, 'b*');
-% end
-% hold off;
-% % % ------------------------------------------------------------
+assert(size(G.D,2)==size(descr,2), 'Wrong number of nodes in subgraph');
 
 %
 % connect super pixel that have a common edge    
@@ -111,20 +110,29 @@ dist_y(distNeg) = 0;
 
 dist = dist_x .* dist_y;
 
-[v1,v2] = find(dist>0);
-G.E = [v1,v2];
+% [v1,v2] = find(dist>0);
+% G.E = [G.E; [v1,v2]];
 
-% color super pixel without edge points into black color
-imgSP.label(~mask_img) = -1 ;
-imgSP.boundary(repmat(~mask_img,[1 1 3]) ) = 0;
-% imgSP.num = nLabels;    % we do not count negative labels
+% % % ------------------------------------------------------------
+% figure, imagesc(imgSP.boundary), hold on;
+% for v=1:size(SPrect,1)
+% %     xmin = SPrect(v,1);
+% %     ymin = SPrect(v,2);
+% %     rectangle('Position', [xmin, ymin, SPrect(v,3), SPrect(v,4)]);
+%     plot(edges(1,:),edges(2,:), 'b*');
+% end
+% hold on;
+% 
+% for i=1:size(G.E, 1)
+%     line([G.V(G.E(i,1),1) G.V(G.E(i,2),1) ],...
+%          [G.V(G.E(i,1),2) G.V(G.E(i,2),2) ], 'Color', 'g');  
+% end
+% hold off;
+% % % ------------------------------------------------------------
 
-
-% % save adjacency matrix
-% G.adjM = sparse(logical(dist));
-
-% display('size of the adjacency matrix');
-% size(G.adjM);
+% % color super pixel without edge points into black color
+% imgSP.label(~mask_img) = -1 ;
+% imgSP.boundary(repmat(~mask_img,[1 1 3]) ) = 0;
 
 
 end
