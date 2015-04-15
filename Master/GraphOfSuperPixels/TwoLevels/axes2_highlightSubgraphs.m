@@ -39,11 +39,11 @@ plot(LLGraph.V(:,1), LLGraph.V(:,2), 'b*');
 if showLLG
     E_subG = [];
     for i=1:size(LLGraph.E, 1)
+        
         line([LLGraph.V(LLGraph.E(i,1),1) LLGraph.V(LLGraph.E(i,2),1) ],...
              [LLGraph.V(LLGraph.E(i,1),2) LLGraph.V(LLGraph.E(i,2),2) ], 'Color', 'g');  
-
         
-        if ismember(LLGraph.E(i,1), ind_subG) || ismember(LLGraph.E(i,2), ind_subG)
+        if ismember(LLGraph.E(i,1), ind_subG) & ismember(LLGraph.E(i,2), ind_subG)
             E_subG = [E_subG; LLGraph.E(i,:)];
             line([LLGraph.V(LLGraph.E(i,1),1) LLGraph.V(LLGraph.E(i,2),1) ],...
                  [LLGraph.V(LLGraph.E(i,1),2) LLGraph.V(LLGraph.E(i,2),2) ], 'Color', 'g', 'LineWidth', 3);  

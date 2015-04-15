@@ -81,6 +81,7 @@ if filename~=0
     
     % show image
     replotaxes(handles.axes1, img);
+    replotaxes(handles.axes2, img);
     
     % Update data
     handles.img = img;

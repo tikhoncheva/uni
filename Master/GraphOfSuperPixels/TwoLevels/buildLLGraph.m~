@@ -18,7 +18,7 @@
 %       V  coordinates of the vertices
 %       D  decriptors of the vertcies (HoG)
 %       E  list of the edges
-%       U  correspondences between vertices of the G and those of HL graph (anchors)
+%       U  correspondences between vertices of the G and those of HL graph
 %          (boolean matrix (n x nA): U[i,j] = 1 if v_i\in V is inside super pixel of A_j
 %                                    U[i,j] = 0 otherwise)
 
@@ -114,8 +114,6 @@ for i=1:nSP_hl
 %        figure, imagesc(SP.label);
 %        
 %    end
-
-    clear subG;
    
 end
 
@@ -125,13 +123,11 @@ end
 % intersection, than it will be arranged to the both anchor nodes and
 % repeated in sets V and D
 
-% Delete repetitions: real number of nodes is equal to number of unique
-% descriptors
+% Delete 
 [uniqueD, ia, ic] = unique(D', 'rows');
 uniqueD = uniqueD';
-
-newE = E;           % new list od edges
-newU = U(ia, :);    % new matrix of correspondenes between nodes and anchor nodes
+newE = E;
+newU = U(ia, :);
 
 for i=1:size(V,1)
     j = ic(i);
@@ -150,5 +146,6 @@ LLG.V = V(ia, :);
 LLG.D = uniqueD;   
 LLG.E = newE; 
 LLG.U = logical(newU); 
+
 
 end

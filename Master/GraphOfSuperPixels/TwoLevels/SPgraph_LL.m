@@ -1,4 +1,4 @@
-% Graph of Super Pixels
+% Graph of Super Pixels (for lower level graph construction)
 
 % Input
 % img       given image
@@ -7,7 +7,15 @@
 % imgSP = [num, label, boundary] superpixel segemntation of the given image
 
 % Output
-% G         Graph of Super Pixels
+% G = (V,E) Graph of Super Pixels
+%    V      each vertex is represented by an edge point
+%    E      there are two groups of edges:
+%           - Vertices inside one superpixel belong together and build a
+%             fully connected component
+%           - Additionaly all vertices inside one superpixesl are connected
+%             to the nodes inside another superpixel if those superpixels
+%             have a common edge
+%             (if the rectangles around those superpixels intersect)
 % imgSP     same structure as in input with colored in black superpixels, that
 %           were not used for graph building
 % SPrect    rectangles around each used superpixel (#usedSP x 5)
@@ -21,7 +29,7 @@ s = 9; % size of cells the HoG descriptor
 w = 36;  % width of the square region
 
 % list of rectangles around SPs
-SPrect = [];        % [x,y, width, height]
+SPrect = [];         % [xmin,ymin, width, height, label of SP]
 
 % number of edge points
 nEdgePoints = size(edges,2);
@@ -34,40 +42,41 @@ Labels = [];
 
 % correspondeces between super pixel and edge points
 correspondenceMatrix = zeros(imgSP.num, nEdgePoints); 
-
 for i=1:nEdgePoints
     label_i = imgSP.label(edges(2,i), edges(1,i));    
     Labels = [Labels, label_i];
     correspondenceMatrix(label_i + 1, i) = 1;
 end
+correspondenceMatrix(all(~any(correspondenceMatrix, 2),2), :) = []; % remove zero rows
 
 % labels of super pixel, which contain edge points
 Labels = unique(Labels);
 nLabels = numel(Labels);
 
-correspondenceMatrix(all(~any(correspondenceMatrix, 2),2), :) = []; % remove zero rows
 
-% compute coordinates of the centers of superpixels, coordinates of graph nodes
-% we need the first to find out which SP should be connected
-
+% define rectangle around each superpixel that contain edge points
+% define vertices of the graph and add edges between nodes inside one
+% superpixel into set E
 for i = 1:nLabels
+    % select one super pixel
     mask_SP = (imgSP.label == Labels(i));  % select one super pixel
     mask_img(mask_SP) = 1;
     
-    % max width and height of the selected super pixel
+    % coordinates of the pixels inside selected SP
     [SPxy(:,2), SPxy(:,1)] = find(mask_SP); 
     
+    % rectangle around selected SP  [xmin,ymin, width, height, label of the SP]
     SPxmin = min(SPxy(:,1));
-    SPymin = min(SPxy(:,2));
-    
+    SPymin = min(SPxy(:,2)); 
     max_width  = max(SPxy(:,1)) - SPxmin;   % maximal width of the rectangle around SP
     max_height = max(SPxy(:,2)) - SPymin;   % maximal height of the rectangle around SP
        
-    % find edge points inside selected SP
+    % list of edge points inside selected SP
     ind = find(correspondenceMatrix(i,:));
     
     SPrect = [SPrect; single(repmat([SPxmin, SPymin, max_width, max_height, Labels(i)], numel(ind),1))];
     
+    % connections between nodes inside one superpixel
     AdjM_local = ones(numel(ind));
     AdjM_local = triu(AdjM_local,1);
     [v1,v2] = find(AdjM_local>0);
@@ -83,35 +92,42 @@ for i = 1:nLabels
 end
 clear correspondenceMatrix;
 
+% ASSERT: check if we have included all edge points into graph G
 assert(size(G.D,2)==size(descr,2), 'Wrong number of nodes in subgraph');
 
-%
-% connect super pixel that have a common edge    
+% find out which nodes should be additionally connected:
+% all vertices inside one superpixesl are connected
+%             to the nodes inside another superpixel if those superpixels
+%             have a common edge
 n = size(SPrect,1);
 
-% compute distances between "centers" of the super pixels
+% compute distances between centers of the rectangles around superpixels 
 dist_x = abs( bsxfun(@minus, SPrect(:,1) + 0.5 * SPrect(:,3), SPrect(:,1)' + 0.5 * SPrect(:,3)') );   % n x n difference matrix
 dist_y = abs( bsxfun(@minus, SPrect(:,2) + 0.5 * SPrect(:,4), SPrect(:,2)' + 0.5 * SPrect(:,4)') );   % n x n difference matrix
 
-% distances between "centers" of super pixels if they would be neighbors
+% distnace between centers of the rectangles if they have an common edge
 distR_x = 0.5 * ( diag(SPrect(:,3))*ones(n,n) + double(ones(n,n))*diag(SPrect(:,3)) );
 distR_x(1:(n+1):end)= 0;
 distR_y = 0.5 * ( diag(SPrect(:,4))*ones(n,n) + ones(n,n)*diag(SPrect(:,4)) );
 distR_y(1:(n+1):end)= 0;
 
-% connenct SP if the corresponding rectangels intersect
-dist_x = distR_x - dist_x;             
+% Calculate difference between two ditanes 
+dist_x = distR_x - dist_x;
+dist_y = distR_y - dist_y; 
+
+% Replace negative values with zeros
 distNeg = dist_x < 0;  %!!!
 dist_x(distNeg) = 0;
 
-dist_y = distR_y - dist_y; 
 distNeg = dist_y < 0;  %!!!
 dist_y(distNeg) = 0;
 
+% We are only interested in pairs for which distances in both x and y
+% dimensions are not zero
 dist = dist_x .* dist_y;
 
-% [v1,v2] = find(dist>0);
-% G.E = [G.E; [v1,v2]];
+[v1,v2] = find(dist>0);
+G.E = [G.E; [v1,v2]];
 
 % % % ------------------------------------------------------------
 % figure, imagesc(imgSP.boundary), hold on;
@@ -129,10 +145,6 @@ dist = dist_x .* dist_y;
 % end
 % hold off;
 % % % ------------------------------------------------------------
-
-% % color super pixel without edge points into black color
-% imgSP.label(~mask_img) = -1 ;
-% imgSP.boundary(repmat(~mask_img,[1 1 3]) ) = 0;
 
 
 end
