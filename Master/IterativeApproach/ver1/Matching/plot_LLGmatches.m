@@ -3,7 +3,7 @@
 % G1, G2        corresponding graphs to match (nV1=|V1|,nV2=|V2|)
 % M             correspondes matrix (nV1 x nV2)
 
-function plot_DGmatches(img1, G1, img2, G2, M, varargin )
+function plot_LLGmatches(img1, G1, img2, G2, M, varargin )
 
 n1 = size(img1,2);    % width of the first image
 

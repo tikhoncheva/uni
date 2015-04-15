@@ -13,9 +13,11 @@
 %  matches      boolean matrix of matches if the size (nV1 x nV2)
 
 
-function [objval, matches] = matchAnchorGraphs(AG1, AG2)
+function [objval, matches] = matchHLGraphs(AG1, AG2)
 
-fprintf('Match anchor graphs \n');
+display(sprintf('\n--------------------------------------------------'));
+display(sprintf('Match anchor graphs'));
+display(sprintf('--------------------------------------------------'));
 
 v1 = AG1.V';  %2xnV1
 v2 = AG2.V';  %2xnV2
@@ -41,8 +43,8 @@ adjM2(ind) = 1;
 corrMatrix = ones(nV1,nV2);
 
 % compute initial affinity matrix
-% AffMatrix = initialAffinityMatrix2(v1, v2, adjM1, adjM2, corrMatrix);
-AffMatrix = initialAffinityMatrix3(v1, v2, adjM1, adjM2, AG1.W, AG2.W, corrMatrix);
+AffMatrix = initialAffinityMatrix2(v1, v2, adjM1, adjM2, corrMatrix);
+% AffMatrix = initialAffinityMatrix3(v1, v2, adjM1, adjM2, AG1.W, AG2.W, corrMatrix);
 
 % conflict groups
 [L12(:,1), L12(:,2)] = find(corrMatrix);

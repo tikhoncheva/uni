@@ -31,7 +31,7 @@ s = 1;
 
 U = zeros(n, nA);
 
-for label=0:imgSP.num-1
+for label=0:0 % imgSP.num-1
     
    SPxy = (imgSP.label == label);
    
@@ -46,6 +46,8 @@ for label=0:imgSP.num-1
 
        [SP.num, SP.label, SP.boundary] = SLIC_Superpixels(im2uint8(img_shadowed), nV, 20);
        
+%      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       
        U( s : s+nV - 1, label + 1) = 1;
 %        figure, imagesc(SP.boundary);
        
@@ -53,18 +55,21 @@ for label=0:imgSP.num-1
        subG.D = [];   % descriptors of the vertices
        subG.E = [];   % edges
        
-       [subG, ~] = SPgraph( img_shadowed, edges, descr, SP, subG);
-       
-       G.V = [G.V; subG.V];  
-       G.D = [G.D, subG.D];   
-       G.E = [G.E; subG.E];   
+%        [subG, ~] = SPgraph( img_shadowed, edges, descr, SP, subG);
+%        
+%        U(size(subG.V,1)+1 : s+nV - 1, :) = [];
+%        
+%        G.V = [G.V; subG.V];  
+%        G.D = [G.D, subG.D];   
+%        G.E = [G.E; subG.E];   
        
        s = s + nV;
    end
    
+   
 end
 
 
-
+    figure;
 
 end

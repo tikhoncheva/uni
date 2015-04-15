@@ -35,9 +35,9 @@ function plot_anchorgraph(img, DG, AG, show_DG, show_AG)
 %     xInit = [ DG.V(matchesInd(1,:),1) , AG.V(matchesInd(2,:),1) , nans ] ;
 %     yInit = [ DG.V(matchesInd(1,:),2) , AG.V(matchesInd(2,:),2) , nans ] ;
 %     line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
-      
+%       
     % vertices
-    plot(DG.V(:,1), DG.V(:,2), 'b*');
+%     plot(DG.V(:,1), DG.V(:,2), 'b*', 'MarkerSize',50);
     
     % edges between vertices
     if show_DG

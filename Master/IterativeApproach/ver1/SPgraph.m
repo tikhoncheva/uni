@@ -31,7 +31,9 @@ nLabels = numel(Labels);
 
 correspondenceMatrix(all(~any(correspondenceMatrix, 2),2), :) = []; % remove zero rows
 
-% compute centers of superpixels and it' radii
+% compute centers of superpixels and it's radii
+figure, imagesc(img), hold on;
+
 for i = 1:nLabels
     SPxy = (imgSP.label == Labels(i));
     mask(SPxy) = 1;
@@ -49,18 +51,32 @@ for i = 1:nLabels
     clear xy_hog
     
     % radius of the super pixel with the center (x,y)
-    [sameSP(:,2), sameSP(:,1)] = find(imgSP.label == Labels(i)); 
+%     [sameSP(:,2), sameSP(:,1)] = find(imgSP.label == Labels(i)); 
+    [sameSP(:,2), sameSP(:,1)] = find(imgSP.boundary(:,:,1) == 0); % boundary points
+    
+    
     diff = bsxfun(@minus,double([x;y]), sameSP(:,1:2)');
     euclid_dist = sqrt(sum(diff.^2)); % sum(abs(diff));
-    R = [R; max(euclid_dist(:))];
+
+    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ToDo
+%     r = 0.5*(min(euclid_dist(:))+max(euclid_dist(:)));
+%     r = max(euclid_dist(:));
+    r = min(euclid_dist(:));
+
+    R = [R; r];
+
+
+    circle(x,y,r);
     
     clear sameSP
 end
 clear correspondenceMatrix;
+hold off;
+
 
 %
 % connect super pixel that have a common edge    
-% !!!!!!!!!!!!!!!!!!! ToDo
+% !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ToDo
 
 n = size(G.V,1);
 
@@ -81,6 +97,7 @@ G.E = [v1,v2];
 % color super pixel without edge point into black color
 imgSP.label(~mask) = -1 ;
 imgSP.boundary(repmat(~mask,[1 1 3]) ) = 0;
+imgSP.num = nLabels;    % we do not count negative labels
 
 % % save adjacency matrix
 % G.adjM = sparse(logical(dist));
@@ -89,5 +106,12 @@ imgSP.boundary(repmat(~mask,[1 1 3]) ) = 0;
 % size(G.adjM);
 
 
+end
+
+function circle(x,y,r)
+ang=0:0.01:2*pi; 
+xp=r*cos(ang);
+yp=r*sin(ang);
+plot(x+xp,y+yp);
 end
 
