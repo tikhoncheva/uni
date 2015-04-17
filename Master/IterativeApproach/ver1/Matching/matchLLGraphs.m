@@ -1,3 +1,4 @@
+ 
 %% Matching of dependency graphs
 %
 % Input
@@ -11,88 +12,156 @@
 
 function [objval, matches] = matchLLGraphs(LLG1, LLG2, HLG1, HLG2, HLGmatches)
 
-fprintf('Match initial graphs \n');
+display(sprintf('\n================================================'));
+display(sprintf('Match initial graphs'));
+display(sprintf('=================================================='));
 
-nV1 = size(LLG1.V,1);
-nV2 = size(LLG2.V,1);
+try
+    nV1 = size(LLG1.V,1);
+    nV2 = size(LLG2.V,1);
 
-% adjacency matrix of the first dependency graph
-adjM1 = zeros(nV1, nV1);
-E1 = LLG1.E;
-E1 = [E1; [E1(:,2) E1(:,1)]];
-ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
-adjM1(ind) = 1;
+    % adjacency matrix of the first dependency graph
+    adjM1 = zeros(nV1, nV2);
+    E1 = LLG1.E;
+    E1 = [E1; [E1(:,2) E1(:,1)]];
+    ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
+    adjM1(ind) = 1;
 
-% adjacency matrix of the second dependency graph
-adjM2 = zeros(nV2, nV2);
-E2 = LLG2.E;
-E2 = [E2; [E2(:,2) E2(:,1)]];
-ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
-adjM2(ind) = 1;
+    % adjacency matrix of the second dependency graph
+    adjM2 = zeros(nV1, nV2);
+    E2 = LLG2.E;
+    E2 = [E2; [E2(:,2) E2(:,1)]];
+    ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
+    adjM2(ind) = 1;
 
-matchesW = zeros(nV1, nV2);%, s);
-% in each step we match points corresponding to the anchor match a1<->a2
-for i=1:size(LLG1.U, 2)
-    fprintf('  Anchor %d: \n', i);
+
+
+    display(sprintf(' -------------------------------------------------- '));
+    display(sprintf('              Start Parallel Pool                   '));
+    display(sprintf(' -------------------------------------------------- '));
+
+    try
+        poolobj = parpool;                           
+
+        if isempty(poolobj)
+            poolsize = 0;
+        else
+            poolsize = poolobj.NumWorkers;
+        end
+
+        display(sprintf('Number of workers: %d', poolsize));
+
+        % global variables
+        nIterations = size(LLG1.U, 2);      % number of iterations is equal to number of matched anchor pairs on High Level
+
+        objective = zeros(nIterations, 1);
+
+        nV = nV1 * nV2;
+        localMatches = zeros(nIterations, nV);
+        
+        
+        
+
+        % in each step we match points corresponding to the anchor match ai<->aj
+        parfor it=3:3
+
+            % node, that belong to the anchor ai
+            ai_x = LLG1.U(:,it);
+            
+            
+
+            LLG1.U(it,:)
+
+            v1 = LLG1.V(ai_x,:)';          
+            nVi = size(v1,2);
+            display(sprintf('nVi = %d', nVi));
+            
+            adjM1cut = adjM1(ai_x, ai_x');
+
+            % node, that belong to the anchor aj
+            aj_x = LLG2.U(:, HLGmatches(it,:)');
+            v2 = LLG2.V(aj_x,:)';
+            nVj = size(v2,2);
+            display(sprintf('nVj = %d', nVj));
+            
+            adjM2cut = adjM2(aj_x, aj_x');
+
+            % correspondence matrix (!!!!!!!!!!!!!!!!!!!!!! now: all-to-all)
+            corrMatrix = ones(nVi,nVj);
+
+            % compute initial affinity matrix
+            AffMatrix = initialAffinityMatrix2(v1, v2, adjM1cut, adjM2cut, corrMatrix);
+
+            % conflict groups
+            [I, J] = find(corrMatrix);
+            [ group1, group2 ] = make_group12([I, J]);
+
+            % run RRW Algorithm 
+            tic
+            x = RRWM(AffMatrix, group1, group2);
+            fprintf('    RRWM: %f sec\n', toc);
+
+            X = greedyMapping(x, group1, group2);
+
+            objective(it) = x'*AffMatrix * x;
+
+            matchesL = zeros(nVi, nVj);
+            for k=1:numel(I)
+                matchesL(I(k), J(k)) = X(k);
+            end  
+
+            %     w = HLG1.Z(a1_x, it);
+            %     matchesL =  matchesL.*repmat(w, 1, nV2);
+            matches = zeros(nV1, nV2);
+            matches(ai_x, aj_x') = matchesL;
+            localMatches(it, :) = reshape(matches, [1 nV]);
+
+            %     clear L12;
+            %     clear corrMatrix;
+            %     clear adjM1cut;
+            %     clear adjM2cut;
+            %     clear w;
+        end
+
+    catch ME
+        msg = 'Error occurred in Lower Level Graph Matching in parallel pool';
+        causeException = MException(ME.identifier, msg);
+        ME = addCause(ME, causeException);
+
+        % close parallel pool
+        delete(gcp('nocreate'));
+
+        rethrow(ME);
+    end
+
+    delete(poolobj); 
+    display(sprintf('Delete parallel pool %d', poolsize));
+    display(sprintf(' -------------------------------------------------- '));
+
+    % % matches = matchesW;
+    % matchesW = zeros(nV1, nV2);
+    matches = max(localMatches,[], 1);
+    matches = reshape(matches, nV1,nV2);
+
+    % for i=1:nV1
+    %    [val, ind] = max(matchesW(i,:));
+    %    if val>0
+    %        matches(i,ind) = 1;
+    %    end
+    % end
+
+    matches = logical(matches);
     
-    % corresponding points of the anchor a1i
-    a1_x = LLG1.U(:,i);
-    v1 = LLG1.V(a1_x,:)';          
-    nV1 = size(v1,2);
-    adjM1cut = adjM1(a1_x, a1_x');
-    
-    % corresponding points of the anchor a2i
-    a2_x = LLG2.U(:, HLGmatches(i,:)');
-    v2 = LLG2.V(a2_x,:)';
-    nV2 = size(v2,2);
-    adjM2cut = adjM2(a2_x, a2_x');
-    
-    % correspondence matrix (!!!!!!!!!!!!!!!!!!!!!! now: all-to-all)
-    corrMatrix = ones(nV1,nV2);
+    objval = sum(objective);
 
-    % compute initial affinity matrix
-    tic
-    AffMatrix = initialAffinityMatrix2(v1, v2, adjM1cut, adjM2cut, corrMatrix);
-    fprintf('    Affinity matrix %d x %d : %f sec\n', size(AffMatrix,1), size(AffMatrix,2), toc);
-    
-    % conflict groups
-    [L12(:,1), L12(:,2)] = find(corrMatrix);
-    [ group1, group2 ] = make_group12(L12);
+    display(sprintf('=================================================='));
 
-    % run RRW Algorithm 
-    tic
-    x = RRWM(AffMatrix, group1, group2);
-    fprintf('    RRWM: %f sec\n', toc);
-
-    X = greedyMapping(x, group1, group2);
-
-    objval = x'*AffMatrix * x;
+catch
+    msg = 'Error occurred in Lower Level Graph Matching';
+    causeException = MException(ME.identifier, msg);
+    ME = addCause(ME, causeException);
     
-    matchesL = zeros(nV1, nV2);
-    for j=1:size(L12,1)
-        matchesL(L12(j,1), L12(j,2)) = X(j);
-    end  
-    
-%     w = HLG1.Z(a1_x, i);
-%     matchesL =  matchesL.*repmat(w, 1, nV2);
-    matchesW(a1_x, a2_x') = matchesW(a1_x, a2_x') + matchesL;
-    
-    clear L12;
-    clear corrMatrix;
-    clear adjM1cut;
-    clear adjM2cut;
-    clear w;
+    rethrow(ME);   
 end
 
-% matches = matchesW;
-matches = zeros(size(matchesW));
-for i=1:nV1
-   [val, ind] = max(matchesW(i,:));
-   if val>0
-       matches(i,ind) = 1;
-   end
-end
-
-matches = logical(matches);
-fprintf('------------------------------------------------\n');
 end

@@ -67,7 +67,7 @@ for i=1:nSP_hl
     % superpixel segmentation of the croped image
     t = tic;
     [SP.num, SP.label, SP.boundary] = SLIC_Superpixels(im2uint8(img_part), nSP_ll, 20);
-    display(sprintf('\t    Superpixel segmentation took %f sec', toc(t) ));
+    display(sprintf('\t\t Superpixel segmentation took %f sec', toc(t) ));
 %
 %     figure, imagesc(SP.boundary), hold on;
 %     plot(edges_part(1,:),edges_part(2,:), 'b*'), hold off;
@@ -101,7 +101,7 @@ for i=1:nSP_hl
     D = [D, subG.D];   
     E = [E; subG.E]; 
    
-    display(sprintf('\t finished in %f sec', toc(ti) ));
+    display(sprintf('\t   finished in %f sec', toc(ti) ));
     
 %     SPxy = (imgSP.label == label);
 %    

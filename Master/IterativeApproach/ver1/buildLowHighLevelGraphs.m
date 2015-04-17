@@ -17,25 +17,23 @@
 %
 function [ HLGraph, LLGraph, SP_hl, SP_ll ] = buildLowHighLevelGraphs( img, features, nSP_hl, nSP_ll)
 
-    display(sprintf('--------------------------------------------------'));
+    display(sprintf('=================================================='));
     display(sprintf('Two-level graph structure for the given image...'));
-    display(sprintf('--------------------------------------------------'));
+    display(sprintf('=================================================='));
     t0 = tic ;
     
-    display(sprintf('--------------------------------------------------'));
-    display(sprintf('- build higher level graph (anchor graph)'));
+    display(sprintf('\n - build higher level graph (anchor graph)'));
     
     t1 = tic ;
     [HLGraph, SP_hl, SP_rectangles]   = buildHLGraph(img, features.edges, nSP_hl);
-    display(sprintf(' finished in %f sec', toc(t1)));
+    display(sprintf('   finished in %f sec', toc(t1)));
     
    
-    display(sprintf('--------------------------------------------------'));
-    display(sprintf('- build lower level graph'));
+    display(sprintf('\n - build lower level graph'));
 
     t2 = tic;
     [LLGraph, SP_ll] = buildLLGraph(img, features.edges, features.descr, SP_hl, SP_rectangles, nSP_ll);
-    display(sprintf(' finished in %f sec', toc(t2)));
+    display(sprintf('   finished in %f sec', toc(t2)));
     
     % ASSERT: lower level graph should contain exactly the same number of nodes as
     % number of extracted edge points
