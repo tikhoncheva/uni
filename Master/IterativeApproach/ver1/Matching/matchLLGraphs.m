@@ -41,16 +41,10 @@ try
     display(sprintf(' -------------------------------------------------- '));
 
     try
-        poolobj = parpool;                           
-
-        if isempty(poolobj)
-            poolsize = 0;
-        else
-            poolsize = poolobj.NumWorkers;
-        end
-
-        display(sprintf('Number of workers: %d', poolsize));
-
+        % ----------------------------------------------------------------
+        % Preprocessing : collect global inforamtion
+        % ----------------------------------------------------------------
+        tic 
         % global variables
         nIterations = size(LLG1.U, 2);      % number of iterations is equal to number of matched anchor pairs on High Level
 
@@ -59,32 +53,71 @@ try
         nV = nV1 * nV2;
         localMatches = zeros(nIterations, nV);
         
+        % save separately indices of nodes, that should be matched parallel on the Lower Level
+        nodeCorresp = zeros(nIterations, nV1 + nV2);
         
+        localAdjMatrices1 = cell(nIterations);
+        localAdjMatrices2 = cell(nIterations);
         
-
-        % in each step we match points corresponding to the anchor match ai<->aj
-        parfor it=3:3
-
-            % node, that belong to the anchor ai
+        V1 = cell(nIterations);
+        V2 = cell(nIterations);
+        
+        for it = 1:nIterations % for each match ai<->aj on the High Level
+            
+            % indices of nodes, that belong to the anchor ai
             ai_x = LLG1.U(:,it);
+            V1{it} = LLG1.V(ai_x,:)';
+            adjM1cut = adjM1(ai_x, ai_x');
             
+            % indices of nodes, that belong to the anchor aj
+            aj_x = LLG2.U(:, HLGmatches(it,:)');
+            V2{it} = LLG2.V(aj_x,:)';
+            adjM2cut = adjM2(aj_x, aj_x');
             
+            nodeCorresp(it,:) = [ai_x' aj_x'];
+      
+            localAdjMatrices1{it} = adjM1cut;
+            localAdjMatrices2{it} = adjM2cut;
+            
+            display(sprintf(' %d x %d', size(V1{it},2), size(V2{it},2)));
+        end
+        
+        display(sprintf('Preprocessing took %f sec', toc));
+        
+        
+        
+        poolobj = parpool(3);                           
 
-            LLG1.U(it,:)
+        if isempty(poolobj)
+            poolsize = 0;
+        else
+            poolsize = poolobj.NumWorkers;
+        end
+        display(sprintf('Number of workers: %d', poolsize));
+        
+        % ----------------------------------------------------------------
+        % Run parallel
+        % ----------------------------------------------------------------
+        % in each step we match points corresponding to the anchor match ai<->aj
+        parfor it = 1:1
+            node_ind = nodeCorresp(it,:);
+            % node, that belong to the anchor ai
+            ai_x = logical(node_ind(1:nV1));
 
-            v1 = LLG1.V(ai_x,:)';          
+            v1 = V1{it};          
             nVi = size(v1,2);
             display(sprintf('nVi = %d', nVi));
             
-            adjM1cut = adjM1(ai_x, ai_x');
+            adjM1cut = localAdjMatrices1{it};
 
             % node, that belong to the anchor aj
-            aj_x = LLG2.U(:, HLGmatches(it,:)');
-            v2 = LLG2.V(aj_x,:)';
+            aj_x = logical(node_ind(nV1+1:end));
+            
+            v2 = V2{it};
             nVj = size(v2,2);
             display(sprintf('nVj = %d', nVj));
             
-            adjM2cut = adjM2(aj_x, aj_x');
+            adjM2cut = localAdjMatrices2{it};
 
             % correspondence matrix (!!!!!!!!!!!!!!!!!!!!!! now: all-to-all)
             corrMatrix = ones(nVi,nVj);
@@ -115,12 +148,7 @@ try
             matches = zeros(nV1, nV2);
             matches(ai_x, aj_x') = matchesL;
             localMatches(it, :) = reshape(matches, [1 nV]);
-
-            %     clear L12;
-            %     clear corrMatrix;
-            %     clear adjM1cut;
-            %     clear adjM2cut;
-            %     clear w;
+            
         end
 
     catch ME

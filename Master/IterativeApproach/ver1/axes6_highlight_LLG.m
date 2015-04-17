@@ -2,18 +2,18 @@
 %
 % Show initial candidates and the best match according to the algorithm
 %
-function axes5_highlightAG(hObject, ~, handles)
+function axes6_highlight_LLG(hObject, ~, handles)
 
 img1 = handles.img1;
 img2 = handles.img2;
 
-v1 = handles.DG1.V';
-v2 = handles.DG2.V';
+v1 = handles.LLG1.V';
+v2 = handles.LLG2.V';
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);
 
-matches = handles.DGmatches.matches;
+matches = handles.LLGmatches.matches;
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -31,9 +31,9 @@ else
 end
       
 if img==1
-    nn = knnsearch(handles.DG1.V,[n,m]); 
+    nn = knnsearch(handles.LLG1.V,[n,m]); 
 else
-    nn = knnsearch(handles.DG2.V,[n,m]);    
+    nn = knnsearch(handles.LLG2.V,[n,m]);    
 end
       
 % show best match
@@ -48,8 +48,8 @@ end
 
 axes(handles.axes6);
 cla reset
-plot_DGmatches(handles.img1, handles.DG1, handles.img2, handles.DG2, matches, bestmatch);
+plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matches, bestmatch);
 
 axes(handles.axes6);
-set(gca,'ButtonDownFcn', {@axes6_highlightAG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightAG, handles})    
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})    

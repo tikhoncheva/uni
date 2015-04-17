@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 15-Apr-2015 17:11:56
+% Last Modified by GUIDE v2.5 17-Apr-2015 16:43:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -218,7 +218,7 @@ end
 
 % --- Executes on button press in pbBuildGraphs_img1.
 function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
-    handles.parameters.nAnchors1 = str2double(get(handles.editNAnchors1,'string')); 
+    handles.parameters.nAnchors1 = str2double(get(handles.edit_NAnchors1,'string')); 
     handles.parameters.nNodesProAnchor1 = ones(1,handles.parameters.nAnchors1) * 10;
     guidata(hObject,handles); 
     
@@ -243,11 +243,13 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 
     axes(handles.axes3);
 %     plot_anchorgraph(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
-    plot_anchorgraph(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
+%     plot_anchorgraph(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
+    plot_twolevelgraphs(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
 
     
     set(handles.pbSaveAnchors_img1, 'Enable', 'on');
     set(handles.pbLoadAnchors_img1, 'Enable', 'on');
+    set(handles.edit_nV1, 'String', size(HLG1.V,1) );
     
     if handles.HLG2isBuilt 
         handles.LLGmatches.objval  = 0.;
@@ -273,7 +275,7 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 
 % --- Executes on button press in pbBuildGraphs_img1.
 function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
-    handles.parameters.nAnchors2 = str2double(get(handles.editNAnchors2,'string')); 
+    handles.parameters.nAnchors2 = str2double(get(handles.edit_NAnchors2,'string')); 
     handles.parameters.nNodesProAnchor2 = ones(1,handles.parameters.nAnchors2) * 10;
     guidata(hObject,handles); 
     
@@ -297,11 +299,12 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
 
     axes(handles.axes4);
 %     plot_anchorgraph(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
-    plot_anchorgraph(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
-
+%     plot_anchorgraph(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
+    plot_twolevelgraphs(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
     
     set(handles.pbSaveAnchors_img2, 'Enable', 'on');
-    set(handles.pbLoadAnchors_img2, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img2, 'Enable', 'on');    
+    set(handles.edit_nV2, 'String', size(HLG2.V,1) );
     
     if handles.HLG1isBuilt 
         handles.LLGmatches.objval  = 0.;
@@ -361,7 +364,7 @@ if  filename~=0
     % read data from file
     load( [pathname filesep filename] ,'-mat', 'm', 'kNN', 'HLG');                     
 
-    set(handles.editNAnchors2,'string', m);
+    set(handles.edit_NAnchors2,'string', m);
     set(handles.edit_nNodesProAnchor,'string', kNN);
 
     handles.HLG1 = HLG;
@@ -372,8 +375,9 @@ if  filename~=0
     show_LLG = get(handles.cbShow_LLG, 'Value');
     show_HLG = get(handles.cbShow_HLG, 'Value');
     axes(handles.axes3);cla reset;
-    plot_anchorgraph(handles.img1, handles.LLG1, ...
-                      handles.HLG1, show_LLG, show_HLG); 
+    plot_twolevelgraphs(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img1, handles.LLG1, ...
+%                       handles.HLG1, show_LLG, show_HLG); 
 
     if handles.HLG2isBuilt  
        handles.HLGmatches.objval  = 0.;
@@ -397,7 +401,7 @@ if  filename~=0
     % read data from file
     load( [pathname filesep filename] ,'-mat', 'm', 'kNN', 'HLG');     
 
-    set(handles.editNAnchors2,'string', m);
+    set(handles.edit_NAnchors2,'string', m);
     set(handles.edit_nNodesProAnchor,'string', kNN);
 
     handles.HLG2 = HLG;
@@ -408,8 +412,9 @@ if  filename~=0
     show_LLG = get(handles.cbShow_LLG, 'Value');
     show_HLG = get(handles.cbShow_HLG, 'Value');
     axes(handles.axes4);cla reset;
-    plot_anchorgraph(handles.img2, handles.LLG2, ...
-                     handles.HLG2, show_LLG, show_HLG);   
+    plot_twolevelgraphs(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img2, handles.LLG2, ...
+%                      handles.HLG2, show_LLG, show_HLG);   
 
     if handles.HLG1isBuilt
        handles.HLGmatches.objval  = 0.;
@@ -434,14 +439,16 @@ show_HLG = get(handles.cbShow_HLG, 'Value');
 % replot first anchor graph
 if (handles.HLG1isBuilt)
     axes(handles.axes3);cla reset;
-    plot_anchorgraph(handles.img1SP.boundary, handles.LLG1, ...
-                  handles.HLG1, show_LLG, show_HLG);
+    plot_twolevelgraphs(handles.img1SP.boundary, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img1SP.boundary, handles.LLG1, ...
+%                   handles.HLG1, show_LLG, show_HLG);
 end
 % replot second anchor graph              
 if (handles.HLG2isBuilt)
     axes(handles.axes4);cla reset;
-    plot_anchorgraph(handles.img2SP.boundary, handles.LLG2, ...
-                  handles.HLG2, show_LLG, show_HLG);              
+    plot_twolevelgraphs(handles.img2SP.boundary, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img2SP.boundary, handles.LLG2, ...
+%                   handles.HLG2, show_LLG, show_HLG);              
 end
 
 
@@ -454,14 +461,16 @@ show_HLG = get(handles.cbShow_HLG, 'Value');
 % replot first anchor graph
 if (handles.HLG1isBuilt)
     axes(handles.axes3);cla reset;
-    plot_anchorgraph(handles.img1SP.boundary, handles.LLG1, ...
-                  handles.HLG1, show_LLG, show_HLG);
+    plot_twolevelgraphs(handles.img1SP.boundary, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img1SP.boundary, handles.LLG1, ...
+%                   handles.HLG1, show_LLG, show_HLG);
 end
 % replot first second graph       
 if (handles.HLG2isBuilt)
     axes(handles.axes4);cla reset;
-    plot_anchorgraph(handles.img2SP.boundary, handles.LLG2, ...
-                  handles.HLG2, show_LLG, show_HLG);  
+    plot_twolevelgraphs(handles.img2SP.boundary, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
+%     plot_anchorgraph(handles.img2SP.boundary, handles.LLG2, ...
+%                   handles.HLG2, show_LLG, show_HLG);  
 end
 
 %-------------------------------------------------------------------------
@@ -491,16 +500,16 @@ axes(handles.axes6);
 plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches.matches);
 
 axes(handles.axes5);
-set(gca,'ButtonDownFcn', {@axes5_highlightHLG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightHLG, handles}) 
+set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles}) 
 %end
 
 % --- Executes on mouse press over axes background.
 function axes5_ButtonDownFcn(hObject, ~, handles)
 
 axes(handles.axes5);
-set(gca,'ButtonDownFcn', {@axes5_highlightHLG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlightHLG, handles}) 
+set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles}) 
     
 %-------------------------------------------------------------------------
 %       Panel4 : matching lower level graphs
@@ -523,8 +532,8 @@ plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.
 
 % highlithin
 axes(handles.axes6);
-set(gca,'ButtonDownFcn', {@axes6_highlightHLG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightHLG, handles})   
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})   
 %end
 
 
@@ -532,5 +541,6 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightHLG, handles})
 function axes6_ButtonDownFcn(hObject, ~, handles)
 
 gaxes(handles.axes6);
-set(gca,'ButtonDownFcn', {@axes6_highlightHLG, handles})
-set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlightHLG, handles})   
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})   
+
