@@ -5,7 +5,7 @@ clc
 radius = 2;
 thr = 0.05;
 
-load ../edges-master/edgesModel.mat
+load ../../Tools/edges-master/edgesModel.mat
 
 % find edge points
 E = imresize(edgesDetect(imresize(img,2), model),0.5);

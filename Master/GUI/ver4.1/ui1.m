@@ -61,12 +61,11 @@ guidata(hObject,handles);
 % set parameters
 
 % Piotr Dollar toolbox
-addpath('../../edges-master/');
-addpath(genpath('../../piotr_toolbox_V3.26/'));
+addpath('../../Tools/edges-master/');
+addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
 
 % VL_Library
-%  VLFEAT_Toolbox = '/home/kitty/Documents/Uni/Master/vlfeat-0.9.19/toolbox/';
-addpath('/export/home/etikhonc/Documents/vlfeat-0.9.19/toolbox/');
+addpath('../../Tools/vlfeat-0.9.20/toolbox/');
 run vl_setup.m
 
 addpath([ '.' filesep 'Matching' ]);
