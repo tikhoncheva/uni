@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 17-Apr-2015 16:43:55
+% Last Modified by GUIDE v2.5 17-Apr-2015 17:45:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -81,22 +81,22 @@ addpath(genpath('../../Tools/edges-master/'));
 % VL_Library
 addpath(genpath('../../Tools/vlfeat-0.9.20/toolbox/'));
 run vl_setup.m
-clc;
+% clc;
 
 % SLIC 
 addpath(genpath('../../Tools/SLIC_MATLAB/'));
-clc;
+% clc;
 
 % Graph matching algorithm
 addpath(genpath('../../Tools/RRWM_release_v1.22'));
-clc;
+% clc;
 
 % Additional functions
 addpath(genpath('./HigherLevelGraph'));
 addpath(genpath('./LowerLevelGraph'));
 addpath(genpath('./Matching'));
 
-clc;
+% clc;
 
 % UIWAIT makes ia1 wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -157,6 +157,10 @@ if filename~=0
     handles.features1.edges = edges;
     handles.features1.descr = descr;
     
+    handles.HLG1 = [];
+    handles.LLG1 = [];
+    handles.HLG1isBuilt = 0;
+    
     guidata(hObject,handles); 
     
     set(handles.pbBuildGraphs_img1, 'Enable', 'on');
@@ -203,6 +207,10 @@ if filename~=0
     handles.img2selected = 1;
     handles.features2.edges = edges;
     handles.features2.descr = descr;
+    
+    handles.HLG2 = [];
+    handles.LLG2 = [];
+    handles.HLG2isBuilt = 0;
     
     guidata(hObject,handles); 
     
@@ -333,11 +341,13 @@ function pbSaveAnchors_img1_Callback(hObject, ~, handles)
 [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 
 HLG = handles.HLG1;
-m = size(HLG.V,1);
-kNN = numel(find(HLG.U(1,:)>0));
+LLG =  handles.LLG1;
+
+m = handles.parameters.nAnchors1;
+%kNN = numel(find(HLG.U(1,:)>0));
 
 if  filename~=0
-    save([pathname filesep filename] , 'm', 'kNN', 'HLG');
+    save([pathname filesep filename] , 'm', 'HLG', 'LLG');
 end
 %end
 
@@ -346,12 +356,15 @@ function pbSaveAnchors_img2_Callback(hObject, ~, handles)
 
 [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 
+m = handles.parameters.nAnchors2;
 HLG = handles.HLG2;
-m = size(HLG.V,1);
-kNN = numel(find(HLG.U(1,:)>0));
+LLG =  handles.LLG2;
+
+% m = size(HLG.V,1);
+% kNN = numel(find(HLG.U(1,:)>0));
 
 if  filename~=0
-    save([pathname filesep filename] , 'm', 'kNN', 'HLG');
+    save([pathname filesep filename] , 'm', 'HLG', 'LLG');
 end
 %end
 
@@ -362,13 +375,18 @@ function pbLoadAnchors_img1_Callback(hObject, ~, handles)
 
 if  filename~=0
     % read data from file
-    load( [pathname filesep filename] ,'-mat', 'm', 'kNN', 'HLG');                     
+    load( [pathname filesep filename] ,'-mat', 'm', 'HLG', 'LLG');                     
 
-    set(handles.edit_NAnchors2,'string', m);
-    set(handles.edit_nNodesProAnchor,'string', kNN);
+    set(handles.edit_NAnchors1, 'string', m);
+    set(handles.edit_nV1, 'string', size(HLG.V,1));
 
+    handles.parameters.nAnchors1 = m;
+    
     handles.HLG1 = HLG;
     handles.HLG1isBuilt = 1;
+    
+    handles.LLG1 = LLG1;
+    
     guidata(hObject, handles);
 
     %replot HLG
@@ -399,13 +417,18 @@ function pbLoadAnchors_img2_Callback(hObject, ~, handles)
 
 if  filename~=0
     % read data from file
-    load( [pathname filesep filename] ,'-mat', 'm', 'kNN', 'HLG');     
+    load( [pathname filesep filename] ,'-mat', 'm', 'HLG', 'LLG');     
 
-    set(handles.edit_NAnchors2,'string', m);
-    set(handles.edit_nNodesProAnchor,'string', kNN);
+    set(handles.edit_NAnchors2, 'string', m);
+    set(handles.edit_nV2, 'string', size(HLG.V,1));
+
+    handles.parameters.nAnchors2 = m;
 
     handles.HLG2 = HLG;
     handles.HLG2isBuilt = 1;
+    
+    handles.LLG2 = LLG;
+    
     guidata(hObject, handles);
 
     %replot HLG
@@ -543,4 +566,3 @@ function axes6_ButtonDownFcn(hObject, ~, handles)
 gaxes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})   
-

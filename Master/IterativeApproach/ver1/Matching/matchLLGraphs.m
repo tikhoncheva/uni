@@ -21,14 +21,14 @@ try
     nV2 = size(LLG2.V,1);
 
     % adjacency matrix of the first dependency graph
-    adjM1 = zeros(nV1, nV2);
+    adjM1 = zeros(nV1, nV1);
     E1 = LLG1.E;
     E1 = [E1; [E1(:,2) E1(:,1)]];
     ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
     adjM1(ind) = 1;
 
     % adjacency matrix of the second dependency graph
-    adjM2 = zeros(nV1, nV2);
+    adjM2 = zeros(nV2, nV2);
     E2 = LLG2.E;
     E2 = [E2; [E2(:,2) E2(:,1)]];
     ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
@@ -62,16 +62,21 @@ try
         V1 = cell(nIterations);
         V2 = cell(nIterations);
         
+        D1 = cell(nIterations);
+        D2 = cell(nIterations);
+        
         for it = 1:nIterations % for each match ai<->aj on the High Level
             
             % indices of nodes, that belong to the anchor ai
             ai_x = LLG1.U(:,it);
             V1{it} = LLG1.V(ai_x,:)';
+            D1{it} = LLG1.D(:, ai_x);
             adjM1cut = adjM1(ai_x, ai_x');
             
             % indices of nodes, that belong to the anchor aj
             aj_x = LLG2.U(:, HLGmatches(it,:)');
             V2{it} = LLG2.V(aj_x,:)';
+            D2{it} = LLG2.D(:, aj_x);
             adjM2cut = adjM2(aj_x, aj_x');
             
             nodeCorresp(it,:) = [ai_x' aj_x'];
@@ -99,12 +104,13 @@ try
         % Run parallel
         % ----------------------------------------------------------------
         % in each step we match points corresponding to the anchor match ai<->aj
-        parfor it = 1:1
+        parfor it = 1:1%nIterations
             node_ind = nodeCorresp(it,:);
             % node, that belong to the anchor ai
             ai_x = logical(node_ind(1:nV1));
 
-            v1 = V1{it};          
+            v1 = V1{it};
+            d1 = D1{it};
             nVi = size(v1,2);
             display(sprintf('nVi = %d', nVi));
             
@@ -114,6 +120,7 @@ try
             aj_x = logical(node_ind(nV1+1:end));
             
             v2 = V2{it};
+            d2 = D2{it};
             nVj = size(v2,2);
             display(sprintf('nVj = %d', nVj));
             
@@ -122,8 +129,9 @@ try
             % correspondence matrix (!!!!!!!!!!!!!!!!!!!!!! now: all-to-all)
             corrMatrix = ones(nVi,nVj);
 
+            % compu
             % compute initial affinity matrix
-            AffMatrix = initialAffinityMatrix2(v1, v2, adjM1cut, adjM2cut, corrMatrix);
+            AffMatrix = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrMatrix);
 
             % conflict groups
             [I, J] = find(corrMatrix);
@@ -184,7 +192,7 @@ try
 
     display(sprintf('=================================================='));
 
-catch
+catch ME
     msg = 'Error occurred in Lower Level Graph Matching';
     causeException = MException(ME.identifier, msg);
     ME = addCause(ME, causeException);

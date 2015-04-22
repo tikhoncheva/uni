@@ -79,9 +79,24 @@ for i = 1:nLabels
     % HoG descriptor around new node of the graph
     xy_hog = vl_hog( single(imcrop(im2uint8(img),[x-w/2 y-w/2 w w])), s) ;
     
+%     % SIFT descriptor
+%     sigma = sum(edges(3,ind))/numel(ind);
+%     angle = 0;
+%     f = [x;y;sigma;angle];
+%     
+%     I_       = vl_imsmooth(im2double(img), sqrt(f(3)^2)) ;
+%     [Ix, Iy] = vl_grad(I_) ;
+%     mod      = sqrt(Ix.^2 + Iy.^2) ;
+%     ang      = atan2(Iy,Ix) ;
+%     grd      = shiftdim(cat(3,mod,ang),2) ;
+%     grd      = single(grd) ;
+%     xy_sift  = vl_siftdescriptor(grd, f) ;
+  
+    
     % save node ant it's descriptor
     G.V = [G.V; [x,y]];
     G.D = [G.D, reshape(xy_hog, numel(xy_hog),1)]; % 4x4x31 descriptor
+%     G.D = [G.D, xy_sift]; % 4x4x31 descriptor
     
     clear SPxy
     clear xy_hog

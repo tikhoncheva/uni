@@ -2,12 +2,17 @@
 %
 % v1 : 2 x nV1
 % v2 : 2 x nV2
+
+% d1: d x nV1
+% d2: d x nV2
+%
+% d - size of vectorized HoG - descriptor around node
 %
 % AdjM1, AdjM2 adjancency matrices of two graphs
 % 
 
 
-function [D, ratio] = initialAffinityMatrix2(v1, v2, AdjM1, AdjM2, corrMatrix)
+function [D, ratio] = initialAffinityMatrix2(v1, v2, d1, d2, AdjM1, AdjM2, corrMatrix)
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);
@@ -19,75 +24,46 @@ nV2 = size(v2,2);
 tic
 % conflictMatrix = getConflictMatrix(group1, group2)
 conflictMatrix = getConflictMatrix2(group1, group2, AdjM1, AdjM2);
-fprintf('    Conflict matrix: %f sec\n', toc);
+display(sprintf('    Conflict matrix: %f sec\n', toc));
 
-% Affinity matrix
 
-G11 = squareform(pdist(v1', 'euclidean'));
-G11(~AdjM1) = 0;
-sigma1 = sum(G11(:))/nV1/nV1;
-G11 = G11./sigma1;
+% Affinity matrix (non-diagonal elements: edge similarity)
 
-G22 = squareform(pdist(v2', 'euclidean'));
-G22(~AdjM2) = 0;
-sigma2 = sum(G22(:))/nV2/nV2;
-G22 = G22./sigma2;
+G1 = squareform(pdist(v1', 'euclidean'));
+G1(~AdjM1) = 0;
+sigma1 = sum(G1(:))/nV1/nV1;
+G1 = G1./sigma1;
 
-D = (repmat(G11, nV2, nV2)-kron(G22,ones(nV1))).^2;
+G2 = squareform(pdist(v2', 'euclidean'));
+G2(~AdjM2) = 0;
+sigma2 = sum(G2(:))/nV2/nV2;
+G2 = G2./sigma2;
+
+D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
 D = exp(-D./4.);
 D(isnan(D)) = 0;
 
-% 
-% [L1(:,2), L1(:,1)] = find(AdjM1);
-% [L2(:,2), L2(:,1)] = find(AdjM2);
-% 
-% G1 = v1(:, L1(:,1))-v1(:, L1(:,2));
-% G2 = v2(:, L2(:,1))-v2(:, L2(:,2));
-% 
-% G1 = sqrt(G1(1,:).^2+G1(2,:).^2);
-% G2 = sqrt(G2(1,:).^2+G2(2,:).^2);
-% 
-% % distance matrix of the first graph
-% d1 = zeros(nV1, nV1);
-% for i=1:size(L1,1)
-%     d1(L1(i,2), L1(i,1)) = G1(i);
-% end
-% sigma1 = sum(d1(:))/nV1/nV1;
-% d1 = d1./sigma1;
-% 
-% % distance matrix of the second graph
-% d2 = zeros(nV2, nV2);
-% for i=1:size(L2,1)
-%     d2(L2(i,2), L2(i,1)) = G2(i);
-% end
-% sigma2 = sum(d2(:))/nV2/nV2;
-% d2 = d2./sigma2;
-% 
-% % Affinity Matrix
-% nAffMatrix = size(L12,1);
-% D = zeros(nAffMatrix);
-% D1 = zeros(nAffMatrix);
-% for ia=1:nAffMatrix
-%     i = L12(ia, 1);
-%     a = L12(ia, 2);
-%     for jb=1:nAffMatrix
-%         j = L12(jb, 1);
-%         b = L12(jb, 2);
-%         
-% %         D(ia,jb) = (dotsimilarity(v1(:,i)', v2(:,a)') ...
-% %                  + dotsimilarity(v1(:,j)', v2(:,b)') )/2.;  
-%         D1(ia,jb) = exp(-(d1(i,j)-d2(a,b))^2/4.);     
-%     end
-% end
-% 
-% D = D1;
-% 
-% % D1 = max(D1(:)) - D1;
-% % D = D - D1;
-% % D(find(D<0)) = 0;
+% Affinity matrix (non-diagonal elements: cosine node similarity)
+node_cossimilarity = nodeSimilarity(v1, v2, 'cosine');
+D1 = repmat(node_cossimilarity, numel(node_cossimilarity), 1);
+D1 = (D1 + D1')/2;
 
-D(1:(length(D)+1):end)=0;
+% combine two matrices
+D = max(D(:)) - D;
+D1 = D1 - D;
+D1(D1<0) = 0;
+D = D1;
+
+
+% Affinity matrix (diagonal elements: node similarity)
+
+node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
+D(1:(length(D)+1):end) = node_eusimilarity;
+
+D(1:(length(D)+1):end) = 0;
+
 D = D.*~full(conflictMatrix);
 
-% figure, imagesc(D)
+figure, imagesc(D);
+
 end
