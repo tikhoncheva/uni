@@ -17,7 +17,7 @@
 % SPrect_i = [xmin,ymin, width, height, label] 
 %           (xmin,ymin) left upper corner of the rectangle
 
-function [ G, imgSP, SPrect ] = SPgraph_HL( img, edges,imgSP, G)
+function [ G, imgSP, SPrect ] = SPgraph_HL( img, edges, descr, imgSP, G)
 
 % parameters of the HoG descriptor
 s = 9; % size of cells for the HoG descriptor
@@ -73,6 +73,10 @@ for i = 1:nLabels
     ind = find(correspondenceMatrix(i,:));
 
     % calculate center of mass of the edge points inside selected SP (new node)
+    
+%     x = edges(1, ind(1));
+%     y = edges(2, ind(1));
+    
     x = round(sum(edges(1,ind))/numel(ind));
     y = round(sum(edges(2,ind))/numel(ind));
     
@@ -91,7 +95,6 @@ for i = 1:nLabels
 %     grd      = shiftdim(cat(3,mod,ang),2) ;
 %     grd      = single(grd) ;
 %     xy_sift  = vl_siftdescriptor(grd, f) ;
-  
     
     % save node ant it's descriptor
     G.V = [G.V; [x,y]];

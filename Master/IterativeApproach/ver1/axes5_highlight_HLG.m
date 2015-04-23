@@ -51,7 +51,7 @@ end
 
 axes(handles.axes5);
 cla reset
-plot_matches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matches, bestmatch);
+plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matches, bestmatch);
 
 W  = 36; % from vl_feat
 
@@ -74,11 +74,13 @@ else
     display( simval(1, (nn-1)*nV1 + nn_match) );
 end
 
-patch1 = imcrop(img1, [p1(1)-W/2, p1(2)-W/2, W, W]);
-patch2 = imcrop(img2, [p2(1)-W/2, p2(2)-W/2, W, W]);    
 
-figure, imagesc(patch1),  colormap gray, hold off;
-figure, imagesc(patch2),  colormap gray, hold off;
+% show patches
+% patch1 = imcrop(img1, [p1(1)-W/2, p1(2)-W/2, W, W]);
+% patch2 = imcrop(img2, [p2(1)-W/2, p2(2)-W/2, W, W]);    
+% 
+% figure, imagesc(patch1),  colormap gray, hold off;
+% figure, imagesc(patch2),  colormap gray, hold off;
 
 axes(handles.axes5);
 set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})

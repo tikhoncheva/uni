@@ -24,7 +24,7 @@ nV2 = size(v2,2);
 tic
 % conflictMatrix = getConflictMatrix(group1, group2)
 conflictMatrix = getConflictMatrix2(group1, group2, AdjM1, AdjM2);
-display(sprintf('    Conflict matrix: %f sec\n', toc));
+display(sprintf('    Conflict matrix: %f sec', toc));
 
 
 % Affinity matrix (non-diagonal elements: edge similarity)
@@ -57,8 +57,8 @@ D = D1;
 
 % Affinity matrix (diagonal elements: node similarity)
 
-node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
-D(1:(length(D)+1):end) = node_eusimilarity;
+% node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
+% D(1:(length(D)+1):end) = node_eusimilarity;
 
 D(1:(length(D)+1):end) = 0;
 

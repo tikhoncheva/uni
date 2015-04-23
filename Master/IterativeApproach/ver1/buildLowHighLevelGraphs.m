@@ -25,7 +25,7 @@ function [ HLGraph, LLGraph, SP_hl, SP_ll ] = buildLowHighLevelGraphs( img, feat
     display(sprintf('\n - build higher level graph (anchor graph)'));
     
     t1 = tic ;
-    [HLGraph, SP_hl, SP_rectangles]   = buildHLGraph(img, features.edges, nSP_hl);
+    [HLGraph, SP_hl, SP_rectangles]   = buildHLGraph(img, features.edges, features.descr, nSP_hl);
     display(sprintf('   finished in %f sec', toc(t1)));
     
    

@@ -23,7 +23,7 @@
 %   SPrect_i = [x,y, width, height, label] 
 %              (x,y) coordinates of the center of the rectangle
 %
-function [ HLG, imgSP, SP_rect] = buildHLGraph(img, edges, nSuperPixels)
+function [ HLG, imgSP, SP_rect] = buildHLGraph(img, edges, descr, nSuperPixels)
 
 HLG.V = [];   % vertices
 HLG.D = [];   % descriptors of the vertices
@@ -37,6 +37,6 @@ t = tic;
 display(sprintf('\t Superpixel segmentation took %f sec', toc(t) ));
 
 % Build Graph of Super Pixels given superpixel segmentation
-[HLG, imgSP, SP_rect] = SPgraph_HL( img, edges, imgSP, HLG);
+[HLG, imgSP, SP_rect] = SPgraph_HL( img, edges, descr, imgSP, HLG);
 
 end

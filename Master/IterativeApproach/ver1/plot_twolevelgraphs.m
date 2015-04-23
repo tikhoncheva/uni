@@ -44,10 +44,18 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
     
     % edges between vertices
     if show_LLG
-        for i=1:size(LLG.E, 1)
-            line([LLG.V(LLG.E(i,1),1) LLG.V(LLG.E(i,2),1) ],...
-                 [LLG.V(LLG.E(i,1),2) LLG.V(LLG.E(i,2),2) ], 'Color', 'g');  
-        end
+        edges = LLG.E';
+        edges(end+1,:) = 1;
+        edges = edges(:);
+
+        points = LLG.V(edges,:);
+        points(3:3:end,:) = NaN;
+
+        line(points(:,1), points(:,2), 'Color', 'g');
+% %         for i=1:size(LLG.E, 1)
+% %             line([LLG.V(LLG.E(i,1),1) LLG.V(LLG.E(i,2),1) ],...
+% %                  [LLG.V(LLG.E(i,1),2) LLG.V(LLG.E(i,2),2) ], 'Color', 'g');  
+% %         end
     end
     
     % anchors
