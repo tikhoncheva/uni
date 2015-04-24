@@ -10,7 +10,8 @@
 %  matches      boolean matrix of matches if the size (nV1 x nV2)
 
 
-function [objval, matches] = matchLLGraphs(nV1, nV2, indOfSubgraphsNodes, corrmatrices, affmatrices)
+function [objval, matches, ...
+          local_objval, local_optsol] = matchLLGraphs(nV1, nV2, indOfSubgraphsNodes, corrmatrices, affmatrices)
 
 display(sprintf('\n================================================'));
 display(sprintf('Match initial graphs'));
@@ -19,13 +20,17 @@ display(sprintf('=================================================='));
 
 tic 
 
+nV = nV1 * nV2;
+
 % number of local matchings to do
 nIterations = size(indOfSubgraphsNodes, 1); 
 
-objective = zeros(nIterations, 1);
+local_objval = zeros(nIterations, 1);
+local_optsol = zeros(nIterations, nV);
 
-nV = nV1 * nV2;
-localMatches = zeros(nIterations, nV);
+global_corrmatrix = zeros(nIterations, nV);
+
+% localMatches = zeros(nIterations, nV);
 
 try
     % ----------------------------------------------------------------
@@ -54,30 +59,44 @@ try
 
         display(sprintf('matrix size %d x %d', nVi, nVj));
         
-        corrMatrix = corrmatrices{it};
+        corrmatrix = corrmatrices{it};
         affmatrix = affmatrices{it};
 
         % conflict groups
-        [I, J] = find(corrMatrix);
+        [I, J] = find(corrmatrix);
         [ group1, group2 ] = make_group12([I, J]);
 
         % run RRW Algorithm 
         tic
         x = RRWM(affmatrix, group1, group2);
         fprintf('    RRWM: %f sec\n', toc);
-
-        X = greedyMapping(x, group1, group2);
-
-        objective(it) = x'*affmatrix * x;
-
-        matchesL = zeros(nVi, nVj);
-        for k=1:numel(I)
-            matchesL(I(k), J(k)) = X(k);
-        end  
-
+        
+        X = greedyMapping_LLG(x, group1, group2);
+        
+        matchesL = reshape(X, [nVi, nVj]);
         matches = zeros(nV1, nV2);
         matches(ai_x, aj_x') = matchesL;
-        localMatches(it, :) = reshape(matches, [1 nV]);
+        
+%         M = zeros(nV1, nV2);
+%         M(ai_x, aj_x') = corrmatrix;
+%         
+%         global_corrmatrix(it, :) = reshape(M, [1 nV]);
+        
+        local_optsol(it,:) = reshape(matches, [1 nV]);
+        local_objval(it,1) = x'*affmatrix * x;
+
+%         X = greedyMapping(x, group1, group2);
+% 
+%         objective(it) = x'*affmatrix * x;
+% 
+%         matchesL = zeros(nVi, nVj);
+%         for k=1:numel(I)
+%             matchesL(I(k), J(k)) = X(k);
+%         end  
+% 
+%         matches = zeros(nV1, nV2);
+%         matches(ai_x, aj_x') = matchesL;
+%         localMatches(it, :) = reshape(matches, [1 nV]);
 
     end
 
@@ -97,11 +116,24 @@ catch ME
 end
 
 % global matrix of matches
-matches = max(localMatches,[], 1);
+
+% corrmatrix = max(global_corrmatrix,[],1);
+% corrmatrix = reshape(corrmatrix, nV1, nV2);
+% 
+% [I, J] = find(corrmatrix);
+% [ group1, group2 ] = make_group12([I, J]);
+% 
+
+matches = max(local_optsol, [], 1);
+% matches = greedyMapping(matches, group1, group2);
 matches = reshape(matches, nV1,nV2);
 matches = logical(matches);
 
-objval = sum(objective);
+% matches = max(localMatches,[], 1);
+% matches = reshape(matches, nV1,nV2);
+% matches = logical(matches);
+
+objval = sum(local_objval);
 
 display(sprintf('Summary %f sec', toc));
 display(sprintf('=================================================='));

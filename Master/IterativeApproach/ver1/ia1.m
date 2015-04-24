@@ -613,18 +613,22 @@ load( [pathname filesep filename] ,'-mat', 'subgraphsNodes', 'corrmatrices', 'af
 
 % [objval, matches] = matchLLGraphs(handles.LLG1, handles.LLG2, ...
 %                                  handles.HLGmatches.matches);
-nV1 = size(handles.LLG1.V,1)
-nV2 = size(handles.LLG2.V,1)
-[objval, matches] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
+nV1 = size(handles.LLG1.V,1);
+nV2 = size(handles.LLG2.V,1);
+[objval, matches, ...
+ lobjval, loptsol] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
 
 %update data
 
 handles.LLGmatches.objval = [handles.LLGmatches.objval, objval];
 handles.LLGmatches.matches = matches;
-
+handles.LLGmatches.lobjval = lobjval;
+handles.LLGmatches.loptsol = loptsol;
 handles.LLGmatches.subgraphsNodes = subgraphsNodes;
 handles.LLGmatches.corrmatrices = corrmatrices;
 handles.LLGmatches.affmatrices  = affmatrices;
+
+guidata(hObject, handles);
 
 set(handles.text_objval_LLG, 'string', objval);
 set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
@@ -654,10 +658,8 @@ function pb_Reweight_HLGraph_Callback(hObject, eventdata, handles)
 LLG1 = handles.LLG1;
 LLG2 = handles.LLG2;
 
-matches_HLG = handles.HLGmatches.matches;
-affmatrix_HLG = handles.HLGmatches.affmatrix; 
 
-new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, matches_HLG, affmatrix_HLG );
+new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches, handles.HLGmatches, handles.Iteration);
 
 %update affmatrix
 handles.HLGmatches.affmatrix = new_affmatrix_HLG;

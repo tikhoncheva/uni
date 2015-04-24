@@ -127,8 +127,8 @@ dist_y(distNeg) = 0;
 dist = dist_x .* dist_y;
 
 % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-% [v1,v2] = find(dist>0);
-% G.E = [G.E; [v1,v2]];
+[v1,v2] = find(dist>0);
+G.E = [G.E; [v1,v2]];
 
 % % % ------------------------------------------------------------
 % figure, imagesc(imgSP.boundary), hold on;
