@@ -34,7 +34,7 @@ try
 
     X = greedyMapping(x, group1, group2);
 
-    objval = x'*affmatrix * x;
+    objval = X'*affmatrix * X;
 
     matches = zeros(nV1, nV2);
     for i=1:size(L12,1)

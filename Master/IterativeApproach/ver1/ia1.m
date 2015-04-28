@@ -291,6 +291,11 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     if handles.HLG2isBuilt 
         
         [corrmatrix, affmatrix] = initialization_HLGM(HLG1, handles.HLG2);
+        
+        handles.Iteration = 0;
+        set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+
+       
         handles.HLGmatches.corrmatrix = corrmatrix;
         handles.HLGmatches.affmatrix = affmatrix;
         
@@ -355,13 +360,18 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
     if handles.HLG1isBuilt 
         
         [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, HLG2);
+        
+        handles.Iteration = 0;
+        set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+
+       
         handles.HLGmatches.corrmatrix = corrmatrix;
         handles.HLGmatches.affmatrix = affmatrix;
        
-        handles.LLGmatches.objval  = 0.;
+        handles.LLGmatches.objval  = [];
         handles.LLGmatches.matches = zeros(size(handles.LLG1.V,1), size(LLG2.V,1));
         
-        handles.HLGmatches.objval  = 0.;
+        handles.HLGmatches.objval  = [];
         handles.HLGmatches.matches = zeros(size(handles.HLG1.V,1), size(HLG2.V,1));
    
         axes(handles.axes5);cla reset;
@@ -440,6 +450,10 @@ if  filename~=0
         
        [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
        
+       handles.Iteration = 0;
+       set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+
+       
        handles.HLGmatches.corrmatrix = corrmatrix;
        handles.HLGmatches.affmatrix = affmatrix;
        handles.HLGmatches.objval  = 0.;
@@ -487,6 +501,9 @@ if  filename~=0
     if handles.HLG1isBuilt
         
        [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
+       
+       handles.Iteration = 0;
+       set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
        
        handles.HLGmatches.corrmatrix = corrmatrix;
        handles.HLGmatches.affmatrix = affmatrix;
@@ -599,31 +616,35 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles})
 % --- Executes on button press in pbMatch_LLGraphs.
 function pbMatch_LLGraphs_Callback(hObject,  ~ , handles)
 
-% if (handles.Iteration == 0) % first iteration
-%     [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches.matches);
-% end
-% 
+if (handles.Iteration == 0) % first iteration
+    [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches.matches);
+else
+    subgraphsNodes = handles.LLGmatches.subgraphsNodes;
+    corrmatrices = handles.LLGmatches.corrmatrices;
+    affmatrices = handles.LLGmatches.affmatrices;
+end
+
 % [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 % if  filename~=0
 %     save([pathname filesep filename] , 'subgraphsNodes', 'corrmatrices', 'affmatrices');
 % end
 
-[filename, pathname] = uigetfile({'*.mat'}, 'File Selector');
-load( [pathname filesep filename] ,'-mat', 'subgraphsNodes', 'corrmatrices', 'affmatrices');  
+% [filename, pathname] = uigetfile({'*.mat'}, 'File Selector');
+% load( [pathname filesep filename] ,'-mat', 'subgraphsNodes', 'corrmatrices', 'affmatrices');  
 
 % [objval, matches] = matchLLGraphs(handles.LLG1, handles.LLG2, ...
 %                                  handles.HLGmatches.matches);
 nV1 = size(handles.LLG1.V,1);
 nV2 = size(handles.LLG2.V,1);
 [objval, matches, ...
- lobjval, loptsol] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
+ lobjval, lweights] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
 
 %update data
 
 handles.LLGmatches.objval = [handles.LLGmatches.objval, objval];
 handles.LLGmatches.matches = matches;
 handles.LLGmatches.lobjval = lobjval;
-handles.LLGmatches.loptsol = loptsol;
+handles.LLGmatches.lweights = lweights;
 handles.LLGmatches.subgraphsNodes = subgraphsNodes;
 handles.LLGmatches.corrmatrices = corrmatrices;
 handles.LLGmatches.affmatrices  = affmatrices;
@@ -665,7 +686,7 @@ new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches, handles.HLG
 handles.HLGmatches.affmatrix = new_affmatrix_HLG;
 handles.Iteration = handles.Iteration + 1;
 
-set(handles.text_IterationCount, 'String', handles.Iteration);
+set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
 
 guidata(hObject, handles);
 

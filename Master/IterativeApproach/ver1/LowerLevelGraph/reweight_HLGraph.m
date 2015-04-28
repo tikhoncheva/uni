@@ -10,8 +10,10 @@ function [new_affmatrix_HLG] = reweight_HLGraph(LLG1, LLG2, LLGmatches, HLGmatch
 
 affmatrix = HLGmatches.affmatrix;
 
+npairs = size(LLGmatches.subgraphsNodes,1);
 
-[L12(:,1), L12(:,2)] = find(HLGmatches.corrmatrix);
+[nV1, ~] = size(HLGmatches.corrmatrix);
+% [L12(:,1), L12(:,2)] = find(HLGmatches.corrmatrix);
 
 % consider first lower level graph LLG1
 
@@ -30,10 +32,19 @@ affmatrix = HLGmatches.affmatrix;
 % end
 
 %% ???????????????????????????????????????????????
-% % update diagonal elements of the affmatrix
-% for i=1:size(affmatrix,1)
-%    affmatrix(i, i) =  affmatrix(i, i) * LLGmatches.loptsol(i,1)/ LLGmatches.objval(1,it+1);
-% end
+
+
+% update diagonal elements of the affmatrix
+[I,J] = find(HLGmatches.matches);       % matched pairs of anchor graphs
+
+assert( npairs == size(I,1), 'number of matched subgraphs is differ from number of matched anchors');
+
+for k=1:size(I,1)
+    IkJk = (J(k)-1)*nV1 + I(k);    % index of pair (ai, aj) in the affinity matrix
+   
+    affmatrix(IkJk, IkJk) = affmatrix(IkJk, IkJk) * LLGmatches.lobjval(k) / LLGmatches.objval(1,it+1) ;
+end
+
 
 
 

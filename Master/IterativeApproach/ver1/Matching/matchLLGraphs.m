@@ -11,7 +11,7 @@
 
 
 function [objval, matches, ...
-          local_objval, local_optsol] = matchLLGraphs(nV1, nV2, indOfSubgraphsNodes, corrmatrices, affmatrices)
+          local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphsNodes, corrmatrices, affmatrices)
 
 display(sprintf('\n================================================'));
 display(sprintf('Match initial graphs'));
@@ -26,9 +26,9 @@ nV = nV1 * nV2;
 nIterations = size(indOfSubgraphsNodes, 1); 
 
 local_objval = zeros(nIterations, 1);
-local_optsol = zeros(nIterations, nV);
+local_weights = zeros(nIterations, nV);
 
-global_corrmatrix = zeros(nIterations, nV);
+% global_corrmatrix = zeros(nIterations, nV);
 
 % localMatches = zeros(nIterations, nV);
 
@@ -73,17 +73,17 @@ try
         
         X = greedyMapping_LLG(x, group1, group2);
         
-        matchesL = reshape(X, [nVi, nVj]);
-        matches = zeros(nV1, nV2);
-        matches(ai_x, aj_x') = matchesL;
+        W_local = reshape(X, [nVi, nVj]);
+        W = zeros(nV1, nV2);
+        W(ai_x, aj_x') = W_local;
         
 %         M = zeros(nV1, nV2);
 %         M(ai_x, aj_x') = corrmatrix;
 %         
 %         global_corrmatrix(it, :) = reshape(M, [1 nV]);
         
-        local_optsol(it,:) = reshape(matches, [1 nV]);
-        local_objval(it,1) = x'*affmatrix * x;
+        local_weights(it,:) = reshape(W, [1 nV]);
+        local_objval(it,1) = X' * affmatrix * X;
 
 %         X = greedyMapping(x, group1, group2);
 % 
@@ -124,7 +124,7 @@ end
 % [ group1, group2 ] = make_group12([I, J]);
 % 
 
-matches = max(local_optsol, [], 1);
+matches = max(local_weights, [], 1);
 % matches = greedyMapping(matches, group1, group2);
 matches = reshape(matches, nV1,nV2);
 matches = logical(matches);
