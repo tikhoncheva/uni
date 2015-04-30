@@ -10,7 +10,7 @@
 %  matches      boolean matrix of matches if the size (nV1 x nV2)
 
 
-function [objval, matches, ...
+function [objval, pairs, ...
           local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphsNodes, corrmatrices, affmatrices)
 
 display(sprintf('\n================================================'));
@@ -127,11 +127,14 @@ end
 matches = max(local_weights, [], 1);
 % matches = greedyMapping(matches, group1, group2);
 matches = reshape(matches, nV1,nV2);
-matches = logical(matches);
+% matches = logical(matches);
 
 % matches = max(localMatches,[], 1);
 % matches = reshape(matches, nV1,nV2);
 % matches = logical(matches);
+
+[pairs(:,1), pairs(:,2)] = find(matches);
+
 
 objval = sum(local_objval);
 

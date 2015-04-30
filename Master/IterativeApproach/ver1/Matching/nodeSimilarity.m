@@ -32,11 +32,12 @@ function [sim] = nodeSimilarity(x1, x2, method)
             % normalize distances
             norm_max_rows = max(dist,[],2);
             
-            norm_min_rows = min(dist,[],2);
-            dist = (dist - repmat(norm_min_rows,1, n2))./ repmat(norm_max_rows - norm_min_rows, 1, n2);
-            dist = 1- dist;
-            
-%             dist = 1- dist./repmat(norm_max_rows, 1, n2);
+%             norm_min_rows = min(dist,[],2);
+%             dist = (dist - repmat(norm_min_rows,1, n2))./ repmat(norm_max_rows - norm_min_rows, 1, n2);
+%             dist = 1- dist;
+
+            norm_max_rows(norm_max_rows==0) = 1;
+            dist = 1- dist./repmat(norm_max_rows, 1, n2);
             
             % vectorize result matrix columnwise
             sim = reshape(dist, 1, numel(dist));  

@@ -12,7 +12,7 @@
 %  matches      boolean matrix of matches if the size (nV1 x nV2)
 
 
-function [objval, matches] = matchHLGraphs(corrmatrix, affmatrix)
+function [objval, pairs] = matchHLGraphs(corrmatrix, affmatrix)
 
 display(sprintf('\n================================================'));
 display(sprintf('Match Higher Level Graphs'));
@@ -42,6 +42,8 @@ try
     end  
 
     matches = logical(matches);
+    
+    [pairs(:,1), pairs(:,2)] = find(matches);       % matched pairs of anchor graphs
     
 catch ME
     

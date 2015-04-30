@@ -92,8 +92,11 @@ for i=1:nSP_hl
     subG.V(:,1) = subG.V(:,1) + xmin - 1;
     subG.V(:,2) = subG.V(:,2) + ymin - 1;
     
-    subG.E(:,1) = subG.E(:,1) + size(V,1);
-    subG.E(:,2) = subG.E(:,2) + size(V,1);
+    if (~isempty(subG.E))
+        subG.E(:,1) = subG.E(:,1) + size(V,1);
+        subG.E(:,2) = subG.E(:,2) + size(V,1);
+    end
+
     
     % save local parts in global variables
     U = [U; subG.U];   

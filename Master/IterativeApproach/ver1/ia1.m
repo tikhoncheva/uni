@@ -181,7 +181,7 @@ if filename~=0
     
     handles.HLGmatches = [];
     handles.LLGmatches = [];
-    handles.Iteration = 0;
+    handles.Iteration = 1;
     
     guidata(hObject,handles); 
     
@@ -236,7 +236,7 @@ if filename~=0
     
     handles.HLGmatches = [];
     handles.LLGmatches = [];
-    handles.Iteration = 0;
+    handles.Iteration = 1;
     
     guidata(hObject,handles); 
     
@@ -275,8 +275,6 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     cla reset;
 
     axes(handles.axes3);
-%     plot_anchorgraph(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
-%     plot_anchorgraph(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
     plot_twolevelgraphs(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
 
     
@@ -292,21 +290,22 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
         
         [corrmatrix, affmatrix] = initialization_HLGM(HLG1, handles.HLG2);
         
-        handles.Iteration = 0;
+        it = 1;
+        handles.Iteration = it;
         set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
-
        
-        handles.HLGmatches.corrmatrix = corrmatrix;
-        handles.HLGmatches.affmatrix = affmatrix;
+        handles.HLGmatches = [];
+        handles.HLGmatches(it).corrmatrix = corrmatrix;
+        handles.HLGmatches(it).affmatrix = affmatrix;
         
-        handles.LLGmatches.objval  = 0.;
-        handles.LLGmatches.matches = zeros(size(LLG1.V,1), size(handles.LLG2.V,1));
-        
-        handles.HLGmatches.objval  = 0.;
-        handles.HLGmatches.matches = zeros(size(HLG1.V,1), size(handles.HLG2.V,1));
+        handles.HLGmatches(it).objval  = 0.;
+        handles.HLGmatches(it).matched_pairs = [];
    
         axes(handles.axes5);cla reset;
-        plot_HLGmatches(handles.img1, HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matches);
+        plot_HLGmatches(handles.img1, HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs, ...
+                                                                        handles.HLGmatches.matched_pairs);
+        
+        handles.LLGmatches = [];
         
         set(handles.pbMatch_HLGraphs, 'Enable', 'on');
     end
@@ -346,8 +345,6 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
     cla reset;
 
     axes(handles.axes4);
-%     plot_anchorgraph(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
-%     plot_anchorgraph(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
     plot_twolevelgraphs(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
     
     set(handles.pbSaveAnchors_img2, 'Enable', 'on');
@@ -361,21 +358,22 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
         
         [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, HLG2);
         
-        handles.Iteration = 0;
+        it = 1;
+        handles.Iteration = it;
         set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
-
        
-        handles.HLGmatches.corrmatrix = corrmatrix;
-        handles.HLGmatches.affmatrix = affmatrix;
-       
-        handles.LLGmatches.objval  = [];
-        handles.LLGmatches.matches = zeros(size(handles.LLG1.V,1), size(LLG2.V,1));
+        handles.HLGmatches = [];
+        handles.HLGmatches(it).corrmatrix = corrmatrix;
+        handles.HLGmatches(it).affmatrix = affmatrix;
         
-        handles.HLGmatches.objval  = [];
-        handles.HLGmatches.matches = zeros(size(handles.HLG1.V,1), size(HLG2.V,1));
+        handles.HLGmatches(it).objval  = 0.;
+        handles.HLGmatches(it).matched_pairs = [];
    
         axes(handles.axes5);cla reset;
-        plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches.matches);
+        plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches.matched_pairs,...
+                                                                        handles.HLGmatches.matched_pairs);
+        
+        handles.LLGmatches = [];
         
         set(handles.pbMatch_HLGraphs, 'Enable', 'on');
     end
@@ -443,25 +441,27 @@ if  filename~=0
     show_HLG = get(handles.cbShow_HLG, 'Value');
     axes(handles.axes3);cla reset;
     plot_twolevelgraphs(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
-%     plot_anchorgraph(handles.img1, handles.LLG1, ...
-%                       handles.HLG1, show_LLG, show_HLG); 
 
     if handles.HLG2isBuilt  
         
        [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
        
-       handles.Iteration = 0;
+       it = 1;
+       handles.Iteration = it;
        set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
-
        
-       handles.HLGmatches.corrmatrix = corrmatrix;
-       handles.HLGmatches.affmatrix = affmatrix;
-       handles.HLGmatches.objval  = 0.;
-       handles.HLGmatches.matches = zeros(size(handles.HLG1.V,1), size(handles.HLG2.V,1));
+       handles.HLGmatches = [];
+       
+       handles.HLGmatches(it).corrmatrix = corrmatrix;
+       handles.HLGmatches(it).affmatrix = affmatrix;
+       handles.HLGmatches(it).objval  = 0.;
+       handles.HLGmatches(it).matched_pairs = [];
 
        axes(handles.axes5);cla reset;
-       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matches);
+       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs);
 
+       handles.LLGmatches = [];
+       
        set(handles.pbMatch_HLGraphs, 'Enable', 'on');
        set(handles.pbMatch_LLGraphs, 'Enable', 'off');
        set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
@@ -494,25 +494,28 @@ if  filename~=0
     show_LLG = get(handles.cbShow_LLG, 'Value');
     show_HLG = get(handles.cbShow_HLG, 'Value');
     axes(handles.axes4);cla reset;
-    plot_twolevelgraphs(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
-%     plot_anchorgraph(handles.img2, handles.LLG2, ...
-%                      handles.HLG2, show_LLG, show_HLG);   
+    plot_twolevelgraphs(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);   
 
     if handles.HLG1isBuilt
         
        [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
        
-       handles.Iteration = 0;
+       it = 1;
+       handles.Iteration = it;
        set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
        
-       handles.HLGmatches.corrmatrix = corrmatrix;
-       handles.HLGmatches.affmatrix = affmatrix;
-       handles.HLGmatches.objval  = 0.;
-       handles.HLGmatches.matches = zeros(size(handles.HLG1.V,1), size(handles.HLG2.V,1));
+       handles.HLGmatches = [];
+       handles.HLGmatches(it).corrmatrix = corrmatrix;
+       handles.HLGmatches(it).affmatrix = affmatrix;
+       handles.HLGmatches(it).objval  = 0.;
+       handles.HLGmatches(it).matched_pairs = [];
 
        axes(handles.axes5);cla reset;
-       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matches);
+       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs, ...
+                                                                               handles.HLGmatches.matched_pairs);
 
+       handles.LLGmatches = [];
+       
        set(handles.pbMatch_HLGraphs, 'Enable', 'on');
        set(handles.pbMatch_LLGraphs, 'Enable', 'off');
        set(handles.pb_Reweight_HLGraph, 'Enable', 'off');       
@@ -575,27 +578,44 @@ function pbMatch_HLGraphs_Callback(hObject, ~, handles)
 %   see Minsu Cho, Jungmin Lee, and Kyoung Mu Lee   
 %       "Reweighted Random Walks for Graph Matching"
 
-corrmatrix = handles.HLGmatches.corrmatrix;
-affmatrix = handles.HLGmatches.affmatrix;
+it = handles.Iteration;                         % iterations
+corrmatrix = handles.HLGmatches.corrmatrix;     % corrmatrix
+affmatrix = handles.HLGmatches(it).affmatrix;       % affmatrix
 
-[objval, matches] = matchHLGraphs(corrmatrix, affmatrix);
+[objval, matched_pairs] = matchHLGraphs(corrmatrix, affmatrix);
 
 axes(handles.axes5); cla reset;
-plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matches);
+if (it==1)
+    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
+                                                                            matched_pairs);
+else
+    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
+                                                                            handles.HLGmatches(it-1).matched_pairs);
+end
 
 set(handles.pbMatch_LLGraphs, 'Enable', 'on');
 set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
-set(handles.text_objval_HLG, 'string', objval);
+
+set(handles.text_objval_HLG, 'String', sprintf('Objval: %0.3f', objval));
 
 %update data
-handles.HLGmatches.objval = [handles.LLGmatches.objval, objval];
-handles.HLGmatches.matches = matches;
+handles.HLGmatches(it).objval = objval;
+handles.HLGmatches(it).matched_pairs = matched_pairs;
+
+handles.LLGmatches(it).objval = 0;
+handles.LLGmatches(it).matched_pairs = [];
 
 guidata(hObject, handles);
 
 % plot results of the matching
 axes(handles.axes6);
-plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches.matches);
+if (it==1)
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                                                            handles.LLGmatches(it).matched_pairs);
+else
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                                                            handles.LLGmatches(it-1).matched_pairs);
+end
 
 axes(handles.axes5);
 set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
@@ -616,9 +636,14 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles})
 % --- Executes on button press in pbMatch_LLGraphs.
 function pbMatch_LLGraphs_Callback(hObject,  ~ , handles)
 
-if (handles.Iteration == 0) % first iteration
-    [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches.matches);
+it = handles.Iteration;
+
+if (it == 1) % first iteration
+    [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches(it).matched_pairs);
 else
+    [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches(it).matched_pairs,...
+                                                                                                  handles.HLGmatches(it-1).matched_pairs, ...
+                                                                                                  handles.LLGmatches(it-1));
     subgraphsNodes = handles.LLGmatches.subgraphsNodes;
     corrmatrices = handles.LLGmatches.corrmatrices;
     affmatrices = handles.LLGmatches.affmatrices;
@@ -636,18 +661,19 @@ end
 %                                  handles.HLGmatches.matches);
 nV1 = size(handles.LLG1.V,1);
 nV2 = size(handles.LLG2.V,1);
-[objval, matches, ...
+[objval, matched_pairs, ...
  lobjval, lweights] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
 
 %update data
 
-handles.LLGmatches.objval = [handles.LLGmatches.objval, objval];
-handles.LLGmatches.matches = matches;
-handles.LLGmatches.lobjval = lobjval;
-handles.LLGmatches.lweights = lweights;
-handles.LLGmatches.subgraphsNodes = subgraphsNodes;
-handles.LLGmatches.corrmatrices = corrmatrices;
-handles.LLGmatches.affmatrices  = affmatrices;
+handles.LLGmatches(it).objval = objval;
+handles.LLGmatches(it).matched_pairs = matched_pairs;
+
+handles.LLGmatches(it).lobjval = lobjval;
+handles.LLGmatches(it).lweights = lweights;
+handles.LLGmatches(it).subgraphsNodes = subgraphsNodes;
+handles.LLGmatches(it).corrmatrices = corrmatrices;
+handles.LLGmatches(it).affmatrices  = affmatrices;
 
 guidata(hObject, handles);
 
@@ -656,7 +682,13 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 
 %plotting
 axes(handles.axes6); cla reset;
-plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches.matches)
+if (it==1)
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                                                            handles.LLGmatches(it).matched_pairs);
+else
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                                                            handles.LLGmatches(it-1).matched_pairs);
+end
 
 % highlithin
 axes(handles.axes6);
@@ -679,14 +711,19 @@ function pb_Reweight_HLGraph_Callback(hObject, eventdata, handles)
 LLG1 = handles.LLG1;
 LLG2 = handles.LLG2;
 
+it = handles.Iteration;
 
-new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches, handles.HLGmatches, handles.Iteration);
+new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), it);
 
 %update affmatrix
-handles.HLGmatches.affmatrix = new_affmatrix_HLG;
-handles.Iteration = handles.Iteration + 1;
+it = it + 1;
+handles.Iteration = it;
+handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
 
 set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+
+set(handles.pbMatch_LLGraphs, 'Enable', 'off');
+set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 
 guidata(hObject, handles);
 

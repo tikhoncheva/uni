@@ -1,9 +1,9 @@
 %% plot results of matching
 % img1, img2    two images to match
 % G1, G2        corresponding graphs to match (nV1=|V1|,nV2=|V2|)
-% corrmatrix             correspondes matrix (nV1 x nV2)
+% pairs         pairs of points
 
-function plot_LLGmatches(img1, G1, img2, G2, corrmatrix, varargin )
+function plot_LLGmatches(img1, G1, img2, G2, pairs, pairs_old, varargin )
 
 n1 = size(img1,2);    % width of the first image
 G2.V(:,1) = n1 + G2.V(:,1);     % shift x-coordinates of the second graph
@@ -58,27 +58,41 @@ line(points(:,1), points(:,2), 'Color', 'g');
 %                      ------------------------------------
 %                                  plot matches
 
-[i, j] = find(corrmatrix);
-matches = [i,j]';
+matches = pairs';
 
-nans = NaN * ones(size(matches,2),1) ;
-x = [ G1.V(matches(1,:),1) , G2.V(matches(2,:),1) , nans ] ;
-y = [ G1.V(matches(1,:),2) , G2.V(matches(2,:),2) , nans ] ; 
-line(x', y', 'Color','r') ;
+if(~isempty(matches))
+    nans = NaN * ones(size(matches,2),1) ;
+    x = [ G1.V(matches(1,:),1) , G2.V(matches(2,:),1) , nans ] ;
+    y = [ G1.V(matches(1,:),2) , G2.V(matches(2,:),2) , nans ] ; 
+    line(x', y', 'Color','r') ;
+end
+
+%                      ------------------------------------
+%                      plot matches of previuos iterations
+
+matches_old = pairs_old';
+
+if(~isempty(matches_old))
+    nans = NaN * ones(size(matches_old,2),1) ;
+    x = [ G1.V(matches_old(1,:),1) , G2.V(matches_old(2,:),1) , nans ] ;
+    y = [ G1.V(matches_old(1,:),2) , G2.V(matches_old(2,:),2) , nans ] ; 
+    line(x', y', 'Color','r') ;
+end
 
 
 %                      ------------------------------------
 %                        ADDITIONALLY:  highlight some matches
-if (nargin == 6)
-    M2 = varargin{1};
+if (nargin == 7)
+    pairs2 = varargin{1};
     % plot matches
-    [i, j] = find(M2);
-    matches2 = [i,j]';
+    matches2 = pairs2';
 
-    nans = NaN * ones(size(matches2,2),1) ;
-    x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
-    y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
-    line(x', y', 'Color','w','LineWidth', 2) ;
+    if(~isempty(matches2))
+        nans = NaN * ones(size(matches2,2),1) ;
+        x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
+        y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
+        line(x', y', 'Color','w','LineWidth', 2) ;
+    end
     
 end
 

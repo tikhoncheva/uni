@@ -16,7 +16,14 @@ d2 = handles.HLG2.D;
 nV1 = size(v1,2);
 nV2 = size(v2,2);
 
-matches = handles.HLGmatches.matches;
+it = handles.Iteration;
+pairs = handles.HLGmatches(it).matched_pairs;
+if (it > 1)
+    pairs_old = handles.HLGmatches(it-1).matched_pairs;
+else
+    pairs_old = handles.HLGmatches(it).matched_pairs;
+end
+
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -41,26 +48,32 @@ end
       
 % show best match
       
-bestmatch = zeros(nV1, nV2);
+% bestmatch = zeros(nV1, nV2);
 
 if (img==1)
-    bestmatch(nn, :) = matches(nn, :);
+    ind = (pairs(:,1) ==nn);
+    bestmatch = pairs(ind,:);
+%     bestmatch(nn, :) = matches(nn, :);
 else
-    bestmatch(:, nn) = matches(:,nn);          
+    ind = (pairs(:,2) ==nn);
+    bestmatch = pairs(ind,:);
+%     bestmatch(:, nn) = matches(:,nn);          
 end
 
 axes(handles.axes5);
 cla reset
-plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matches, bestmatch);
+plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, pairs, pairs_old, bestmatch);
 
 W  = 36; % from vl_feat
 
 if (img == 1)
-    nn_match = find(matches(nn, :)>0);
+%     nn_match = find(matches(nn, :)>0);
+    nn_match = find(pairs(:,1) ==nn);
     p1  = v1(1:2,nn);               % coordinates of the selected node on the first image
     p2 = v2(1:2, nn_match); % coordinates of the selected node on the second image
 else
-    nn_match = find(matches(:,nn)>0);
+%     nn_match = find(matches(:,nn)>0);
+    nn_match = find(pairs(:,2) ==nn);
     p1  = v1(1:2, nn_match); % coordinates of the selected node on the first image
     p2 = v2(1:2, nn);               % coordinates of the selected node on the second image
 end

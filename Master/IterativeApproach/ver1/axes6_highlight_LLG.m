@@ -13,7 +13,15 @@ v2 = handles.LLG2.V';
 nV1 = size(v1,2);
 nV2 = size(v2,2);
 
-matches = handles.LLGmatches.matches;
+it = handles.Iteration;
+
+matched_pairs = handles.LLGmatches(it).matched_pairs;
+
+if (it > 1)
+    matched_pairs_old = handles.LLGmatches(it-1).matched_pairs;
+else
+    matched_pairs_old = handles.LLGmatches(it).matched_pairs;
+end
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -38,17 +46,22 @@ end
       
 % show best match
       
-bestmatch = zeros(nV1, nV2);
+% bestmatch = zeros(nV1, nV2);
 
 if (img==1)
-    bestmatch(nn, :) = matches(nn, :);
+    ind = (matched_pairs(:,1) == nn);
+    bestmatch = matched_pairs(ind,:);
+%     bestmatch(nn, :) = matches_pairs(nn, :);
 else
-    bestmatch(:, nn) = matches(:,nn);          
+    ind = (matched_pairs(:,2) == nn);
+    bestmatch = matched_pairs(ind,:);
+%     bestmatch(:, nn) = matches_pairs(:,nn);          
 end
 
 axes(handles.axes6);
 cla reset
-plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matches, bestmatch);
+plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matched_pairs,...
+                                                                        matched_pairs_old, bestmatch);
 
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})

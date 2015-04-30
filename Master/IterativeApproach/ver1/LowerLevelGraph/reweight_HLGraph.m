@@ -6,13 +6,13 @@
 %
 % new_affmatrix_HLG   updated affinity matrix for matching problem on the Higher Level
 
-function [new_affmatrix_HLG] = reweight_HLGraph(LLG1, LLG2, LLGmatches, HLGmatches, it)
+function [new_affmatrix_HLG] = reweight_HLGraph(LLG1, LLG2, LLGmatches_it, HLGmatches_it, it)
 
-affmatrix = HLGmatches.affmatrix;
+affmatrix = HLGmatches_it.affmatrix;
 
-npairs = size(LLGmatches.subgraphsNodes,1);
+npairs = size(LLGmatches_it.subgraphsNodes,1);
 
-[nV1, ~] = size(HLGmatches.corrmatrix);
+[nV1, ~] = size(HLGmatches_it.corrmatrix);
 % [L12(:,1), L12(:,2)] = find(HLGmatches.corrmatrix);
 
 % consider first lower level graph LLG1
@@ -35,14 +35,13 @@ npairs = size(LLGmatches.subgraphsNodes,1);
 
 
 % update diagonal elements of the affmatrix
-[I,J] = find(HLGmatches.matches);       % matched pairs of anchor graphs
+matched_pairs = HLGmatches_it.matched_pairs;       % matched pairs of anchor graphs
 
-assert( npairs == size(I,1), 'number of matched subgraphs is differ from number of matched anchors');
+assert( npairs == size(matched_pairs,1), 'number of matched subgraphs is differ from number of matched anchors');
 
-for k=1:size(I,1)
-    IkJk = (J(k)-1)*nV1 + I(k);    % index of pair (ai, aj) in the affinity matrix
-   
-    affmatrix(IkJk, IkJk) = affmatrix(IkJk, IkJk) * LLGmatches.lobjval(k) / LLGmatches.objval(1,it+1) ;
+for k=1:npairs
+    IkJk = (matched_pairs(k,2)-1)*nV1 + matched_pairs(k,1);    % index of pair (ai, aj) in the affinity matrix
+    affmatrix(IkJk, IkJk) = affmatrix(IkJk, IkJk) * LLGmatches_it.lobjval(k) / LLGmatches_it.objval ;
 end
 
 

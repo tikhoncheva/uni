@@ -64,6 +64,6 @@ D(1:(length(D)+1):end) = node_eusimilarity;
 
 D = D.*~full(conflictMatrix);
 
-figure, imagesc(D);
+% figure, imagesc(D);
 
 end

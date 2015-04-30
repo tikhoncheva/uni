@@ -24,7 +24,8 @@ E(E<lowthr) = lowthr;
 E = 1/highthr * E;
 
 % Extract PHOW-Features (dense SIFT at several resolutions)
-[F, D] = vl_phow(single(E), 'Sizes', [6,8,10,16]); % Scales 
+% [F, D] = vl_phow(single(E), 'Sizes', [6,8,10,16]); % Scales 
+[F, D] = vl_phow(single(E), 'Sizes', [8]); % Scales 
 F(:,1) = F(:,1) + border;
 F(:,2) = F(:,2) + border;
 
