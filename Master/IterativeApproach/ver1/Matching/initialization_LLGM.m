@@ -53,34 +53,33 @@ try
     affmatrix = cell(nIterations,1);
     
     
-    % check if we have same matches as on the level before, than we just
+    % check if we have same matches as in the iteration before, than we just
     % copy necessary matrices
     
     if (nargin == 5)
         HLG_prev_matched_pairs =  varargin{1};
         prev_LLGmatches =  varargin{2};
-        [~, old_ind] = ismember(HLG_matched_pairs, HLG_prev_matched_pairs, 'rows');
+        [~, ref_ind] = ismember(HLG_matched_pairs, HLG_prev_matched_pairs, 'rows');
         
-        new_ind = [];
-        for k=1:size(old_ind, 1)
-           if old_ind(k) > 0
-               indOfSubgraphsNodes(k,:) = prev_LLGmatches.subgraphsNodes(old_ind(k),:);
-               corrmatrix{k} = prev_LLGmatches.corrmatrices{old_ind(k) };
-               affmatrix{k} = prev_LLGmatches.affmatrices{old_ind(k) };
-           else
-               new_ind = [new_ind; k];
+        newpairs_ind = find(ref_ind==0);
+        
+        for k=1:size(ref_ind, 1)
+           if ref_ind(k) > 0
+               indOfSubgraphsNodes(k,:) = prev_LLGmatches.subgraphsNodes(ref_ind(k),:);
+               corrmatrix{k} = prev_LLGmatches.corrmatrices{ref_ind(k) };
+               affmatrix{k} = prev_LLGmatches.affmatrices{ref_ind(k) };
            end
         end    
     else
-        new_ind = [1:nIterations]';
+        newpairs_ind = [1:nIterations]';
     end
 
     % reduce number of iterations, if it is possible
-    nIterations = size(new_ind,1);
+    nIterations = size(newpairs_ind,1);
     
 
     for i = 1:nIterations % for each match ai<->aj on the High Level
-        k = new_ind(i);
+        k = newpairs_ind(i);
         % indices of nodes, that belong to the anchor ai
         ai = HLG_matched_pairs(k,1);
         ai_x = LLG1.U(:,ai);
@@ -119,7 +118,7 @@ try
     % in each step we consider subgraphs of the LLgraphs, which correspond to the anchor match ai<->aj
     for i = 1:nIterations
 
-        k = new_ind(i);
+        k = newpairs_ind(i);
         
         v1 = V1{k};
         d1 = D1{k};

@@ -304,6 +304,9 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
         axes(handles.axes5);cla reset;
         plot_HLGmatches(handles.img1, HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs, ...
                                                                         handles.HLGmatches.matched_pairs);
+        axes(handles.axes6); cla reset;
+        img3 = combine2images(handles.img1, handles.img2);
+        imagesc(img3), axis off;
         
         handles.LLGmatches = [];
         
@@ -372,6 +375,9 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
         axes(handles.axes5);cla reset;
         plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches.matched_pairs,...
                                                                         handles.HLGmatches.matched_pairs);
+        axes(handles.axes6); cla reset;
+        img3 = combine2images(handles.img1, handles.img2);
+        imagesc(img3), axis off;                                                                    
         
         handles.LLGmatches = [];
         
@@ -459,6 +465,10 @@ if  filename~=0
 
        axes(handles.axes5);cla reset;
        plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs);
+       
+       axes(handles.axes6); cla reset;
+       img3 = combine2images(handles.img1, handles.img2);
+       imagesc(img3), axis off;
 
        handles.LLGmatches = [];
        
@@ -513,6 +523,9 @@ if  filename~=0
        axes(handles.axes5);cla reset;
        plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs, ...
                                                                                handles.HLGmatches.matched_pairs);
+       axes(handles.axes6); cla reset;
+       img3 = combine2images(handles.img1, handles.img2);
+       imagesc(img3), axis off;
 
        handles.LLGmatches = [];
        
@@ -612,9 +625,9 @@ axes(handles.axes6);
 if (it==1)
     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
                                                                             handles.LLGmatches(it).matched_pairs);
-else
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                                                            handles.LLGmatches(it-1).matched_pairs);
+% else
+%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it-1).matched_pairs, ...
+%                                                                             handles.LLGmatches(it-2).matched_pairs);
 end
 
 axes(handles.axes5);
@@ -644,9 +657,6 @@ else
     [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(handles.LLG1, handles.LLG2, handles.HLGmatches(it).matched_pairs,...
                                                                                                   handles.HLGmatches(it-1).matched_pairs, ...
                                                                                                   handles.LLGmatches(it-1));
-    subgraphsNodes = handles.LLGmatches.subgraphsNodes;
-    corrmatrices = handles.LLGmatches.corrmatrices;
-    affmatrices = handles.LLGmatches.affmatrices;
 end
 
 % [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
@@ -659,12 +669,22 @@ end
 
 % [objval, matches] = matchLLGraphs(handles.LLG1, handles.LLG2, ...
 %                                  handles.HLGmatches.matches);
+
+% Reweighting by the HLGraph matching
+LLG1 = handles.LLG1;
+LLG2 = handles.LLG2;
+
+it = handles.Iteration;
+
+affmatrices = reweight_LLGraph(LLG1, LLG2, affmatrices, handles.HLGmatches(it));
+
+% Matching
 nV1 = size(handles.LLG1.V,1);
 nV2 = size(handles.LLG2.V,1);
 [objval, matched_pairs, ...
  lobjval, lweights] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
 
-%update data
+% Update data
 
 handles.LLGmatches(it).objval = objval;
 handles.LLGmatches(it).matched_pairs = matched_pairs;
@@ -712,7 +732,6 @@ LLG1 = handles.LLG1;
 LLG2 = handles.LLG2;
 
 it = handles.Iteration;
-
 new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), it);
 
 %update affmatrix

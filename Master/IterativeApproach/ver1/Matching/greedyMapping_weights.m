@@ -1,4 +1,4 @@
-function Xd = greedyMapping_LLG(score, group1, group2)
+function Xd = greedyMapping_weights(score, group1, group2)
 % greedy discretization using the group1 and group2
 % group1 = # of matches by ( # of groups in feat1 )
 % group2 = # of matches by ( # of groups in feat2 )

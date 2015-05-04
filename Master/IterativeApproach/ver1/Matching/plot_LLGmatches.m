@@ -76,7 +76,7 @@ if(~isempty(matches_old))
     nans = NaN * ones(size(matches_old,2),1) ;
     x = [ G1.V(matches_old(1,:),1) , G2.V(matches_old(2,:),1) , nans ] ;
     y = [ G1.V(matches_old(1,:),2) , G2.V(matches_old(2,:),2) , nans ] ; 
-    line(x', y', 'Color','r') ;
+    line(x', y', 'Color','r', 'LineStyle', '--') ;
 end
 
 

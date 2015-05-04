@@ -71,7 +71,7 @@ try
         x = RRWM(affmatrix, group1, group2);
         fprintf('    RRWM: %f sec\n', toc);
         
-        X = greedyMapping_LLG(x, group1, group2);
+        X = greedyMapping_weights(x, group1, group2);
         
         W_local = reshape(X, [nVi, nVj]);
         W = zeros(nV1, nV2);
@@ -124,9 +124,16 @@ end
 % [ group1, group2 ] = make_group12([I, J]);
 % 
 
-matches = max(local_weights, [], 1);
+matches_tmp = max(local_weights, [], 1);        % maximum in each column
 % matches = greedyMapping(matches, group1, group2);
-matches = reshape(matches, nV1,nV2);
+matches_tmp = reshape(matches_tmp, nV1,nV2);    % maximum in each row
+% force 1-to-1 matching
+[maxval, ind] = max(matches_tmp, [], 2);
+matches = zeros(size(matches_tmp));
+for i=1:size(matches,1)
+    matches(i,ind(i)) = maxval(i);
+end
+
 % matches = logical(matches);
 
 % matches = max(localMatches,[], 1);
