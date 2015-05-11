@@ -52,9 +52,9 @@ for i=1:nSP_hl
     
     % select edge points inside selected region
     ind1 = edges(1, :) >= xmin;
-    ind2 = edges(1, :) <= xmin + width - 1;
+    ind2 = edges(1, :) <= xmin + width; % - 1;
     ind3 = edges(2, :) >= ymin;
-    ind4 = edges(2, :) <= ymin + height - 1;
+    ind4 = edges(2, :) <= ymin + height; % - 1;
     
     ind = logical(ind1.*ind2.*ind3.*ind4);
         
@@ -78,6 +78,8 @@ for i=1:nSP_hl
     subG.E = [];   % edges
     
     [subG, SP, ~] = SPgraph_LL( img_part, edges_part, descr_part, SP, subG);
+    
+    assert(size(subG.D,2)==size(descr_part,2));
     
     % save local superpixel segmentation into global segmentation
     imgSP.boundary(ymin:ymin+height, xmin:xmin+width, :) = SP.boundary;
@@ -123,7 +125,7 @@ for i=1:nSP_hl
 end
 
 % The global matrices V and D may have same repetitions. This can happen,
-% because rectangle regions around superpixel (and corr. anchor nodes) in the 
+% because rectangle regions around superpixels (and corr. anchor nodes) in the 
 % higher level graph intersect. If there is an edge point inside of such 
 % intersection, than it will be arranged to the both anchor nodes and
 % repeated in sets V and D

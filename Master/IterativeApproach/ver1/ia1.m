@@ -616,18 +616,21 @@ handles.HLGmatches(it).objval = objval;
 handles.HLGmatches(it).matched_pairs = matched_pairs;
 
 handles.LLGmatches(it).objval = 0;
-handles.LLGmatches(it).matched_pairs = [];
+
+if (~exist('handles.LLGmatches(it).matched_pairs', 'var'))
+    handles.LLGmatches(it).matched_pairs = [];
+end
 
 guidata(hObject, handles);
 
 % plot results of the matching
 axes(handles.axes6);
 if (it==1)
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                                                            handles.LLGmatches(it).matched_pairs);
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+                                                                                handles.LLGmatches(it).matched_pairs);
 % else
-%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it-1).matched_pairs, ...
-%                                                                             handles.LLGmatches(it-2).matched_pairs);
+%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it-1).matched_pairs, ...
+%                                                                                 handles.LLGmatches(it-2).matched_pairs);
 end
 
 axes(handles.axes5);
@@ -676,7 +679,7 @@ LLG2 = handles.LLG2;
 
 it = handles.Iteration;
 
-affmatrices = reweight_LLGraph(LLG1, LLG2, affmatrices, handles.HLGmatches(it));
+% affmatrices = reweight_LLGraph(LLG1, LLG2, affmatrices, handles.HLGmatches(it));
 
 % Matching
 nV1 = size(handles.LLG1.V,1);
@@ -703,11 +706,11 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 %plotting
 axes(handles.axes6); cla reset;
 if (it==1)
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                                                            handles.LLGmatches(it).matched_pairs);
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+                                                                                handles.LLGmatches(it).matched_pairs);
 else
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                                                            handles.LLGmatches(it-1).matched_pairs);
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+                                                                                handles.LLGmatches(it-1).matched_pairs);
 end
 
 % highlithin

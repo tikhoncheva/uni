@@ -64,6 +64,18 @@ axes(handles.axes5);
 cla reset
 plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, pairs, pairs_old, bestmatch);
 
+% % plot matches on the lower Level
+% matched_pairs_LLG = handles.LLGmatches(it).matched_pairs;
+% if (it > 1)
+%     matched_pairs_LLG_old = handles.LLGmatches(it-1).matched_pairs;
+% else
+%     matched_pairs_LLG_old = handles.LLGmatches(it).matched_pairs;
+% end
+% axes(handles.axes6);
+% cla reset
+% plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, bestmatch, matched_pairs_LLG,...
+%                                                                                    matched_pairs_LLG_old);
+
 W  = 36; % from vl_feat
 
 if (img == 1)
