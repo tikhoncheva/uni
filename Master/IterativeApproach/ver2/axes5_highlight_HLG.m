@@ -24,6 +24,8 @@ else
     pairs_old = handles.HLGmatches(it).matched_pairs;
 end
 
+pairs_old = handles.GT.HLpairs;
+
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -91,13 +93,13 @@ else
 end
 
 
-simval = nodeSimilarity(d1, d2, 'euclidean');
-
-if (img == 1)
-    display( simval(1, (nn_match-1)*nV1 + nn) );
-else
-    display( simval(1, (nn-1)*nV1 + nn_match) );
-end
+% simval = nodeSimilarity(d1, d2, 'euclidean');
+% 
+% if (img == 1)
+%     display( simval(1, (nn_match-1)*nV1 + nn) );
+% else
+%     display( simval(1, (nn-1)*nV1 + nn_match) );
+% end
 
 
 % show patches

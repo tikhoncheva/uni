@@ -28,7 +28,7 @@ function [ HLGraph, LLGraph, SP_hl] = buildLowHighLevelGraphs( img, features, nS
     
     display(sprintf('\n - correspondences between two levels'));
     t3 = tic;
-    LLGraph.U  = connect2levels(LLGraph, SP_rect);
+    LLGraph.U  = connect2levels(LLGraph, LLGraph, SP_rect);
     display(sprintf('   finished in %f sec', toc(t3)));
     
     

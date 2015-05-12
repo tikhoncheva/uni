@@ -40,7 +40,7 @@ sigma2 = sum(G2(:))/nV2/nV2;
 G2 = G2./sigma2;
 
 D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
-D = exp(-D./100.); % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+D = exp(-D./100.);                  % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 D(isnan(D)) = 0;
 
 % Affinity matrix (non-diagonal elements: cosine node similarity)
@@ -56,11 +56,13 @@ D = D1;
 
 
 % Affinity matrix (diagonal elements: node similarity)
+if (isempty(d1) || isempty(d2))
+   D(1:(length(D)+1):end) = 0; 
+else
+    node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
+    D(1:(length(D)+1):end) = node_eusimilarity;
+end
 
-node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
-D(1:(length(D)+1):end) = node_eusimilarity;
-
-% D(1:(length(D)+1):end) = 0;
 
 D = D.*~full(conflictMatrix);
 

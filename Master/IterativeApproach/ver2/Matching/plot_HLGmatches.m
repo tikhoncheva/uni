@@ -5,13 +5,16 @@
 
 function plot_HLGmatches(img1, G1, img2, G2, pairs, pairs_old, varargin )
 
-n1 = size(img1,2);    % width of the first image
+if (~isempty(img1) && ~isempty(img2))
+    n1 = size(img1,2);                      % width of the first image
+    img3 = combine2images(img1,img2);       % plot two concatenated images
+    imagesc(img3) ; hold on ; axis off;
+else
+    n1 = max(G1.V(:,1)) + abs(min(G1.V(:,1)));
+end
+
 G2.V(:,1) = n1 + G2.V(:,1);
 
-%                      ------------------------------------
-%                              plot two concatenated images
-img3 = combine2images(img1,img2);
-imagesc(img3) ; hold on ; axis off;
 
 %                      ------------------------------------
 %                              plot first graph (G1)
@@ -67,7 +70,7 @@ end
 
 matches_old = pairs_old';
 
-if (~isempty(matches))
+if (~isempty(matches_old))
     nans = NaN * ones(size(matches_old,2),1) ;
     x = [ G1.V(matches_old (1,:),1) , G2.V(matches_old (2,:),1) , nans ] ;
     y = [ G1.V(matches_old (1,:),2) , G2.V(matches_old (2,:),2) , nans ] ; 
@@ -76,15 +79,15 @@ end
 
 %                      ------------------------------------
 %                  highlight matches subgraph in the second graph;
-if (~isempty(matches))
-    for i=1:size(G2.E, 1)
-
-        if (ismember(G2.E(i,1), matches(2,:)) && ismember(G2.E(i,2), matches(2,:))  )
-            line([G2.V(G2.E(i,1),1) G2.V(G2.E(i,2),1) ],...
-                 [G2.V(G2.E(i,1),2) G2.V(G2.E(i,2),2) ], 'Color', 'w', 'LineWidth', 3);  
-        end
-    end
-end
+% if (~isempty(matches))
+%     for i=1:size(G2.E, 1)
+% 
+%         if (ismember(G2.E(i,1), matches(2,:)) && ismember(G2.E(i,2), matches(2,:))  )
+%             line([G2.V(G2.E(i,1),1) G2.V(G2.E(i,2),1) ],...
+%                  [G2.V(G2.E(i,1),2) G2.V(G2.E(i,2),2) ], 'Color', 'w', 'LineWidth', 3);  
+%         end
+%     end
+% end
 
 %                      ------------------------------------
 %                        ADDITIONALLY:  highlight some matches

@@ -22,6 +22,8 @@ if (it > 1)
 else
     matched_pairs_old = handles.LLGmatches(it).matched_pairs;
 end
+
+matched_pairs_old = handles.GT.LLpairs;
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);

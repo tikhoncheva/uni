@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 23-Apr-2015 10:27:48
+% Last Modified by GUIDE v2.5 12-May-2015 13:50:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -92,6 +92,7 @@ addpath(genpath('../../Tools/RRWM_release_v1.22'));
 % clc;
 
 % Additional functions
+addpath(genpath('./toyProblem'));
 addpath(genpath('./HigherLevelGraph'));
 addpath(genpath('./LowerLevelGraph'));
 addpath(genpath('./Matching'));
@@ -122,6 +123,88 @@ set(handles.axes6,'YTick',[]);
 %end
 
 
+%-------------------------------------------------------------------------
+%   Synthetic Graph Matching
+% --------------------------------------------------------------------
+function mToyProblem_Callback(hObject, ~, handles)
+
+    set(handles.pbBuildGraphs_img1, 'Enable', 'off');
+    set(handles.pbBuildGraphs_img2, 'Enable', 'off');
+    
+    set(handles.pbSaveAnchors_img1, 'Enable', 'off');
+    set(handles.pbSaveAnchors_img2, 'Enable', 'off');
+    
+    set(handles.pbLoadAnchors_img1, 'Enable', 'off');
+    set(handles.pbLoadAnchors_img2, 'Enable', 'off');
+    
+    
+    N = 6;
+    handles.img1 = repmat(ones(N,N),1,1,3);
+    handles.img2 = repmat(ones(N,N),1,1,3);
+    
+    handles.img1selected = 0;
+    handles.img2selected = 0;
+    
+    handles.features1.edges = [];
+    handles.features2.edges = [];
+    
+    handles.features1.descr = [];
+    handles.features2.descr = [];
+       
+    [LLG1, LLG2, HLG1, HLG2, GT] = make2SyntheticGraphs();
+            
+    handles.HLG1 = HLG1;
+    handles.HLG2 = HLG2;
+    
+    handles.LLG1 = LLG1;
+    handles.LLG2 = LLG2;
+    
+    handles.HLG1isBuilt = 1;
+    handles.HLG2isBuilt = 1;
+    
+    handles.GT = GT;                % ground truth
+    
+    it = 1;
+    handles.Iteration = it;
+    
+    [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2);
+        
+    
+    handles.HLGmatches = [];
+    handles.HLGmatches(it).corrmatrix = corrmatrix;
+    handles.HLGmatches(it).affmatrix = affmatrix;
+        
+    handles.HLGmatches(it).objval  = 0.;
+    handles.HLGmatches(it).matched_pairs = [];
+   
+    handles.LLGmatches = [];
+
+    guidata(hObject,handles); 
+    
+    % plot graphs
+    axes(handles.axes1);
+    plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
+    
+    axes(handles.axes2);
+    plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
+    
+    axes(handles.axes3);
+    plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
+    
+    axes(handles.axes4);
+    plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
+    
+    axes(handles.axes5);cla;
+    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...
+                                                                    handles.GT.HLpairs);
+                                                                
+    axes(handles.axes6);cla;                                                               
+
+    % 
+    set(handles.pbMatch_HLGraphs, 'Enable', 'on');
+    set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+    
+% end
 
 %-------------------------------------------------------------------------
 %    Panel1 : select images and extract edge points with corresponding
@@ -567,14 +650,14 @@ show_HLG = get(handles.cbShow_HLG, 'Value');
 % replot first anchor graph
 if (handles.HLG1isBuilt)
     axes(handles.axes3);cla reset;
-    plot_twolevelgraphs(handles.img1SP.boundary, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
+    plot_twolevelgraphs(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
 %     plot_anchorgraph(handles.img1SP.boundary, handles.LLG1, ...
 %                   handles.HLG1, show_LLG, show_HLG);
 end
 % replot first second graph       
 if (handles.HLG2isBuilt)
     axes(handles.axes4);cla reset;
-    plot_twolevelgraphs(handles.img2SP.boundary, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
+    plot_twolevelgraphs(handles.img2, handles.LLG2, handles.HLG2, show_LLG, show_HLG);
 %     plot_anchorgraph(handles.img2SP.boundary, handles.LLG2, ...
 %                   handles.HLG2, show_LLG, show_HLG);  
 end
@@ -597,11 +680,15 @@ affmatrix = handles.HLGmatches(it).affmatrix;       % affmatrix
 
 axes(handles.axes5); cla reset;
 if (it==1)
+%     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
+%                                                                             matched_pairs);
     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
-                                                                            matched_pairs);
+                                                                            handles.GT.HLpairs);
 else
     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
-                                                                            handles.HLGmatches(it-1).matched_pairs);
+                                                                            handles.GT.HLpairs);
+%     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, matched_pairs, ...
+%                                                                             handles.HLGmatches(it-1).matched_pairs);
 end
 
 set(handles.pbMatch_LLGraphs, 'Enable', 'on');
@@ -625,10 +712,9 @@ guidata(hObject, handles);
 axes(handles.axes6);
 if (it==1)
     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
-                                                                                handles.LLGmatches(it).matched_pairs);
-% else
-%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it-1).matched_pairs, ...
-%                                                                                 handles.LLGmatches(it-2).matched_pairs);
+                                                                                handles.GT.LLpairs);    
+%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+%                                                                                 handles.LLGmatches(it).matched_pairs);
 end
 
 axes(handles.axes5);
@@ -705,10 +791,14 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 axes(handles.axes6); cla reset;
 if (it==1)
     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
-                                                                                handles.LLGmatches(it).matched_pairs);
+                                                                                handles.GT.LLpairs); 
+%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+%                                                                                 handles.LLGmatches(it).matched_pairs);
 else
     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
-                                                                                handles.LLGmatches(it-1).matched_pairs);
+                                                                                handles.GT.LLpairs);     
+%     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+%                                                                                 handles.LLGmatches(it-1).matched_pairs);
 end
 
 % highlithin

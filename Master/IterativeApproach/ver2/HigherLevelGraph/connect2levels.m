@@ -4,12 +4,13 @@
 %
 % Input
 %   LLG     lower level graph, LLG = (V,D,E,U)
+%   HLG     higher level graph, HLG = (V,D,E)
 %   SPrect rectangles, that an affinity area around each node of HLG
 %
 % Output
 %   U       correspondence matrix
 
-function [U] = connect2levels(LLG, SPrect)
+function [U] = connect2levels(LLG, HLG, SPrect)
 
     n = size(LLG.V , 1);  % number of nodes in the lower level graph LLG
     m = size(SPrect, 1);  % number of nodes in the higher level graph HLG

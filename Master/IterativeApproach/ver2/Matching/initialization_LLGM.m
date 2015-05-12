@@ -84,14 +84,22 @@ try
         ai = HLG_matched_pairs(k,1);
         ai_x = LLG1.U(:,ai);
         V1{k} = LLG1.V(ai_x,:)';
-        D1{k} = LLG1.D(:, ai_x);
+        if (~isempty(LLG1.D))
+            D1{k} = LLG1.D(:, ai_x);
+        else 
+            D1{k} = [];
+        end
         adjM1cut = adjM1(ai_x, ai_x');
 
         % indices of nodes, that belong to the anchor aj
         aj = HLG_matched_pairs(k,2);
         aj_x = LLG2.U(:, aj);
         V2{k} = LLG2.V(aj_x,:)';
-        D2{k} = LLG2.D(:, aj_x);
+        if (~isempty(LLG2.D))
+            D2{k} = LLG2.D(:, aj_x);
+        else 
+            D2{k} = [];
+        end
         adjM2cut = adjM2(aj_x, aj_x');
 
         indOfSubgraphsNodes(k,:) = [ai_x' aj_x'];
