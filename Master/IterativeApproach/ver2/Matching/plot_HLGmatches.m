@@ -30,11 +30,6 @@ points(3:3:end,:) = NaN;
 
 line(points(:,1), points(:,2), 'Color', 'y', 'LineWidth', 3);
 
-% % for i=1:size(G1.E, 1)
-% %     line([G1.V(G1.E(i,1),1) G1.V(G1.E(i,2),1) ],...
-% %          [G1.V(G1.E(i,1),2) G1.V(G1.E(i,2),2) ], 'Color', 'y', 'LineWidth', 3);  
-% % end
-
 %                      ------------------------------------
 %                              plot second graph (G2)
 plot(G2.V(:,1), G2.V(:,2), 'yo','MarkerSize', 7, 'MarkerFaceColor','y');
@@ -48,11 +43,6 @@ points(3:3:end,:) = NaN;
 
 line(points(:,1), points(:,2), 'Color', 'y', 'LineWidth', 3);
 
-% % for i=1:size(G2.E, 1)
-% %     line([G2.V(G2.E(i,1),1) G2.V(G2.E(i,2),1) ],...
-% %          [G2.V(G2.E(i,1),2) G2.V(G2.E(i,2),2) ], 'Color', 'y', 'LineWidth', 3);  
-% % end
-
 %                      ------------------------------------
 %                                  plot matches
 
@@ -62,7 +52,7 @@ if (~isempty(matches))
     nans = NaN * ones(size(matches,2),1) ;
     x = [ G1.V(matches(1,:),1) , G2.V(matches(2,:),1) , nans ] ;
     y = [ G1.V(matches(1,:),2) , G2.V(matches(2,:),2) , nans ] ; 
-    line(x', y', 'Color','g') ;
+    line(x', y', 'Color','b') ;
 end
 
 %                      ------------------------------------
@@ -74,20 +64,9 @@ if (~isempty(matches_old))
     nans = NaN * ones(size(matches_old,2),1) ;
     x = [ G1.V(matches_old (1,:),1) , G2.V(matches_old (2,:),1) , nans ] ;
     y = [ G1.V(matches_old (1,:),2) , G2.V(matches_old (2,:),2) , nans ] ; 
-    line(x', y', 'Color','g', 'LineStyle', '--') ;
+    line(x', y', 'Color','b','LineStyle', '--') ;
 end
 
-%                      ------------------------------------
-%                  highlight matches subgraph in the second graph;
-% if (~isempty(matches))
-%     for i=1:size(G2.E, 1)
-% 
-%         if (ismember(G2.E(i,1), matches(2,:)) && ismember(G2.E(i,2), matches(2,:))  )
-%             line([G2.V(G2.E(i,1),1) G2.V(G2.E(i,2),1) ],...
-%                  [G2.V(G2.E(i,1),2) G2.V(G2.E(i,2),2) ], 'Color', 'w', 'LineWidth', 3);  
-%         end
-%     end
-% end
 
 %                      ------------------------------------
 %                        ADDITIONALLY:  highlight some matches
@@ -100,7 +79,12 @@ if (nargin == 7)
         nans = NaN * ones(size(matches2,2),1) ;
         x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
         y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
-        line(x', y', 'Color','g', 'LineWidth', 3) ;
+        line(x', y', 'Color','b', 'LineWidth', 2) ;
+
+        [~,right_matches] = ismember(matches2(1,:), matches_old(1,:));
+        x = [ G1.V(matches2(1,:),1) , G2.V(matches_old(2, right_matches),1) , nans ] ;
+        y = [ G1.V(matches2(1,:),2) , G2.V(matches_old(2, right_matches),2) , nans ] ; 
+        line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--');
     end
     
 end

@@ -12,7 +12,7 @@
 % 
 
 
-function [D, ratio] = initialAffinityMatrix2(v1, v2, d1, d2, AdjM1, AdjM2, corrMatrix)
+function [D] = initialAffinityMatrix2(v1, v2, d1, d2, AdjM1, AdjM2, corrMatrix)
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);

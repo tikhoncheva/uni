@@ -6,7 +6,7 @@
 %
 % new_affmatrix_HLG   updated affinity matrix for matching problem on the Higher Level
 
-function [new_affmatrix_HLG] = reweight_HLGraph(LLG1, LLG2, LLGmatches_it, HLGmatches_it, it)
+function [new_affmatrix_HLG] = reweight_HLGraph(LLG1, LLG2, LLGmatches_it, HLGmatches_it, gamma)
 
 affmatrix = HLGmatches_it.affmatrix;
 [nVA1, ~] = size(HLGmatches_it.corrmatrix);     % number of nodes (anchors)  in the first HLG
@@ -91,7 +91,7 @@ thres = 0.75;
 
 for k=1:npairs
     IkJk = (matched_pairs(k,2)-1)*nVA1 + matched_pairs(k,1);    % index of pair (ai, aj) in the affinity matrix
-    affmatrix(IkJk, IkJk) = affmatrix(IkJk, IkJk) * LLGmatches_it.lobjval(k) / LLGmatches_it.objval ;
+    affmatrix(IkJk, IkJk) = gamma*affmatrix(IkJk, IkJk) + (1-gamma) * LLGmatches_it.lobjval(k) / LLGmatches_it.objval ;
 end
 
 new_affmatrix_HLG = affmatrix;

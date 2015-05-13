@@ -90,14 +90,37 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         G2.U(last+1 : last+n_new_nodes, i+sum(nOut_per_cluster2(1:i-1)): i+sum(nOut_per_cluster2(1:i))) = 1;  % ToDo
         corr_AG1AG2 = [corr_AG1AG2; [size(AG1.V,1), i+sum(nOut_per_cluster2(1:i-1)) ] ];
     end
-    
-%     AG2.V = [AG2.V; randn(nOut2,2)];
 
     assert(size(G2.V,1)==n2);
     assert(size(AG2.V,1)==na2);
+    
+    % permute graph nodes
+    if to_permute
+        seq = randperm(n2);
+        G2.V(seq,:) = G2.V;
+        
+%         G2.E(:,1) = seq(G2.E(:,1));
+%         G2.E(:,2) = seq(G2.E(:,2));
+        
+        G2.U(seq,:)   = G2.U;
+%         seq = seq(1:n1);
 
+        seq2 = randperm(na2);
+        AG2.V(seq2,:) = AG2.V;
+%         AG2.E(:,1) = seq2(AG2.E(:,1));
+%         AG2.E(:,2) = seq2(AG2.E(:,2));
+%         
+        G2.U(:, seq2) = G2.U;
+%         seq2 = seq2(1:na1);
+    else
+        seq  = 1:n2;
+        seq2 = 1:na2;
+    end
+    
+%     G2.U = connect2levels2(G2, AG2, G[], 0.5);
+    
     % graphs on the lower level have kNN-connectivity                                       
-
+    
     [nodes_kNN, ~] = knnsearch(G1.V(:, 1:2), G1.V(:, 1:2), 'k', minDeg + 1); % nV x (minDeg+1) matrix                   
     nodes_kNN = nodes_kNN(:,2:end);                                          % delete loops in each vertex
     nodes_kNN = reshape(nodes_kNN, n1*minDeg, 1);
@@ -118,30 +141,6 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
     v2 = repmat([1:na2],  na2, 1);
     AG2.E = [v1(:), v2(:)];              
 
-
-    % permute graph nodes
-    if to_permute
-        seq = randperm(n2);
-        G2.V(seq,:) = G2.V;
-        
-        G2.E(:,1) = seq(G2.E(:,1));
-        G2.E(:,2) = seq(G2.E(:,2));
-        
-        G2.U(seq,:)   = G2.U;
-%         seq = seq(1:n1);
-
-        seq2 = randperm(na2);
-        AG2.V(seq2,:) = AG2.V;
-        AG2.E(:,1) = seq2(AG2.E(:,1));
-        AG2.E(:,2) = seq2(AG2.E(:,2));
-        
-        G2.U(:, seq2) = G2.U;
-%         seq2 = seq2(1:na1);
-    else
-        seq  = 1:n1;
-        seq2 = 1:na1;
-    end
-
     % Ground Truth
     GT.LLpairs = [corr_G1G2(:,1)  , seq(corr_G1G2(:,2) )'];
     GT.HLpairs = [corr_AG1AG2(:,1), seq2(corr_AG1AG2(:,2) )'];
@@ -150,11 +149,11 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
     % shift coordinates of the nodes to plot it nice
     
     N = 5;
-    min_x = min([ min(G1.V(:,1)), min(G2.V(:,1)) ])
-    max_x = max([ max(G1.V(:,1)), max(G2.V(:,1)) ])
+    min_x = min([ min(G1.V(:,1)), min(G2.V(:,1)) ]);
+    max_x = max([ max(G1.V(:,1)), max(G2.V(:,1)) ]);
     
-    min_y = min([ min(G1.V(:,2)), min(G2.V(:,2)) ])
-    max_y = min([ max(G1.V(:,2)), max(G2.V(:,2)) ])
+    min_y = min([ min(G1.V(:,2)), min(G2.V(:,2)) ]);
+    max_y = min([ max(G1.V(:,2)), max(G2.V(:,2)) ]);
     
     G1.V(:,1) = 1 + (G1.V(:,1) - min_x) * N / (max_x-min_x);
     G1.V(:,2) = 1 +(G1.V(:,2) - min_y) * N / (max_y-min_y);

@@ -74,13 +74,15 @@ matched_anchors = pairs_ai_aj(is_matched, :);
 % show matched anchors
 axes(handles.axes5);
 cla reset
-if (it>1)
     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
-                                                                            handles.HLGmatches(it-1).matched_pairs, matched_anchors);
-else
-    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
-                                                                            handles.HLGmatches(it).matched_pairs, matched_anchors);
-end
+                                                                            handles.GT.HLpairs, matched_anchors);
+% if (it>1)
+%     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
+%                                                                             handles.HLGmatches(it-1).matched_pairs, matched_anchors);
+% else
+%     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
+%                                                                             handles.HLGmatches(it).matched_pairs, matched_anchors);
+% end
 
 % show matched nodes with corresponding subgraphs
 axes(handles.axes6);

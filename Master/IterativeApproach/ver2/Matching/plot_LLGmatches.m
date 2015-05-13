@@ -28,12 +28,6 @@ points(3:3:end,:) = NaN;
 
 line(points(:,1), points(:,2), 'Color', 'g');
 
-% % TOO SLOW
-% % for i=1:size(G1.E, 1)
-% %     line([G1.V(G1.E(i,1),1) G1.V(G1.E(i,2),1) ],...
-% %          [G1.V(G1.E(i,1),2) G1.V(G1.E(i,2),2) ], 'Color', 'g');  
-% % end
-
 %                      ------------------------------------
 %                              plot second graph (G2)
 % plot nodes
@@ -48,12 +42,6 @@ points(3:3:end,:) = NaN;
 
 line(points(:,1), points(:,2), 'Color', 'g');
 
-% % TOO SLOW
-% % for i=1:size(G2.E, 1)
-% %     line([G2.V(G2.E(i,1),1) G2.V(G2.E(i,2),1) ],...
-% %          [G2.V(G2.E(i,1),2) G2.V(G2.E(i,2),2) ], 'Color', 'g');  
-% % end
-
 %                      ------------------------------------
 %                        plot subgraphs of selected anchor points
 for i=1:size(anchor_pairs)
@@ -65,7 +53,7 @@ for i=1:size(anchor_pairs)
    v_aj = find(G2.U(:, aj));          % nodes, that belong to the anchor aj
    
    % subgraph 1
-   plot(G1.V(v_ai,1), G1.V(v_ai,2), 'bo', 'MarkerSize', 4); 
+   plot(G1.V(v_ai,1), G1.V(v_ai,2), 'ko', 'MarkerSize', 4); 
 
    edges_ind1 = ismember(G1.E(:,1), v_ai);
    edges_ind2 = ismember(G1.E(:,2), v_ai);
@@ -78,11 +66,11 @@ for i=1:size(anchor_pairs)
    points = G1.V(edges,:);
    points(3:3:end,:) = NaN;
 
-   line(points(:,1), points(:,2), 'Color', 'b');
+   line(points(:,1), points(:,2), 'Color', 'k');
    
    % subgraph 2
    
-   plot(G2.V(v_aj,1), G2.V(v_aj,2), 'bo', 'MarkerSize', 4); 
+   plot(G2.V(v_aj,1), G2.V(v_aj,2), 'ko', 'MarkerSize', 4); 
    
    edges_ind1 = ismember(G2.E(:,1), v_aj);
    edges_ind2 = ismember(G2.E(:,2), v_aj);
@@ -95,7 +83,7 @@ for i=1:size(anchor_pairs)
    points = G2.V(edges,:);
    points(3:3:end,:) = NaN;
 
-   line(points(:,1), points(:,2), 'Color', 'b');
+   line(points(:,1), points(:,2), 'Color', 'k');
     
 end
 
@@ -109,7 +97,7 @@ if(~isempty(matches))
     nans = NaN * ones(size(matches,2),1) ;
     x = [ G1.V(matches(1,:),1) , G2.V(matches(2,:),1) , nans ] ;
     y = [ G1.V(matches(1,:),2) , G2.V(matches(2,:),2) , nans ] ; 
-    line(x', y', 'Color','r') ;
+    line(x', y', 'Color','b') ;
 end
 
 %                      ------------------------------------
@@ -121,7 +109,7 @@ if(~isempty(matches_old))
     nans = NaN * ones(size(matches_old,2),1) ;
     x = [ G1.V(matches_old(1,:),1) , G2.V(matches_old(2,:),1) , nans ] ;
     y = [ G1.V(matches_old(1,:),2) , G2.V(matches_old(2,:),2) , nans ] ; 
-    line(x', y', 'Color','r', 'LineStyle', '--') ;
+    line(x', y', 'Color','b', 'LineStyle', '--') ;
 end
 
 
@@ -136,7 +124,12 @@ if (nargin == 8)
         nans = NaN * ones(size(matches2,2),1) ;
         x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
         y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
-        line(x', y', 'Color','r','LineWidth', 3) ;
+        line(x', y', 'Color','b','LineWidth', 2) ;
+        
+        [~,right_matches] = ismember(matches2(1,:), matches_old(1,:));
+        x = [ G1.V(matches2(1,:),1) , G2.V(matches_old(2, right_matches),1) , nans ] ;
+        y = [ G1.V(matches2(1,:),2) , G2.V(matches_old(2, right_matches),2) , nans ] ; 
+        line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--') ;        
     end
     
 end

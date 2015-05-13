@@ -6,7 +6,7 @@ nOut = 10;                         % number of outliers in the second graph G2
 
 nIn2  = 4;                         % number of nodes in the first anchor graph AG1 = number of 
                                    % inliers in the second anchor graph AG2
-nOut2 = 2;                         % number of outliers in the second anchor graph G2
+nOut2 = 0;                         % number of outliers in the second anchor graph G2
 
 minDeg = 6;                        % minimal degree of nodes in the graphs on lower level
 

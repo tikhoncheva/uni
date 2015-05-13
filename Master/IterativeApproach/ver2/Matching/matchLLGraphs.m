@@ -61,6 +61,14 @@ try
         
         corrmatrix = corrmatrices{it};
         affmatrix = affmatrices{it};
+        
+        
+        if (sum(affmatrix(:))==0)               % if affinity matrix is zero matrix !!!!!!
+            
+            local_weights(it,:) = reshape(zeros(nV1, nV2), [1 nV]);
+            local_objval(it,1) = 0.;
+            continue; 
+        end
 
         % conflict groups
         [I, J] = find(corrmatrix);
@@ -83,7 +91,8 @@ try
 %         global_corrmatrix(it, :) = reshape(M, [1 nV]);
         
         local_weights(it,:) = reshape(W, [1 nV]);
-        local_objval(it,1) = X' * affmatrix * X;
+        local_objval(it,1) = ceil(X)' * affmatrix * ceil(X);
+        
 
 %         X = greedyMapping(x, group1, group2);
 % 

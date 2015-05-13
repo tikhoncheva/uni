@@ -67,7 +67,7 @@ handles.HLG2isBuilt= 0;
 
 handles = setParameters(handles);
 
-% Update handles structure
+% Update handles structure 
 guidata(hObject, handles);
 
 
@@ -96,6 +96,7 @@ addpath(genpath('./toyProblem'));
 addpath(genpath('./HigherLevelGraph'));
 addpath(genpath('./LowerLevelGraph'));
 addpath(genpath('./Matching'));
+addpath(genpath('./ransac'));
 
 % clc;
 
@@ -822,8 +823,16 @@ function pb_Reweight_HLGraph_Callback(hObject, eventdata, handles)
 LLG1 = handles.LLG1;
 LLG2 = handles.LLG2;
 
+HLG1 = handles.HLG1;
+HLG2 = handles.HLG2;
+
+
 it = handles.Iteration;
-new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), it);
+gamma = 0.5;
+% new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
+
+new_affmatrix_HLG = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
+                                    handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
 %update affmatrix
 it = it + 1;
