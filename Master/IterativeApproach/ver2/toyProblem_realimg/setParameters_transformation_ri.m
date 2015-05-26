@@ -1,8 +1,8 @@
 %% Parameters of the image transformation
 
 % Parameters of affine transformation
-aff_transfo_angle = pi/4;             % rotation angle
-aff_transfo_scale = 1;             % scale factor
+aff_transfo_angle = -pi/4;             % rotation angle
+aff_transfo_scale = 1.;             % scale factor
 t = [0; 0];                        % translation
 
 
