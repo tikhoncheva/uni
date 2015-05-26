@@ -87,7 +87,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         AG1.V = [AG1.V; [x,y] ];
         AG2.V = [AG2.V; a; randn(nOut_per_cluster2(i), 2)];
         
-        G2.U(last+1 : last+n_new_nodes, i+sum(nOut_per_cluster2(1:i-1)): i+sum(nOut_per_cluster2(1:i))) = 1;  % ToDo
+%         G2.U(last+1 : last+n_new_nodes, i+sum(nOut_per_cluster2(1:i-1)): i+sum(nOut_per_cluster2(1:i))) = 1;  % ToDo
         corr_AG1AG2 = [corr_AG1AG2; [size(AG1.V,1), i+sum(nOut_per_cluster2(1:i-1)) ] ];
     end
 
@@ -102,7 +102,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
 %         G2.E(:,1) = seq(G2.E(:,1));
 %         G2.E(:,2) = seq(G2.E(:,2));
         
-        G2.U(seq,:)   = G2.U;
+%         G2.U(seq,:)   = G2.U;
 %         seq = seq(1:n1);
 
         seq2 = randperm(na2);
@@ -110,14 +110,14 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
 %         AG2.E(:,1) = seq2(AG2.E(:,1));
 %         AG2.E(:,2) = seq2(AG2.E(:,2));
 %         
-        G2.U(:, seq2) = G2.U;
+%         G2.U(:, seq2) = G2.U;
 %         seq2 = seq2(1:na1);
     else
         seq  = 1:n2;
         seq2 = 1:na2;
     end
     
-%     G2.U = connect2levels2(G2, AG2, G[], 0.5);
+    G2.U = connect2levels2(G2, AG2, G1.V);
     
     % graphs on the lower level have kNN-connectivity                                       
     
@@ -130,8 +130,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
     nodes_kNN = nodes_kNN(:,2:end);                                          % delete loops in each vertex
     nodes_kNN = reshape(nodes_kNN, n2*minDeg, 1);
     G2.E = [repmat([1:n2]', minDeg, 1) nodes_kNN];
-         
-
+    
     % we consider fully connected anchor graphs                             % !!!!!!!!!!!!!!!!!!!!!!!!! 
     v1 = repmat([1:na1]', 1, na1);
     v2 = repmat([1:na1],  na1, 1);

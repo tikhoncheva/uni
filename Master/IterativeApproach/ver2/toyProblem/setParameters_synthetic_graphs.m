@@ -10,7 +10,7 @@ nOut2 = 0;                         % number of outliers in the second anchor gra
 
 minDeg = 6;                        % minimal degree of nodes in the graphs on lower level
 
-% Parameters of affinity transformation
+% Parameters of affine transformation
 aff_transfo_angle = [0, 0, 0, 0];          % rotation angles for each of nIn2 groups of nodes
 aff_transfo_scale = [1, 1, 1, 1];          % scale factor for each of nIn2 groups of nodes
 

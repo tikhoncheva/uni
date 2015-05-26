@@ -28,10 +28,6 @@ nIterations = size(indOfSubgraphsNodes, 1);
 local_objval = zeros(nIterations, 1);
 local_weights = zeros(nIterations, nV);
 
-% global_corrmatrix = zeros(nIterations, nV);
-
-% localMatches = zeros(nIterations, nV);
-
 try
     % ----------------------------------------------------------------
     % Run parallel
@@ -47,6 +43,7 @@ try
 
     % in each step we match points corresponding to the anchor match ai<->aj
     for it = 1:nIterations
+        
         node_ind = indOfSubgraphsNodes(it,:);
 
         % nodes, that belong to the anchor ai
@@ -62,9 +59,9 @@ try
         corrmatrix = corrmatrices{it};
         affmatrix = affmatrices{it};
         
+        [nVi, nVj] = size(corrmatrices{it});
         
-        if (sum(affmatrix(:))==0)               % if affinity matrix is zero matrix !!!!!!
-            
+        if (nVi==0 || nVj==0 || sum(affmatrix(:))==0)  % if affinity matrix is zero matrix or one subgraph is empty !!!!!!!!!!!!
             local_weights(it,:) = reshape(zeros(nV1, nV2), [1 nV]);
             local_objval(it,1) = 0.;
             continue; 
@@ -85,28 +82,10 @@ try
         W = zeros(nV1, nV2);
         W(ai_x, aj_x') = W_local;
         
-%         M = zeros(nV1, nV2);
-%         M(ai_x, aj_x') = corrmatrix;
-%         
-%         global_corrmatrix(it, :) = reshape(M, [1 nV]);
-        
+      
         local_weights(it,:) = reshape(W, [1 nV]);
         local_objval(it,1) = ceil(X)' * affmatrix * ceil(X);
         
-
-%         X = greedyMapping(x, group1, group2);
-% 
-%         objective(it) = x'*affmatrix * x;
-% 
-%         matchesL = zeros(nVi, nVj);
-%         for k=1:numel(I)
-%             matchesL(I(k), J(k)) = X(k);
-%         end  
-% 
-%         matches = zeros(nV1, nV2);
-%         matches(ai_x, aj_x') = matchesL;
-%         localMatches(it, :) = reshape(matches, [1 nV]);
-
     end
 
 %     delete(poolobj); 
@@ -124,33 +103,14 @@ catch ME
     rethrow(ME);
 end
 
-% global matrix of matches
-
-% corrmatrix = max(global_corrmatrix,[],1);
-% corrmatrix = reshape(corrmatrix, nV1, nV2);
-% 
-% [I, J] = find(corrmatrix);
-% [ group1, group2 ] = make_group12([I, J]);
-% 
 
 matches_tmp = max(local_weights, [], 1);        % maximum in each column
-% matches = greedyMapping(matches, group1, group2);
-matches_tmp = reshape(matches_tmp, nV1,nV2);    % maximum in each row
+matches_tmp = reshape(matches_tmp, nV1,nV2);   
 % force 1-to-1 matching
-[maxval, ind] = max(matches_tmp, [], 2);
-matches = zeros(size(matches_tmp));
-for i=1:size(matches,1)
-    matches(i,ind(i)) = maxval(i);
-end
-
-% matches = logical(matches);
-
-% matches = max(localMatches,[], 1);
-% matches = reshape(matches, nV1,nV2);
-% matches = logical(matches);
-
-[pairs(:,1), pairs(:,2)] = find(matches);
-
+[maxval, maxpos] = max(matches_tmp, [], 2);
+pairs1 = find(maxval>0);
+pairs2 = maxpos(pairs1);
+pairs = [pairs1, pairs2];
 
 objval = sum(local_objval);
 

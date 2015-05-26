@@ -144,7 +144,11 @@ try
         corrmatrix{k} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
         
         % compute initial affinity matrix
-        affmatrix{k} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{k});
+        if (nVi==0 || nVj==0 || nVi==1 || nVj==1)
+            affmatrix{k} = [];
+        else
+            affmatrix{k} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{k});
+        end
     end
     
 %     delete(poolobj); 

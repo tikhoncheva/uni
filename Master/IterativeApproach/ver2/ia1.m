@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 12-May-2015 13:50:26
+% Last Modified by GUIDE v2.5 26-May-2015 15:41:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -206,6 +206,89 @@ function mToyProblem_Callback(hObject, ~, handles)
     set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
     
 % end
+
+
+%-------------------------------------------------------------------------
+%   Synthetic Graph Matching on a real image
+%-------------------------------------------------------------------------
+
+function mToyProblem_ri_Callback(hObject, eventdata, handles)
+
+[filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
+
+if filename~=0
+    img1 = imread([pathname filesep filename]);
+    
+    replotaxes(handles.axes1, img1);
+    
+    % Extract edge points and corresponding descriptors
+    [edges, descr] = computeDenseSIFT(img1);
+
+    zerocol_ind = all( ~any(descr), 1);
+    descr(:, zerocol_ind) = []; % remove zero columns
+    edges(:, zerocol_ind) = []; %  and corresponding points
+
+    % Show it on the axis1
+    axes(handles.axes1);cla reset;
+    imagesc(img1), axis off; % plot_graph(img1, 'Image 2', LLG1);
+    
+    % Show it on the axis3
+    axes(handles.axes3);cla reset;
+    imagesc(img1), axis off; % plot_graph(img1, 'Image 2', LLG1);
+    
+    
+    % create second image
+    [img2, features2, GT] = transform_image(img1);
+    
+    
+    if handles.img2selected
+        img3 = combine2images(img1, handles.img2);
+        axes(handles.axes5);
+        imagesc(img3), axis off;
+    end
+        
+    % update/reset data
+    handles.img1 = img1;
+    handles.img2 = img2;
+    
+    handles.img1isSelected= 1;
+    handles.img2isSelected= 1;
+    
+    handles.features1.edges = edges;
+    handles.features1.descr = descr;
+    
+    handles.features2.edges = features2.edges;
+    handles.features2.descr = features2.descr;
+    
+    handles.HLG1 = [];
+    handles.HLG2 = [];
+    
+    handles.LLG1 = [];
+    handles.LLG2 = [];
+    
+    handles.HLG1isBuilt = 0;
+    handles.HLG2isBuilt = 0;
+    
+    handles.HLGmatches = [];
+    handles.LLGmatches = [];
+    
+    handles.GT = GT;                         % Ground Truth
+    
+    handles.Iteration = 1;
+    
+    guidata(hObject,handles); 
+    
+    set(handles.pbBuildGraphs_img1, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img1, 'Enable', 'on');
+    
+    set(handles.pbMatch_HLGraphs, 'Enable', 'off');
+    set(handles.pbMatch_LLGraphs, 'Enable', 'off');
+    
+end
+%end
+
+
+
 
 %-------------------------------------------------------------------------
 %    Panel1 : select images and extract edge points with corresponding
@@ -845,6 +928,4 @@ set(handles.pbMatch_LLGraphs, 'Enable', 'off');
 set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 
 guidata(hObject, handles);
-
-
 % end
