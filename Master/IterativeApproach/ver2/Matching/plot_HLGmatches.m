@@ -75,16 +75,18 @@ if (nargin == 7)
     pairs2 = varargin{1};
     matches2 = pairs2';
 
-    if (~isempty(matches2))
+    if (~isempty(matches2) )
         nans = NaN * ones(size(matches2,2),1) ;
         x = [ G1.V(matches2(1,:),1) , G2.V(matches2(2,:),1) , nans ] ;
         y = [ G1.V(matches2(1,:),2) , G2.V(matches2(2,:),2) , nans ] ; 
         line(x', y', 'Color','b', 'LineWidth', 2) ;
 
-        [~,right_matches] = ismember(matches2(1,:), matches_old(1,:));
-        x = [ G1.V(matches2(1,:),1) , G2.V(matches_old(2, right_matches),1) , nans ] ;
-        y = [ G1.V(matches2(1,:),2) , G2.V(matches_old(2, right_matches),2) , nans ] ; 
-        line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--');
+        if (~isempty(matches_old))
+            [~,right_matches] = ismember(matches2(1,:), matches_old(1,:));
+            x = [ G1.V(matches2(1,:),1) , G2.V(matches_old(2, right_matches),1) , nans ] ;
+            y = [ G1.V(matches2(1,:),2) , G2.V(matches_old(2, right_matches),2) , nans ] ; 
+            line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--');
+        end
     end
     
 end

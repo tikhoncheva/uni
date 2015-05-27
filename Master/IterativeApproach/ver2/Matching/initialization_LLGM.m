@@ -137,8 +137,6 @@ try
         d2 = D2{k};
         nVj = size(v2,2);
         adjM2cut = localAdjMatrices2{k};
-                
-        display(sprintf('matrix %d x %d ', nVi, nVj));
 
         % correspondence matrix 
         corrmatrix{k} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
@@ -149,6 +147,8 @@ try
         else
             affmatrix{k} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{k});
         end
+        
+        display(sprintf('matrix %d x %d ... finished', nVi, nVj));
     end
     
 %     delete(poolobj); 

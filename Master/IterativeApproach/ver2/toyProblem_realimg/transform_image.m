@@ -50,12 +50,15 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     end
     
     % Coordinates of the transformed keypoints
-    keypoints_new = round(aff_transfo_scale * M * keypoints(1:2,:) + repmat(t, 1, size(keypoints, 2)) );
+    keypoints(1:2,:) = keypoints(1:2,:) - repmat([m/2;n/2], 1, size(keypoints,2));
+    keypoints_new = aff_transfo_scale * M * keypoints(1:2,:) + repmat(t, 1, size(keypoints, 2));
+    keypoints_new = round(keypoints_new + repmat([m/2;n/2], 1, size(keypoints,2)) );
+    
     ind_feasible = keypoints_new(1,:)>=1 & keypoints_new(1,:)<=m ...
                  & keypoints_new(2,:)>=1 & keypoints_new(2,:)<=n;  
     
-    % SIFT descriptors in the keypoints
-    F_in = [keypoints_new(:, ind_feasible); keypoints(3, ind_feasible) + aff_transfo_angle ; keypoints(4, ind_feasible)];
+    % SIFT descriptors in the keypoints   
+    F_in = [keypoints_new(:, ind_feasible); keypoints(3, ind_feasible) + aff_transfo_angle ; keypoints(4, ind_feasible)]; 
     [F, D] = vl_sift(single(rgb2gray(img_new)), 'frames', F_in);
     
     features.edges = F;
@@ -69,7 +72,7 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     assert(numel(find(ind_keyp2>0)) == size(ind_keyp1,2), ...
         'fct transform_image: error in extraction of descriptors in defined keypoints');
     
-    GT.LLpairs = [ind_keyp1; ind_keyp2'];
+    GT.LLpairs = [ind_keyp1; ind_keyp2']';
     GT.HLpairs = [];
-
+ 
 end

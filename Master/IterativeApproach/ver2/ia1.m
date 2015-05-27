@@ -218,12 +218,12 @@ function mToyProblem_ri_Callback(hObject, eventdata, handles)
 [filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
 
 if filename~=0
-    img1 = imread([pathname filesep filename]);
+    img2 = imread([pathname filesep filename]);
     
-    replotaxes(handles.axes1, img1);
+    replotaxes(handles.axes1, img2);
     
     % Extract edge points and corresponding descriptors
-    [edges, descr] = computeDenseSIFT(img1);        % edges 4xn; % descr 128xn
+    [edges, descr] = computeDenseSIFT(img2);        % edges 4xn; % descr 128xn
 
 
     zerocol_ind = all( ~any(descr), 1);
@@ -231,7 +231,7 @@ if filename~=0
     edges(:, zerocol_ind) = []; %  and corresponding points
     
     % create second image = affine_transformation(img1)
-    [img2, features2, GT] = transform_image(img1, edges);
+    [img1, features1, GT] = transform_image(img2, edges);
     
 
     % Show img1 on the axis1
@@ -264,11 +264,11 @@ if filename~=0
     handles.img1isSelected= 1;
     handles.img2isSelected= 1;
     
-    handles.features1.edges = edges;
-    handles.features1.descr = descr;
+    handles.features1.edges = features1.edges;
+    handles.features1.descr = features1.descr;
     
-    handles.features2.edges = features2.edges;
-    handles.features2.descr = features2.descr;
+    handles.features2.edges = edges;
+    handles.features2.descr = descr;
     
     handles.HLG1 = [];
     handles.HLG2 = [];
@@ -282,6 +282,7 @@ if filename~=0
     handles.HLGmatches = [];
     handles.LLGmatches = [];
     
+    GT.LLpairs = [GT.LLpairs(:,2), GT.LLpairs(:,1)];
     handles.GT = GT;                         % Ground Truth
     
     handles.Iteration = 1;
@@ -473,6 +474,8 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
 
     set(handles.edit_nV1, 'String', size(HLG1.V,1) );
+    
+    set(handles.edit_nV2, 'String', size(HLG2.V,1) );
     
     
     % preparation for the HL graph matching
