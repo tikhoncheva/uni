@@ -92,6 +92,7 @@ addpath(genpath('../../Tools/RRWM_release_v1.22'));
 % clc;
 
 % Additional functions
+addpath(genpath('./toyProblem_realimg'));
 addpath(genpath('./toyProblem'));
 addpath(genpath('./HigherLevelGraph'));
 addpath(genpath('./LowerLevelGraph'));
@@ -222,31 +223,40 @@ if filename~=0
     replotaxes(handles.axes1, img1);
     
     % Extract edge points and corresponding descriptors
-    [edges, descr] = computeDenseSIFT(img1);
+    [edges, descr] = computeDenseSIFT(img1);        % edges 4xn; % descr 128xn
+
 
     zerocol_ind = all( ~any(descr), 1);
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = []; %  and corresponding points
+    
+    % create second image = affine_transformation(img1)
+    [img2, features2, GT] = transform_image(img1, edges);
+    
 
-    % Show it on the axis1
+    % Show img1 on the axis1
     axes(handles.axes1);cla reset;
-    imagesc(img1), axis off; % plot_graph(img1, 'Image 2', LLG1);
-    
-    % Show it on the axis3
+    imagesc(img1), axis off; 
+    % Show img1 on the axis3
     axes(handles.axes3);cla reset;
-    imagesc(img1), axis off; % plot_graph(img1, 'Image 2', LLG1);
+    imagesc(img1), axis off; 
+    
+    % Show img2 on the axis2
+    axes(handles.axes2);cla reset;
+    imagesc(img2), axis off; 
+    % Show img2 on the axis4
+    axes(handles.axes4);cla reset;
+    imagesc(img2), axis off; 
+    
+    % combine two images
+    img3 = combine2images(img1, img2);
+    axes(handles.axes5);
+    imagesc(img3), axis off;
+    
+    axes(handles.axes6);
+    imagesc(img3), axis off;
     
     
-    % create second image
-    [img2, features2, GT] = transform_image(img1);
-    
-    
-    if handles.img2selected
-        img3 = combine2images(img1, handles.img2);
-        axes(handles.axes5);
-        imagesc(img3), axis off;
-    end
-        
     % update/reset data
     handles.img1 = img1;
     handles.img2 = img2;
@@ -419,7 +429,9 @@ end
 
 % --- Executes on button press in pbBuildGraphs_img1.
 function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
+
     handles.parameters.nSP1 = str2double(get(handles.edit_NAnchors1,'string')); 
+    handles.parameters.nSP2 = handles.parameters.nSP1;
   
     guidata(hObject,handles); 
     
@@ -427,15 +439,22 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     set(handles.pbLoadAnchors_img1, 'Enable', 'off');
     
     axes(handles.axes3);
-    imagesc(handles.img1), axis off; % plot_graph(handles.img1, 'Image 1', handles.LLG1);
+    imagesc(handles.img1), axis off; 
     
-    axes(handles.axes3);
     % build coarse (Anchor Graph HLG) and fine (Dependency Graph LLG) graph    
+    % on the first image
     [HLG1, LLG1, img1SP] = buildLowHighLevelGraphs (handles.img1, ...
                                                   handles.features1,...
                                                   handles.parameters.nSP1);  
+    % build coarse (Anchor Graph HLG) and fine (Dependency Graph LLG) graph    
+    % on the second image 
+    [HLG2, LLG2, img2SP] = buildLowHighLevelGraphs (handles.img2, ...
+                                                    handles.features2,...
+                                                    handles.parameters.nSP2);  
     
-    % plot anchor graph
+    
+                                                
+    % plot anchor graphs
     show_LLG = get(handles.cbShow_LLG, 'Value');
     show_HLG = get(handles.cbShow_HLG, 'Value');
     cla reset;
@@ -443,6 +462,9 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     axes(handles.axes3);
     plot_twolevelgraphs(img1SP.boundary, LLG1, HLG1, show_LLG, show_HLG);
 
+    axes(handles.axes4);
+    plot_twolevelgraphs(img2SP.boundary, LLG2, HLG2, show_LLG, show_HLG);
+    
     
     set(handles.pbSaveAnchors_img1, 'Enable', 'on');
     set(handles.pbLoadAnchors_img1, 'Enable', 'on');
@@ -452,38 +474,44 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 
     set(handles.edit_nV1, 'String', size(HLG1.V,1) );
     
-    if handles.HLG2isBuilt 
+    
+    % preparation for the HL graph matching
+    [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2);
         
-        [corrmatrix, affmatrix] = initialization_HLGM(HLG1, handles.HLG2);
-        
-        it = 1;
-        handles.Iteration = it;
-        set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
+    it = 1;
+    handles.Iteration = it;
+    set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
        
-        handles.HLGmatches = [];
-        handles.HLGmatches(it).corrmatrix = corrmatrix;
-        handles.HLGmatches(it).affmatrix = affmatrix;
-        
-        handles.HLGmatches(it).objval  = 0.;
-        handles.HLGmatches(it).matched_pairs = [];
-   
-        axes(handles.axes5);cla reset;
-        plot_HLGmatches(handles.img1, HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs, ...
-                                                                        handles.HLGmatches.matched_pairs);
-        axes(handles.axes6); cla reset;
-        img3 = combine2images(handles.img1, handles.img2);
-        imagesc(img3), axis off;
-        
-        handles.LLGmatches = [];
-        
-        set(handles.pbMatch_HLGraphs, 'Enable', 'on');
-    end
+    handles.HLGmatches = [];
+    handles.HLGmatches(it).corrmatrix = corrmatrix;
+    handles.HLGmatches(it).affmatrix = affmatrix;
+
+    handles.HLGmatches(it).objval  = 0.;
+    handles.HLGmatches(it).matched_pairs = [];
+
+    axes(handles.axes5);cla reset;
+    plot_HLGmatches(handles.img1, HLG1, handles.img2, HLG2, handles.HLGmatches.matched_pairs, ...
+                                                            handles.HLGmatches.matched_pairs);
+    axes(handles.axes6); cla reset;
+    img3 = combine2images(handles.img1, handles.img2);
+    imagesc(img3), axis off;
+
+    handles.LLGmatches = [];
+
+    set(handles.pbMatch_HLGraphs, 'Enable', 'on');
+
     
     % update data
     handles.HLG1 = HLG1;
     handles.LLG1 = LLG1;
     handles.HLG1isBuilt = 1;
     handles.img1SP = img1SP;
+    
+    handles.HLG2 = HLG2;
+    handles.LLG2 = LLG2;
+    handles.HLG2isBuilt = 1;
+    handles.img2SP = img2SP;
+    
     guidata(hObject,handles); 
     guidata(hObject,handles);     
 %end
