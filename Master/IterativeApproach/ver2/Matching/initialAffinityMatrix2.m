@@ -30,29 +30,41 @@ display(sprintf('    Conflict matrix: %f sec', toc));
 % Affinity matrix (non-diagonal elements: edge similarity)
 
 G1 = squareform(pdist(v1', 'euclidean'));
-G1(~AdjM1) = 0;
+% G1(~AdjM1) = 0;
 sigma1 = sum(G1(:))/nV1/nV1;
 G1 = G1./sigma1;
 
 G2 = squareform(pdist(v2', 'euclidean'));
-G2(~AdjM2) = 0;
+% G2(~AdjM2) = 0;
 sigma2 = sum(G2(:))/nV2/nV2;
 G2 = G2./sigma2;
 
+
+sigma = 0.15; % 100
 D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
-D = exp(-D./100.);                  % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+D = exp(-D./sigma);                  % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 D(isnan(D)) = 0;
+D = D+D'; 
+
 
 % Affinity matrix (non-diagonal elements: cosine node similarity)
-node_cossimilarity = nodeSimilarity(v1, v2, 'cosine');
-D1 = repmat(node_cossimilarity, numel(node_cossimilarity), 1);
-D1 = (D1 + D1')/2;
+% node_cossimilarity = nodeSimilarity(v1, v2, 'cosine');
+% D1 = repmat(node_cossimilarity, numel(node_cossimilarity), 1);
+
+% D1 = angleBetweenEdges(v1,v2);
+% D1 = (D1 + D1');
+% 
+% D = D + D1;
+
 
 % combine two matrices
-D = max(D(:)) - D;
-D1 = D1 - D;
-D1(D1<0) = 0;
-D = D1;
+% alpha = 0.6;
+% D = alpha*D + (1-alpha)*D1;
+
+% D = max(D(:)) - D;
+% D1 = D1 - D;
+% D1(D1<0) = 0;
+% D = D1;
 
 
 % Affinity matrix (diagonal elements: node similarity)
@@ -64,7 +76,8 @@ else
 end
 
 
-D = D.*~full(conflictMatrix);
+% D = D.*~full(conflictMatrix);     % it also will be done in the matching
+                                    % algorithm 
 
 % figure, imagesc(D);
 

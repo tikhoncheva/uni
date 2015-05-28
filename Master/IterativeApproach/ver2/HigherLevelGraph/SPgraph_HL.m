@@ -21,7 +21,7 @@ function [ G, imgSP, SPrect ] = SPgraph_HL( img, edges, imgSP, G)
 
 % parameters of the HoG descriptor
 s = 9; % size of cells for the HoG descriptor
-w = 36;  % width of the square region
+w = 37;  % width of the square region
 
 % list of rectangles around SPs
 SPrect = [];        % [xmin,ymin, width, height, label of SP]
@@ -80,8 +80,11 @@ for i = 1:nLabels
     x = round(sum(edges(1,ind))/numel(ind));
     y = round(sum(edges(2,ind))/numel(ind));
     
+    x = max((w-1)/2+1, min(x, size(img,1)-(w-1)/2) );
+    y = max((w-1)/2+1, min(y, size(img,2)-(w-1)/2) );
+    
     % HoG descriptor around new node of the graph
-    xy_hog = vl_hog( single(imcrop(im2uint8(img),[x-w/2 y-w/2 w w])), s) ;
+    xy_hog = vl_hog( single(imcrop(im2uint8(img),[x-(w-1)/2 y-(w-1)/2 w w])), s) ;
     
 %     % SIFT descriptor
 %     sigma = sum(edges(3,ind))/numel(ind);

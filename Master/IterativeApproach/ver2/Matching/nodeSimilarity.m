@@ -50,7 +50,7 @@ function [sim] = nodeSimilarity(x1, x2, method)
             for i=1:n1
                sim(i,:) = x1(:, i)' * x2; % (n1x128)(128xn2)
                sim(i,:) = sim(i,:)/norm(x1(:,i)');
-               sim(i,:) = sim(i,:)./norm2;
+                sim(i,:) = sim(i,:)./norm2;
             end
             
             % vectorize result matrix columnwise
