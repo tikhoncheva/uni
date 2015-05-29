@@ -945,13 +945,32 @@ it = handles.Iteration;
 gamma = 0.5;
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-new_affmatrix_HLG = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
-                                    handles.LLGmatches(it), handles.HLGmatches(it), gamma);
+[LLG1, LLG2, HLG1, HLG2] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
+                                    handles.LLGmatches(it), handles.HLGmatches(it), handles.GT, gamma);
 
 %update affmatrix
+[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2);
+
 it = it + 1;
 handles.Iteration = it;
+
+
 handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
+handles.LLG1 = LLG1;
+handles.LLG2 = LLG2;
+handles.HLG1 = HLG1;
+handles.HLG2 = HLG2;
+
+axes(handles.axes3);
+plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
+
+axes(handles.axes4);
+plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
+
+axes(handles.axes5);cla;
+plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...
+                                                                handles.GT.HLpairs);
+                                                                        
 
 set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
 

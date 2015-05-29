@@ -26,7 +26,7 @@ function [sim] = nodeSimilarity(x1, x2, method)
             
             descr = [x1'; x2'];  % (nV1+nV2) x d
 
-            dist = squareform(pdist(descr, 'euclidean')); % (n1+n2) x (n1+n2) distance matrix
+            dist = squareform(pdist(double(descr), 'euclidean')); % (n1+n2) x (n1+n2) distance matrix
             dist = dist(1:n1, n1+1:end);
 
             % normalize distances

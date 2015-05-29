@@ -33,11 +33,6 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     M_inv = [ cos(aff_transfo_angle)  sin(aff_transfo_angle); ... 
             -sin(aff_transfo_angle)  cos(aff_transfo_angle) ]; 
     
-    % new rotated image
-    
-    img_new = repmat(img,1);
-    img_new(:) = 0;
-    
     [x(:,1), x(:,2)] = find(img_new(:,:,1)==0);
     x = x - repmat([m/2, n/2] , m*n, 1);
     x = x - repmat(t', m*n, 1);
@@ -50,12 +45,17 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     mask2 = y(:,2)>=1 & y(:,2)<=n;
     mask = logical(mask1.* mask2);
     
-    k = size(x(mask,:),1);
+    ind_x = sub2ind( [m,n], x(mask,1), x(mask,2));
+    ind_y = sub2ind( [m,n], y(mask,1), y(mask,2));
     
-    ind_x = sub2ind( size(img), repmat(x(mask,1),3,1), repmat(x(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
-    ind_y = sub2ind( size(img), repmat(y(mask,1),3,1), repmat(y(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
+    img_l1 = img(:,:,1); img_l2 = img(:,:,2); img_l3 = img(:,:,3);
+    img_new_l1 = img_new(:,:,1); img_new_l2 = img_new(:,:,2); img_new_l3 = img_new(:,:,3);
+
+    new_img_l1(ind_x) = img_l1(ind_y);
+    new_img_l2 = zeros(m,n); new_img_l2(ind_x) = img_l2(ind_y);
+    new_img_l3 = zeros(m,n); new_img_l3(ind_x) = img_l3(ind_y);
     
-    img_new(ind_x) = img(ind_y);
+    new_img = cat(3, new_img_l1, new_img_l2, new_img_l3);
     
 %     for i=1:m
 %         for j=1:n
