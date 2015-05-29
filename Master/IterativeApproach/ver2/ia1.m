@@ -70,6 +70,8 @@ handles = setParameters(handles);
 % Update handles structure 
 guidata(hObject, handles);
 
+global HLGm_score;
+global LLGM_score;
 
 % Piotr Dollar toolbox
 addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
@@ -656,6 +658,7 @@ if  filename~=0
        
        handles.HLGmatches(it).corrmatrix = corrmatrix;
        handles.HLGmatches(it).affmatrix = affmatrix;
+
        handles.HLGmatches(it).objval  = 0.;
        handles.HLGmatches(it).matched_pairs = [];
 
@@ -713,6 +716,7 @@ if  filename~=0
        handles.HLGmatches = [];
        handles.HLGmatches(it).corrmatrix = corrmatrix;
        handles.HLGmatches(it).affmatrix = affmatrix;
+
        handles.HLGmatches(it).objval  = 0.;
        handles.HLGmatches(it).matched_pairs = [];
 
@@ -812,6 +816,12 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
 set(handles.text_objval_HLG, 'String', sprintf('Objval: %0.3f', objval));
 
 %update data
+
+global HLGM_score;
+tmp = HLGM_score;
+tmp = [tmp, objval];
+HLGM_score = tmp;
+
 handles.HLGmatches(it).objval = objval;
 handles.HLGmatches(it).matched_pairs = matched_pairs;
 
@@ -861,6 +871,15 @@ else
                                                                                                   handles.LLGmatches(it-1));
 end
 
+if isfield(handles.LLGmatches(it), 'aftr_sim')
+    nV1 = size(handles.LLG1.V,1);
+    nV2 = size(handles.LLG2.V,1);
+    affmatrices = add_affine_transformation_similarity(nV1, nV2, subgraphsNodes, affmatrices, ...
+                                                       handles.HLGmatches(it).matched_pairs, ...
+                                                       handles.HLGmatches(it-1).matched_pairs, ...
+                                                       handles.LLGmatches(it).aftr_sim); 
+end
+
 % [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 % if  filename~=0
 %     save([pathname filesep filename] , 'subgraphsNodes', 'corrmatrices', 'affmatrices');
@@ -887,6 +906,11 @@ nV2 = size(handles.LLG2.V,1);
  lobjval, lweights] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices);
 
 % Update data
+
+global LLGM_score;
+tmp = LLGM_score;
+tmp = [tmp, objval];
+LLGM_score = tmp;
 
 handles.LLGmatches(it).objval = objval;
 handles.LLGmatches(it).matched_pairs = matched_pairs;
@@ -932,7 +956,7 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 
 
 % --- Executes on button press in pb_Reweight_HLGraph.
-function pb_Reweight_HLGraph_Callback(hObject, eventdata, handles)
+function pb_Reweight_HLGraph_Callback(hObject, ~, handles)
 
 LLG1 = handles.LLG1;
 LLG2 = handles.LLG2;
@@ -945,17 +969,24 @@ it = handles.Iteration;
 gamma = 0.5;
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-[LLG1, LLG2, HLG1, HLG2] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
+[LLG1, LLG2, HLG1, HLG2, T] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
                                     handles.LLGmatches(it), handles.HLGmatches(it), handles.GT, gamma);
 
+[aftr_sim_HL, aftr_sim_LL] = affine_transformation_similarity(LLG1, LLG2, HLG1, HLG2, ...
+                                                              handles.LLGmatches(it).matched_pairs, ...
+                                                              handles.HLGmatches(it).matched_pairs, ...
+                                                              T);
 %update affmatrix
-[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2);
+[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2, aftr_sim_HL);
 
 it = it + 1;
 handles.Iteration = it;
 
 
 handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
+
+handles.LLGmatches(it).aftr_sim = aftr_sim_LL;
+
 handles.LLG1 = LLG1;
 handles.LLG2 = LLG2;
 handles.HLG1 = HLG1;

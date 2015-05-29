@@ -98,7 +98,11 @@ function [U] = connect2levels2(LLG, HLG, V2, varargin) %anchor_matched_pairs, no
         end 
     end
     
-    lincomb_Us = gamma*U1 + (1-gamma)*exp(-U2/10);
+%     lincomb_Us = gamma*U1 + (1-gamma)*exp(-U2/10);
+    C = max(U1(:)-min(U1(:)));
+    U2 = C* (1./(1+exp(-U2)) - 0.5);
+    lincomb_Us = gamma*U1 + (1-gamma)*U2;
+    
     [~, minpos] = min(lincomb_Us, [], 2);
     
     U = false(n,m);

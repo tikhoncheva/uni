@@ -2,7 +2,7 @@
  %
  %
  
-function [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2)
+function [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2, varargin)
 
 display(sprintf('\n================================================'));
 display(sprintf('Initialization for higher level graph matching'));
@@ -40,7 +40,12 @@ corrmatrix = ones(nV1,nV2);                                                 %  !
 
 % compute initial affinity matrix
 affmatrix = initialAffinityMatrix2(v1, v2, d1, d2, adjM1, adjM2, corrmatrix);
-% affmatrix = initialAffinityMatrix3(v1, v2, adjM1, adjM2, HLG1.W, HLG2.W, corrMatrix);
+
+% add affine transformation similarity of the anchors
+if (nargin == 3)
+    affmatrix(1:(length(affmatrix)+1):end) = affmatrix(1:(length(affmatrix)+1):end) + varargin{1};
+end
+    
 
 display(sprintf('Summary %f sec', toc));
 display(sprintf('=================================================='));
