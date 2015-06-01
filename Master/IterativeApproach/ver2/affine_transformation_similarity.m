@@ -6,7 +6,7 @@ function [aff_sim_HL, aff_sim_LL] = affine_transformation_similarity(...
    nV2 = size(LLG2.V,1);
    
    nA1 = size(HLG1.V,1);
-   nA2 = size(HLG1.V,1);
+   nA2 = size(HLG2.V,1);
    
    aff_sim_LL = Inf(1, nV1*nV2);
    aff_sim_HL = Inf(1, nA1*nA2);
