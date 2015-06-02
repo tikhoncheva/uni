@@ -24,14 +24,16 @@ function [ HLGraph, LLGraph, SP_hl] = buildLowHighLevelGraphs( img, features, nS
     display(sprintf('\n - build higher level graph (anchor graph)'));
     t2 = tic;
     [HLGraph, SP_hl, SP_rect]   = buildHLGraph(img, features.edges, nSP_hl);  
+%     [HLGraph, LLGraph.U]   = buildHLGraph2(img, features.edges(1:2,:)', nSP_hl);  
     display(sprintf('   finished in %f sec', toc(t2)));
+    
     
     display(sprintf('\n - correspondences between two levels'));
     t3 = tic;
     LLGraph.U  = connect2levels(LLGraph, HLGraph, SP_rect);
     display(sprintf('   finished in %f sec', toc(t3)));
     
-    
+%     SP_hl.boundary = img;
     display(sprintf('--------------------------------------------------'));
     display(sprintf('Summary (%f sec) ', toc(t0)));
     display(sprintf('--------------------------------------------------'));

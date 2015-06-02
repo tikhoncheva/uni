@@ -23,7 +23,6 @@ function [U] = connect2levels2(LLG, HLG, V2, varargin) %anchor_matched_pairs, no
 
     U1 = dist;
     
-    
     U2 = zeros(n, m);
     
     if (nargin == 7)
@@ -111,7 +110,7 @@ function [U] = connect2levels2(LLG, HLG, V2, varargin) %anchor_matched_pairs, no
     
     % check if each anchor node has either 0 or at least 3 associated nodes
     col_sum = sum(double(U));
-    problem_anchors = find(col_sum>0 & col_sum<3);
+    problem_anchors = find(col_sum>= 0 & col_sum<3);
     
     if (numel(problem_anchors)>0)
         display(sprintf('WARNING: %d subgraph(s) contain less than 3 nodes', numel(problem_anchors)));

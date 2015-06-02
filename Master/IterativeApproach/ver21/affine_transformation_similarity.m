@@ -37,18 +37,28 @@ function [aff_sim_HL, aff_sim_LL] = affine_transformation_similarity(...
             
             % projection of points corresponding to anchor ai
             n = size(ind_nodes_ai, 1);
-            TVai = A * LLG1.V(ind_nodes_ai,:)' + repmat(b,1,n);
-            TVai = TVai';
+            T_Vai = A * LLG1.V(ind_nodes_ai,:)' + repmat(b,1,n);
+            T_Vai = T_Vai';
             
-            Vaj = LLG2.V(ind_nodes_aj,:);
+            % matches of those points
+            M_Vai = LLG2.V(ind_nodes_aj,:);
+            
+            % ground truth of those points
+            [~, ind_in_GT] = ismember(ind_nodes_ai, GT.LLpairs(:,1));
+            GT_Vai = LLG2.V( GT.LLpairs(ind_in_GT, 1), :);
             
             % distance between projections and found matches            
-            diff = single(sqrt( (Vaj(:,1) - TVai(:,1)).^2 + ...
-                                (Vaj(:,2) - TVai(:,2)).^2) );
+%             diff = single(sqrt( (M_Vai(:,1) - T_Vai(:,1)).^2 + ...
+%                                 (M_Vai(:,2) - T_Vai(:,2)).^2) );
+%          
+            diff1 = single(sqrt( (M_Vai(:,1) - GT_Vai(:,1)).^2 + ...
+                                 (M_Vai(:,2) - GT_Vai(:,2)).^2) );    
+            diff2 = single(sqrt( (T_Vai(:,1) - GT_Vai(:,1)).^2 + ...
+                                 (T_Vai(:,2) - GT_Vai(:,2)).^2) );     
+            diff =  diff1 + diff2;
 
             diff_sum = sum(diff(:));
-       
-
+            
             aff_sim_HL((aj-1)*nA1 + ai) = diff_sum / n;
             
             ind = (ind_nodes_aj-1)*nV1 + ind_nodes_ai;  

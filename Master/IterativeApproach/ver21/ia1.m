@@ -871,7 +871,7 @@ else
                                                                                                   handles.LLGmatches(it-1));
 end
 
-if isfield(handles.LLGmatches(it), 'aftr_sim')
+if isfield(handles.LLGmatches(it), 'aftr_sim') 
     nV1 = size(handles.LLG1.V,1);
     nV2 = size(handles.LLG2.V,1);
     affmatrices = add_affine_transformation_similarity(nV1, nV2, subgraphsNodes, affmatrices, ...
@@ -969,7 +969,7 @@ it = handles.Iteration;
 gamma = 0.5;
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-[~, ~, ~, ~, T] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
+[LLG1, LLG2, HLG1, HLG2, T] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
                                     handles.LLGmatches(it), handles.HLGmatches(it), handles.GT, gamma);
 
 % use old graphs!                                
@@ -988,11 +988,12 @@ handles.Iteration = it;
 handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
 
 handles.LLGmatches(it).aftr_sim = aftr_sim_LL;
+% handles.LLGmatches(it).aftr_sim = [];
 
-% handles.LLG1 = LLG1;
-% handles.LLG2 = LLG2;
-% handles.HLG1 = HLG1;
-% handles.HLG2 = HLG2;
+handles.LLG1 = LLG1;
+handles.LLG2 = LLG2;
+handles.HLG1 = HLG1;
+handles.HLG2 = HLG2;
 
 axes(handles.axes3);
 plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);

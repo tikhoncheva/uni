@@ -41,20 +41,22 @@ function [U] = connect2levels(LLG, HLG, SPrect)
     % 02.06. if one node belongs to  more than one anchor, select the
     % closest anchor
     
-    diffx = repmat(LLG.V(:,1), 1, m) - repmat(HLG.V(:,1)', n, 1);
-    diffy = repmat(LLG.V(:,2), 1, m) - repmat(HLG.V(:,2)', n, 1);
-    dist = sqrt(diffx.^2 + diffy.^2);
-
-    U1 = U.*dist;
-    U1(U1==0) = NaN;
-    
-    [~, minpos] = min(U1,[], 2);
-    
-    U = false(n,m);
-    
-    ind = sub2ind([n,m], [1:n]', minpos);
-    
-    U(ind) = true;
+%     diffx = repmat(LLG.V(:,1), 1, m) - repmat(HLG.V(:,1)', n, 1);
+%     diffy = repmat(LLG.V(:,2), 1, m) - repmat(HLG.V(:,2)', n, 1);
+%     dist = sqrt(diffx.^2 + diffy.^2);
+% 
+%     U1 = U.*dist;
+%     U1(U1==0) = NaN;
+%     
+%     [~, minpos] = min(U1,[], 2);
+%     
+%     U = false(n,m);
+%     
+%     ind = sub2ind([n,m], [1:n]', minpos);
+%     
+%     U(ind) = true;
 
     U = logical(U);
+    
+    
 end

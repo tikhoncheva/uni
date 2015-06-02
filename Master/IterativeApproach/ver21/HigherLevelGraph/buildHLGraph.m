@@ -39,4 +39,6 @@ display(sprintf('\t Superpixel segmentation took %f sec', toc(t) ));
 % Build Graph of Super Pixels given superpixel segmentation
 [HLG, imgSP, SP_rect] = SPgraph_HL( img, edges, imgSP, HLG);
 
+    
+
 end
