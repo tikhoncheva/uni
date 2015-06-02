@@ -64,7 +64,7 @@ function [T, inliers] = ransacfitaffine(x1, x2, t)
     
     s = 3;  % Minimum No of points needed to fit a homography.
     
-    fittingfn = @affineFit_stacked;
+    fittingfn = @homography2d;
     distfn    = @homogdist2d;
     degenfn   = @isdegenerate;
     % x1 and x2 are 'stacked' to create a 6xN array for ransac
