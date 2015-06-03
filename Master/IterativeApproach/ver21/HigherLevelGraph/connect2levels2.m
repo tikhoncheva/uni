@@ -47,7 +47,7 @@ function [U] = connect2levels2(LLG, HLG, V2, varargin) %anchor_matched_pairs, no
             if (sum(T(j,:))>0)
                 aj = anchor_matched_pairs(j,1);
             
-                % T(j) is a [6x1] row-vector
+                % T(j) is a [1x6] row-vector
                 A = reshape(T(j, 1:4), 2, 2);
                 b = T(j, 5:6)';
                 % projection of points LLG.V

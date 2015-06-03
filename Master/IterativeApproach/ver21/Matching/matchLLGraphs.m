@@ -106,10 +106,15 @@ end
 
 matches_tmp = max(local_weights, [], 1);        % maximum in each column
 matches_tmp = reshape(matches_tmp, nV1,nV2);   
+
 % force 1-to-1 matching
-[maxval, maxpos] = max(matches_tmp, [], 2);
-pairs1 = find(maxval>0);
-pairs2 = maxpos(pairs1);
+% [maxval, maxpos] = max(matches_tmp, [], 2);
+% pairs1 = find(maxval>0);
+% pairs2 = maxpos(pairs1);
+
+% not 1-to-1 matching
+[pairs1, pairs2] = find(matches_tmp); 
+
 pairs = [pairs1, pairs2];
 
 objval = sum(local_objval);

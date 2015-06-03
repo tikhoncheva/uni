@@ -663,7 +663,8 @@ if  filename~=0
        handles.HLGmatches(it).matched_pairs = [];
 
        axes(handles.axes5);cla reset;
-       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs);
+       plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches.matched_pairs,...
+                                                            handles.HLGmatches.matched_pairs);
        
        axes(handles.axes6); cla reset;
        img3 = combine2images(handles.img1, handles.img2);
@@ -966,20 +967,30 @@ HLG2 = handles.HLG2;
 
 
 it = handles.Iteration;
-gamma = 0.5;
+
+% estimated affine transformation for each subgraph given matches 
+[T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
+                                                 handles.LLGmatches(it), ...
+                                                  handles.HLGmatches(it));
+% use old graphs!                                
+% [aftr_sim_HL, aftr_sim_LL] = affine_transformation_similarity(LLG1, LLG2, HLG1, HLG2, ...
+%                                                               handles.LLGmatches(it).matched_pairs, ...
+%                                                               handles.HLGmatches(it).matched_pairs, ...
+%                                                               T, handles.GT);    
+                                                          
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-[LLG1, LLG2, HLG1, HLG2, T] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
-                                    handles.LLGmatches(it), handles.HLGmatches(it), handles.GT, gamma);
+[LLG1, LLG2] = force1to1matching(LLG1, LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                             handles.HLGmatches(it).matched_pairs, T);
 
-% use old graphs!                                
-[aftr_sim_HL, aftr_sim_LL] = affine_transformation_similarity(handles.LLG1, handles.LLG2, handles.HLG1, handles.HLG2, ...
-                                                              handles.LLGmatches(it).matched_pairs, ...
-                                                              handles.HLGmatches(it).matched_pairs, ...
-                                                              T, handles.GT);                                
+% rebuild HL graph 
+% gamma = 0.3;
+% [LLG1, LLG2, HLG1, HLG2] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
+%                                            handles.LLGmatches(it),...
+%                                            handles.HLGmatches(it), handles.GT, T, inverseT, gamma);
 
-%update affmatrix
-[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2, aftr_sim_HL);
+% update affmatrix for the HLGM
+[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2); %, aftr_sim_HL);
 
 it = it + 1;
 handles.Iteration = it;
@@ -987,8 +998,7 @@ handles.Iteration = it;
 
 handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
 
-handles.LLGmatches(it).aftr_sim = aftr_sim_LL;
-% handles.LLGmatches(it).aftr_sim = [];
+% handles.LLGmatches(it).aftr_sim = aftr_sim_LL;
 
 handles.LLG1 = LLG1;
 handles.LLG2 = LLG2;
