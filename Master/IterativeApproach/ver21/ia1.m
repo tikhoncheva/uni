@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 26-May-2015 15:41:36
+% Last Modified by GUIDE v2.5 08-Jun-2015 15:44:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -855,6 +855,37 @@ axes(handles.axes5);
 set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles}) 
     
+
+% --- Executes on button press in pb_accuracy_LL.
+function pb_accuracy_HL_Callback(hObject, eventdata, handles)
+nIt = size(handles.LLGmatches,2);
+
+% GT = handles.GT.LLpairs;
+
+x = 1:1:nIt;
+% y_ac = zeros(1, nIt);
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+%     TP = ismember(handles.LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+%     TP = sum(TP(:));
+%     y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1);
+    y_obj(i) = handles.LLGmatches(i).objval;
+end
+
+% figure, plot(x, y_ac), hold on
+% plot(x,y_ac, 'b*'), hold off;
+% title('Accurasy of the GM on the Higher Level');
+% xlabel('Iteration');
+% ylabel('Accurasy');
+
+figure, plot(x, y_obj), hold on
+plot(x,y_ac, 'b*'), hold off;
+title('Matching score on the Higher Level');
+xlabel('Iteration');
+ylabel('Score');
+
+
+
 %-------------------------------------------------------------------------
 %       Panel4 : matching lower level graphs
 %-------------------------------------------------------------------------
@@ -930,12 +961,12 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 %plotting
 axes(handles.axes6); cla reset;
 if (it==1)
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs(:,1:2), ...
                                                                                 handles.GT.LLpairs); 
 %     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
 %                                                                                 handles.LLGmatches(it).matched_pairs);
 else
-    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
+    plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs(:,1:2), ...
                                                                                 handles.GT.LLpairs);     
 %     plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, [], handles.LLGmatches(it).matched_pairs, ...
 %                                                                                 handles.LLGmatches(it-1).matched_pairs);
@@ -972,6 +1003,7 @@ it = handles.Iteration;
 [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
                                                  handles.LLGmatches(it), ...
                                                   handles.HLGmatches(it));
+                                              
 % use old graphs!                                
 % [aftr_sim_HL, aftr_sim_LL] = affine_transformation_similarity(LLG1, LLG2, HLG1, HLG2, ...
 %                                                               handles.LLGmatches(it).matched_pairs, ...
@@ -980,10 +1012,14 @@ it = handles.Iteration;
                                                           
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-[LLG1, LLG2] = force1to1matching(LLG1, LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                             handles.HLGmatches(it).matched_pairs, T);
+[LLG1, LLG2, LL_matches] = force1to1matching(LLG1, LLG2, handles.LLGmatches(it).matched_pairs, ...
+                                             handles.HLGmatches(it).matched_pairs, T, handles.GT.LLpairs);
 
-% rebuild HL graph 
+    
+figure, 
+    plot_LLGmatches(handles.img1, LLG1, handles.img2, LLG2, [], LL_matches(:,1:2), ...
+                                                                handles.GT.LLpairs); 
+
 % gamma = 0.3;
 % [LLG1, LLG2, HLG1, HLG2] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
 %                                            handles.LLGmatches(it),...
@@ -1019,7 +1055,39 @@ plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatch
 set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
 
 set(handles.pbMatch_LLGraphs, 'Enable', 'off');
-set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
+set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
 
 guidata(hObject, handles);
 % end
+
+
+
+% --- Executes on button press in pb_accuracy_HL.
+function pb_accuracy_LL_Callback(hObject, ~, handles)
+nIt = size(handles.LLGmatches,2);
+
+GT = handles.GT.LLpairs;
+
+x = 1:1:nIt;
+y_ac = zeros(1, nIt);
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+    TP = ismember(handles.LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+    TP = sum(TP(:));
+    y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1);
+    y_obj(i) = handles.LLGmatches(i).objval;
+end
+
+figure, plot(x, y_ac), hold on
+plot(x,y_ac, 'b*'), hold off;
+title('Accurasy of the GM on the Lower Level');
+xlabel('Iteration');
+ylabel('Accurasy');
+
+figure, plot(x, y_obj), hold on
+plot(x,y_ac, 'b*'), hold off;
+title('Matching score on the Lower Level');
+xlabel('Iteration');
+ylabel('Score');
+
+

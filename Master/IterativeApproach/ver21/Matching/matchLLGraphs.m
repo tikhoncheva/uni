@@ -104,8 +104,9 @@ catch ME
 end
 
 
-matches_tmp = max(local_weights, [], 1);        % maximum in each column
-matches_tmp = reshape(matches_tmp, nV1,nV2);   
+[matches_tmp, matches_HLind] = max(local_weights, [], 1);        % maximum in each column 
+matches_tmp = matches_HLind.*logical(matches_tmp);
+matches_tmp = reshape(matches_tmp, nV1,nV2);  
 
 % force 1-to-1 matching
 % [maxval, maxpos] = max(matches_tmp, [], 2);
@@ -115,7 +116,9 @@ matches_tmp = reshape(matches_tmp, nV1,nV2);
 % not 1-to-1 matching
 [pairs1, pairs2] = find(matches_tmp); 
 
-pairs = [pairs1, pairs2];
+% pairs = [pairs1, pairs2, matches];
+ind = sub2ind(size(matches_tmp), pairs1, pairs2);
+pairs = [pairs1, pairs2, matches_tmp(ind)];
 
 objval = sum(local_objval);
 
