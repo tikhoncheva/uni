@@ -15,8 +15,10 @@ function [affmatrices] = add_affine_transformation_similarity (nV1, nV2, subgrap
 
         % reweight diagonal elements of laffmatrix
         laffmatrix = affmatrices{k};
-        laffmatrix(1:(size(laffmatrix,1)+1):end) = laffmatrix(1:(size(laffmatrix,1)+1):end) ...
-                                                 + aftr_sim(ind);
+        if ~isempty(laffmatrix)
+            laffmatrix(1:(size(laffmatrix,1)+1):end) = laffmatrix(1:(size(laffmatrix,1)+1):end) ...
+                                                     + aftr_sim(ind);
+        end
         affmatrices{k} = laffmatrix;                                    
     end    
         

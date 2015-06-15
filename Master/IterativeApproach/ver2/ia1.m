@@ -22,7 +22,7 @@ function varargout = ia1(varargin)
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 26-May-2015 15:41:36
+% Last Modified by GUIDE v2.5 15-Jun-2015 14:15:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -853,6 +853,37 @@ function axes5_ButtonDownFcn(hObject, ~, handles)
 axes(handles.axes5);
 set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles}) 
+
+
+% --- Executes on button press in pb_accuracy_plot_HL.
+function pb_accuracy_plot_HL_Callback(hObject, eventdata, handles)
+nIt = size(handles.LLGmatches,2);
+
+% GT = handles.GT.HLpairs;
+
+x = 1:1:nIt;
+% y_ac = zeros(1, nIt);
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+%     TP = ismember(handles.HLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+%     TP = sum(TP(:));
+%     y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1);
+    y_obj(i) = handles.HLGmatches(i).objval;
+end
+
+% figure, plot(x, y_ac), hold on
+% plot(x,y_ac, 'b*'), hold off;
+% title('Accurasy of the GM on the Higher Level');
+% xlabel('Iteration');
+% ylabel('Accurasy');
+
+figure, plot(x, y_obj), hold on
+plot(x,y_obj, 'b*'), hold off;
+title('Matching score on the Higher Level');
+xlabel('Iteration');
+ylabel('Score');
+
+
     
 %-------------------------------------------------------------------------
 %       Panel4 : matching lower level graphs
@@ -1012,3 +1043,31 @@ set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 
 guidata(hObject, handles);
 % end
+
+% --- Executes on button press in pb_accuracy_plot_LL.
+function pb_accuracy_plot_LL_Callback(hObject, eventdata, handles)
+nIt = size(handles.LLGmatches,2);
+
+GT = handles.GT.LLpairs;
+
+x = 1:1:nIt;
+% y_ac = zeros(1, nIt);
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+    TP = ismember(handles.LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+    TP = sum(TP(:));
+%     y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1);
+    y_obj(i) = handles.LLGmatches(i).objval;
+end
+
+% figure, plot(x, y_ac), hold on
+% plot(x,y_ac, 'b*'), hold off;
+% title('Accurasy of the GM on the Lower Level');
+% xlabel('Iteration');
+% ylabel('Accurasy');
+
+figure, plot(x, y_obj), hold on
+plot(x,y_obj, 'b*'), hold off;
+title('Matching score on the Lower Level');
+xlabel('Iteration');
+ylabel('Score');

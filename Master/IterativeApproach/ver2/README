@@ -18,6 +18,9 @@ Ver 2
     node similarity = euclidean dist in feature space
     edge similarity based on the length of the anchor and cosine similarity
  +  estimation of affine transformation
+ 
+ Nodes can migrate between anchors
+ Some anchors are can be unused
  ----------------------------------------------------------------------------
  
 
