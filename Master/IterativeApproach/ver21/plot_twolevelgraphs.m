@@ -30,14 +30,14 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
     n = size(LLG.V, 1);
     m = size(HLG.V, 1);
     
-    % edges between vertives on two levels
-    [i, j] = find(LLG.U);
-    matchesInd = [i,j]';
-
-    nans = NaN * ones(size(matchesInd,2),1) ;
-    xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
-    yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
-    line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
+%     % edges between vertives on two levels
+%     [i, j] = find(LLG.U);
+%     matchesInd = [i,j]';
+% 
+%     nans = NaN * ones(size(matchesInd,2),1) ;
+%     xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
+%     yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
+%     line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
       
     % vertices
     plot(LLG.V(:,1), LLG.V(:,2), 'b*');

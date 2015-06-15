@@ -8,7 +8,7 @@ radius = 6; %2;
 thr = 0.2; %0.05;
 
 % img = imcrop(img, [border border size(img, 1)-2*border size(img,2)-2*border]);
-load ../../Tools/edges-master/edgesModel.mat   % model
+load /export/home/etikhonc/Documents/Tools/edges-master/edgesModel.mat   % model
 
 % find edge points
 E = imresize(edgesDetect(imresize(img,2), model),0.5);

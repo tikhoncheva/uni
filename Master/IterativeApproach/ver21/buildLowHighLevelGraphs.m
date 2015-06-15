@@ -21,6 +21,11 @@ function [ HLGraph, LLGraph, SP_hl] = buildLowHighLevelGraphs( img, features, nS
     LLGraph = buildLLGraph(features.edges, features.descr);
     display(sprintf('   finished in %f sec', toc(t1)));
     
+%     [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
+%     if  filename~=0
+%         save([pathname filesep filename] , 'LLGraph');
+%     end
+    
     display(sprintf('\n - build higher level graph (anchor graph)'));
     t2 = tic;
     [HLGraph, SP_hl, SP_rect]   = buildHLGraph(img, features.edges, nSP_hl);  

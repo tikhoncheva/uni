@@ -141,6 +141,9 @@ function mToyProblem_Callback(hObject, ~, handles)
     set(handles.pbLoadAnchors_img1, 'Enable', 'off');
     set(handles.pbLoadAnchors_img2, 'Enable', 'off');
     
+    set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
+    set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
+    
     
     N = 6;
     handles.img1 = repmat(ones(N,N),1,1,3);
@@ -156,6 +159,12 @@ function mToyProblem_Callback(hObject, ~, handles)
     handles.features2.descr = [];
        
     [LLG1, LLG2, HLG1, HLG2, GT] = make2SyntheticGraphs();
+    
+%     [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
+%     if  filename~=0
+%         save([pathname filesep filename] , 'LLG1');
+%     end
+    
             
     handles.HLG1 = HLG1;
     handles.HLG2 = HLG2;
@@ -296,6 +305,9 @@ if filename~=0
     
     set(handles.pbMatch_HLGraphs, 'Enable', 'off');
     set(handles.pbMatch_LLGraphs, 'Enable', 'off');
+    
+    set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
+    set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
     
 end
 %end
@@ -860,16 +872,16 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles})
 function pb_accuracy_HL_Callback(hObject, eventdata, handles)
 nIt = size(handles.LLGmatches,2);
 
-% GT = handles.GT.LLpairs;
+% GT = handles.GT.HLpairs;
 
 x = 1:1:nIt;
 % y_ac = zeros(1, nIt);
 y_obj = zeros(1, nIt);
 for i=1:1:nIt
-%     TP = ismember(handles.LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+%     TP = ismember(handles.HLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
 %     TP = sum(TP(:));
-%     y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1);
-    y_obj(i) = handles.LLGmatches(i).objval;
+%     y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1);
+    y_obj(i) = handles.HLGmatches(i).objval;
 end
 
 % figure, plot(x, y_ac), hold on
@@ -879,7 +891,7 @@ end
 % ylabel('Accurasy');
 
 figure, plot(x, y_obj), hold on
-plot(x,y_ac, 'b*'), hold off;
+plot(x,y_obj, 'b*'), hold off;
 title('Matching score on the Higher Level');
 xlabel('Iteration');
 ylabel('Score');
@@ -955,7 +967,8 @@ handles.LLGmatches(it).affmatrices  = affmatrices;
 
 guidata(hObject, handles);
 
-set(handles.text_objval_LLG, 'string', objval);
+
+set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', objval));
 set(handles.pb_Reweight_HLGraph, 'Enable', 'on');
 
 %plotting
@@ -1025,6 +1038,7 @@ figure,
 %                                            handles.LLGmatches(it),...
 %                                            handles.HLGmatches(it), handles.GT, T, inverseT, gamma);
 
+
 % update affmatrix for the HLGM
 [~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2); %, aftr_sim_HL);
 
@@ -1085,7 +1099,7 @@ xlabel('Iteration');
 ylabel('Accurasy');
 
 figure, plot(x, y_obj), hold on
-plot(x,y_ac, 'b*'), hold off;
+plot(x,y_obj, 'b*'), hold off;
 title('Matching score on the Lower Level');
 xlabel('Iteration');
 ylabel('Score');

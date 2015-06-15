@@ -14,6 +14,8 @@
 
 function [img_new, features, GT] = transform_image(img, keypoints)
     
+    rng(1);
+    
     assert(size(keypoints,1)==4);
 
     setParameters_transformation_ri;

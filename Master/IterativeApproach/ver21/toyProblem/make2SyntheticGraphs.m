@@ -10,6 +10,7 @@
 
 function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
 
+    rng(1);
     setParameters_synthetic_graphs;
     
     assert(numel(aff_transfo_angle)==nIn2, sprintf('Define rotation angle for each of %d anchors of the first graph', nIn2));
