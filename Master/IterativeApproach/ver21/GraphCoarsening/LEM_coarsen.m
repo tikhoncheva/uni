@@ -3,7 +3,7 @@
 % G             fine graph of the image img
 % nA            number of nodes in the coarse graph
 
-function [cG] = LEM_coarsen(img, G, nA)
+function [cG, U] = LEM_coarsen(img, G, nA)
 
 rng(1);
 
@@ -42,15 +42,16 @@ while nV>nA && it<(nmin_it + 1)
     [cG, tau, matching] = LEM(nA, cG, tau, matching);
     nV = size(cG.V,1);
     it = it + 1;
+
 end
 
 U = anchor_nodes_connections(tau, matching);
 G.U = U;
 
+% figure;
+% plot_twolevelgraphs(img, G, cG);
+% title(sprintf('LEM Coarsed graph with %d nodes (initial %d nodes)', size(cG.V,1), size(G.V,1)) );
 
-figure;
-plot_twolevelgraphs(img, G, cG);
-title(sprintf('LEM Coarsed graph with %d nodes (initial %d nodes)', size(cG.V,1), size(G.V,1)) );
     
 end
 
@@ -68,7 +69,9 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     it_max = 100;
 
     while (nV>nA && it<=it_max)
+        
         u = randi(nV);  % random select a node
+
         wneighbors_u = G.eW(u,:).* not_matched;
         
         % if u is not matched and there is an unmatched neighbor(s)
@@ -97,24 +100,14 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     
     for i = 1:size(LEM,1)
        u = LEM(i,1);
-       v = LEM(i,2);
-       
-%        % contract edge to form new node w instead of u
-%        ind_v_1 = (G.E(:,1) == v);
-%        ind_v_2 = (G.E(:,2) == v);
-%        
-%        G.E(ind_v_1,1) = u;
-%        G.E(ind_v_2,2) = u;
-%        
-%        ind_uu = (G.E(:,1)==G.E(:,2));
-%        G.E(ind_uu,:) = NaN;
-       
+       v = LEM(i,2);    
        
        % Weight of the new node
        G.nW(u) = G.nW(u) + G.nW(v);
        
        % Coordinates of the new node
        G.V(u,:) = (G.V(u,:) + G.V(v,:))/2;
+%        G.V(v,:) = G.V(u,:);
        
        % Redefine weights of the edges between new node w and neighbors of
        % u and v

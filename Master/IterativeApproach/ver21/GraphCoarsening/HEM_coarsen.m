@@ -3,7 +3,7 @@
 % G             fine graph of the image img
 % nA            number of nodes in the coarse graph
 
-function [cG] = HEM_coarsen(img, G, nA)
+function [cG,U] = HEM_coarsen(img, G, nA)
 
 rng(1);
 
@@ -42,23 +42,22 @@ nmin_it = floor(log(nA/nV)/log(3/4));
 
 it = 1;
 while nV>nA && it<(nmin_it + 1)
-    [cG, tau, matching] = LEM(nA, cG, tau, matching);
+    [cG, tau, matching] = HEM(nA, cG, tau, matching);
     nV = size(cG.V,1);
     it = it + 1;
 end
 
 U = anchor_nodes_connections(tau, matching);
-G.U = U;
 
 
-figure;
-plot_twolevelgraphs(img, G, cG);
-title(sprintf('HEM Coarsed graph with %d nodes (initial %d nodes)', size(cG.V,1), size(G.V,1)) );
+% figure;
+% plot_twolevelgraphs(img, G, cG);
+% title(sprintf('HEM Coarsed graph with %d nodes (initial %d nodes)', size(cG.V,1), size(G.V,1)) );
     
 end
 
 %%
-function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
+function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
 
     nV = size(G.V,1);
 

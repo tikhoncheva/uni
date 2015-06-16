@@ -38,7 +38,7 @@ function plot_twolevelgraphs(img, fG, cG)
     % nodes
     plot(cG.V(:,1), cG.V(:,2), 'yo','MarkerSize', 8, 'MarkerFaceColor','y');
     
-    % edges between vertives on two levels
+    % edges between vertises on two levels
     [i, j] = find(fG.U);
     matchesInd = [i,j]';
 
