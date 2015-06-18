@@ -74,7 +74,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         
         last = size(G2.V,1);   
         n_new_nodes = len + nOut_per_cluster(i);
-   
+        
         G2.V = [G2.V; V; randn(nOut_per_cluster(i), 2)];
         G1.U(ind, i) = true;                                                   % ToDo
         corr_G1G2 = [corr_G1G2; [ind,  (last+1 : last + len)' ] ];
