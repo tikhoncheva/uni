@@ -30,21 +30,25 @@ display(sprintf('    Conflict matrix: %f sec', toc));
 % Affinity matrix (non-diagonal elements: edge similarity)
 
 G1 = squareform(pdist(v1', 'euclidean'));
-% G1(~AdjM1) = 0;
-sigma1 = sum(G1(:))/nV1/nV1;
-G1 = G1./sigma1;
+% G1(~AdjM1) = NaN;
+
+% sigma1 = sum(G1(:))/nV1/nV1;
+% sigma1 = median(G1(:)); 
+% G1 = G1./sigma1;
 
 G2 = squareform(pdist(v2', 'euclidean'));
-% G2(~AdjM2) = 0;
-sigma2 = sum(G2(:))/nV2/nV2;
-G2 = G2./sigma2;
+% G2(~AdjM2) = NaN;
+
+% sigma2 = sum(G2(:))/nV2/nV2;
+% sigma2 = median(G2(:));
+% G2 = G2./sigma2;
 
 
 sigma = 0.15; % 100
 D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
 D = exp(-D./sigma);                  % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 D(isnan(D)) = 0;
-D = D+D'; 
+% D = D+D'; 
 
 
 % Affinity matrix (non-diagonal elements: cosine node similarity)

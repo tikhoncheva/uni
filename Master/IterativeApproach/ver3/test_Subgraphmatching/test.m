@@ -38,10 +38,11 @@ rect1 = [x0, y0, wx, wy];
 mask1 = zeros(m,n);
 mask1(y0:y0+wy, x0:x0+wx) = 1;
 
-
-x0 = 40; y0 =100; wx = 100; wy = 50;
-% x0 = 80; y0 =80; wx = 100; wy = 50;
+% x0 = 40; y0 =80; wx = 100; wy = 50;
 % x0 = 40; y0 =80; wx = 150; wy = 50;
+% x0 = 80; y0 =80; wx = 100; wy = 50;
+% x0 = 40; y0 =100; wx = 100; wy = 50;
+x0 = 80; y0 =100; wx = 100; wy = 50;
 rect2 = [x0, y0, wx, wy];
 
 mask2 = zeros(m,n);
@@ -113,14 +114,6 @@ GT_cut = GT(ind_V1,:);
 
 GT_cut(GT_cut(:,1)==0,:) = [];
 GT_cut(GT_cut(:,2)==0,:) = [];
-
-
-% %%
-% subG2 = subG1;
-% GT_cut = [ [1:size(subG1.V,1)]', [1:size(subG2.V,1)]'];
-% 
-% subG2.V = [subG2.V; subG2.V(1:15,:) - 5 + randi(5,15,2) ];
-% subG2.D = [subG2.D, subG2.D(:,1:15) + 20*uint8(randi(50, 128,15))];
 
 
 %% Match two subgraphs

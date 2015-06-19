@@ -52,7 +52,7 @@ if (~isempty(pairs))
     nans = NaN * ones(size(matches,2),1) ;
     x = [ G1.V(matches(1,:),1) , G2.V(matches(2,:),1) , nans ] ;
     y = [ G1.V(matches(1,:),2) , G2.V(matches(2,:),2) , nans ] ; 
-    line(x', y', 'Color','b') ;
+    line(x', y', 'Color','b','LineWidth', 2) ;
 end
 
 %                      ------------------------------------
@@ -67,7 +67,7 @@ if (~isempty(GT))
     nans = NaN * ones(size(matches_wrong,2),1) ;
     x = [ G1.V(matches_wrong (1,:),1) , G2.V(matches_wrong (2,:),1) , nans ] ;
     y = [ G1.V(matches_wrong (1,:),2) , G2.V(matches_wrong (2,:),2) , nans ] ; 
-    line(x', y', 'Color','r') ;
+    line(x', y', 'Color','r','LineWidth', 2) ;
 end
 
 

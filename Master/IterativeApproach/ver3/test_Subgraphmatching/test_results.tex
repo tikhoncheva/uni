@@ -40,9 +40,10 @@ We want to test the behaviour of the $RRWM$ in case of matching two graphs with 
 The results of tests are represented below.
 In the first case, graphs $G_1$ and $G_2$ are almost similar (except for one additional node and missing edge in $G_2$). In the second and third tests, one graph is a sub-graph of the other. In the fourth case both graphs have a common sub-graph.
 
+We can see, that RRWM had achieved good results in all case. Notable, that the algorithm was able to detect common structure of the graphs in all tests.
 \newpage
 % ----------------------------------------------------------------------------------
-\subsection*{ Case $1$: $V(G_1)\cap V(G2) = V(G_1)$, $n1=17$, $n2=18$}
+\subsection*{ Case $1$: $V(G_1)\cap V(G2) = V(G_1)$, $n_1=17$, $n_2=18$}
 % ----------------------------------------------------------------------------------
 
 \begin{figure} [htb] \centering
@@ -61,7 +62,7 @@ In the first case, graphs $G_1$ and $G_2$ are almost similar (except for one add
 
 \newpage
 % ----------------------------------------------------------------------------------
-\subsection*{ Case $2$: $V(G_1)\cap V(G2) = V(G_1)$, $n1=17$, $n2=21$}
+\subsection*{ Case $2$: $V(G_1)\cap V(G2) = V(G_1)$, $n_1=17$, $n_2=21$}
 % ----------------------------------------------------------------------------------
 \begin{figure} [htb] \centering
 	\includegraphics[scale = 0.35]{test2/subregions.png}
@@ -79,7 +80,7 @@ In the first case, graphs $G_1$ and $G_2$ are almost similar (except for one add
 
 \newpage
 % ----------------------------------------------------------------------------------
-\subsection*{ Case $3$: $V(G_1)\cap V(G2) = V(G_2)\setminus\{v\}$, $n1=23$, $n2=18$}
+\subsection*{ Case $3$: $V(G_1)\cap V(G2) = V(G_2)\setminus\{v\}$, $n_1=23$, $n_2=18$}
 % ----------------------------------------------------------------------------------
 \begin{figure} [htb] \centering
 	\includegraphics[scale = 0.35]{test3/subregions.png}
@@ -127,6 +128,18 @@ In the first case, graphs $G_1$ and $G_2$ are almost similar (except for one add
 
 \FloatBarrier
 
+\begin{figure} [htb] \centering
+	\includegraphics[scale = 0.35]{test6/subregions.png}
+\end{figure}
+\begin{figure} [hb] \centering
+	\includegraphics[scale = 0.4]{test6/subgraphs.png}
+	\caption{Graphs $G_1$ and $G_2$}
+\end{figure}
+\begin{figure} [htb] \centering
+	\includegraphics[scale = 0.4]{test6/matching_result.png}
+	\caption{ Matching result}
+\end{figure}
 
+\FloatBarrier
 
 \end{document}
