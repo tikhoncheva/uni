@@ -1,4 +1,4 @@
-function varargout = ia1(varargin)
+    function varargout = ia1(varargin)
 % IA1 MATLAB code for ia1.fig
 %      IA1, by itself, creates a new IA1 or raises the existing
 %      singleton*.

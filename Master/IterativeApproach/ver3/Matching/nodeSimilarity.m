@@ -43,6 +43,7 @@ function [sim] = nodeSimilarity(x1, x2, method)
             sim = reshape(dist, 1, numel(dist));  
         
         case 'cosine'   % Cosine similarity function
+            x1 = double(x1); x2 = double(x2);
             
             sim = zeros(n1, n2);
             norm2 = sqrt(sum(x2.^2, 1) );
