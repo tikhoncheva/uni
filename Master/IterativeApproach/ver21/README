@@ -14,6 +14,12 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 21
 -----------------------------------------------------------------------------
+changes 19.06.2015
+
+!!! deleted normalizetion of the distance matrices by the calculation of affinity matrix
+ +  G1(~adjM) = NaN instead of G1(~adjM) = 0 (?)
+<->  cosine similarity of nodes in affinity matrix instead of euclidean distance
+
 <-> Anchor points are not moving
 <-> subgraphs do not have intersections
 <-> always reinitialize subgraphs affinity matrices    
