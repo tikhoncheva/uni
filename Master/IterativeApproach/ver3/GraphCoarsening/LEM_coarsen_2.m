@@ -3,6 +3,8 @@
 % G             fine graph of the image img
 % nA            number of nodes in the coarse graph
 
+% select first node randomly and then always select farthest node from the current one
+
 function [cG, U] = LEM_coarsen_2(G, nA)
 
 rng(1);
@@ -59,7 +61,7 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     % Vector, that shows which nodes were already matched
     not_matched = ones(1, nV);
 
-    % Light Edge Matching
+    % Step1: Light Edge Matching
     LEM = [];
     it = 0;
     it_max = 100;
@@ -68,9 +70,7 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     W = squareform(pdist(G.V, 'euclidean'));
 
     while (nV>nA && it<=it_max)
-        
         [~,u] = max(W(u,:).* not_matched); % u = randi(nV);  % random select a node
-
         wneighbors_u = G.eW(u,:).* not_matched;
         
         % if u is not matched and there is an unmatched neighbor(s)
@@ -94,7 +94,7 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     
     G.eW(isnan(G.eW)) = 0;
     
-    % Coarsen: contract edges, adjusting new weights to edges and nodes
+    % Ste2: Coarsen: contract edges, adjusting new weights to edges and nodes
     lines_to_del = [];
     
     for i = 1:size(LEM,1)

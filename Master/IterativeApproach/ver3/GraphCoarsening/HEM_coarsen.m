@@ -3,6 +3,8 @@
 % G             fine graph of the image img
 % nA            number of nodes in the coarse graph
 
+% select a node always randomly
+
 function [cG,U] = HEM_coarsen(G, nA)
 
 rng(1);
@@ -47,7 +49,6 @@ while nV>nA && it<(nmin_it + 1)
     it = it + 1;
 end
 
-
 U = anchor_nodes_connections(tau, matching);
 
 cG = rmfield(cG,'eW');
@@ -63,8 +64,8 @@ function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
     % Vector, that shows which nodes were already matched
     not_matched = ones(1, nV);
 
-    % Light Edge Matching
-    LEM = [];
+    % Step1: Heavy Edge Matching
+    HEM = [];
     it = 0;
     it_max = 100;
 
@@ -81,7 +82,7 @@ function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
             not_matched(u) = 0;
             not_matched(v) = 0;
             
-            LEM = [LEM; [u,v]];
+            HEM = [HEM; [u,v]];
 
             nV = nV - 1;       
             it = 0;
@@ -93,12 +94,12 @@ function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
     
     G.eW(isnan(G.eW)) = 0;
     
-    % Coarsen: contract edges, adjusting new weights to edges and nodes
+    % Step2: Coarsen: contract edges, adjusting new weights to edges and nodes
     lines_to_del = [];
     
     for i = 1:size(LEM,1)
-       u = LEM(i,1);
-       v = LEM(i,2);   
+       u = HEM(i,1);
+       v = HEM(i,2);   
        
        % Weight of the new node
        G.nW(u) = G.nW(u) + G.nW(v);

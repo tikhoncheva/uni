@@ -3,9 +3,9 @@
 % G             fine graph of the image img
 % nA            number of nodes in the coarse graph
 
-% select a node always randomly
+% select first node randomly and then always select farthest node from the current ones
 
-function [cG, U] = LEM_coarsen(G, nA)
+function [cG, U] = HEM_coarsen_2(G, nA)
 
 rng(1);
 
@@ -22,6 +22,9 @@ adjM(ind) = 1;
 eW = squareform(pdist(G.V, 'euclidean'));
 sigma = sum(eW(:))/nV/nV;
 eW = eW./sigma;
+
+sigma = 0.15;
+eW = exp(-eW./sigma);    
 
 eW(~adjM) = NaN;
 
@@ -41,45 +44,48 @@ nmin_it = floor(log(nA/nV)/log(3/4));
 
 it = 1;
 while nV>nA && it<(nmin_it + 1)
-    [cG, tau, matching] = LEM(nA, cG, tau, matching);
+    [cG, tau, matching] = HEM(nA, cG, tau, matching);
     nV = size(cG.V,1);
-    it = it + 1;
+    it = it + 1;    
 end
 
 U = anchor_nodes_connections(tau, matching);
- 
+
 cG = rmfield(cG,'eW');
 cG = rmfield(cG,'nW');
-
+   
 end
 
 %%
-function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
+function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
 
     nV = size(G.V,1);
 
     % Vector, that shows which nodes were already matched
     not_matched = ones(1, nV);
 
-    % Step1: Light Edge Matching
-    LEM = [];
+    % Step1: Heavy Edge Matching
+    HEM = [];
     it = 0;
     it_max = 100;
+    
+    u = randi(nV);  % random select a node
+    W = squareform(pdist(G.V, 'euclidean'));
 
-    while (nV>nA && it<=it_max)       
-        u = randi(nV);  % random select a node
+    while (nV>nA && it<=it_max)
+        [~,u] = max(W(u,:).* not_matched); % u = randi(nV);  % random select a node
         wneighbors_u = G.eW(u,:).* not_matched;
         
         % if u is not matched and there is an unmatched neighbor(s)
         if not_matched(u) && sum(wneighbors_u(~isnan(wneighbors_u)))>0
             
             wneighbors_u(wneighbors_u==0) = NaN;
-            [~, v] = min(wneighbors_u(:));
+            [~, v] = max(wneighbors_u(:));
 
             not_matched(u) = 0;
             not_matched(v) = 0;
             
-            LEM = [LEM; [u,v]];
+            HEM = [HEM; [u,v]];
 
             nV = nV - 1;       
             it = 0;
@@ -91,12 +97,12 @@ function [G, init_indexing, matching] = LEM(nA, G, init_indexing, matching)
     
     G.eW(isnan(G.eW)) = 0;
     
-    % Step2: Coarsen: contract edges, adjusting new weights to edges and nodes
+    % Coarsen: contract edges, adjusting new weights to edges and nodes
     lines_to_del = [];
     
-    for i = 1:size(LEM,1)
-       u = LEM(i,1);
-       v = LEM(i,2);    
+    for i = 1:size(HEM,1)
+       u = HEM(i,1);
+       v = HEM(i,2);    
        
        % Weight of the new node
        G.nW(u) = G.nW(u) + G.nW(v);
