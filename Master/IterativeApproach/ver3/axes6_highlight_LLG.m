@@ -17,11 +17,11 @@ it = handles.Iteration;
 
 matched_pairs = handles.LLGmatches(it).matched_pairs;
 
-if (it > 1)
-    matched_pairs_old = handles.LLGmatches(it-1).matched_pairs;
-else
-    matched_pairs_old = handles.LLGmatches(it).matched_pairs;
-end
+% if (it > 1)
+%     matched_pairs_old = handles.LLGmatches(it-1).matched_pairs;
+% else
+%     matched_pairs_old = handles.LLGmatches(it).matched_pairs;
+% end
 
 matched_pairs_old = handles.GT.LLpairs;
                  
@@ -61,8 +61,8 @@ else
 end
 
 % corresponding match between anchor graphs:
-ai = find( handles.LLG1.U(selected_match(:,1),:) );
-aj = find( handles.LLG2.U(selected_match(:,2),:) );
+ai = find( handles.HLG1.U(selected_match(:,1),:) );
+aj = find( handles.HLG2.U(selected_match(:,2),:) );
 
 [grid1,grid2] = meshgrid(ai, aj);
 c = [grid1', grid2'];
@@ -87,7 +87,7 @@ cla reset
 % show matched nodes with corresponding subgraphs
 axes(handles.axes6);
 cla reset
-plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matched_anchors, matched_pairs,...
+plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matched_pairs,...
                                                                         matched_pairs_old, selected_match);
 
 axes(handles.axes6);

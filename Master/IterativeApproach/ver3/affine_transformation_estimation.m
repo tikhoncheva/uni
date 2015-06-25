@@ -25,7 +25,7 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
         ai = HLGmatches.matched_pairs(k,1); % \in HLG1.V
         aj = HLGmatches.matched_pairs(k,2); % \in HLG2.V
        
-        ind_Vi = find(LLG1.U(:,ai));
+        ind_Vi = find(HLG1.U(:,ai));
         
         [~, ind_matched_pairs] = ismember(ind_Vi, LLGmatches.matched_pairs(:,1));
         ind_matched_pairs = ind_matched_pairs(ind_matched_pairs>0);

@@ -35,8 +35,8 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
     G1.D = [];                  % set of node descriptors of the first graph
     G2.D = [];                  % set of node descriptors of the second graph
     
-    G1.U = false(n1, na1);
-    G2.U = false(n2, na2);
+    AG1.U = false(n1, na1);
+    AG2.U = false(n2, na2);
 
     AG1.V = [];
     AG2.V = [];
@@ -76,7 +76,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         n_new_nodes = len + nOut_per_cluster(i);
         
         G2.V = [G2.V; V; randn(nOut_per_cluster(i), 2)];
-        G1.U(ind, i) = true;                                                   % ToDo
+        AG1.U(ind, i) = true;                                                   % ToDo
         corr_G1G2 = [corr_G1G2; [ind,  (last+1 : last + len)' ] ];
         
               
@@ -118,7 +118,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         seq2 = 1:na2;
     end
     
-    G2.U = connect2levels2(G2, AG2, G1.V);
+    AG2.U = connect2levels2(G2, AG2, G1.V);
     
     % graphs on the lower level have kNN-connectivity                                       
     

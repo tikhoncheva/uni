@@ -25,7 +25,7 @@ function [ HLGraph, LLGraph, imgSP] = buildLowHighLevelGraphs( img, features, nS
     display(sprintf('\n - build higher level graph (anchor graph)'));
     t2 = tic;
     [HLGraph, U] = HEM_coarsen_2(LLGraph, nSP_hl);
-    LLGraph.U  = U;
+    HLGraph.U  = U;
     
     % extract SIFT descriptors in nodes of HLGraph
     binSize = 8;        % see VL_DSIFT documentation and conditions when result of vl_dsift

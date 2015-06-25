@@ -2,7 +2,7 @@
  %
  %
  
-function [indOfSubgraphsNodes, corrmatrix, affmatrix] = initialization_LLGM(LLG1, LLG2, HLG_matched_pairs, varargin)
+function [indOfSubgraphsNodes, corrmatrix, affmatrix] = initialization_LLGM(LLG1, LLG2, U1, U2, HLG_matched_pairs, varargin)
 
 display(sprintf('\n================================================'));
 display(sprintf('Initialization for Lower Level Graph Matching (LLGM)'));
@@ -83,7 +83,7 @@ try
         k = newpairs_ind(i);
         % indices of nodes, that belong to the anchor ai
         ai = HLG_matched_pairs(k,1);
-        ai_x = LLG1.U(:,ai);
+        ai_x = U1(:,ai);
         V1{k} = LLG1.V(ai_x,:)';
         if (~isempty(LLG1.D))
             D1{k} = LLG1.D(:, ai_x);
@@ -94,7 +94,7 @@ try
 
         % indices of nodes, that belong to the anchor aj
         aj = HLG_matched_pairs(k,2);
-        aj_x = LLG2.U(:, aj);
+        aj_x = U2(:, aj);
         V2{k} = LLG2.V(aj_x,:)';
         if (~isempty(LLG2.D))
             D2{k} = LLG2.D(:, aj_x);

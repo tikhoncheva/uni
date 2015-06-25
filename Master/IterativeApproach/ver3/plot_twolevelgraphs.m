@@ -21,17 +21,14 @@
 function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
 
     if (ndims(img)>1)
-        imagesc(img) ;
+        imagesc(img);
     end
     
     hold on ;
     axis off;
     
-    n = size(LLG.V, 1);
-    m = size(HLG.V, 1);
-    
     % edges between vertives on two levels
-    [i, j] = find(LLG.U);
+    [i, j] = find(HLG.U);
     matchesInd = [i,j]';
 
     nans = NaN * ones(size(matchesInd,2),1) ;
@@ -52,10 +49,6 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
         points(3:3:end,:) = NaN;
 
         line(points(:,1), points(:,2), 'Color', 'g');
-% %         for i=1:size(LLG.E, 1)
-% %             line([LLG.V(LLG.E(i,1),1) LLG.V(LLG.E(i,2),1) ],...
-% %                  [LLG.V(LLG.E(i,1),2) LLG.V(LLG.E(i,2),2) ], 'Color', 'g');  
-% %         end
     end
     
     % anchors
@@ -75,6 +68,4 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
     
     hold off; 
 
- 
- 
 end
