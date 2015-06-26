@@ -27,18 +27,8 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
     hold on ;
     axis off;
     
-    % edges between vertives on two levels
-    [i, j] = find(HLG.U);
-    matchesInd = [i,j]';
-
-    nans = NaN * ones(size(matchesInd,2),1) ;
-    xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
-    yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
-    line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
-      
-    % vertices
-    plot(LLG.V(:,1), LLG.V(:,2), 'b*');
-    
+%                      ------------------------------------
+%                             initial graph       
     % edges between vertices
     if show_LLG
         edges = LLG.E';
@@ -50,10 +40,11 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
 
         line(points(:,1), points(:,2), 'Color', 'g');
     end
+    % vertices
+    plot(LLG.V(:,1), LLG.V(:,2), 'b*');
     
-    % anchors
-    plot(HLG.V(:,1), HLG.V(:,2), 'yo','MarkerSize', 9, 'MarkerFaceColor','y');
-    
+%                      ------------------------------------
+%                             anchor graph
     % edges between anchors
     if show_HLG
         matchesInd = HLG.E';
@@ -64,7 +55,19 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
 
         line(xInit', yInit', 'Color','y', 'LineStyle', '-', 'LineWidth', 3) ;
     end
-    
+    % anchors
+    plot(HLG.V(:,1), HLG.V(:,2), 'bo','MarkerSize', 9, 'MarkerFaceColor','y');
+
+%                      ------------------------------------
+%                             edges connecting two levels  
+    [i, j] = find(HLG.U);
+    matchesInd = [i,j]';
+
+    nans = NaN * ones(size(matchesInd,2),1) ;
+    xInit = [ LLG.V(matchesInd(1,:),1) , HLG.V(matchesInd(2,:),1) , nans ] ;
+    yInit = [ LLG.V(matchesInd(1,:),2) , HLG.V(matchesInd(2,:),2) , nans ] ;
+    line(xInit', yInit', 'Color','m', 'LineStyle', '--', 'LineWidth', 0.5) ;
+
     
     hold off; 
 

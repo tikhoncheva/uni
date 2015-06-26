@@ -1,10 +1,10 @@
 %% Parameters of the graphs
 
-nIn  = 40;                         % number of nodes in the first graph G1 = number of inliers in
+nIn  = 20;                         % number of nodes in the first graph G1 = number of inliers in
                                    % the second graph G2
 nOut = 10;                         % number of outliers in the second graph G2
 
-nIn2  = 17;                         % number of nodes in the first anchor graph AG1 = number of 
+nIn2  = 8;                         % number of nodes in the first anchor graph AG1 = number of 
                                    % inliers in the second anchor graph AG2
 nOut2 = 4;                         % number of outliers in the second anchor graph AG2
 

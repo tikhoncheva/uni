@@ -73,12 +73,6 @@ guidata(hObject, handles);
 global HLGm_score;
 global LLGM_score;
 
-% Piotr Dollar toolbox
-addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
-
-% Edge extraction
-addpath(genpath('../../Tools/edges-master/'));
-
 
 % VL_Library
 addpath(genpath('../../Tools/vlfeat-0.9.20/toolbox/'));
@@ -98,7 +92,8 @@ addpath(genpath('./toyProblem_realimg'));
 addpath(genpath('./toyProblem'));
 addpath(genpath('./HigherLevelGraph'));
 addpath(genpath('./LowerLevelGraph'));
-addpath(genpath('./Matching'));
+addpath(genpath('./Matching_HL'));
+addpath(genpath('./Matching_LL'));
 addpath(genpath('./ransac'));
 addpath(genpath('./GraphCoarsening'));
 
@@ -197,10 +192,10 @@ function mToyProblem_Callback(hObject, ~, handles)
     
     % plot graphs
     axes(handles.axes1);
-    plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
+    plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, false);
     
     axes(handles.axes2);
-    plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
+    plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, false);
     
     axes(handles.axes3);
     plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
@@ -332,7 +327,7 @@ function varargout = ia1_OutputFcn(hObject, ~ , handles)
 varargout{1} = handles.output;
 
 %
-% Selcet first image
+% Select first image
 function pbSelect_img1_Callback(hObject, ~, handles)
 [filename, pathname] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
 
@@ -800,7 +795,8 @@ function pbMatch_HLGraphs_Callback(hObject, ~, handles)
 
 it = handles.Iteration;                         % iterations
 
-[corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
+[corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2, ...
+                                              handles.LLG1, handles.LLG2);
 
 % corrmatrix = handles.HLGmatches.corrmatrix;     % corrmatrix
 % affmatrix = handles.HLGmatches(it).affmatrix;       % affmatrix
@@ -888,7 +884,7 @@ if ~isempty(handles.GT.HLpairs)
     for i=1:1:nIt
         TP = ismember(handles.HLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
         TP = sum(TP(:));
-        y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1);
+        y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1)*100;
     end
     
     subplot(1,2,2); xlabel('Iteration'); ylabel('Accurasy');
@@ -1095,7 +1091,7 @@ if ~isempty(handles.GT.LLpairs)
     for i=1:1:nIt
         TP = ismember(handles.LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
         TP = sum(TP(:));
-        y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1);
+        y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1) * 100;
     end
     
     subplot(1,2,2);

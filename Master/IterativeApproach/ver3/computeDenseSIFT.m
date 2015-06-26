@@ -8,6 +8,12 @@ radius = 6; %2;
 thr = 0.2; %0.05;
 
 % img = imcrop(img, [border border size(img, 1)-2*border size(img,2)-2*border]);
+
+% Piotr Dollar toolbox
+addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
+% Edge extraction
+addpath(genpath('../../Tools/edges-master/'));
+
 load /export/home/etikhonc/Documents/Tools/edges-master/edgesModel.mat   % model
 
 % find edge points
@@ -43,4 +49,6 @@ lia = ismember(F([2,1],:)', subs, 'rows');
 F = F(:,lia);
 D = D(:,lia);
 
+rmpath(genpath('../../Tools/piotr_toolbox_V3.26/'))
+rmpath(genpath('../../Tools/edges-master/'))
 end    

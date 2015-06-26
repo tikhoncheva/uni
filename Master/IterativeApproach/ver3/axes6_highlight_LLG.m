@@ -52,11 +52,11 @@ end
 
 if (img==1)
     ind = (matched_pairs(:,1) == nn);
-    selected_match = matched_pairs(ind,:);
+    selected_match = matched_pairs(ind,1:2);
 %     bestmatch(nn, :) = matches_pairs(nn, :);
 else
     ind = (matched_pairs(:,2) == nn);
-    selected_match = matched_pairs(ind,:);
+    selected_match = matched_pairs(ind,1:2);
 %     bestmatch(:, nn) = matches_pairs(:,nn);          
 end
 

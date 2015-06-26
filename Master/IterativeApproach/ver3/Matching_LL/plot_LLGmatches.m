@@ -67,8 +67,7 @@ if (nargin == 7)
         line(x', y', 'Color','b','LineWidth', 2) ;
         
         if (~isempty(matches_old) )
-            [~,right_matches] = ismember(matches_hl(:,1), matches_old(:,2));
-            right_matches = right_matches(right_matches>0);
+            [~,right_matches] = ismember(matches_hl(:,1), matches_old(:,1));
             x = [ G1.V(matches_hl(:,1),1) , G2.V(matches_old(right_matches,2),1) , nans ] ;
             y = [ G1.V(matches_hl(:,1),2) , G2.V(matches_old(right_matches,2),2) , nans ] ; 
             line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--') ;        

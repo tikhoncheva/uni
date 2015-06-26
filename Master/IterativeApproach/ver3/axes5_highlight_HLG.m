@@ -5,13 +5,9 @@
 function axes5_highlight_HLG(hObject, ~, handles)
 
 img1 = handles.img1;
-img2 = handles.img2;
 
 v1 = handles.HLG1.V';   % 2 x nV1
 v2 = handles.HLG2.V';   % 2 x nV2
-
-d1 = handles.HLG1.D;
-d2 = handles.HLG2.D;
 
 nV1 = size(v1,2);
 nV2 = size(v2,2);
@@ -93,13 +89,13 @@ else
 end
 
 
-% simval = nodeSimilarity(d1, d2, 'euclidean');
-% 
-% if (img == 1)
-%     display( simval(1, (nn_match-1)*nV1 + nn) );
-% else
-%     display( simval(1, (nn-1)*nV1 + nn_match) );
-% end
+if (img == 1)
+    ind = nn + (nn_match-1)*nV1;
+    display(handles.HLGmatches(it).affmatrix(ind, ind));
+else
+    ind = nn_match + (nn-1)*nV1;
+    display(handles.HLGmatches(it).affmatrix(ind, ind));
+end
 
 
 % show patches

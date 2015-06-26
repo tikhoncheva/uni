@@ -30,12 +30,12 @@ display(sprintf('    Conflict matrix: %f sec', toc));
 % Affinity matrix (non-diagonal elements: edge similarity)
 
 G1 = squareform(pdist(v1', 'euclidean'));
-% G1(~AdjM1) = NaN;
+G1(~AdjM1) = NaN;
 % sigma1 = sum(G1(:))/nV1/nV1;
 % G1 = G1./sigma1;
 
 G2 = squareform(pdist(v2', 'euclidean'));
-% G2(~AdjM2) = NaN;
+G2(~AdjM2) = NaN;
 % sigma2 = sum(G2(:))/nV2/nV2;
 % G2 = G2./sigma2;
 

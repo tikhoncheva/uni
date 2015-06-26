@@ -27,16 +27,16 @@ function [ HLGraph, LLGraph, imgSP] = buildLowHighLevelGraphs( img, features, nS
     [HLGraph, U] = HEM_coarsen_2(LLGraph, nSP_hl);
     HLGraph.U  = U;
     
-    % extract SIFT descriptors in nodes of HLGraph
-    binSize = 8;        % see VL_DSIFT documentation and conditions when result of vl_dsift
-    magnif = 3;         % is the same as one of vl_sift
-
-    f = HLGraph.V';
-    f(3,:) = binSize/magnif;
-    f(4,:) = 0;
-    
-    [~, D] = vl_sift(single(rgb2gray(img)), 'frames', f) ;
-    HLGraph.D = D;  % 128x nV
+%     % extract SIFT descriptors in nodes of HLGraph
+%     binSize = 8;        % see VL_DSIFT documentation and conditions when result of vl_dsift
+%     magnif = 3;         % is the same as one of vl_sift
+% 
+%     f = HLGraph.V';
+%     f(3,:) = binSize/magnif;
+%     f(4,:) = 0;
+%     
+%     [~, D] = vl_sift(single(rgb2gray(img)), 'frames', f) ;
+%     HLGraph.D = D;  % 128x nV
     
     display(sprintf('   finished in %f sec', toc(t2)));
     
