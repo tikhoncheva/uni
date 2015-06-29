@@ -22,7 +22,7 @@
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 08-Jun-2015 15:44:40
+% Last Modified by GUIDE v2.5 29-Jun-2015 11:23:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -914,14 +914,14 @@ else
                                                                       handles.LLGmatches(it-1));
 end
 
-if isfield(handles.LLGmatches(it), 'aftr_sim') 
-    nV1 = size(handles.LLG1.V,1);
-    nV2 = size(handles.LLG2.V,1);
-    affmatrices = add_affine_transformation_similarity(nV1, nV2, subgraphsNodes, affmatrices, ...
-                                                       handles.HLGmatches(it).matched_pairs, ...
-                                                       handles.HLGmatches(it-1).matched_pairs, ...
-                                                       handles.LLGmatches(it).aftr_sim); 
-end
+% if isfield(handles.LLGmatches(it), 'aftr_sim') 
+%     nV1 = size(handles.LLG1.V,1);
+%     nV2 = size(handles.LLG2.V,1);
+%     affmatrices = add_affine_transformation_similarity(nV1, nV2, subgraphsNodes, affmatrices, ...
+%                                                        handles.HLGmatches(it).matched_pairs, ...
+%                                                        handles.HLGmatches(it-1).matched_pairs, ...
+%                                                        handles.LLGmatches(it).aftr_sim); 
+% end
 
 % [filename, pathname] = uiputfile({'*.mat'}, 'Save file name');
 % if  filename~=0
@@ -1010,7 +1010,7 @@ it = handles.Iteration;
 [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
                                                  handles.LLGmatches(it), ...
                                                   handles.HLGmatches(it));
-                                              
+
 % use old graphs!                                
 % [aftr_sim_HL, aftr_sim_LL] = affine_transformation_similarity(LLG1, LLG2, HLG1, HLG2, ...
 %                                                               handles.LLGmatches(it).matched_pairs, ...
@@ -1019,13 +1019,10 @@ it = handles.Iteration;
                                                           
 % new_affmatrix_HLG = reweight_HLGraph(LLG1, LLG2, handles.LLGmatches(it), handles.HLGmatches(it), gamma);
 
-[LLG1, LLG2, LL_matches] = force1to1matching(LLG1, LLG2, handles.LLGmatches(it).matched_pairs, ...
-                                             handles.HLGmatches(it).matched_pairs, T, handles.GT.LLpairs);
+% [LLG1, LLG2, LL_matches] = force1to1matching(LLG1, LLG2, handles.LLGmatches(it).matched_pairs, ...
+%                                              handles.HLGmatches(it).matched_pairs, T, handles.GT.LLpairs);
 
     
-figure, 
-    plot_LLGmatches(handles.img1, LLG1, handles.img2, LLG2, LL_matches(:,1:2), ...
-                                                                handles.GT.LLpairs); 
 
 % gamma = 0.3;
 % [LLG1, LLG2, HLG1, HLG2] = rebuild_HLGraph(LLG1, LLG2, HLG1, HLG2, ...
@@ -1034,14 +1031,12 @@ figure,
 
 
 % update affmatrix for the HLGM
-[~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2); %, aftr_sim_HL);
+% [~, new_affmatrix_HLG] = initialization_HLGM(HLG1, HLG2); %, aftr_sim_HL);
 
 it = it + 1;
 handles.Iteration = it;
 
-
-handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
-
+% handles.HLGmatches(it).affmatrix = new_affmatrix_HLG;
 % handles.LLGmatches(it).aftr_sim = aftr_sim_LL;
 
 handles.LLG1 = LLG1;
@@ -1055,9 +1050,9 @@ plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
 axes(handles.axes4);
 plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
 
-axes(handles.axes5);cla;
-plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...
-                                                                handles.GT.HLpairs);
+% axes(handles.axes5);cla;
+% plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...
+%                                                                 handles.GT.HLpairs);
                                                                         
 
 set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
@@ -1100,5 +1095,3 @@ if ~isempty(handles.GT.LLpairs)
     
 end
 %end
-
-
