@@ -14,7 +14,7 @@
 
 function [img_new, features, GT] = transform_image(img, keypoints)
     
-    rng(1);
+    rng('default');
     
     assert(size(keypoints,1)==4);
 

@@ -176,16 +176,8 @@ function mToyProblem_Callback(hObject, ~, handles)
     it = 1;
     handles.Iteration = it;
     
-    [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2);
-        
     
-    handles.HLGmatches = [];
-    handles.HLGmatches(it).corrmatrix = corrmatrix;
-    handles.HLGmatches(it).affmatrix = affmatrix;
-        
-    handles.HLGmatches(it).objval  = 0.;
-    handles.HLGmatches(it).matched_pairs = [];
-   
+    handles.HLGmatches = []; 
     handles.LLGmatches = [];
 
     guidata(hObject,handles); 
@@ -204,8 +196,7 @@ function mToyProblem_Callback(hObject, ~, handles)
     plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
     
     axes(handles.axes5);cla;
-    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...
-                                                                    handles.GT.HLpairs);
+    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, [], handles.GT.HLpairs);
                                                                 
     axes(handles.axes6);cla;                                                               
 
@@ -1007,7 +998,7 @@ HLG2 = handles.HLG2;
 it = handles.Iteration;
 
 % estimated affine transformation for each subgraph given matches 
-[T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
+[T, inverseT, HLG1, HLG2] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
                                                  handles.LLGmatches(it), ...
                                                   handles.HLGmatches(it));
 
@@ -1045,10 +1036,10 @@ handles.HLG1 = HLG1;
 handles.HLG2 = HLG2;
 
 axes(handles.axes3);
-plot_twolevelgraphs(handles.img1, LLG1, HLG1, true, true);
+plot_twolevelgraphs(handles.img1, LLG1, HLG1, false, true);
 
 axes(handles.axes4);
-plot_twolevelgraphs(handles.img2, LLG2, HLG2, true, true);
+plot_twolevelgraphs(handles.img2, LLG2, HLG2, false, true);
 
 % axes(handles.axes5);cla;
 % plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, handles.HLGmatches(it).matched_pairs,...

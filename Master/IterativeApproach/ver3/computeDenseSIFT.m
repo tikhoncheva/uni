@@ -14,7 +14,7 @@ addpath(genpath('../../Tools/piotr_toolbox_V3.26/'));
 % Edge extraction
 addpath(genpath('../../Tools/edges-master/'));
 
-load /export/home/etikhonc/Documents/Tools/edges-master/edgesModel.mat   % model
+load '../../Tools/edges-master/edgesModel.mat'   % model
 
 % find edge points
 E = imresize(edgesDetect(imresize(img,2), model),0.5);

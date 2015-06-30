@@ -4,19 +4,14 @@ function h = plot_graph(img, G)
         h = imshow(img);
     end
     
-    hold on ;
-    axis off;
+    hold on ; axis off;
        
     % plot edges
-    edges = G.E';
-    edges(end+1,:) = 1;
-    edges = edges(:);
-
-    points = G.V(edges,:);
-    points(3:3:end,:) = NaN;
-
-    line(points(:,1), points(:,2), 'Color', 'g');
-          
+    if ~isempty(G.E)
+        edges = G.E'; edges(end+1,:) = 1; edges = edges(:);
+        points = G.V(edges,:); points(3:3:end,:) = NaN;
+        line(points(:,1), points(:,2), 'Color', 'g');
+    end      
     % plot vertices
     plot(G.V(:,1),G.V(:,2), 'b*')
     hold off;     

@@ -56,7 +56,7 @@ addpath(fullfile(root,'toolbox'             )) ;
 addpath(fullfile(root,'toolbox','aib'       )) ;
 addpath(fullfile(root,'toolbox','geometry'  )) ;
 addpath(fullfile(root,'toolbox','imop'      )) ;
-% addpath(fullfile(root,'toolbox','kmeans'    )) ;
+addpath(fullfile(root,'toolbox','kmeans'    )) ;
 addpath(fullfile(root,'toolbox','misc'      )) ;
 addpath(fullfile(root,'toolbox','mser'      )) ;
 addpath(fullfile(root,'toolbox','plotop'    )) ;

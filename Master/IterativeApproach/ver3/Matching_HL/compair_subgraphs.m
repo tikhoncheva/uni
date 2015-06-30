@@ -9,27 +9,31 @@
 
 % Use distance histogram as descriptor of the nodes
 
-function [sim] = compair_subgraphs(G1, G2)
+function [sim] = compair_subgraphs(G1, G2, R)
     
     n1 = size(G1.V,1);
     n2 = size(G2.V,1);
     
-    Rmin = 0; Rmax = 30;
-    d = 2;
-    nbins = (Rmax-Rmin)/d;
+    Rmin = 0; Rmax = R;
+    %d = 0.5;
+    nbins = 50; %(Rmax-Rmin)/d;
     binEdges = linspace(Rmin,Rmax,nbins+1);
     
     % adjacency matrix of the first dependency graph
     A1 = zeros(n1, n1);
-    E1 = G1.E; E1 = [E1; [E1(:,2) E1(:,1)]];
-    ind = sub2ind(size(A1), E1(:,1), E1(:,2));
-    A1(ind) = 1;
+    if ~isempty(G1.E)
+        E1 = G1.E; E1 = [E1; [E1(:,2) E1(:,1)]];
+        ind = sub2ind(size(A1), E1(:,1), E1(:,2));
+        A1(ind) = 1;
+    end
 
     % adjacency matrix of the second dependency graph
     A2 = zeros(n2, n2);
-    E2 = G2.E; E2 = [E2; [E2(:,2) E2(:,1)]];
-    ind = sub2ind(size(A2), E2(:,1), E2(:,2));
-    A2(ind) = 1;
+    if ~isempty(G2.E)
+        E2 = G2.E; E2 = [E2; [E2(:,2) E2(:,1)]];
+        ind = sub2ind(size(A2), E2(:,1), E2(:,2));
+        A2(ind) = 1;
+    end
     
     
     
@@ -45,15 +49,18 @@ function [sim] = compair_subgraphs(G1, G2)
         dist1(~A1cut) = NaN;
         
         hist_descr = histc(dist1(:), binEdges);
-        G1_hist(i,:) = hist_descr(1:end-1)/sum(hist_descr(1:end-1)); 
-        
+        if (sum(hist_descr(1:end-1))>0)
+            G1_hist(i,:) = hist_descr(1:end-1)/sum(hist_descr(1:end-1)); 
+        else
+            G1_hist(i,:) = hist_descr(1:end-1);
+        end
         
 %         [subG1_E(:,1), subG1_E(:,2)] = find(A1cut);
 %         subG1 = struct('V', subG1_V, 'E', subG1_E);
 
 %         subplot(2, n1/2, i); plot_graph([], subG1);
         
-        clear subG1_E;
+%         clear subG1_E;
     end
     
     G2_hist = zeros(n2,nbins);
@@ -68,14 +75,18 @@ function [sim] = compair_subgraphs(G1, G2)
         dist2(~A2cut) = NaN;
         
         hist_descr = histc(dist2(:), binEdges);
-        G2_hist(j,:) = hist_descr(1:end-1)/sum(hist_descr(1:end-1));
+        if (sum(hist_descr(1:end-1))>0)
+            G2_hist(j,:) = hist_descr(1:end-1)/sum(hist_descr(1:end-1));
+        else
+            G2_hist(j,:) = hist_descr(1:end-1);
+        end
 
 %         [subG2_E(:,1), subG2_E(:,2)] = find(A2cut);
 %         subG2 = struct('V', subG2_V, 'E', subG2_E);
        
 %         subplot(2, n2/2, j); plot_graph([], subG2);
         
-        clear subG2_E;
+%         clear subG2_E;
     end
     
     D1 = repmat(G1_hist, n2, 1);

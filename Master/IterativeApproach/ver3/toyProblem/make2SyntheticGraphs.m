@@ -10,7 +10,7 @@
 
 function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
 
-    rng(1);
+    rng('default');
     setParameters_synthetic_graphs;
     
     assert(numel(aff_transfo_angle)==nIn2, sprintf('Define rotation angle for each of %d anchors of the first graph', nIn2));
@@ -70,7 +70,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         len = numel(ind);
         
         
-        V = aff_transfo_scale(i) * G1.V(ind,:) * rotMatrix + sigma*randn(len, 2); 
+        V = aff_transfo_scale(i) * G1.V(ind,:) * rotMatrix + sig*randn(len, 2); 
         
         last = size(G2.V,1);   
         n_new_nodes = len + nOut_per_cluster(i);
@@ -83,7 +83,7 @@ function [G1, G2, AG1, AG2, GT] = make2SyntheticGraphs()
         x = sum(G1.V(ind,1))/ numel(ind);
         y = sum(G1.V(ind,2))/ numel(ind);
         
-        a = aff_transfo_scale(i) * [x,y] * rotMatrix + sigma*randn(1, 2);
+        a = aff_transfo_scale(i) * [x,y] * rotMatrix + sig*randn(1, 2);
         
         AG1.V = [AG1.V; [x,y] ];
         AG2.V = [AG2.V; a; randn(nOut_per_cluster2(i), 2)];

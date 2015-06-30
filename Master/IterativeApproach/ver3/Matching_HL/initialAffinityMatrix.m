@@ -18,9 +18,8 @@ nA2 = size(vA2,1);
 nV1 = size(LLG1.V,1);
 nV2 = size(LLG2.V,1);
 
-d1 = LLG1.D;   % d x nV1 
-d2 = LLG2.D;   % d x nV2
-
+% define size of the local neighborhood of a node
+R = 30;
 
 % adjacency matrix of the first dependency graph
 adjM1 = zeros(nV1, nV1);
@@ -43,6 +42,10 @@ affmatrix = zeros(nA1*nA2);
 for ai = 1:nA1 % consider anchor i
    % subgraph underlying the anchor i
    ai_x = HLG1.U(:,ai);
+   if sum(ai_x)==0
+       continue;
+   end
+   
    V1 = LLG1.V(ai_x,:);
    
    if (~isempty(LLG1.D))
@@ -51,7 +54,11 @@ for ai = 1:nA1 % consider anchor i
         D1 = [];
    end
    adjM1cut = adjM1(ai_x, ai_x');
-   [subE1(:,1), subE1(:,2)] = find(adjM1cut);
+   if max(adjM1cut(:))==1
+       [subE1(:,1), subE1(:,2)] = find(adjM1cut);
+   else
+       subE1 = [];
+   end
    subG1 = struct('V', V1, 'D', D1, 'E', subE1);
           
    % list of possible mathches of the anchor ai to the nodes of the second
@@ -62,6 +69,10 @@ for ai = 1:nA1 % consider anchor i
        aj = seed_pairs(p);
        % define subgraphs underlying the anchor aj of the second graph
        aj_x = HLG2.U(:,aj);
+       if sum(aj_x)==0
+           continue;
+       end
+
        V2 = LLG2.V(aj_x,:);
        if (~isempty(LLG1.D))
             D2 = LLG2.D(:, aj_x);
@@ -69,11 +80,15 @@ for ai = 1:nA1 % consider anchor i
             D2 = [];
        end
        adjM2cut = adjM2(aj_x, aj_x');
-       [subE2(:,1), subE2(:,2)] = find(adjM2cut);
+       if max(adjM2cut(:))==1
+           [subE2(:,1), subE2(:,2)] = find(adjM2cut);
+       else
+           subE2 = [];
+       end
        subG2 = struct('V', V2, 'D', D2, 'E', subE2);
    
        % compair two subgraphs
-       simval = compair_subgraphs(subG1, subG2);
+       simval = compair_subgraphs(subG1, subG2, R);
        
        affmatrix( (aj-1)*nA1+ai, (aj-1)*nA1+ai) = simval;
       

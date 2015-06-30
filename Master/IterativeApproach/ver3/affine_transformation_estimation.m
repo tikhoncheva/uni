@@ -3,11 +3,14 @@
 % HLGmatches    result of higher level graph matching (pairs of correspondence nodes)
 %
 
-function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
+function [T, inverseT, new_HLG1, new_HLG2] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
                                                LLGmatches, HLGmatches)
        
    nV1 = size(LLG1.V,1);
    nV2 = size(LLG2.V,1);
+   
+   new_HLG1 = HLG1;
+   new_HLG2 = HLG2;
    
    
    % for each pairs of anchor matches ai<->aj estimate the best local
@@ -15,11 +18,9 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
    n_pairs_HL = size(HLGmatches.matched_pairs,1);
    
    T = zeros(n_pairs_HL, 6);  
-   
    inverseT = zeros(n_pairs_HL, 6);  
    
-   % list of problematic nodes (nodes, that were not matched oder were matched wrong)
-   listV1 = []; listV2 = [];
+   error_eps = 1.0;
    
    for k=1:n_pairs_HL
        
@@ -32,8 +33,6 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
         [~, ind_matched_pairs] = ismember(ind_Vai, LLGmatches.matched_pairs(:,1));
         ind_matched_pairs = ind_matched_pairs(ind_matched_pairs>0);
         pairs = LLGmatches.matched_pairs(ind_matched_pairs,1:2);
-        
-%         list1 = [list1, ind_matched_pairs(ind_matched_pairs==0)];
 
         X1 = LLG1.V(ind_Vai,:);
         X2 = LLG2.V(ind_Vaj,:);
@@ -44,23 +43,10 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
             
             x1 = LLG1.V(pairs(:,1),:);
             x2 = LLG2.V(pairs(:,2),:);
-            
-            X1 = LLG1.V(pairs(:,1),:);
-            X2 = LLG2.V(pairs(:,1),:);
-            
-            matched_nodes_Gai = ismember(ind_Vai, pairs(:,1));
-            matched_nodes_Gaj = ismember(ind_Vaj, pairs(:,2));
-            
-            X1 = [X1; LLG1.V(~matched_nodes_Gai, 1:2)];
-            X2 = [X2; zeros(sum(~matched_nodes_Gai),2)];
-
-            X1 = [X1; zeros(sum(~matched_nodes_Gaj),2)];
-            X2 = [X2; LLG2.V(~matched_nodes_Gaj, 1:2)];            
-        
+                   
             % estimate affine transformation
-            [H, inliers] = ransacfitaffine(x1', x2', 0.01);
+            [H, ~] = ransacfitaffine(x1', x2', 0.01);
         
-
             T(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             
             A = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
@@ -78,16 +64,41 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
             Prx2 = Prx2';
             
             % calculate summary error of the estimated transformation
-            err1 = sum(sqrt((x1(:,1)-Prx2(:,1)).^2+(x1(:,2)-Prx2(:,2)).^2))/size(pairs, 1);            
-            err2 = sum(sqrt((x1(:,1)-Prx2(:,1)).^2+(x1(:,2)-Prx2(:,2)).^2))/size(pairs, 1);            
-            err = err1 + err2;
+            err1 = median(sqrt((x2(:,1)-Prx1(:,1)).^2+(x2(:,2)-Prx1(:,2)).^2));%/size(pairs, 1);            
+            err2 = median(sqrt((x1(:,1)-Prx2(:,1)).^2+(x1(:,2)-Prx2(:,2)).^2));%/size(pairs, 1);            
+            err = 0.5*(err1 + err2);
 
             
+                        
+            if (err<error_eps)
+
+     
+            % nodes of the first graph, that wasn't matched
+            matched_nodes_Gai = ismember(ind_Vai, pairs(:,1));
+            Y1 = LLG1.V(ind_Vai(~matched_nodes_Gai), 1:2);            
             
-            PrX1 = A * X1' + repmat(b,1,size(X1,1));             % proejction of x1 nodes
-            PrX1 = PrX1';
-            PrX2 = A_prime * X2' + repmat(b_prime,1,size(X2,1)); % projection of x2 nodes
-            PrX2 = PrX2';
+            % nodes of the second graph, that wasn't matched
+            matched_nodes_Gaj = ismember(ind_Vaj, pairs(:,2));            
+            Y2 = LLG2.V(ind_Vaj(~matched_nodes_Gaj), 1:2);            
+            
+            PrY1 = A * Y1' + repmat(b,1,size(Y1,1));             % proejction of x1 nodes
+            PrY1 = PrY1';
+            PrY2 = A_prime * Y2' + repmat(b_prime,1,size(Y2,1)); % projection of x2 nodes
+            PrY2 = PrY2';
+            
+            % calculate the nearest neighbours of the projections and
+            % include them into corresponding graphs
+            nn_G2_of_PrY1 = knnsearch(LLG2.V, PrY1);
+            nn_G1_of_PrY2 = knnsearch(LLG1.V, PrY2);
+            
+            Z2 = LLG2.V(nn_G2_of_PrY1,1:2);
+            Z1 = LLG1.V(nn_G1_of_PrY2,1:2);
+            
+            new_HLG1.U(nn_G1_of_PrY2, :) = 0;
+            new_HLG1.U(nn_G1_of_PrY2, ai) = 1;
+            
+            new_HLG2.U(nn_G2_of_PrY1, :) = 0;
+            new_HLG2.U(nn_G2_of_PrY1, aj) = 1;                        
             
             
             figure; subplot(1,2,1);
@@ -104,6 +115,16 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
                     X2(:,1) = 300 + X2(:,1);
                     plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
 
+
+                    plot(Y1(:,1), 256-Y1(:,2), 'ko', 'MarkerFaceColor','k'), hold on;
+                    Y2(:,1) = 300 + Y2(:,1);
+                    plot(Y2(:,1), 256-Y2(:,2), 'ko', 'MarkerFaceColor','k'), hold on;
+
+                    plot(Z1(:,1), 256-Z1(:,2), 'ko', 'MarkerFaceColor','k'), hold on;
+                    Z2(:,1) = 300 + Z2(:,1);
+                    plot(Z2(:,1), 256-Z2(:,2), 'ko', 'MarkerFaceColor','k'), hold on;
+
+                    
                     edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
                     points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
                     line(points(:,1), 256-points(:,2), 'Color', 'g');
@@ -112,61 +133,62 @@ function [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2
                     points = V2(edges,:); points(3:3:end,:) = NaN;
                     line(points(:,1), 256-points(:,2), 'Color', 'g');
 
-                    Tx1 = PrX1;
+                    Tx1 = Prx1;
                     Tx1(:,1) = 300 + Tx1(:,1);
                     plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
 
 
                     nans = NaN * ones(size(Tx1,1),1) ;
-                    x = [ X1(:,1) , Tx1(:,1) , nans ] ;
-                    y = [ X1(:,2) , Tx1(:,2) , nans ] ; 
+                    x = [ x1(:,1) , Tx1(:,1) , nans ] ;
+                    y = [ x1(:,2) , Tx1(:,2) , nans ] ; 
                     line(x', 256-y', 'Color','m') ;
                     
                     matches = pairs';
 
-                   nans = NaN * ones(size(matches,2),1) ;
-                   x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-                   y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-                   line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
-                   title(sprintf('Transformation error %.03f', err1));
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
+                    title(sprintf('Transformation error %.03f', err1));
                    
-                   % ---------------------------------------------------- %
-                   subplot(1,2,2);
+                    % ---------------------------------------------------- %
+                    subplot(1,2,2);
 
-                   plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-                   plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
+                    plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+                    plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
 
-                   edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
-                   points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
-                   line(points(:,1), 256-points(:,2), 'Color', 'g');
+                    edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
+                    points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
 
-                   edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
-                   points = V2(edges,:); points(3:3:end,:) = NaN;
-                   line(points(:,1), 256-points(:,2), 'Color', 'g');
+                    edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
+                    points = V2(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
 
 
-                   plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-                   plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
                    
 
-                   Tx2 = PrX2;
-                   plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
-
-                   nans = NaN * ones(size(Tx2,1),1) ;
-                   x = [ X2(:,1) , Tx2(:,1) , nans ] ;
-                   y = [ X2(:,2) , Tx2(:,2) , nans ] ; 
-                   line(x', 256-y', 'Color','m') ;
+                    Tx2 = Prx2;
+                    plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
                     
-                   matches = pairs';
-                   nans = NaN * ones(size(matches,2),1) ;
-                   x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-                   y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-                   line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
+                    x2(:,1) = 300 + x2(:,1);
+                    nans = NaN * ones(size(Tx2,1),1) ;
+                    x = [ x2(:,1) , Tx2(:,1) , nans ] ;
+                    y = [ x2(:,2) , Tx2(:,2) , nans ] ; 
+                    line(x', 256-y', 'Color','m') ;
                     
-                   title(sprintf('Transformation error %.03f', err2));
+                    matches = pairs';
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
+                    
+                    title(sprintf('Transformation error %.03f', err2));
             hold off;
                 
-              
+            end
         end
         
         clear pairs;
