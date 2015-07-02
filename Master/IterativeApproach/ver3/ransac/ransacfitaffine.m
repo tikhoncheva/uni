@@ -72,7 +72,11 @@ function [T, inliers] = ransacfitaffine(x1, x2, t)
     
     % Now do a final least squares fit on the data points considered to
     % be inliers.
-    T = affineFit(x1(:,inliers), x2(:,inliers));
+    if ~isempty(T)
+        T = affineFit(x1(:,inliers), x2(:,inliers));
+    else
+        T = zeros(3,3);
+    end
     
     % Denormalise
     T = T2\T*T1;

@@ -221,6 +221,8 @@ function [M, inliers] = ransac(x, fittingfn, distfn, degenfn, s, t, feedback, ..
     else           
         M = [];
         inliers = [];
-        error('ransac was unable to find a useful solution');
+        warning('ransac was unable to find a useful solution');
+        
+%         error('ransac was unable to find a useful solution');
     end
     
