@@ -3,7 +3,7 @@
 % HLGmatches    result of higher level graph matching (pairs of correspondence nodes)
 %
 
-function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, HLG1, HLG2, ...
+function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2, ...
                                                LLGmatches, HLGmatches) 
 
    display(sprintf('\n================================================'));
@@ -19,16 +19,13 @@ function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, HL
    T = zeros(n_pairs_HL, 6);  
    inverseT = zeros(n_pairs_HL, 6);  
    
-   W1 = zeros(size(LLG1.V,1),1);
-   W2 = zeros(size(LLG2.V,1),1);
-   
    for k=1:n_pairs_HL
        
         ai = HLGmatches.matched_pairs(k,1); % \in HLG1.V
         aj = HLGmatches.matched_pairs(k,2); % \in HLG2.V
        
-        ind_Vai = find(HLG1.U(:,ai));
-        ind_Vaj = find(HLG2.U(:,aj));
+        ind_Vai = find(U1(:,ai));
+        ind_Vaj = find(U2(:,aj));
         
         [~, ind_matched_pairs] = ismember(ind_Vai, LLGmatches.matched_pairs(:,1));
         ind_matched_pairs = ind_matched_pairs(ind_matched_pairs>0);

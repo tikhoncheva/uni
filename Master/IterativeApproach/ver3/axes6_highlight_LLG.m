@@ -15,15 +15,9 @@ nV2 = size(v2,2);
 
 it = handles.Iteration;
 
-matched_pairs = handles.LLGmatches(it).matched_pairs;
+LL_matches = handles.LLGmatches(it).matched_pairs;
 
-% if (it > 1)
-%     matched_pairs_old = handles.LLGmatches(it-1).matched_pairs;
-% else
-%     matched_pairs_old = handles.LLGmatches(it).matched_pairs;
-% end
-
-matched_pairs_old = handles.GT.LLpairs;
+GT = handles.GT.LLpairs;
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -51,12 +45,12 @@ end
 % bestmatch = zeros(nV1, nV2);
 
 if (img==1)
-    ind = (matched_pairs(:,1) == nn);
-    selected_match = matched_pairs(ind,1:2);
+    ind = (LL_matches(:,1) == nn);
+    selected_match = LL_matches(ind,1:2);
 %     bestmatch(nn, :) = matches_pairs(nn, :);
 else
-    ind = (matched_pairs(:,2) == nn);
-    selected_match = matched_pairs(ind,1:2);
+    ind = (LL_matches(:,2) == nn);
+    selected_match = LL_matches(ind,1:2);
 %     bestmatch(:, nn) = matches_pairs(:,nn);          
 end
 
@@ -74,8 +68,8 @@ matched_anchors = pairs_ai_aj(is_matched, :);
 % show matched anchors
 axes(handles.axes5);
 cla reset
-    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
-                                                                            handles.GT.HLpairs, matched_anchors);
+plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
+                                                                        handles.GT.HLpairs, matched_anchors);
 % if (it>1)
 %     plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
 %                                                                             handles.HLGmatches(it-1).matched_pairs, matched_anchors);
@@ -87,8 +81,12 @@ cla reset
 % show matched nodes with corresponding subgraphs
 axes(handles.axes6);
 cla reset
-plot_LLGmatches(handles.img1, handles.LLG1, handles.img2, handles.LLG2, matched_pairs,...
-                                                                        matched_pairs_old, selected_match);
+plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
+                handles.img2, handles.LLG2, handles.HLG2, ...  
+                handles.LLGmatches(it).matched_pairs, ...
+                handles.HLGmatches(it).matched_pairs, ...
+                GT, selected_match);   
+
 
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})

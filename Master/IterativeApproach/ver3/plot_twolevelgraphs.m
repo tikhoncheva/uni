@@ -18,7 +18,7 @@
 % show_HLGraphs   show eLLGes of the HLG
 % show_LLGraphs   show eLLGes of the LLG
 
-function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
+function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
 
     if (ndims(img)>1)
         imagesc(img);
@@ -27,8 +27,11 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
     hold on ;
     axis off;
     
+    cmap = hsv(size(HLG.V,1));
+    cmap = [cmap; [0.0 0.0 0.0]];
+    
 %                      ------------------------------------
-%                             initial graph       
+%                            initial graph       
     % edges between vertices
     if show_LLG
         edges = LLG.E';
@@ -40,8 +43,26 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG)
 
         line(points(:,1), points(:,2), 'Color', 'g');
     end
-    % vertices
-    plot(LLG.V(:,1), LLG.V(:,2), 'b*');
+    
+
+    % vertices (color nodes in each subgraph in different color)
+    col_mapping = size(cmap,1)*ones(1,size(HLG.V,1))    ;
+    if (nargin == 7) % assign same color to the nodes in matched subgraphs
+        matching = varargin{1};
+        col = varargin{2};
+        col_mapping(matching(:,2)) = matching(:,1);
+        if col==2
+            col_mapping(matching(:,2)) = matching(:,1);
+        end
+        if col==1
+            col_mapping(matching(:,1)) = matching(:,1);
+        end
+    end
+    
+    for i=1:numel(col_mapping)
+        Vi_ind = HLG.U(:,i);
+        plot(LLG.V(Vi_ind,1), LLG.V(Vi_ind,2), 'ko', 'MarkerFaceColor', cmap(col_mapping(i),:));       
+    end
     
 %                      ------------------------------------
 %                             anchor graph

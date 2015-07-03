@@ -13,7 +13,8 @@
 % the subgraph to the anchor, to which the nearest neighbors of this nodes
 % belong to
 
-function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
+% function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
+function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
                                                LLGmatches, HLGmatches, T, inverseT)
        
    display(sprintf('\n================================================'));
@@ -25,15 +26,19 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    nV1 = size(LLG1.V, 1);
    nV2 = size(LLG2.V, 1);
    
-   new_HLG1_U = 0.5*double(HLG1.U); 
-   new_HLG2_U = 0.5*double(HLG2.U); 
+%    new_HLG1_U = 0.5*double(HLG1.U); 
+%    new_HLG2_U = 0.5*double(HLG2.U); 
+
+   WG1 = Inf*ones(nV1,1);
+   WG2 = Inf*ones(nV2,1);   
+   
    
    % for each pairs of anchor matches ai<->aj estimate the best local
    % affine transformation
    n_pairs_HL = size(HLGmatches.matched_pairs,1); 
    
    error_eps = 1.0;
-   nswap = 3;
+%    nswap = 3;
    
    for k=1:n_pairs_HL
        
@@ -41,8 +46,8 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
         aj = HLGmatches.matched_pairs(k,2); % \in HLG2.V
        
         
-        ind_Vai = find(HLG1.U(:,ai));
-        ind_Vaj = find(HLG2.U(:,aj));
+        ind_Vai = find(U1(:,ai));
+        ind_Vaj = find(U2(:,aj));
         
         [~, ind_matched_pairs] = ismember(ind_Vai, LLGmatches.matched_pairs(:,1));
         ind_matched_pairs = ind_matched_pairs(ind_matched_pairs>0);
@@ -77,6 +82,9 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
             err1 = median(sqrt((Vaj_m(:,1)-PVai_m(:,1)).^2+(Vaj_m(:,2)-PVai_m(:,2)).^2));    
             err2 = median(sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2));
             err = 0.5*(err1 + err2);
+            
+            WG1(pairs(:,1)) = err;
+            WG2(pairs(:,2)) = err;
                         
             if (err<error_eps)  % Rule 1
 
@@ -93,11 +101,8 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
                 Z2 = LLG2.V(nn_PVai, 1:2);
                 Z1 = LLG1.V(nn_PVaj, 1:2);
 
-%                 new_HLG1.U(nn_PVaj, :) = 0;
-                new_HLG1_U(nn_PVaj, ai) = exp(-err); %1;
-
-%                 new_HLG2.U(nn_PVai, :) = 0;
-                new_HLG2_U(nn_PVai, aj) = exp(-err); %1;                        
+%                 new_HLG1_U(nn_PVaj, ai) = exp(-err); %1;
+%                 new_HLG2_U(nn_PVai, aj) = exp(-err); %1;                        
 
 
 %                 figure; subplot(1,2,1);
@@ -199,97 +204,97 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
 %                 nn_ind(:,1) = [];                
 %                 new_HLG2_U(ind_Vaj(ind), :) = new_HLG2_U(nn_ind, :);                
                 
-                figure; subplot(1,2,1);
-                
-                        V2 = LLG2.V; V2(:,1) = 300 + V2(:,1);
-                        
-                        edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
-                        points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
-                        line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
-
-                        edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
-                        points = V2(edges,:); points(3:3:end,:) = NaN;
-                        line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
-                        
-
-                        plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-                        plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
-
-
-                        plot(Vai(:,1), 256-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-                        Vaj(:,1) = 300 + Vaj(:,1);
-                        plot(Vaj(:,1), 256-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-
-
-                        Tx1 = PVai_m;
-                        Tx1(:,1) = 300 + Tx1(:,1);
-                        plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
-
-                        nans = NaN * ones(size(Tx1,1),1) ;
-                        x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
-                        y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
-                        line(x', 256-y', 'Color','m') ;
-
-                        matches = pairs';
-
-                        nans = NaN * ones(size(matches,2),1) ;
-                        x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-                        y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-                        line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
-                        title(sprintf('Transformation error %.03f', err1));
-
-                        % ---------------------------------------------------- %
-                        subplot(1,2,2);
-                        
-                        edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
-                        points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
-                        line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
-
-                        edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
-                        points = V2(edges,:); points(3:3:end,:) = NaN;
-                        line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
-                        
-
-                        plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-                        plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
-
-
-                        plot(Vai(:,1), 256-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-                        plot(Vaj(:,1), 256-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-
-
-                        Tx2 = PVaj_m;
-                        plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
-
-                        Vaj_m(:,1) = 300 + Vaj_m(:,1);
-                        nans = NaN * ones(size(Tx2,1),1) ;
-                        x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
-                        y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
-                        line(x', 256-y', 'Color','m') ;
-
-                        matches = pairs';
-                        nans = NaN * ones(size(matches,2),1) ;
-                        x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-                        y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-                        line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
-
-                        title(sprintf('Transformation error %.03f', err2));
-                hold off;           
+%                 figure; subplot(1,2,1);
+%                 
+%                         V2 = LLG2.V; V2(:,1) = 300 + V2(:,1);
+%                         
+%                         edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
+%                         points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
+%                         line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
+% 
+%                         edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
+%                         points = V2(edges,:); points(3:3:end,:) = NaN;
+%                         line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
+%                         
+% 
+%                         plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+%                         plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
+% 
+% 
+%                         plot(Vai(:,1), 256-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                         Vaj(:,1) = 300 + Vaj(:,1);
+%                         plot(Vaj(:,1), 256-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+% 
+% 
+%                         Tx1 = PVai_m;
+%                         Tx1(:,1) = 300 + Tx1(:,1);
+%                         plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
+% 
+%                         nans = NaN * ones(size(Tx1,1),1) ;
+%                         x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
+%                         y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
+%                         line(x', 256-y', 'Color','m') ;
+% 
+%                         matches = pairs';
+% 
+%                         nans = NaN * ones(size(matches,2),1) ;
+%                         x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+%                         y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+%                         line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
+%                         title(sprintf('Transformation error %.03f', err1));
+% 
+%                         % ---------------------------------------------------- %
+%                         subplot(1,2,2);
+%                         
+%                         edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
+%                         points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
+%                         line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
+% 
+%                         edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
+%                         points = V2(edges,:); points(3:3:end,:) = NaN;
+%                         line(points(:,1), 256-points(:,2), 'Color', 'g'), hold on;
+%                         
+% 
+%                         plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+%                         plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
+% 
+% 
+%                         plot(Vai(:,1), 256-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                         plot(Vaj(:,1), 256-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+% 
+% 
+%                         Tx2 = PVaj_m;
+%                         plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
+% 
+%                         Vaj_m(:,1) = 300 + Vaj_m(:,1);
+%                         nans = NaN * ones(size(Tx2,1),1) ;
+%                         x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
+%                         y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
+%                         line(x', 256-y', 'Color','m') ;
+% 
+%                         matches = pairs';
+%                         nans = NaN * ones(size(matches,2),1) ;
+%                         x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+%                         y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+%                         line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
+% 
+%                         title(sprintf('Transformation error %.03f', err2));
+%                 hold off;           
                 
             end % err<err_eps
         else % Rule 2
-            if size(Vai,1)<3
-                nn_Vai = knnsearch(LLG1.V, Vai, 'K', 2);   %indices of nodes in LLG2.V
-                nn_Vai(:,1) = [];                
-                new_HLG1_U(ind_Vai, :) = new_HLG1_U(nn_Vai, :);
-
-            end
-            if size(Vaj,1)<3
-                nn_Vaj = knnsearch(LLG2.V, Vaj, 'K', 2);   %indices of nodes in LLG2.V
-                nn_Vaj(:,1) = [];             
-                new_HLG2_U(ind_Vaj, :) = new_HLG2_U(nn_Vaj, :);
-          
-            end
+%             if size(Vai,1)<3
+%                 nn_Vai = knnsearch(LLG1.V, Vai, 'K', 2);   %indices of nodes in LLG2.V
+%                 nn_Vai(:,1) = [];                
+%                 new_HLG1_U(ind_Vai, :) = new_HLG1_U(nn_Vai, :);
+% 
+%             end
+%             if size(Vaj,1)<3
+%                 nn_Vaj = knnsearch(LLG2.V, Vaj, 'K', 2);   %indices of nodes in LLG2.V
+%                 nn_Vaj(:,1) = [];             
+%                 new_HLG2_U(ind_Vaj, :) = new_HLG2_U(nn_Vaj, :);
+%           
+%             end
         end
        
         clear pairs;
@@ -297,18 +302,18 @@ function [HLG1, HLG2] = rearrange_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
         clear ind_matched_pairs;
    end
    
-   [~, max_pos] = max(new_HLG1_U, [], 2);
-   ind = sub2ind(size(HLG1.U), [1:nV1]', max_pos);
-   new_HLG1_U(:) = 0;
-   new_HLG1_U(ind) = 1;
-   
-   [~, max_pos] = max(new_HLG2_U, [], 2);
-   ind = sub2ind(size(HLG2.U), [1:nV2]', max_pos);
-   new_HLG2_U(:) = 0;
-   new_HLG2_U(ind) = 1;
-   
-   HLG1.U = logical(new_HLG1_U);
-   HLG2.U = logical(new_HLG2_U);
+%    [~, max_pos] = max(new_HLG1_U, [], 2);
+%    ind = sub2ind(size(HLG1.U), [1:nV1]', max_pos);
+%    new_HLG1_U(:) = 0;
+%    new_HLG1_U(ind) = 1;
+%    
+%    [~, max_pos] = max(new_HLG2_U, [], 2);
+%    ind = sub2ind(size(HLG2.U), [1:nV2]', max_pos);
+%    new_HLG2_U(:) = 0;
+%    new_HLG2_U(ind) = 1;
+%    
+%    HLG1.U = logical(new_HLG1_U);
+%    HLG2.U = logical(new_HLG2_U);
    
 
    display(sprintf('Summary %.03f sec', toc));
