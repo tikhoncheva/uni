@@ -26,8 +26,8 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
    nV1 = size(LLG1.V, 1);
    nV2 = size(LLG2.V, 1);
    
-%    new_HLG1_U = 0.5*double(HLG1.U); 
-%    new_HLG2_U = 0.5*double(HLG2.U); 
+%    new_HLG1_U = 0.5*double(U1); 
+%    new_HLG2_U = 0.5*double(U2); 
 
    WG1 = Inf*ones(nV1,1);
    WG2 = Inf*ones(nV2,1);   
@@ -185,7 +185,7 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
 %                         title(sprintf('Transformation error %.03f', err2));
 %                 hold off;           
             else % if the estimated transformation law is not reliable
-%                 ind_Vai = HLG1.U(:,ai);      
+%                 ind_Vai = U1(:,ai);      
 %                 nVai = size(Vai,1);
 %                 
 %                 ind = randi([1 nVai], nswap, 1);
@@ -195,7 +195,7 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
 %                 new_HLG1_U(ind_Vai(ind), :) = new_HLG1_U(nn_ind, :);
 %                 
 % 
-%                 ind_Vaj = HLG2.U(:,aj);      
+%                 ind_Vaj = U2(:,aj);      
 %                 nVaj = size(Vaj,1);
 %                 
 %                 ind = randi([1 nVaj], nswap, 1);
@@ -203,7 +203,7 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
 %                 nn_ind = knnsearch(LLG2.V(~ind_Vaj), LLG2.V(ind_Vaj(ind)), 'K', 2);   %indices of nodes in LLG2.V
 %                 nn_ind(:,1) = [];                
 %                 new_HLG2_U(ind_Vaj(ind), :) = new_HLG2_U(nn_ind, :);                
-                
+%                 
 %                 figure; subplot(1,2,1);
 %                 
 %                         V2 = LLG2.V; V2(:,1) = 300 + V2(:,1);
@@ -303,17 +303,17 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
    end
    
 %    [~, max_pos] = max(new_HLG1_U, [], 2);
-%    ind = sub2ind(size(HLG1.U), [1:nV1]', max_pos);
+%    ind = sub2ind(size(U1), [1:nV1]', max_pos);
 %    new_HLG1_U(:) = 0;
 %    new_HLG1_U(ind) = 1;
 %    
 %    [~, max_pos] = max(new_HLG2_U, [], 2);
-%    ind = sub2ind(size(HLG2.U), [1:nV2]', max_pos);
+%    ind = sub2ind(size(U2), [1:nV2]', max_pos);
 %    new_HLG2_U(:) = 0;
 %    new_HLG2_U(ind) = 1;
 %    
-%    HLG1.U = logical(new_HLG1_U);
-%    HLG2.U = logical(new_HLG2_U);
+%    U1 = logical(new_HLG1_U);
+%    U2 = logical(new_HLG2_U);
    
 
    display(sprintf('Summary %.03f sec', toc));

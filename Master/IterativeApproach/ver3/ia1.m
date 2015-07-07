@@ -201,6 +201,11 @@ function mToyProblem_Callback(hObject, ~, handles)
                                                                 
     axes(handles.axes6);cla;                                                               
 
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
+    
     % 
     set(handles.pbMatch_HLGraphs, 'Enable', 'on');
     set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
@@ -254,6 +259,12 @@ if filename~=0
     
     axes(handles.axes6);
     imagesc(img3), axis off;
+    
+    
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
     
     
     % update/reset data
@@ -348,7 +359,12 @@ if filename~=0
         axes(handles.axes5);
         imagesc(img3), axis off;
     end
-        
+
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
+    
     % update/reset data
     handles.img1 = img1;
     handles.img1selected = 1;
@@ -402,6 +418,11 @@ if filename~=0
         axes(handles.axes5);
         imagesc(img3), axis off;
     end
+    
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
     
 
     % update/reset data
@@ -466,6 +487,10 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     axes(handles.axes4);
     plot_twolevelgraphs(handles.img2, LLG2, HLG2, show_LLG, show_HLG);
     
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
     
     set(handles.pbSaveAnchors_img1, 'Enable', 'on');
     set(handles.pbLoadAnchors_img1, 'Enable', 'on');
@@ -643,6 +668,12 @@ if  filename~=0
     axes(handles.axes3);cla reset;
     plot_twolevelgraphs(handles.img1, handles.LLG1, handles.HLG1, show_LLG, show_HLG);
 
+    axes(handles.axes11);cla reset;
+    axes(handles.axes12);cla reset;
+    axes(handles.axes13);cla reset;
+    axes(handles.axes14);cla reset;
+    
+    
     if handles.HLG2isBuilt  
         
 %        [corrmatrix, affmatrix] = initialization_HLGM(handles.HLG1, handles.HLG2);
@@ -849,6 +880,9 @@ plot_twolevelgraphs(handles.img1, handles.LLG1, handles.HLG1, false, false, hand
 axes(handles.axes4);
 plot_twolevelgraphs(handles.img2, handles.LLG2, handles.HLG2, false, false, handles.HLGmatches(it).matched_pairs,2);
 
+% plot score
+pb_accuracy_HL_Callback(hObject, [], handles);
+
 
 axes(handles.axes5);
 set(gca,'ButtonDownFcn', {@axes5_highlight_HLG, handles})
@@ -864,7 +898,7 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes5_highlight_HLG, handles})
     
 
 % --- Executes on button press in pb_accuracy_LL.
-function pb_accuracy_HL_Callback(hObject, eventdata, handles)
+function pb_accuracy_HL_Callback(hObject, ~, handles)
 nIt = size(handles.LLGmatches,2);
 
 x = 1:1:nIt;
@@ -873,10 +907,11 @@ for i=1:1:nIt
     y_obj(i) = handles.HLGmatches(i).objval;
 end
 
-figure; subplot(1,2,1); 
-plot(x, y_obj), hold on; plot(x,y_obj, 'b*'), hold off;
-xlabel('Iteration'); ylabel('Score');
-title('          Matching result on the Higher Level');
+axes(handles.axes11);% figure; subplot(1,2,1); 
+plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
+xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
+% title('          Matching result on the Higher Level');
+set(legend('Score'), 'Location', 'best', 'FontSize', 6);
 
 % if we knew the Ground Truth for the HL
 if ~isempty(handles.GT.HLpairs)
@@ -888,9 +923,10 @@ if ~isempty(handles.GT.HLpairs)
         y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1)*100;
     end
     
-    subplot(1,2,2); xlabel('Iteration'); ylabel('Accurasy');
-    plot(x, y_ac), hold on; plot(x,y_ac, 'b*'), hold off;
-
+    axes(handles.axes12);%subplot(1,2,2);
+    plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
+    xlabel('Iteration'); ylabel('Accurasy');set(gca,'FontSize',6);
+    set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
 end
 %end
 
@@ -986,6 +1022,10 @@ else
 %                                                                                 handles.LLGmatches(it-1).matched_pairs);
 end
 
+
+% plot score and accuracy
+pb_accuracy_LL_Callback(hObject, [], handles)
+
 % highlithin
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
@@ -1014,13 +1054,13 @@ HLG2 = handles.HLG2;
 it = handles.Iteration;
 
 % parameters of the simulated annealing
-alpha = 0.85;
-p = 0.3;
-p = p*(0.85^(it-1));
+alpha = 0.75;
+p = 0.2;
+p = p*(alpha^(it-1));
     
 
-% [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
-%                                    handles.LLGmatches(it), handles.HLGmatches(it), p);
+[HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
+                                   handles.LLGmatches(it), handles.HLGmatches(it), p);
                                            
 
 % estimated affine transformation for each subgraph given matches 
@@ -1098,10 +1138,12 @@ for i=1:1:nIt
     y_obj(i) = handles.LLGmatches(i).objval;
 end
 
-figure; subplot(1,2,1);
-plot(x, y_obj), hold on; plot(x,y_obj, 'b*'), hold off;
-xlabel('Iteration'); ylabel('Score');
-      
+%figure; subplot(1,2,1);
+axes(handles.axes13);
+plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
+xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
+set(legend('Score'), 'Location', 'best', 'FontSize', 6);
+
 % if we know the Ground Truth fot the LL
 if ~isempty(handles.GT.LLpairs)
     GT = handles.GT.LLpairs;
@@ -1112,9 +1154,9 @@ if ~isempty(handles.GT.LLpairs)
         y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1) * 100;
     end
     
-    subplot(1,2,2);
-    plot(x, y_ac), hold on; plot(x,y_ac, 'b*'), hold off;
-    xlabel('Iteration'); ylabel('Accurasy');
-    
+    axes(handles.axes14); %subplot(1,2,1);
+    plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
+    xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
+    set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
 end
 %end

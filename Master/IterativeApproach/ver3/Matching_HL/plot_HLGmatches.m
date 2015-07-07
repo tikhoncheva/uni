@@ -40,7 +40,7 @@ if (~isempty(matches))
     nans = NaN * ones(size(matches,1),1) ;
     x = [ G1.V(matches(:,1),1) , G2.V(matches(:,2),1) , nans ] ;
     y = [ G1.V(matches(:,1),2) , G2.V(matches(:,2),2) , nans ] ; 
-    line(x', y', 'Color','b') ;
+    line(x', y', 'Color','b',  'LineWidth', 2) ;
 end
 
 %                      ------------------------------------
@@ -63,13 +63,13 @@ if (nargin == 7)
         nans = NaN * ones(size(matches_hl,1),1) ;
         x = [ G1.V(matches_hl(:,1),1) , G2.V(matches_hl(:,2),1) , nans ] ;
         y = [ G1.V(matches_hl(:,1),2) , G2.V(matches_hl(:,2),2) , nans ] ; 
-        line(x', y', 'Color','b', 'LineWidth', 2) ;
+        line(x', y', 'Color','b', 'LineWidth', 4) ;
 
         if (~isempty(matches_old))
             [~,right_matches] = ismember(matches_hl(:,1), matches_old(:,1));
             x = [ G1.V(matches_hl(:,1),1) , G2.V(matches_old(right_matches, 2),1) , nans ] ;
             y = [ G1.V(matches_hl(:,1),2) , G2.V(matches_old(right_matches, 2),2) , nans ] ; 
-            line(x', y', 'Color','b', 'LineWidth', 2, 'LineStyle', '--');
+            line(x', y', 'Color','b', 'LineWidth', 4, 'LineStyle', '--');
         end
     end
     

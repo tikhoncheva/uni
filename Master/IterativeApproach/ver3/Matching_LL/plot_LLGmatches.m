@@ -69,7 +69,7 @@ if(~isempty(LL_matches))
         nans = NaN * ones(size(LL_matches(ind,:),1),1) ;
         x = [ G1.V(LL_matches(ind,1),1) , G2.V(LL_matches(ind,2),1) , nans ] ;
         y = [ G1.V(LL_matches(ind,1),2) , G2.V(LL_matches(ind,2),2) , nans ] ; 
-        line(x', y', 'Color', cmap(col_mapping(HL_matches(i,1)),:)) ;
+        line(x', y', 'Color', cmap(col_mapping(HL_matches(i,1)),:), 'LineWidth', 2) ;
     end
 end
 
