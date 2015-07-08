@@ -8,6 +8,8 @@ display(sprintf('=================================================='));
 
 tic;
 
+kB = 1.3865 * 10^(-23);       % Bolzmann's constant
+
 rng('default');
 
 U11 = HLG1.U;   % assignment matrix of the first graph (given partition)
@@ -44,20 +46,37 @@ U22 = randomly_shift_nodes(LLG2, HLG2, p);
   nV1 = size(LLG1.V,1);
   % accept initial clustering
   U1_new = U11;
-  % find nodes, for that the initial clustering was worse then the new ome
-  ind_change = WG11>WG12;
-  % for this nodes accept the new clustering with the probability exp(-(W1-W1_prime)/p)
-  pAccept = exp(-(WG11-WG12)/p); pAccept(isnan(pAccept)) = 0;
-  pAccept = pAccept.* ind_change;
-  rand_vec = rand(nV1,1);
-  ind_select_U12 = pAccept>rand_vec;
-
-%   diff = abs(WG11-WG12); 
-%   diff(isnan(diff)) = 0;    % Inf - Inf
-%   diff(diff<=1) =  0;
-%   ind_select_U12 = logical(diff) & ind_change;
-
-  U1_new(ind_select_U12, :) = U12(ind_select_U12, :);
+  
+  dE = WG12 - WG11;
+  pA = min(1, exp(-dE/(p*kB))); % acception probability
+  
+  dE_npos = dE<=0;
+  dE_pos = ~dE_npos;
+  
+  % accept states with smaller error
+  U1_new(dE_npos, :) = U12(dE_npos,:);
+  
+  % for the states with bigger error accept state with the probability pA
+  q = rand(nV1,1);
+  accept_ind = pA > q;
+  accept_ind = accept_ind & dE_pos;
+  
+  U1_new(accept_ind, :) = U12(accept_ind,:);
+  
+%   % find nodes, for that the initial clustering was worse then the new one
+%   ind_change = WG11>WG12;
+%   % for this nodes accept the new clustering with the probability exp(-(W1-W1_prime)/p)
+%   pAccept = exp(-(WG11-WG12)/(p*kB)); pAccept(isnan(pAccept)) = 0;
+%   pAccept = pAccept.* ind_change;
+%   q = rand(nV1,1);
+%   ind_select_U12 = pAccept>q;
+% 
+% %   diff = abs(WG11-WG12); 
+% %   diff(isnan(diff)) = 0;    % Inf - Inf
+% %   diff(diff<=1) =  0;
+% %   ind_select_U12 = logical(diff) & ind_change;
+% 
+%   U1_new(ind_select_U12, :) = U12(ind_select_U12, :);
 
   assert(sum(U1_new(:))==nV1, 'Error in the step 4 in simulated annealing: first graph had got wrong clustering');
 
@@ -69,20 +88,38 @@ U22 = randomly_shift_nodes(LLG2, HLG2, p);
   nV2 = size(LLG2.V,1);
   % accept initial clustering
   U2_new = U21;
-  % find nodes, for that the initial clustering was worse then the new one
-  ind_change = WG21>WG22;
-  % for other nodes accept the new clustering with the probability exp(-(W1-W1_prime)/p)
-  pAccept = exp(-(WG21-WG22)/p); pAccept(isnan(pAccept)) = 0;
-  pAccept = pAccept.* ind_change;
-  rand_vec = rand(nV2,1);
-  ind_select_U22 = pAccept>rand_vec;
-
-%   diff = abs(WG21-WG22); 
-%   diff(isnan(diff)) = 0;    % Inf - Inf
-%   diff(diff<=1) =  0;
-%   ind_select_U22 = logical(diff) & ind_change;
-
-  U2_new(ind_select_U22, :) = U22(ind_select_U22, :);
+  
+  
+  dE = WG22 - WG21;
+  pA = min(1, exp(-dE/(p*kB))); % acception probability
+  
+  dE_npos = dE<=0;
+  dE_pos = ~dE_npos;
+  
+  % accept states with smaller error
+  U2_new(dE_npos, :) = U22(dE_npos,:);
+  
+  % for the states with bigger error accept state with the probability pA
+  q = rand(nV2,1);
+  accept_ind = pA > q;
+  accept_ind = accept_ind & dE_pos;
+  
+  U2_new(accept_ind, :) = U22(accept_ind,:);
+  
+%   % find nodes, for that the initial clustering was worse then the new one
+%   ind_change = WG21>WG22;
+%   % for other nodes accept the new clustering with the probability exp(-(W1-W1_prime)/p)
+%   pAccept = exp(-(WG21-WG22)/p); pAccept(isnan(pAccept)) = 0;
+%   pAccept = pAccept.* ind_change;
+%   q = rand(nV2,1);
+%   ind_select_U22 = pAccept>q;
+% 
+% %   diff = abs(WG21-WG22); 
+% %   diff(isnan(diff)) = 0;    % Inf - Inf
+% %   diff(diff<=1) =  0;
+% %   ind_select_U22 = logical(diff) & ind_change;
+% 
+%   U2_new(ind_select_U22, :) = U22(ind_select_U22, :);
 
   assert(sum(U2_new(:))==nV2, 'Error in the step 4 in simulated annealing: second graph had got wrong clustering');
 

@@ -29,8 +29,8 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
 %    new_HLG1_U = 0.5*double(U1); 
 %    new_HLG2_U = 0.5*double(U2); 
 
-   WG1 = Inf*ones(nV1,1);
-   WG2 = Inf*ones(nV2,1);   
+   WG1 = 100*ones(nV1,1);    % Inf*ones(nV1,1);
+   WG2 = 100*ones(nV2,1);    % Inf*ones(nV2,1);   
    
    
    % for each pairs of anchor matches ai<->aj estimate the best local
