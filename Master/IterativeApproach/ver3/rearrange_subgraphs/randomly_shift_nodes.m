@@ -9,10 +9,11 @@ U = HLG.U;
 nA = size(HLG.V,1);     % number of anchors
 nV = size(LLG.V,1);     % number of nodes
 
-m = round(p*nV);        % number of nodes to shift
+% m = round(p*nV);        % number of nodes to shift
+m = 1;
 fprintf('Number of nodes to move %d \n', m);
 
-picked_nodes_ind = datasample(1:nV, m,'Replace',false)'; 
+picked_nodes_ind = datasample(1:nV, m,'Replace',false)';
 
 dist_to_anchors = repmat(LLG.V(picked_nodes_ind,1:2), nA,1) ...
                 - kron  (HLG.V(:,1:2), ones(m,1));
