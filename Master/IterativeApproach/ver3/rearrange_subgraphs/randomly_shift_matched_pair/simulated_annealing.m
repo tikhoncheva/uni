@@ -8,7 +8,7 @@ display(sprintf('=================================================='));
 
 tic;
 
-nIterations = 1;
+nIterations = 2;
 
 rng('default');
 
@@ -27,17 +27,18 @@ for it = 1:nIterations
     [WG11, WG21] = rearrange_subgraphs(LLG1, LLG2, U11, U21, ...
                                        LLGmatches, HLGmatches, ...
                                        T, inverseT);
-    % Step 2: randomly select one node in each of two graphs and shift
-    % them to the new anchors
+                                   
+    % Step 2: randomly select one matched pair and move it to the next
+    % nearest anchor
 
-    [U12, sel_nodes_LLG1] = randomly_shift_nodes(LLG1, HLG1_new, p);
-    [U22, sel_nodes_LLG2] = randomly_shift_nodes(LLG2, HLG2_new, p);
+    [U12, U22, sel_node_LLG1, sel_node_LLG2] = randomly_shift_nodes(LLG1, LLG2, HLG1_new, HLG2_new, ...
+                                                                    LLGmatches.matched_pairs, HLGmatches.matched_pairs);
 
-    nHLG1 = HLG1_new;
-    nHLG1.U = U12;
-
-    nHLG2 = HLG2_new;
-    nHLG2.U = U22;
+% %     nHLG1 = HLG1_new;
+% %     nHLG1.U = U12;
+% % 
+% %     nHLG2 = HLG2_new;
+% %     nHLG2.U = U22;
 
 % %     % Step 3: match graphs on the LL ones again
 % %     [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(LLG1, LLG2, ...
@@ -66,11 +67,11 @@ for it = 1:nIterations
 % %                                        nLLGmatches, HLGmatches, ...
 % %                                        T_prime, inverseT_prime);
 
-% %     [T_prime, inverseT_prime] = affine_transformation_estimation(LLG1, LLG2, U12, U22, ...
-% %                                                      LLGmatches, HLGmatches);
+    [T_prime, inverseT_prime] = affine_transformation_estimation(LLG1, LLG2, U12, U22, ...
+                                                     LLGmatches, HLGmatches);
     [WG12, WG22] = rearrange_subgraphs(LLG1, LLG2, U12, U22, ...
                                        LLGmatches, HLGmatches, ...
-                                       T, inverseT);
+                                       T_prime, inverseT_prime);
 
 
     % Step 5: decide for each node (in both graphs), to which anchor it should belong based on the
@@ -85,7 +86,7 @@ for it = 1:nIterations
       pA = min(1, exp(-dE/p) ); % acception probability
     %   pA(isnan(dE)) = 1.0;
     %   pA( abs(dE)<0.1) = 0.0;
-       ind = zeros(nV1, 1); ind(sel_nodes_LLG1) = 1;
+       ind = zeros(nV1, 1); ind(sel_node_LLG1) = 1;
        pA(~ind) = 0.0;
 
       dE_npos = dE<0;
@@ -114,7 +115,7 @@ for it = 1:nIterations
       pA = min(1, exp(-dE/p) ); % acception probability
     %   pA(isnan(dE)) = 1.0;
     %   pA( abs(dE)<0.1) = 0.0;
-       ind = zeros(nV2, 1); ind(sel_nodes_LLG2) = 1;
+       ind = zeros(nV2, 1); ind(sel_node_LLG2) = 1;
        pA(~ind) = 0.0;
 
       dE_npos = dE<0;

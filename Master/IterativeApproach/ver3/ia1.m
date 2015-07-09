@@ -1054,7 +1054,7 @@ HLG2 = handles.HLG2;
 it = handles.Iteration;
 
 % -----------------------------------------------------------------------
-% estimated affine transformation for each subgraph given matches 
+% % estimated affine transformation for each subgraph given matches 
 % [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
 %                                                  handles.LLGmatches(it), ...
 %                                                   handles.HLGmatches(it));
@@ -1069,9 +1069,8 @@ it = handles.Iteration;
 % Simulated annealing                               
 % -----------------------------------------------------------------------          
 % parameters of the simulated annealing
-p = 10;
-p = p*(0.95^(it-1));
-kB = 1; %1.3865 * 10^(-23);       % Bolzmann's constant    
+% % % p = 1; p = p*(0.95^(it-1));
+p = 1/it;
 
 [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
                                    handles.LLGmatches(it), handles.HLGmatches(it), p);
