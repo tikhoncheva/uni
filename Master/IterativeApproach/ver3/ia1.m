@@ -95,6 +95,7 @@ addpath(genpath('./LowerLevelGraph'));
 addpath(genpath('./Matching_HL'));
 addpath(genpath('./Matching_LL'));
 addpath(genpath('./ransac'));
+% addpath(genpath('./RANSAC2'));
 addpath(genpath('./GraphCoarsening'));
 addpath(genpath('./rearrange_subgraphs'));
 
@@ -1069,9 +1070,8 @@ it = handles.Iteration;
 % Simulated annealing                               
 % -----------------------------------------------------------------------          
 % parameters of the simulated annealing
-% % % p = 1; p = p*(0.95^(it-1));
+% % p = 1; p = p*(0.95^(it-1));
 p = 1/it;
-
 [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
                                    handles.LLGmatches(it), handles.HLGmatches(it), p);
 % ------------------------------------------------------------------------

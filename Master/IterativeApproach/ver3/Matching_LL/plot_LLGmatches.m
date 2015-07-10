@@ -33,7 +33,7 @@ cmap = [cmap; [0.0 0.0 0.0]];
 % vertices (color nodes in each subgraph in different color)
 col_mapping = size(cmap,1)*ones(1,size(HLG1.V,1))    ;
 col_mapping(HL_matches(:,1)) = HL_matches(:,1);
-for i=1:size(HL_matches,1)
+for i=1:numel(col_mapping)
     Vi_ind = HLG1.U(:,i);
     plot(G1.V(Vi_ind,1), G1.V(Vi_ind,2), 'ko', 'MarkerFaceColor', cmap(col_mapping(i),:));       
 end
@@ -51,7 +51,7 @@ end
 % plot(G2.V(:,1), G2.V(:,2), 'b*');   
 col_mapping = size(cmap,1)*ones(1,size(HLG2.V,1))    ;
 col_mapping(HL_matches(:,2)) = HL_matches(:,1);
-for i=1:size(HL_matches,1)
+for i=1:numel(col_mapping)
     Vi_ind = HLG2.U(:,i);
     plot(G2.V(Vi_ind,1), G2.V(Vi_ind,2), 'ko', 'MarkerFaceColor', cmap(col_mapping(i),:));       
 end

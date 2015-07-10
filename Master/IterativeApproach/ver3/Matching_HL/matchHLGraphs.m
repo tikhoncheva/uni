@@ -31,8 +31,11 @@ try
     x = RRWM(affmatrix, group1, group2);
     display(sprintf('  time spent for the RRWM on the anchor graph: %f sec', toc));
     display(sprintf('==================================================\n'));
-
+        
     X = greedyMapping(x, group1, group2);
+
+    d = affmatrix(1:size(affmatrix)+1:end);
+%     X(d.*X'<0.5) = 0;       % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 delete weak matches
 
     objval = X'*affmatrix * X;
 

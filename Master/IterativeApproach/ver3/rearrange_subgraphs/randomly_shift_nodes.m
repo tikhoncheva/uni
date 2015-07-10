@@ -2,8 +2,7 @@
 
 % select next nearest anchor
 
-function [U, picked_nodes_ind] = randomly_shift_nodes(LLG, HLG, p)
-
+function [U, picked_nodes_ind] = randomly_shift_nodes(LLG, HLG, W)
 U = HLG.U;
 
 k = 3;  % number of nearest anchors a node can be moved to
@@ -13,6 +12,9 @@ nV = size(LLG.V,1);     % number of nodes
 
 m = 1;
 fprintf('Number of nodes to move %d \n', m);
+
+% ind_nodes_in_bad_subg = find(W>1);
+% picked_nodes_ind = datasample(ind_nodes_in_bad_subg, m,'Replace',false)';
 
 picked_nodes_ind = datasample(1:nV, m,'Replace',false)';
 

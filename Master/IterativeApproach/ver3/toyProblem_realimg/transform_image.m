@@ -19,6 +19,7 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     assert(size(keypoints,1)==4);
 
     setParameters_transformation_ri;
+    theta = 2*pi + theta;
     
     img = imnoise(img,'gaussian', noise_m, noise_var);
     
@@ -29,22 +30,18 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     img_new(:) = 0;
     
     % Rotation matrix of the affine transformation
-    M = [ cos(aff_transfo_angle) -sin(aff_transfo_angle); ... 
-          sin(aff_transfo_angle)  cos(aff_transfo_angle) ]; 
+    M = [ cos(theta) -sin(theta); ... 
+          sin(theta)  cos(theta) ]; 
 
-    M_inv = [ cos(aff_transfo_angle)  sin(aff_transfo_angle); ... 
-            -sin(aff_transfo_angle)  cos(aff_transfo_angle) ]; 
+    M_inv = [ cos(theta)  sin(theta); ... 
+             -sin(theta)  cos(theta) ]; 
     
-    % new rotated image
-    
-    img_new = repmat(img,1);
-    img_new(:) = 0;
-    
+    % new rotated image   
     [x(:,1), x(:,2)] = find(img_new(:,:,1)==0);
     x = x - repmat([m/2, n/2] , m*n, 1);
     x = x - repmat(t', m*n, 1);
     y = x*M_inv;
-    y = y/aff_transfo_scale;
+    y = y/scale;
     y = round(y + repmat([m/2, n/2] , m*n, 1));
     x = round(x + repmat([m/2, n/2] , m*n, 1));
     
@@ -77,14 +74,16 @@ function [img_new, features, GT] = transform_image(img, keypoints)
     
     % Coordinates of the transformed keypoints
     keypoints(1:2,:) = keypoints(1:2,:) - repmat([n/2;m/2], 1, size(keypoints,2));
-    keypoints_new = aff_transfo_scale * M * keypoints(1:2,:) + repmat(t, 1, size(keypoints, 2));
+    keypoints_new = scale * M * keypoints(1:2,:) + repmat(t, 1, size(keypoints, 2));
     keypoints_new = round(keypoints_new + repmat([n/2;m/2], 1, size(keypoints,2)) );
     
     ind_feasible = keypoints_new(1,:)>=1 & keypoints_new(1,:)<=n ...
                  & keypoints_new(2,:)>=1 & keypoints_new(2,:)<=m;  
     
     % SIFT descriptors in the keypoints   
-    F_in = [keypoints_new(:, ind_feasible); keypoints(3, ind_feasible) + aff_transfo_angle ; keypoints(4, ind_feasible)]; 
+    F_in = [keypoints_new(:, ind_feasible); ...
+            keypoints(3, ind_feasible) + theta ; ...
+            keypoints(4, ind_feasible)]; 
     [F, D] = vl_sift(single(rgb2gray(img_new)), 'frames', F_in);
     
     features.edges = F;

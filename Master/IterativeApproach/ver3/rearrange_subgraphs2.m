@@ -76,7 +76,8 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
             % calculate summary error of the estimated transformation
             err1 = median(sqrt((Vaj_m(:,1)-PVai_m(:,1)).^2+(Vaj_m(:,2)-PVai_m(:,2)).^2));    
             err2 = median(sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2));
-            err = 0.5*(err1 + err2);
+%             err = 0.5*(err1 + err2);
+            err = min(err1, err2);
                         
             if (err<error_eps)  % Rule 1
 
@@ -298,19 +299,19 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
    k = 3;
    
    
-   nA1 = size(HLG1.V,1);     % number of anchors
-   % for each node calculate it's distance to the anchor
-   diffx = repmat(LLG1.V(:,1), 1, nA1) - repmat(HLG1.V(:,1)', nV1, 1);
-   diffy = repmat(LLG1.V(:,2), 1, nA1) - repmat(HLG1.V(:,2)', nV1, 1);
-   dist = sqrt(diffx.^2 + diffy.^2);
-   
-   [~, sort_rows] = sort(dist,2);
-   sort_rows = sort_rows(:,1:k);
-
-   U1 = zeros(nV1, nA1);
-   U1(sub2ind(size(U1), repmat([1:nV1]', k, 1), sort_rows(:))) = 1;
-   
-   new_HLG1_U = new_HLG1_U.* U1;
+% %    nA1 = size(HLG1.V,1);     % number of anchors
+% %    % for each node calculate it's distance to the anchor
+% %    diffx = repmat(LLG1.V(:,1), 1, nA1) - repmat(HLG1.V(:,1)', nV1, 1);
+% %    diffy = repmat(LLG1.V(:,2), 1, nA1) - repmat(HLG1.V(:,2)', nV1, 1);
+% %    dist = sqrt(diffx.^2 + diffy.^2);
+% %    
+% %    [~, sort_rows] = sort(dist,2);
+% %    sort_rows = sort_rows(:,1:k);
+% % 
+% %    U1 = zeros(nV1, nA1);
+% %    U1(sub2ind(size(U1), repmat([1:nV1]', k, 1), sort_rows(:))) = 1;
+% %
+% %    new_HLG1_U = new_HLG1_U.* U1;
 
    [~, max_pos] = max(new_HLG1_U, [], 2);
    ind = sub2ind(size(HLG1.U), [1:nV1]', max_pos);
@@ -320,19 +321,19 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
    
    
    
-   nA2 = size(HLG2.V,1);     % number of anchors
-   % for each node calculate it's distance to the anchor
-   diffx = repmat(LLG2.V(:,1), 1, nA2) - repmat(HLG2.V(:,1)', nV2, 1);
-   diffy = repmat(LLG2.V(:,2), 1, nA2) - repmat(HLG2.V(:,2)', nV2, 1);
-   dist = sqrt(diffx.^2 + diffy.^2);
-   
-   [~, sort_rows] = sort(dist,2);
-   sort_rows = sort_rows(:,1:k);
-
-   U2 = zeros(nV2, nA2);
-   U2(sub2ind(size(U2), repmat([1:nV2]', k, 1), sort_rows(:))) = 1;
-   
-   new_HLG2_U = new_HLG2_U.* U2;
+% %    nA2 = size(HLG2.V,1);     % number of anchors
+% %    % for each node calculate it's distance to the anchor
+% %    diffx = repmat(LLG2.V(:,1), 1, nA2) - repmat(HLG2.V(:,1)', nV2, 1);
+% %    diffy = repmat(LLG2.V(:,2), 1, nA2) - repmat(HLG2.V(:,2)', nV2, 1);
+% %    dist = sqrt(diffx.^2 + diffy.^2);
+% %    
+% %    [~, sort_rows] = sort(dist,2);
+% %    sort_rows = sort_rows(:,1:k);
+% % 
+% %    U2 = zeros(nV2, nA2);
+% %    U2(sub2ind(size(U2), repmat([1:nV2]', k, 1), sort_rows(:))) = 1;
+% %    
+% %    new_HLG2_U = new_HLG2_U.* U2;
    
    [~, max_pos] = max(new_HLG2_U, [], 2);
    ind = sub2ind(size(HLG2.U), [1:nV2]', max_pos);

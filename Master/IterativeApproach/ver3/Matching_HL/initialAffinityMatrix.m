@@ -99,6 +99,37 @@ for ai = 1:nA1 % consider anchor i
     
 end
 
+
+% % adjacency matrix of tha anchor graphs
+% 
+% adjM1 = zeros(nA1, nA1);
+% E1 = HLG1.E;
+% E1 = [E1; [E1(:,2) E1(:,1)]];
+% ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
+% adjM1(ind) = 1;
+% 
+% adjM2 = zeros(nA2, nA2);
+% E2 = HLG2.E;
+% E2 = [E2; [E2(:,2) E2(:,1)]];
+% ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
+% adjM2(ind) = 1; 
+%     
+% % nondiagonal elements
+% G1 = squareform(pdist(vA1, 'euclidean'));
+% G1(~adjM1) = NaN;
+% 
+% G2 = squareform(pdist(vA2, 'euclidean'));
+% G2(~adjM2) = NaN;
+% 
+% 
+% sigma = 0.15;      % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% D = (repmat(G1, nA2, nA2)-kron(G2,ones(nA1))).^2;
+% D = exp(-D./sigma);                  
+% D(isnan(D)) = 0;
+% D(1:size(D,1)+1:end) = 0;
+% 
+% affmatrix = affmatrix + D;
+
 % diag_affmatrix = affmatrix(1:size(affmatrix,1)+1:end);
 % diag_affmatrix = (diag_affmatrix - min(diag_affmatrix))/(max(diag_affmatrix)-min(diag_affmatrix));
 % affmatrix(1:size(affmatrix,1)+1:end) = diag_affmatrix;

@@ -3,7 +3,7 @@
 % HLGmatches    result of higher level graph matching (pairs of correspondence nodes)
 %
 
-function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2, ...
+function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2, ...
                                                LLGmatches, HLGmatches) 
 
    display(sprintf('\n================================================'));
@@ -16,8 +16,8 @@ function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1
    % affine transformation
    n_pairs_HL = size(HLGmatches.matched_pairs,1);
    
-   T = zeros(n_pairs_HL, 6);  
-   inverseT = zeros(n_pairs_HL, 6);  
+   Ti = zeros(n_pairs_HL, 6);  
+   Tj = zeros(n_pairs_HL, 6);  
    
    for k=1:n_pairs_HL
        
@@ -38,27 +38,48 @@ function [T, inverseT, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1
         
         if (size(pairs, 1)>=3)
             
-            x1 = LLG1.V(pairs(:,1),:);
-            x2 = LLG2.V(pairs(:,2),:);
+            Vai_m = LLG1.V(pairs(:,1),:);
+            Vaj_m = LLG2.V(pairs(:,2),:);
                    
-            % estimate affine transformation
-            [H, ~] = ransacfitaffine(x1', x2', 0.01);
-        
-            T(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
+            % estimate affine transformation  
             
-            A = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
-            b = [H(1,3); H(2,3)];
+            % from left to right
+            [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
+            Ti(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
+            Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
+            bi = [H(1,3); H(2,3)];
             
-            A_prime = pinv(A);
-            b_prime = - A_prime*b;
+%             A_prime = pinv(A);
+%             b_prime = - A_prime*b;
             
-            inverseT(k,:) = [A_prime(1,1) A_prime(1,2) A_prime(2,1) A_prime(2,2) b_prime(1) b_prime(2)];  
-
+            % from right to left
+            [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
+%             inverseT(k,:) = [A_prime(1,1) A_prime(1,2) A_prime(2,1) A_prime(2,2) b_prime(1) b_prime(2)];  
+            Tj(k,:) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
+            Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
+            bj = [ inverseH(1,3); inverseH(2,3)];     
             
-            Prx1 = A * x1' + repmat(b,1,size(x1,1));             % proejction of x1 nodes
-            Prx1 = Prx1';
-            Prx2 = A_prime * x2' + repmat(b_prime,1,size(x2,1)); % projection of x2 nodes
-            Prx2 = Prx2';                 
+            PVai_m = Ai * Vai_m' + repmat(bi,1,size(Vai_m,1)); % proejction of Vai_m nodes
+            PVai_m = PVai_m';
+            PVaj_m = Aj * Vaj_m' + repmat(bj,1,size(Vaj_m,1)); % projection of Vaj_m nodes
+            PVaj_m = PVaj_m';
+            
+            % calculate summary error of the estimated transformation
+            err1 = median(sqrt((Vaj_m(:,1)-PVai_m(:,1)).^2+(Vaj_m(:,2)-PVai_m(:,2)).^2));    
+            err2 = median(sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2));
+            
+            [~, better_estimated_T] = min([err1, err2]);
+            switch better_estimated_T    
+                case 1
+                    Aj = pinv(Ai);
+                    bj = - Aj*bi;                    
+                    Tj(k,:) = [Aj(1,1) Aj(1,2) Aj(2,1) Aj(2,2) bj(1) bj(2)];                    
+                case 2
+                    Ai = pinv(Aj);
+                    bi = - Ai*bj;                    
+                    Ti(k,:) = [Ai(1,1) Ai(1,2) Ai(2,1) Ai(2,2) bi(1) bi(2)];                    
+            end
+            
             
             
 %             figure; subplot(1,2,1);

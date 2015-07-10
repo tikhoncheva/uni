@@ -50,7 +50,7 @@ function plot_twolevelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
     if (nargin == 7) % assign same color to the nodes in matched subgraphs
         matching = varargin{1};
         col = varargin{2};
-        col_mapping(matching(:,2)) = matching(:,1);
+%         col_mapping(matching(:,2)) = matching(:,1);
         if col==2
             col_mapping(matching(:,2)) = matching(:,1);
         end

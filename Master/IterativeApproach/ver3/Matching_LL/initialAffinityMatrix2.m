@@ -44,7 +44,7 @@ sigma = 0.15; % 100     % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
 D = exp(-D./sigma);                  
 D(isnan(D)) = 0;
-D = D+D'; 
+% D = D+D'; 
 
 
 % Affinity matrix (non-diagonal elements: cosine node similarity)
