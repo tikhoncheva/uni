@@ -20,7 +20,7 @@ adjM(ind) = 1;
 
 % Edge Weights Matrix
 eW = squareform(pdist(G.V, 'euclidean'));
-sigma = sum(eW(:))/nV/nV;
+sigma = sum(eW(:))/nV/nV;                  % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 eW = eW./sigma;
 
 sigma = 0.15;
@@ -133,7 +133,7 @@ function [G, init_indexing, matching] = HEM(nA, G, init_indexing, matching)
     
     init_indexing(lines_to_del) = [];
     
-    [I,J] = find(G.eW);
+    [I,J] = find(tril(G.eW, -1));
     G.E = [I,J];
     
     G.eW(G.eW==0) = NaN;

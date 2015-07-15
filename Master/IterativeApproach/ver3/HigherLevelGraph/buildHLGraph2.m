@@ -63,6 +63,7 @@ minDeg = 5;
 [nodes_kNN, ~] = knnsearch(HLG.V(:, 1:2), HLG.V(:, 1:2), 'k', minDeg + 1); % nV x (minDeg+1) matrix                   
 nodes_kNN = nodes_kNN(:,2:end);                                          % delete loops in each vertex
 nodes_kNN = reshape(nodes_kNN, m*minDeg, 1);
+
 HLG.E = [repmat([1:m]', minDeg, 1) nodes_kNN];
 
     

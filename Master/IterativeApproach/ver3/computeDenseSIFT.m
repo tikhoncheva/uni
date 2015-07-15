@@ -41,8 +41,8 @@ Es = vl_imsmooth(E, sqrt((binSize/magnif)^2 - .25));
 [F, D] = vl_dsift(single(Es), 'size', binSize, 'Bounds', [1+border, 1+border, size(E, 1)-border, size(E,2)-border]); % single scale 
 % F(1,:) = F(1,:) + border;
 % F(2,:) = F(2,:) + border;
-F(3,:) = binSize/magnif ;
-F(4,:) = 0 ;
+F(3,:) = binSize/magnif ;  % scale
+F(4,:) = 0 ;               % orientation
 
 lia = ismember(F([2,1],:)', subs, 'rows');
 
