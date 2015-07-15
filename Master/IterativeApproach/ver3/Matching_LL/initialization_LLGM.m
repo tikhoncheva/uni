@@ -40,7 +40,7 @@ try
     localAdjMatrices1 = cell(nIterations,1);
     localAdjMatrices2 = cell(nIterations,1);
 
-    % according to matches of anchor node build a colelction of
+    % according to matches of anchor node build a collection of
     % corresponding subgraphs on the lower level
     
     V1 = cell(nIterations,1);

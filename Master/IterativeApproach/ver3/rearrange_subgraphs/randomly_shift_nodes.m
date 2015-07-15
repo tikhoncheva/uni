@@ -2,7 +2,7 @@
 
 % select next nearest anchor
 
-function [U, picked_nodes_ind] = randomly_shift_nodes(LLG, HLG, W)
+function [U, affected_anchors] = randomly_shift_nodes(LLG, HLG, W)
 U = HLG.U;
 
 k = 3;  % number of nearest anchors a node can be moved to
@@ -24,10 +24,12 @@ dist_to_anchors = sqrt(dist_to_anchors(:,1).^2 + dist_to_anchors(:,2).^2);
 dist_to_anchors = reshape(dist_to_anchors , m, nA);
 dist_to_anchors(U(picked_nodes_ind, :)) = Inf;
 
-
 [~, nn_anchors_ind] = sort(dist_to_anchors, 2);
-
 nn_anchors_ind = nn_anchors_ind(:, datasample(1:k, 1)); % select one of the k nearest neighbors
+
+[~, affected_anchors] = find(U(picked_nodes_ind, :));
+affected_anchors = unique(affected_anchors);
+affected_anchors = [affected_anchors; nn_anchors_ind];
 
 U(picked_nodes_ind, :) = 0;
 ind = sub2ind(size(U), picked_nodes_ind, nn_anchors_ind);

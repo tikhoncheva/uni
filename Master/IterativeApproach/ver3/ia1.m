@@ -236,7 +236,8 @@ if filename~=0
     edges(:, zerocol_ind) = []; %  and corresponding points
     
     % create second image = affine_transformation(img1)
-    [img1, features1, GT] = transform_image(img2, edges);
+    [img1, features1, features2, GT] = transform_image(img2, edges);
+%     [img1, features1, GT] = transform_image(img2, edges);    
     
 
     % Show img1 on the axis1
@@ -277,9 +278,10 @@ if filename~=0
     
     handles.features1.edges = features1.edges;
     handles.features1.descr = features1.descr;
-    
-    handles.features2.edges = edges;
-    handles.features2.descr = descr;
+
+    handles.features2 = features2;    
+%     handles.features2.edges = edges;
+%     handles.features2.descr = descr;
     
     handles.HLG1 = [];
     handles.HLG2 = [];

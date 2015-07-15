@@ -1,9 +1,13 @@
  
-%% Matching of dependency graphs
+%% Matching of Lower Level Graphs
 %
 % Input
-% DG1, DG2      two graphs with nV1 and nV2 nodes respectively
-% AG1, AG2      corresponding anchor graphs
+% nV1, nV2          number of node in two graph
+% indOfSubgraphs    binary matrix (#matchedSubgraphs x (nV1+nV2))
+%                   each ith row has 1-entries for the nodes of matched
+%                   subgraph pair i
+% corrmatrices      cell of correspondence matrices between matched subgraphs
+% affmatrices       cell of affinity matrices beween matched subgraphs
 %
 % Output
 %   objval      riched match score

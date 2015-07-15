@@ -8,131 +8,115 @@
 
 function [affmatrix] = initialAffinityMatrix(HLG1, HLG2, LLG1, LLG2, corrmatrix)
 
-vA1 = HLG1.V;  %2xnV1
-vA2 = HLG2.V;  %2xnV2
-            
-nA1 = size(vA1,1);
-nA2 = size(vA2,1);
-
-
-nV1 = size(LLG1.V,1);
-nV2 = size(LLG2.V,1);
-
-% define size of the local neighborhood of a node
-R = 30;
-
-% adjacency matrix of the first dependency graph
-adjM1 = zeros(nV1, nV1);
-E1 = LLG1.E;
-E1 = [E1; [E1(:,2) E1(:,1)]];
-ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
-adjM1(ind) = 1;
-
-% adjacency matrix of the second dependency graph
-adjM2 = zeros(nV2, nV2);
-E2 = LLG2.E;
-E2 = [E2; [E2(:,2) E2(:,1)]];
-ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
-adjM2(ind) = 1; 
-    
-
 t1 = tic;
 
-affmatrix = zeros(nA1*nA2);
-for ai = 1:nA1 % consider anchor i
-   % subgraph underlying the anchor i
-   ai_x = HLG1.U(:,ai);
-   if sum(ai_x)==0
-       continue;
-   end
-   
-   V1 = LLG1.V(ai_x,:);
-   
-   if (~isempty(LLG1.D))
-        D1 = LLG1.D(:, ai_x);
-   else 
-        D1 = [];
-   end
-   adjM1cut = adjM1(ai_x, ai_x');
-   if max(adjM1cut(:))==1
-       [subE1(:,1), subE1(:,2)] = find(adjM1cut);
-   else
-       subE1 = [];
-   end
-   subG1 = struct('V', V1, 'D', D1, 'E', subE1);
-          
-   % list of possible mathches of the anchor ai to the nodes of the second
-   % graph
-   seed_pairs = find(corrmatrix(ai,:)>0)';  
-   
-   for p = 1:numel(seed_pairs)
-       aj = seed_pairs(p);
-       % define subgraphs underlying the anchor aj of the second graph
-       aj_x = HLG2.U(:,aj);
-       if sum(aj_x)==0
+nA1 = size(HLG1.V,1);
+nA2 = size(HLG2.V,1);
+
+nodesim = zeros(nA1*nA2,1);
+% node similarity = diag of the affinity matrix
+nodesim1 = structural_node_similarity(HLG1, HLG2, LLG1, LLG2, corrmatrix); % using structur of the anchor subgraphs
+nodesim2 = BoF_node_similarity(HLG1, HLG2, LLG1, LLG2, corrmatrix); % using Back Of Features Representation
+
+% nodesim = nodesim1;
+% nodesim = nodesim2;
+nodesim = nodesim1 + nodesim2;
+
+
+D = zeros(nA1*nA2);
+% edge weights
+% W1 = edgeWeights_HLG(HLG1, LLG1); ind1 = sub2ind([nA1, nA1], HLG1.E(:,1), HLG1.E(:,2));
+% W2 = edgeWeights_HLG(HLG2, LLG2); ind2 = sub2ind([nA2, nA2], HLG2.E(:,1), HLG2.E(:,2));
+
+% distance matrix of the first anchor graph
+G1 = zeros(nA1);
+% G1(ind1) = W1; 
+
+for i = 1:nA1
+    ai = i;
+    for j = 1:i-1
+       aj = j;
+
+       % nodes of the subgraph Ai
+       ind_Vai = HLG1.U(:,ai);
+       if sum(ind_Vai)==0
            continue;
-       end
+       end 
+       Vai = LLG1.V(ind_Vai,:);
+       nVai = size(Vai, 1);
 
-       V2 = LLG2.V(aj_x,:);
-       if (~isempty(LLG1.D))
-            D2 = LLG2.D(:, aj_x);
-       else 
-            D2 = [];
-       end
-       adjM2cut = adjM2(aj_x, aj_x');
-       if max(adjM2cut(:))==1
-           [subE2(:,1), subE2(:,2)] = find(adjM2cut);
-       else
-           subE2 = [];
-       end
-       subG2 = struct('V', V2, 'D', D2, 'E', subE2);
-   
-       % compair two subgraphs
-       simval = compair_subgraphs(subG1, subG2, R);
-       
-       affmatrix( (aj-1)*nA1+ai, (aj-1)*nA1+ai) = simval;
-      
-       clear V2; clear D2; clear subE2; clear subG2;
-   end
-   
-   clear V1; clear D1; clear subE1; clear subG1;
+       % nodes of the subgraph Aj
+       ind_Vaj = HLG1.U(:,aj);
+       if sum(ind_Vaj)==0
+           continue;
+       end 
+       Vaj = LLG1.V(ind_Vaj,:);   
+       nVaj = size(Vaj, 1);
+
+       % calculate pairwise distance between nodes in Vai and Vaj
+       dist = repmat(Vai(:,1:2), nVaj,1) ...
+            - kron  (Vaj(:,1:2), ones(nVai, 1));
+       dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
+
+       % take median
+       G1(i,j) = median(dist(:));
+    end
+
+ end
     
+G1 = G1 + G1';
+G1 = G1./max(G1(:));                          % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+% distance matrix of the second anchor graph
+G2 = zeros(nA2);
+% G2(ind2) = W2;
+for i = 1:nA2
+    ai = i;
+    for j = 1:i-1
+       aj = j;
+
+       % nodes of the subgraph Ai
+       ind_Vai = HLG2.U(:,ai);
+       if sum(ind_Vai)==0
+           continue;
+       end 
+       Vai = LLG2.V(ind_Vai,:);
+       nVai = size(Vai, 1);
+
+       % nodes of the subgraph Aj
+       ind_Vaj = HLG2.U(:,aj);
+       if sum(ind_Vaj)==0
+           continue;
+       end 
+       Vaj = LLG2.V(ind_Vaj,:);   
+       nVaj = size(Vaj, 1);
+
+       % calculate pairwise distance between nodes in Vai and Vaj
+       dist = repmat(Vai(:,1:2), nVaj,1) ...
+            - kron  (Vaj(:,1:2), ones(nVai, 1));
+       dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
+
+       % take median
+       G2(i,j) = median(dist(:));
+    end
+
 end
+ 
+G2 = G2 + G2';
+G2 = G2./max(G2(:));                    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+% edge similarity matrix of two anchor graphs
+sigma = 10;                            % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+D = (repmat(G1, nA2, nA2)-kron(G2,ones(nA1))).^2;
+D = exp(-D./sigma);                  
+D(isnan(D)) = 0;
+D(1:size(D,1)+1:end) = 0;
 
 
-% % adjacency matrix of tha anchor graphs
-% 
-% adjM1 = zeros(nA1, nA1);
-% E1 = HLG1.E;
-% E1 = [E1; [E1(:,2) E1(:,1)]];
-% ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
-% adjM1(ind) = 1;
-% 
-% adjM2 = zeros(nA2, nA2);
-% E2 = HLG2.E;
-% E2 = [E2; [E2(:,2) E2(:,1)]];
-% ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
-% adjM2(ind) = 1; 
-%     
-% % nondiagonal elements
-% G1 = squareform(pdist(vA1, 'euclidean'));
-% G1(~adjM1) = NaN;
-% 
-% G2 = squareform(pdist(vA2, 'euclidean'));
-% G2(~adjM2) = NaN;
-% 
-% 
-% sigma = 0.15;      % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-% D = (repmat(G1, nA2, nA2)-kron(G2,ones(nA1))).^2;
-% D = exp(-D./sigma);                  
-% D(isnan(D)) = 0;
-% D(1:size(D,1)+1:end) = 0;
-% 
-% affmatrix = affmatrix + D;
 
-% diag_affmatrix = affmatrix(1:size(affmatrix,1)+1:end);
-% diag_affmatrix = (diag_affmatrix - min(diag_affmatrix))/(max(diag_affmatrix)-min(diag_affmatrix));
-% affmatrix(1:size(affmatrix,1)+1:end) = diag_affmatrix;
+% resulting affinity matrix
+affmatrix = diag(nodesim) + D;
+
 
 fprintf('calculation of affinity matrix (HL) took %.03f sec', toc(t1));
 
