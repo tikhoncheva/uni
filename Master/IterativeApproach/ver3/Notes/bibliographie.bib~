@@ -1,0 +1,24 @@
+@article{Cho2014_Haystack,
+	author = {Cho, Minsu and Duchenne, Olivier},
+	title = {{Finding Matches in a Haystack : A Max-Pooling Strategy for Graph Matching in the Presence of Outliers}},
+	journal = {Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
+	year = {2014}
+}
+
+
+@article{Cho2012_ProgressiveGM,
+	author = {Cho, Minsu and Lee, Kyoung Mu},
+	title = {{Progressive graph matching: Making a move of graphs via probabilistic voting}},
+	journal = {Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
+	year = {2012}
+}
+
+@article{Cho2010_RRWM,
+	author = {Cho, Minsu and Lee, Jungmin and Lee, Kyoung Mu},
+	title = {{Reweighted Random Walks for Graph Matching}},
+	journal = {ECCV},
+	year = {2010}
+}
+
+
+

@@ -1,0 +1,109 @@
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+% ---------------------------------------          Preamble                   -------------------------------------------------------- 
+\documentclass[
+	fontsize=12pt,
+	paper=a4,
+	twoside=false,
+	numbers=noenddot,
+	plainheadsepline,
+	toc=listof,
+	toc=bibliography
+]{scrartcl}
+
+\usepackage[english]{babel} 
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{placeins}
+\usepackage{float}
+
+\usepackage{graphicx}
+\restylefloat{figure}
+\usepackage{subfigure} 
+
+\usepackage{array}
+
+\usepackage{hyperref}
+
+\setlength{\parindent}{0pt}
+
+\usepackage[sort, numbers]{natbib}
+
+\begin{document}
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+% ---------------------------------------          Title                --------------------------------------------------
+\title{Graph Matching Framework}
+\author{Ekaterina Tikhoncheva}
+\date{} 
+
+\maketitle 
+
+% ---------------------------------------          Introduction         --------------------------------------------------
+This notes are a short description of graph matching model.
+
+% Inhaltsverzeichnis erzeugen
+\tableofcontents
+\newpage
+
+% ---------------------------------------        Problem Statement      --------------------------------------------------
+\section{Problem statement}
+Consider two undirected weighted graphs $G^I = (V^I, E^I, A^I)$ and $G^J = (V^J, E^J, A^J)$, where $V$, $E$, $A$ denote set of nodes,
+set of edges and set of node attributes respectively. We assume situation, where $|V^I|=n_1$, $|V^J|=n_2$ and $n_1$ is not necessary equal to $n_2$.
+
+The aim of graph matching is to find a subset of possible node correspondences, which maximizes the similarity value between two graphs. Such subset can be represented by a binary vector $x\in \{0,1\}^{n_1n_2}$, where $x_{(j-1)n_1+i}=1$, if node $v_i\in V^I$ is matched to node $u_j\in V^J$, and $x_{(j-1)n_1+i}=0$ otherwise. For simplification we will write further $x_{ij}$ and meaning $x_{(j-1)n_1+i}$.
+
+To measure similarity between graphs we define two similarity functions: \emph{nodes similarity function} (first-order similarity) $s_V(v_i, u_j),\ v_i\in V^I, u_j\in V^J$ and \emph{edge similarity function} (second-order similarity) $s_E(e_{ii'}, e_{jj'}),\ e_{ii'}\in E^I, e_{jj'}\in E^J$ (see \cite{Cho2014_Haystack}, \cite{Cho2012_ProgressiveGM}, \cite{Cho2010_RRWM}). Both functions can be combined in one \emph{similarity matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$}, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii'}, e_{jj'})$.
+
+
+Using this notation one can formulate \emph{one-to-one graph matching problem} as an quadratic optimization problem:
+\begin{alignat}{2}
+    &     && \argmin_x{x^TSx}                           \label{QIP::1}\\
+    & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{QIP::2}\\
+    &             &&  \sum_{i=1\dots n_1} x_{ij} = 1    \label{QIP::3}\\
+    &             &&  \sum_{j=1\dots n_2} x_{ij} = 1    \label{QIP::4}
+ \end{alignat}
+ 
+In case when $n_1\not = n_2$, we require one of the conditions (\ref{QIP::3}) or (\ref{QIP::4}) to be fulfilled according to, which graph is bigger.
+
+
+
+ 
+ 
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+
+% ---------------------------------------        Approach      --------------------------------------------------
+\section{Approach}
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+
+% ---------------------------------------        LLG Construction      --------------------------------------------------
+\subsection{Lower Level Graph Construction}
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+% ---------------------------------------        HLG Construction      --------------------------------------------------
+\subsection{Higher Level Graph Construction}
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+% ---------------------------------------        Matcing algorithm      --------------------------------------------------
+\subsection{Matching Algorithm}
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+% ---------------------------------------        Level connection      --------------------------------------------------
+\subsection{Connection between two levels}
+% -----------------------------------------------------------------------------------------------------------------------
+
+
+%\bibliographystyle{plain}
+\bibliography{bibliography}
+	
+\end{document}
