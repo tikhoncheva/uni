@@ -1,5 +1,4 @@
-\newcommand{\argmin}{\operatornamewithlimits{argmin}}
-% ---------------------------------------          Preamble                   -------------------------------------------------------- 
+% ---------------------------------------          Preamble
 \documentclass[
 	fontsize=12pt,
 	paper=a4,
@@ -29,27 +28,41 @@
 \setlength{\parindent}{0pt}
 
 \usepackage[sort, numbers]{natbib}
+% ---------------------------------------          New commands
+%\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\def\argmax{\mathop{\rm argmax}}
+\def\dist{\mathop{\rm dist}} 
+
+\usepackage{xcolor} 
+\newcommand\ToDo[1]{\textcolor{red}{#1}} 
+
+% ------------------------------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
 
 \begin{document}
 
 \pagestyle{plain}
 \pagenumbering{arabic}
 
-% ---------------------------------------          Title                --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------          Title
 \title{Graph Matching Framework}
 \author{Ekaterina Tikhoncheva}
 \date{} 
 
 \maketitle 
 
-% ---------------------------------------          Introduction         --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------          Introduction
 This notes are a short description of graph matching model applied for finding feature correspondences between two images.
 
 % Inhaltsverzeichnis erzeugen
 \tableofcontents
 \newpage
 
-% ---------------------------------------        Problem Statement      --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Problem Statement
 \section{Problem statement}
 Consider two undirected weighted graphs $G^I = (V^I, E^I, A^I)$ and $G^J = (V^J, E^J, A^J)$, where $V$, $E$, $A$ denote set of nodes,
 set of edges and set of node attributes respectively. We assume situation, where $|V^I|=n_1$, $|V^J|=n_2$ and $n_1$ is not necessary equal to $n_2$.
@@ -59,9 +72,9 @@ The aim of graph matching is to find a subset of possible node correspondences, 
 To measure similarity between graphs we define two similarity functions: \emph{nodes similarity function} (first-order similarity) $s_V(v_i, u_j),\ v_i\in V^I, u_j\in V^J$ and \emph{edge similarity function} (second-order similarity) $s_E(e_{ii'}, e_{jj'}),\ e_{ii'}\in E^I, e_{jj'}\in E^J$. Both functions can be combined in one \emph{similarity matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$}, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii'}, e_{jj'})$.
 
 
-Using this notation one can formulate \emph{one-to-one graph matching problem} as an quadratic optimization problem (\cite{Cho2014_Haystack}, \cite{Cho2012_ProgressiveGM}, \cite{Cho2010_RRWM}): 
+Using this notation one can formulate \emph{one-to-one Graph Matching Problem} \textbf{GMP} as an quadratic optimization problem (\cite{Cho2014_Haystack}, \cite{Cho2012_ProgressiveGM}, \cite{Cho2010_RRWM}): 
 \begin{alignat}{2}
-    &     && \argmin_x{x^TSx}                           \label{QIP::1}\\
+    &     && \argmax_x{x^TSx}                           \label{QIP::1}\\
     & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{QIP::2}\\
     &             &&  \sum_{i=1\dots n_1} x_{ij} = 1    \label{QIP::3}\\
     &             &&  \sum_{j=1\dots n_2} x_{ij} = 1    \label{QIP::4}
@@ -71,51 +84,70 @@ The maximum number of possible matches is equal to $\min(n_1, n_2)$. That means,
 
 Quadratic Optimization Problem is known to be \emph{NP}-hard \cite{Sahni1974}. This limits greatly the size of a graph, for which a exact solution can be calculated in reasonable time. Due to this there is a number of algorithms () that solve graph matching problem inexact.
 
-A standard approach to solve formulated problem approximately is to relax the integrality constrains: $x\in [0,1]^{n_1n_2}$ instead of  $x\in \{0,1\}^{n_1n_2}$. To return back to discrete solution one can apply Greedy Matching or Hungarian Algorithm \cite{Kuhn1955} on obtained continues solution.
-
-Unfortunately, most of the algorithms are two following problems:
+Unfortunately, most of the algorithms have two following problems:
 \begin{enumerate}
 \item they are still limited in size of permissible graphs. Experiments in most of the papers consider graphs with up to $100$ nodes.
-\item possible presence of outliers can reduce the accuracy of matching algorithm (\cite{Suh_CVPR2015}).
+\item possible presence of outliers can reduce the accuracy of matching algorithm \cite{Suh_CVPR2015}.
 \end{enumerate}  
 
 Our main aim was to develop a framework, which would allow an existing graph matching algorithm to cope with both problems.
-% -----------------------------------------------------------------------------------------------------------------------
 
 
-
-% ---------------------------------------        Approach      --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Approach
 \section{Approach}
 
-The main idea of our approach is to perform graph matching on several stages. Given initial graphs $G^I$ and $G^J$ we create for each of them a coarse representative graph $$.
+The main idea of our approach is to create flexible multi-scale matching framework, that could improve the speed of
+theoretically any matching algorithm for large graphs and increase their accuracy. 
 
+Given an initial graphs $G^I$ and $G^J$ we create for each of them a coarse representative graphs $A^I$, $A^J$. Each node of such graph represent a subgraph of initial graph. We refer further to nodes of the coarse graphs $A^I$, $A^J$ as \emph{anchor nodes} or just \emph{anchors} and to the graphs them self as \emph{anchor graphs}.
 
-% -----------------------------------------------------------------------------------------------------------------------
+Initial graphs with corresponding anchor graphs build two level structure (see fig \ToDo{ref}): initial graphs (or \emph{fine graphs}) represent a lower level and anchor graphs represent a higher level.  
 
+In case of large $G^I$ and $G^J$ graphs, where existing inexact solution techniques are difficult to apply due to time and storage complexity, their anchor graphs can be constructed small enough to not have this problems. That makes it possible, to find a solution of GMP on the higher level fast. 
 
+Ones the matching problem was solved on the higher level, we get the correspondences between subgraphs of the initial graphs, which are also much smaller comparing to complete graphs. Solving after that GMP for pairs of subgraphs lead us to the desirable correspondences between nodes of fine graphs.
 
-% ---------------------------------------        LLG Construction      --------------------------------------------------
+Obviously, accuracy of such two level matching approach depends heavily on the partition of initial graphs into subgraphs and on the matching quality of anchor graphs. To make the approach robuster we integrate the result of matching on the lower level into graph partition algorithm and repeat the whole scheme several times till convergence.
+
+In our work we concentrate ourself on the task of finding feature correspondences between two images. In the next sections we describe detailed the construction of initial graphs from given images and corresponding anchor graphs together with the matching algorithm on both levels and propagation of the matching results between the levels.
+
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        LLG Construction
 \subsection{Lower Level Graph Construction}
 
-% -----------------------------------------------------------------------------------------------------------------------
+In this section we describe structure of a lower level graph built based on a given image.
+
+Extracted features of the image represent the nodes of the graph. The edges of the graph contain information about geometrical relations between the feature.
+
+To extract features from the given image we detected first the edges \ToDo{ref} of the image and used \emph{dense SIFT descriptors} \ToDo{ref} on the edge points. This results in hundreds or thousand of nodes.
 
 
-% ---------------------------------------        HLG Construction      --------------------------------------------------
+
+
+
+
+
+
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        HLG Construction
 \subsection{Higher Level Graph Construction}
 % -----------------------------------------------------------------------------------------------------------------------
 
-
-% ---------------------------------------        Matcing algorithm      --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Matcing algorithm
 \subsection{Matching Algorithm}
-% -----------------------------------------------------------------------------------------------------------------------
 
+A standard approach to solve formulated problem approximately is to relax the integrality constrains: $x\in [0,1]^{n_1n_2}$ instead of  $x\in \{0,1\}^{n_1n_2}$. To return back to discrete solution one can apply Greedy Matching or Hungarian Algorithm \cite{Kuhn1955} on obtained continues solution.
 
-% ---------------------------------------        Level connection      --------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Level connection
 \subsection{Connection between two levels}
-% -----------------------------------------------------------------------------------------------------------------------
 
 
-%\bibliographystyle{plain}
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Bibliography
+\bibliographystyle{plain}
 \bibliography{bibliography}
 	
 \end{document}
