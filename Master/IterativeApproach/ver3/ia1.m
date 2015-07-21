@@ -22,7 +22,7 @@
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 29-Jun-2015 11:23:29
+% Last Modified by GUIDE v2.5 21-Jul-2015 16:16:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,6 +85,10 @@ addpath(genpath('../../Tools/SLIC_MATLAB/'));
 
 % Graph matching algorithm
 addpath(genpath('../../Tools/RRWM_release_v1.22'));
+% clc;
+
+% Export figure
+addpath(genpath('../../Tools/altmany_export_fig'));
 % clc;
 
 % Additional functions
@@ -909,8 +913,8 @@ y_obj = zeros(1, nIt);
 for i=1:1:nIt
     y_obj(i) = handles.HLGmatches(i).objval;
 end
-
-axes(handles.axes11);% figure; subplot(1,2,1); 
+figure; subplot(1,2,1); 
+% axes(handles.axes11);
 plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
 xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
 % title('          Matching result on the Higher Level');
@@ -926,12 +930,24 @@ if ~isempty(handles.GT.HLpairs)
         y_ac(i) = TP/ size(handles.HLGmatches(i).matched_pairs,1)*100;
     end
     
-    axes(handles.axes12);%subplot(1,2,2);
+    subplot(1,2,2);
+%     axes(handles.axes12);
     plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
     xlabel('Iteration'); ylabel('Accurasy');set(gca,'FontSize',6);
     set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
 end
 %end
+
+% --- Executes on button press in pbSaveImg_HL.
+function pbSaveImg_HL_Callback(hObject, eventdata, handles)
+
+[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+if  filename~=0
+    img = getframe(handles.axes5);
+    imwrite(img.cdata, [pathname, filesep, filename], 'Quality', 100);  
+%     export_fig(handles.axes5, [pathname, filesep, filename]);
+end
+% end
 
 %-------------------------------------------------------------------------
 %       Panel4 : matching lower level graphs
@@ -1156,8 +1172,8 @@ for i=1:1:nIt
     y_obj(i) = handles.LLGmatches(i).objval;
 end
 
-%figure; subplot(1,2,1);
-axes(handles.axes13);
+figure; subplot(1,2,1);
+% axes(handles.axes13);
 plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
 xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
 set(legend('Score'), 'Location', 'best', 'FontSize', 6);
@@ -1171,10 +1187,20 @@ if ~isempty(handles.GT.LLpairs)
         TP = sum(TP(:));
         y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1) * 100;
     end
-    
-    axes(handles.axes14); %subplot(1,2,1);
+    subplot(1,2,2);
+%     axes(handles.axes14); 
     plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
     xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
     set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
 end
 %end
+
+
+% --- Executes on button press in pbSaveImg_LL.
+function pbSaveImg_LL_Callback(hObject, eventdata, handles)
+[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+if  filename~=0
+    img = getframe(handles.axes6);
+    imwrite(img.cdata, [pathname, filesep, filename], 'Quality', 100);  
+%     export_fig(handles.axes5, [pathname, filesep, filename]);
+end
