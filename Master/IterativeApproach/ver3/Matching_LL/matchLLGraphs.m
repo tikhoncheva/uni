@@ -80,7 +80,8 @@ try
         x = RRWM(affmatrix, group1, group2);
         fprintf('    RRWM: %f sec\n', toc);
         
-        X = greedyMapping_weights(x, group1, group2);
+%         X = greedyMapping_weights(x, group1, group2);
+        X = greedyMapping(x, group1, group2);
         
         W_local = reshape(X, [nVi, nVj]);
         W = zeros(nV1, nV2);
@@ -88,7 +89,8 @@ try
         
       
         local_weights(it,:) = reshape(W, [1 nV]);
-        local_objval(it,1) = ceil(X)' * affmatrix * ceil(X);
+%         local_objval(it,1) = ceil(X)' * affmatrix * ceil(X);
+        local_objval(it,1) = X' * affmatrix * X;
         
     end
 
