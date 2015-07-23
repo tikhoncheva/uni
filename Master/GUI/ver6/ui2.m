@@ -182,7 +182,9 @@ end
 function pushbuttonGetFeauters_Callback(hObject, eventdata, handles)
 
 handles = guidata(hObject);
- 
+
+SetParameters;
+
 img1 = handles.img1;
 img2 = handles.img2;
 
@@ -234,6 +236,7 @@ matchInfo.dist = [];
 % for each feature on the first image
 for i=1:size(edgesCell{1},2)
 
+    i
     x = edgesCell{1}(1,i);
     y = edgesCell{1}(2,i);
     
@@ -255,7 +258,7 @@ for i=1:size(edgesCell{1},2)
     maxsimval = 1; % max(newPoint.simvals(:));
     
     matchInfo.match = [matchInfo.match [i*ones(1,nMatches); neighbors]];
-    matchInfo.sim = [matchInfo.sim; imvals];
+    matchInfo.sim = [matchInfo.sim; simvals];
     matchInfo.dist = [ matchInfo.dist, maxsimval - simvals'];    
     
 end    

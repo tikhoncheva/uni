@@ -31,3 +31,6 @@ VER 6
  include graph of super pixel in implementation
  
  clean whole pipeline
+ 
+ NOT FINISHED!
+ 
