@@ -1,0 +1,8 @@
+
+image: sun_aafpznbwiqbmolft.jpg
+
+image transformation (angle)   accuracy      obj          time (affinity matrix)
+ -pi/100                       100         517.360         1622.966534 sec
+ -pi/10				100	    445.274         1503.708521 sec 
+ -pi/5				100 	    454.012         1471.149952 sec 
+ -pi/2                         100	    773.953	     1619.394650 sec
