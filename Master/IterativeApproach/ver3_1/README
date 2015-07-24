@@ -10,6 +10,15 @@ graph -> coarse graph (anchor graph)
 coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse graph matching
 
 -----------------------------------------------------------------------------
+Ver 3.1 
+-----------------------------------------------------------------------------
+
+Same as ver3, but with possibility to make several iterations without clicking
+each time on the individual steps
+
+-----------------------------------------------------------------------------
+ 
+-----------------------------------------------------------------------------
 Ver 3
 -----------------------------------------------------------------------------
 !!! deleted normalizetion of the distance matrices by the calculation of affinity matrix
@@ -23,7 +32,6 @@ Ver 3
     calculate anchor similarity
     edge length between two anchors is equal to mean distanance between the nodes
     in corresponding subgraphs
-
 
  ----------------------------------------------------------------------------
  
