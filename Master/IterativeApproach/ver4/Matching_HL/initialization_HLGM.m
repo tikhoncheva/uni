@@ -9,7 +9,7 @@ display(sprintf('Initialization for higher level graph matching'));
 display(sprintf('=================================================='));
 
 % initial affinity matrix for matching Higher Level Graphs
-tic
+% tic
 
 nV1 = size(HLG1.V,1);
 nV2 = size(HLG2.V,1);
@@ -27,7 +27,7 @@ affmatrix = initialAffinityMatrix(HLG1, HLG2, LLG1, LLG2, corrmatrix);
 % end
     
 
-display(sprintf('Summary %f sec', toc));
+% display(sprintf('Summary %f sec', toc));
 display(sprintf('=================================================='));
 
 

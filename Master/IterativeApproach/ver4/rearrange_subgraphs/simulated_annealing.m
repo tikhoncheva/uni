@@ -7,7 +7,7 @@ display(sprintf('\n================================================'));
 display(sprintf(' Simulated annealing'));
 display(sprintf('=================================================='));
 
-tic;
+% tic;
 
 nIterations = 1;
 
@@ -69,7 +69,8 @@ for it = 1:nIterations
     nV1 = size(LLG1.V,1);
     nV2 = size(LLG2.V,1);
 
-    LLMatches = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices); 
+    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    LLMatches = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices, HLGmatches.matched_pairs ); 
     matched_pairs = LLMatches.matched_pairs;
 %     [~, matched_pairs, ~, ~] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices); 
     matched_pairs(:,3) = affected_pairs_ind(matched_pairs(:,3));
@@ -183,7 +184,7 @@ end
 HLG1.F = F1;
 HLG1.F = F2;
 
-fprintf( 'Time %0.3f \n', toc);
+% fprintf( 'Time %0.3f \n', toc);
 display(sprintf('=================================================='));                          
 
 end

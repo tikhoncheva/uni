@@ -31,9 +31,9 @@ try
     [ group1, group2 ] = make_group12(L12);
 
     % run RRW Algorithm 
-    tic
+%     tic
     x = RRWM(affmatrix, group1, group2);
-    display(sprintf('  time spent for the RRWM on the anchor graph: %f sec', toc));
+%     display(sprintf('  time spent for the RRWM on the anchor graph: %f sec', toc));
     display(sprintf('==================================================\n'));
         
     X = greedyMapping(x, group1, group2);

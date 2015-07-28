@@ -20,7 +20,7 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
    display(sprintf('Rearrange subgraphs'));
    display(sprintf('=================================================='));
    
-   tic
+%    tic
    
    nV1 = size(LLG1.V, 1);
    nV2 = size(LLG2.V, 1);
@@ -326,7 +326,7 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
    HLG2.F = F2;
 
 
-   display(sprintf('Summary %.03f sec', toc));
+%    display(sprintf('Summary %.03f sec', toc));
    display(sprintf('==================================================\n'));
 
 end

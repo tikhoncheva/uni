@@ -21,21 +21,23 @@
 
 % function [objval, pairs, ...
 %           local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices)
-function [LLMatches] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices, varargin)      
+function [LLMatches] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices, HLG_matched_pairs, varargin)      
 
 display(sprintf('\n================================================'));
 display(sprintf('Match initial graphs'));
 display(sprintf('=================================================='));
 
 
-tic 
+% tic 
 
+nMatches = size(HLG_matched_pairs,1);
 nV = nV1 * nV2;
 
 % number of local matchings to do
 nIterations = size(indOfSubgraphNodes, 1);
 objval = 0;
 pairs = [];
+lobjval = zeros(nMatches, 1);
 
 if (nIterations>0)
 
@@ -84,9 +86,9 @@ if (nIterations>0)
             [ group1, group2 ] = make_group12([I, J]);
 
             % run RRW Algorithm 
-            tic
+%             tic
             x = RRWM(affmatrix, group1, group2);
-            fprintf('    RRWM: %f sec\n', toc);
+%             fprintf('    RRWM: %f sec\n', toc);
 
             X = greedyMapping(x, group1, group2);
 
@@ -126,6 +128,7 @@ if (nIterations>0)
     anchor_match_id = indOfSubgraphNodes(:,1);
     pairs = [pairs1, pairs2, anchor_match_id(matches_tmp(ind))];
 
+    lobjval(anchor_match_id) = local_objval;
     objval = sum(local_objval);
     
 end % if nIterations>0
@@ -134,7 +137,7 @@ end % if nIterations>0
 LLMatches.objval = objval;
 LLMatches.matched_pairs = pairs;
 
-% LLMatches.lobjval = lobjval;
+LLMatches.lobjval = lobjval;
 % LLMatches.lweights = lweights;
 LLMatches.subgraphNodes = indOfSubgraphNodes;
 LLMatches.corrmatrices = corrmatrices;
@@ -142,23 +145,27 @@ LLMatches.affmatrices  = affmatrices;
     
 if (nargin == 7)
     
-   HLG_matched_pairs = varargin{1};
-   LLG_matched_pairs_prev = varargin{2};
+%    HLG_matched_pairs = varargin{1};
+% LLG_matched_pairs_prev = varargin{1};
+   LLMatched_prev = varargin{1};
+   LLG_matched_pairs_prev = LLMatched_prev.matched_pairs;
    
    % for unachanged subraphs copy matching results from prev iterations
    ind_same_anchor_matches = HLG_matched_pairs(:,3);
    ind_same_anchor_matches(ind_same_anchor_matches==0) = [];   
    ind_same_matches = ismember(LLG_matched_pairs_prev(:,3), ind_same_anchor_matches);                                       
    matched_pairs_prev_it = LLG_matched_pairs_prev(ind_same_matches,1:3);
-%     lobjval_prev_it = handles.LLGmatches(it-1).lobjval(ind_same_matches,1:3);
+   
+   lobjval(ind_same_anchor_matches) = LLMatched_prev.lobjval(ind_same_anchor_matches);
     
     % combine both results
-%     LLMatches.lobjval = [LLMatches.lobjval; lobjval_prev_it];
+   LLMatches.lobjval = lobjval;
    LLMatches.matched_pairs = [LLMatches.matched_pairs; matched_pairs_prev_it];
+   LLMatches.objval = sum(lobjval);
     
 end
     
-display(sprintf('Summary %f sec', toc));
+% display(sprintf('Summary %f sec', toc));
 display(sprintf('=================================================='));
 
 end

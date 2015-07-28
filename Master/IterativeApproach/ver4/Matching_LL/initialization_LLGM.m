@@ -13,7 +13,7 @@ display(sprintf('=================================================='));
 
 
 try
-    tic 
+%     tic 
     
     nV1 = size(LLG1.V,1);
     nV2 = size(LLG2.V,1);
@@ -84,7 +84,7 @@ try
         localAdjMatrices1{i} = adjM1cut;
         localAdjMatrices2{i} = adjM2cut;
 
-        display(sprintf(' %d x %d', size(V1{i},2), size(V2{i},2)));
+%         display(sprintf(' %d x %d', size(V1{i},2), size(V2{i},2)));
     end
 
     % ----------------------------------------------------------------
@@ -123,7 +123,7 @@ try
             affmatrix{i} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{i});
         end
         
-        display(sprintf('matrix %d x %d ... finished', nVi, nVj));
+%         display(sprintf('matrix %d x %d ... finished', nVi, nVj));
     end
     
 %     delete(poolobj); 
@@ -143,7 +143,7 @@ catch ME
 end
 
 
-display(sprintf('Summary %f sec', toc));
+% display(sprintf('Summary %f sec', toc));
 display(sprintf('=================================================='));
 
 

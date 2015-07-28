@@ -10,7 +10,7 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
    display(sprintf('Estimation of affine transformation between subgraphs'));
    display(sprintf('=================================================='));
 
-   tic 
+%    tic 
    
    % for each pairs of anchor matches ai<->aj estimate the best local
    % affine transformation
@@ -165,6 +165,6 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
         clear ind_matched_pairs;
    end
 
-   display(sprintf('Summary %.03f sec', toc));
+%    display(sprintf('Summary %.03f sec', toc));
    display(sprintf('==================================================\n'));
 end

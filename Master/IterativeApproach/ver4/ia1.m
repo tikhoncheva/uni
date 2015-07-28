@@ -189,7 +189,7 @@ function pbToyProblem_Callback(hObject, ~, handles)
         
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
     handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                'subgraphNodes', [], ...
+                                'lobjval', [],'subgraphNodes', [], ...
                                 'corrmatrices', [], 'affmatrices', []);  
 
     guidata(hObject,handles); 
@@ -302,7 +302,7 @@ if filename~=0
     
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
     handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                'subgraphNodes', [], ...
+                                'lobjval', [],'subgraphNodes', [], ...
                                 'corrmatrices', [], 'affmatrices', []);  
     
     GT.LLpairs = [GT.LLpairs(:,2), GT.LLpairs(:,1)];
@@ -391,7 +391,7 @@ if filename~=0
     
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
     handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                'subgraphNodes', [], ...
+                                'lobjval', [],'subgraphNodes', [], ...
                                 'corrmatrices', [], 'affmatrices', []); 
     
     handles.Iteration = 1;
@@ -463,7 +463,7 @@ if filename~=0
     
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
     handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                'subgraphNodes', [], ...
+                                'lobjval', [],'subgraphNodes', [], ...
                                 'corrmatrices', [], 'affmatrices', []); 
     handles.Iteration = 1;
     handles.SummaryT = 0.0;
@@ -538,7 +538,7 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 %         handles.HLGmatches = [];
         handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
         handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                    'subgraphNodes', [], ...
+                                    'lobjval', [],'subgraphNodes', [], ...
                                     'corrmatrices', [], 'affmatrices', []); 
 
 %         handles.HLGmatches(it).objval  = 0.;
@@ -618,7 +618,7 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
 %         handles.HLGmatches = [];
         handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
         handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                    'subgraphNodes', [], ...
+                                    'lobjval', [],'subgraphNodes', [], ...
                                     'corrmatrices', [], 'affmatrices', []); 
 %         
 %         handles.HLGmatches(it).objval  = 0.;
@@ -714,7 +714,7 @@ if  filename~=0
 %        handles.HLGmatches = [];
         handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
         handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                    'subgraphNodes', [], ...
+                                    'lobjval', [],'subgraphNodes', [], ...
                                     'corrmatrices', [], 'affmatrices', []); 
        
 %        handles.HLGmatches(it).corrmatrix = corrmatrix;
@@ -777,7 +777,7 @@ if  filename~=0
 %        handles.HLGmatches = [];
         handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
         handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                    'subgraphNodes', [], ...
+                                    'lobjval', [],'subgraphNodes', [], ...
                                     'corrmatrices', [], 'affmatrices', []); 
        
 %        handles.HLGmatches(it).corrmatrix = corrmatrix;
@@ -885,7 +885,7 @@ plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, HLMatche
 axes(handles.axes6);
 plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
                 handles.img2, handles.LLG2, handles.HLG2, ...
-                handles.LLGmatches(it).matched_pairs, ...
+                [], ...
                 handles.HLGmatches(it).matched_pairs, handles.GT.LLpairs);    
 
 pb_accuracy_HL_Callback(hObject, [], handles);  % plot score
@@ -978,11 +978,12 @@ t = tic;  % Start timer
 % Matching
 nV1 = size(handles.LLG1.V,1);  nV2 = size(handles.LLG2.V,1);
 if (it==1)
-    LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices);
+    LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, ...
+                              handles.HLGmatches(it).matched_pairs);
 else
     LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, ...
                               handles.HLGmatches(it).matched_pairs, ...
-                              handles.LLGmatches(it-1).matched_pairs);
+                              handles.LLGmatches(it-1));
 end
 
 % [objval, matched_pairs, ...
@@ -1043,8 +1044,8 @@ for i=1:1:nIt
     y_obj(i) = handles.LLGmatches(i).objval;
 end
 
-% figure; subplot(1,2,1);
-axes(handles.axes13);
+figure; subplot(1,2,1);
+% axes(handles.axes13);
 plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
 xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
 set(legend('Score'), 'Location', 'best', 'FontSize', 6);
@@ -1059,8 +1060,8 @@ if ~isempty(handles.GT.LLpairs)
         y_ac(i) = TP/ size(handles.LLGmatches(i).matched_pairs,1) * 100;
     end
     
-%     subplot(1,2,2);
-    axes(handles.axes14); 
+    subplot(1,2,2);
+%     axes(handles.axes14); 
     plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
     xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
     set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
@@ -1163,7 +1164,7 @@ time = handles.SummaryT;
 LLG1 = handles.LLG1; LLG2 = handles.LLG2;
 nV1 = size(handles.LLG1.V,1);  nV2 = size(handles.LLG2.V,1);
 HLG1 = handles.HLG1; HLG2 = handles.HLG2;
-
+TT = [];
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------       
 for i = 1:N
@@ -1181,7 +1182,6 @@ for i = 1:N
                                        handles.HLGmatches(it-1));
     end
     handles.HLGmatches(it) = HLMatches;
-%     handles.LLGmatches(it).objval = 0;
     
     % -----------------------------------------------------------------------    
     % do matching on the lower level
@@ -1190,11 +1190,11 @@ for i = 1:N
                                                                      HLG1.U, HLG2.U,...
                                                                      handles.HLGmatches(it).matched_pairs);    
     if (it==1)
-        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices);
+        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, handles.HLGmatches(it).matched_pairs);
     else
         LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, ...
                                 handles.HLGmatches(it).matched_pairs, ...
-                                handles.LLGmatches(it-1).matched_pairs);
+                                handles.LLGmatches(it-1));
     end
     handles.LLGmatches(it) = LLMatches;
 
@@ -1226,6 +1226,7 @@ for i = 1:N
     % -----------------------------------------------------------------------       
     it = it + 1;
     T_it = toc;
+    TT = [TT; T_it];
     time = time + T_it;
     
 end
