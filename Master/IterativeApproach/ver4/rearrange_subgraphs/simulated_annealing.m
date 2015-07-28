@@ -3,9 +3,7 @@
 function [HLG1_new, HLG2_new] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
                                                LLGmatches, HLGmatches, p)
                                            
-display(sprintf('\n================================================'));
-display(sprintf(' Simulated annealing'));
-display(sprintf('=================================================='));
+fprintf('\n---- Simulated annealing');
 
 % tic;
 
@@ -33,6 +31,8 @@ for it = 1:nIterations
                                        T, inverseT);
     % Step 2: randomly select one node in each of two graphs and shift
     % them to the new anchors
+    [affTrafo, wg11, wg21] = weighNodes(LLG1, LLG2, U11, U21, ...
+                                                     LLGmatches, HLGmatches);
 
     [U12, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1_new, WG11);
     [U22, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2_new, WG21);
@@ -185,6 +185,6 @@ HLG1.F = F1;
 HLG1.F = F2;
 
 % fprintf( 'Time %0.3f \n', toc);
-display(sprintf('=================================================='));                          
+% display(sprintf('=================================================='));                          
 
 end

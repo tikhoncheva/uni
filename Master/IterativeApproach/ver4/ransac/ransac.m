@@ -213,7 +213,7 @@ function [M, inliers] = ransac(x, fittingfn, distfn, degenfn, s, t, feedback, ..
             break
         end     
     end
-    fprintf('\n');
+%     fprintf('\n');
     
     if ~isnan(bestM)   % We got a solution 
         M = bestM;
@@ -221,8 +221,7 @@ function [M, inliers] = ransac(x, fittingfn, distfn, degenfn, s, t, feedback, ..
     else           
         M = [];
         inliers = [];
-        warning('ransac was unable to find a useful solution');
-        
+        warning('ransac was unable to find a useful solution');        
 %         error('ransac was unable to find a useful solution');
     end
     

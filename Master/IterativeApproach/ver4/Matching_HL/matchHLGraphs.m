@@ -18,9 +18,7 @@
 
 function [HLMatches] = matchHLGraphs(corrmatrix, affmatrix, varargin)
 
-display(sprintf('\n================================================'));
-display(sprintf('Match Higher Level Graphs'));
-display(sprintf('=================================================='));
+fprintf('\n---- ');
 
 try 
     nV1 = size(corrmatrix, 1);  % number of nodes in the first graph
@@ -34,7 +32,7 @@ try
 %     tic
     x = RRWM(affmatrix, group1, group2);
 %     display(sprintf('  time spent for the RRWM on the anchor graph: %f sec', toc));
-    display(sprintf('==================================================\n'));
+%     display(sprintf('==================================================\n'));
         
     X = greedyMapping(x, group1, group2);
     objval = X'*affmatrix * X;

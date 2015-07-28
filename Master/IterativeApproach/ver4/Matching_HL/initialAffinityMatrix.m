@@ -122,6 +122,6 @@ D(1:size(D,1)+1:end) = 0;
 affmatrix = diag(nodesim) + D;
 
 
-fprintf('calculation of affinity matrix (HL) took %.03f sec', toc(t1));
+fprintf('   calculation of affinity matrix (HL) took %.03f sec', toc(t1));
 
 end

@@ -6,11 +6,7 @@ function [indOfSubgraphsNodes, corrmatrix, affmatrix] = initialization_LLGM(LLG1
                                                                               U1, U2, ....
                                                                             HLG_matched_pairs)
 
-display(sprintf('\n================================================'));
-display(sprintf('Initialization for Lower Level Graph Matching (LLGM)'));
-display(sprintf('=================================================='));
-
-
+fprintf('\n---- preprocessing: initialize %d subgraphs', size(HLG_matched_pairs,1));
 
 try
 %     tic 
@@ -144,7 +140,6 @@ end
 
 
 % display(sprintf('Summary %f sec', toc));
-display(sprintf('=================================================='));
 
 
 end

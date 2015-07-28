@@ -21,10 +21,10 @@ nV2 = size(v2,2);
 [ group1, group2 ] = make_group12(L12);
 
 % Conflict Matrix
-tic
+% tic
 % conflictMatrix = getConflictMatrix(group1, group2)
 conflictMatrix = getConflictMatrix2(group1, group2, AdjM1, AdjM2);
-display(sprintf('    Conflict matrix: %f sec', toc));
+% display(sprintf('    Conflict matrix: %f sec', toc));
 
 
 % Affinity matrix (non-diagonal elements: edge similarity)

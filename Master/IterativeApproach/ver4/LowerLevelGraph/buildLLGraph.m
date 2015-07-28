@@ -19,7 +19,6 @@ function [LLG] = buildLLGraph(edges, descr)
 
 V = edges(1:2,:)';   % vertices
 D = descr;          % descriptors of the vertices
-U = [];             % correspondence matrix between nodes of graphs on two levels
 
 nV = size(V,1);
 
@@ -36,6 +35,6 @@ E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
 LLG.V = V;
 LLG.D = D;
 LLG.E = E;
-LLG.U = U;
+LLG.W = ones(nV,1)*Inf;
 
 end

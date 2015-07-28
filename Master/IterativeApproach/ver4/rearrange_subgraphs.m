@@ -17,9 +17,7 @@
 function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
                                                LLGmatches, HLGmatches, T, inverseT)
        
-   display(sprintf('\n================================================'));
-   display(sprintf('Rearrange subgraphs'));
-   display(sprintf('=================================================='));
+   fprintf('\n---- Rearrange subgraphs');
    
 %    tic
    
@@ -317,6 +315,6 @@ function [WG1, WG2] = rearrange_subgraphs(LLG1, LLG2, U1, U2, ...
    
 
 %    display(sprintf('Summary %.03f sec', toc));
-   display(sprintf('==================================================\n'));
+%    display(sprintf('==================================================\n'));
 
 end

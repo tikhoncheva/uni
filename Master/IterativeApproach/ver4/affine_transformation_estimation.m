@@ -6,9 +6,7 @@
 function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2, ...
                                                LLGmatches, HLGmatches) 
 
-   display(sprintf('\n================================================'));
-   display(sprintf('Estimation of affine transformation between subgraphs'));
-   display(sprintf('=================================================='));
+   fprintf('\n---- Estimation of affine transformation between subgraphs');
 
 %    tic 
    
@@ -166,5 +164,5 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
    end
 
 %    display(sprintf('Summary %.03f sec', toc));
-   display(sprintf('==================================================\n'));
+%    display(sprintf('==================================================\n'));
 end

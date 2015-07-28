@@ -39,7 +39,10 @@
 
 
 function [T, inliers] = ransacfitaffine(x1, x2, t)
-
+    
+    MSGID = 'MATLAB:nearlySingularMatrix';
+    warning('off', MSGID);
+    
     if ~all(size(x1)==size(x2))
         error('Data sets x1 and x2 must have the same dimension');
     end
@@ -80,6 +83,8 @@ function [T, inliers] = ransacfitaffine(x1, x2, t)
     
     % Denormalise
     T = T2\T*T1;
+    
+    warning('on', MSGID);
 end
 %----------------------------------------------------------------------
 % Function to evaluate the symmetric transfer error of a homography with

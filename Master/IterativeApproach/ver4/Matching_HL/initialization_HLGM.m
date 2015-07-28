@@ -4,9 +4,7 @@
  
 function [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2, LLG1, LLG2, varargin)
 
-display(sprintf('\n================================================'));
-display(sprintf('Initialization for higher level graph matching'));
-display(sprintf('=================================================='));
+fprintf('\n---- preprocessing: ');
 
 % initial affinity matrix for matching Higher Level Graphs
 % tic
@@ -28,7 +26,7 @@ affmatrix = initialAffinityMatrix(HLG1, HLG2, LLG1, LLG2, corrmatrix);
     
 
 % display(sprintf('Summary %f sec', toc));
-display(sprintf('=================================================='));
+% display(sprintf('=================================================='));
 
 
 end

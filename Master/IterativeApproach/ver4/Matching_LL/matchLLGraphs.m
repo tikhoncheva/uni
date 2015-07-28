@@ -23,10 +23,7 @@
 %           local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices)
 function [LLMatches] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices, HLG_matched_pairs, varargin)      
 
-display(sprintf('\n================================================'));
-display(sprintf('Match initial graphs'));
-display(sprintf('=================================================='));
-
+fprintf('\n---- LLGM');
 
 % tic 
 
@@ -68,7 +65,7 @@ if (nIterations>0)
             aj_x = logical(indOfSubgraphNodes(it, nV1+2:end));        
             nVj = size(corrmatrices{it},2);
 
-            display(sprintf('matrix size %d x %d', nVi, nVj));
+            fprintf('\n     matrix size %d x %d ', nVi, nVj);
 
             corrmatrix = corrmatrices{it};
             affmatrix = affmatrices{it};
@@ -139,9 +136,9 @@ LLMatches.matched_pairs = pairs;
 
 LLMatches.lobjval = lobjval;
 % LLMatches.lweights = lweights;
-LLMatches.subgraphNodes = indOfSubgraphNodes;
-LLMatches.corrmatrices = corrmatrices;
-LLMatches.affmatrices  = affmatrices;
+% LLMatches.subgraphNodes = indOfSubgraphNodes;
+% LLMatches.corrmatrices = corrmatrices;
+% LLMatches.affmatrices  = affmatrices;
     
 if (nargin == 7)
     
@@ -166,6 +163,5 @@ if (nargin == 7)
 end
     
 % display(sprintf('Summary %f sec', toc));
-display(sprintf('=================================================='));
 
 end
