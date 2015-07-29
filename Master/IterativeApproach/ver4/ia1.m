@@ -99,7 +99,7 @@ addpath(genpath('./ransac'));
 % addpath(genpath('./RANSAC2'));
 addpath(genpath('./GraphCoarsening'));
 addpath(genpath('./rearrange_subgraphs'));
-addpath(genpath('./rearrange_subgraphs2'));
+addpath(genpath('./rearrange_subgraphs_22'));
 
 % clc;
 
@@ -220,6 +220,7 @@ function pbToyProblem_Callback(hObject, ~, handles)
     
     set(handles.pb_makeNSteps, 'Enable', 'on');
     set(handles.pbMatch_HLGraphs, 'Enable', 'on');
+    set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
     
     set(handles.text_IterationCount, 'String', sprintf('Iteration: -'));
     set(handles.text_SummaryT, 'String', sprintf('Summary time: 0.0'));
@@ -1073,34 +1074,30 @@ HLG2_old.F = ones(size(HLG2_old.V,1),1);
 it = handles.Iteration;
 
 t = tic;            % Start timers
- 
-
-HLG1.F = ones(size(handles.HLG1.V,1),1); 
-HLG2.F = ones(size(handles.HLG2.V,1),1);
 
 % old function
-[T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1_old.U, HLG2_old.U, ...
-                                                 handles.LLGmatches(it), ...
-                                                 handles.HLGmatches(it));
-[HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1_old, HLG2_old, ...
-                               handles.LLGmatches(it), handles.HLGmatches(it), ...
-                               T, inverseT);
-% -----------------------------------------------------------------------       
-%     p = 1/it; % parameters of the simulated annealing
-%     [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
-%                                        handles.LLGmatches(it), handles.HLGmatches(it), p);
-%     % ------------------------------------------------------------------------
-%     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
-%                                                      handles.LLGmatches(it), ...
-%                                                       handles.HLGmatches(it));
-% 
-%     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
-%                                        handles.LLGmatches(it), handles.HLGmatches(it), ...
-%                                        T, inverseT);
+% % [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1_old.U, HLG2_old.U, ...
+% %                                                  handles.LLGmatches(it), ...
+% %                                                  handles.HLGmatches(it));
+% % [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1_old, HLG2_old, ...
+% %                                handles.LLGmatches(it), handles.HLGmatches(it), ...
+% %                                T, inverseT);
+% % % -----------------------------------------------------------------------       
+% % p = 1/it; % parameters of the simulated annealing
+% % [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
+% %                                    handles.LLGmatches(it), handles.HLGmatches(it), p);
+% % % ------------------------------------------------------------------------
+% % [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
+% %                                                  handles.LLGmatches(it), ...
+% %                                                   handles.HLGmatches(it));
+% % 
+% % [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
+% %                                    handles.LLGmatches(it), handles.HLGmatches(it), ...
+% %                                    T, inverseT);
 
-% new function
-% [LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, handles.HLG1, handles.HLG2,...
-%                                          handles.LLGmatches(it), handles.HLGmatches(it));
+% % new function
+[LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, HLG1_old, HLG2_old,...
+                                         handles.LLGmatches(it), handles.HLGmatches(it));
 
 
 handles.SummaryT = handles.SummaryT + toc(t);             % Stop timers
@@ -1193,7 +1190,7 @@ for i = 1:N
 %     p = 1/it; % parameters of the simulated annealing
 %     [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
 %                                        handles.LLGmatches(it), handles.HLGmatches(it), p);
-%     % ------------------------------------------------------------------------
+% %     % ------------------------------------------------------------------------
 %     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
 %                                                      handles.LLGmatches(it), ...
 %                                                       handles.HLGmatches(it));
@@ -1243,6 +1240,8 @@ pb_accuracy_HL_Callback(hObject, [], handles);
 pb_accuracy_LL_Callback(hObject, [], handles);            
 
 % change GUI
+set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
+set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
 set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', handles.Iteration));
 set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', handles.SummaryT));
 

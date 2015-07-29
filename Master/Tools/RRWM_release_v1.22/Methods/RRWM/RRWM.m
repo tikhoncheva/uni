@@ -133,5 +133,5 @@ end % end of main iteration
 X = cur_score;
 
 % tikhoncheva, 13.05.2015
-display(sprintf('    RRWM: number of iterations %d', iter_i));
+fprintf('RRWM: number of iterations %d', iter_i);
 end

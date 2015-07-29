@@ -31,11 +31,9 @@ for it = 1:nIterations
                                        T, inverseT);
     % Step 2: randomly select one node in each of two graphs and shift
     % them to the new anchors
-    [affTrafo, wg11, wg21] = weighNodes(LLG1, LLG2, U11, U21, ...
-                                                     LLGmatches, HLGmatches);
 
-    [U12, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1_new, WG11);
-    [U22, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2_new, WG21);
+    [U12, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1_new);
+    [U22, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2_new);
     
     F1(affected_anchors1) = 0;
     F2(affected_anchors2) = 0;
@@ -70,9 +68,8 @@ for it = 1:nIterations
     nV2 = size(LLG2.V,1);
 
     % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    LLMatches = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices, HLGmatches.matched_pairs ); 
+    LLMatches = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices, HLGmatches.matched_pairs); 
     matched_pairs = LLMatches.matched_pairs;
-%     [~, matched_pairs, ~, ~] = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices); 
     matched_pairs(:,3) = affected_pairs_ind(matched_pairs(:,3));
 
     % new matches on the LL
@@ -181,8 +178,8 @@ for it = 1:nIterations
 
 end
 
-HLG1.F = F1;
-HLG1.F = F2;
+HLG1_new.F = F1;
+HLG2_new.F = F2;
 
 % fprintf( 'Time %0.3f \n', toc);
 % display(sprintf('=================================================='));                          

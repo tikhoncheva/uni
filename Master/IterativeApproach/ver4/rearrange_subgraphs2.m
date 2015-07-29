@@ -310,11 +310,11 @@ function [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
    
 % matk anchors if corresponding subgraphs didn't changed
    F1 = HLG1.F;
-   diff_U1 = new_HLG1_U - old_HLG1_U;
+   diff_U1 = abs(new_HLG1_U - old_HLG1_U);
    F1(logical(sum(diff_U1))) = 0;
 
    F2 = HLG2.F;
-   diff_U2 = new_HLG2_U - old_HLG2_U;
+   diff_U2 = abs(new_HLG2_U - old_HLG2_U);
    F2(logical(sum(diff_U2))) = 0;   
    
    HLG1.U = logical(new_HLG1_U);

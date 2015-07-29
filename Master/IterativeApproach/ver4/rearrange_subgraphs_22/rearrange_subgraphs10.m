@@ -20,13 +20,15 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
    
    
    nV1 = size(LLG1.V, 1);  nV2 = size(LLG2.V, 1);
-   nA1 = size(HLG1.V, 1);  nA2 = size(HLG2.V, 1);
    
-   old_U1 = HLG1.U; old_U2 = HLG2.U;
-   old_W1 = LLG1.W(:,end); old_W2 = LLG2.W(:,end);
+   old_U1 = HLG1.U;
+   old_U2 = HLG2.U;
    
-%    new_U1 = old_U1.* repmat(old_W1, 1, nA1); 
-%    new_U2 = old_U2.* repmat(old_W2, 1, nA2); 
+   old_W1 = LLG1.W(:,end);
+   old_W2 = LLG2.W(:,end);
+   
+%    new_U1 = old_U1.* repmat(old_W1, 1, size(HLG1.V, 1)); 
+%    new_U2 = old_U2.* repmat(old_W2, 1, size(HLG2.V, 1)); 
    new_U1 = 0.5*double(old_U1); 
    new_U2 = 0.5*double(old_U2); 
    
@@ -137,16 +139,16 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
    HLG1.U = logical(new_U1);
    HLG2.U = logical(new_U2);
    
-   LLG1.W(:, end) = W1;
-   LLG2.W(:, end) = W2;
+%    LLG1.W(:, end) = W1;
+%    LLG2.W(:, end) = W2;
    
 % mark anchors if corresponding subgraphs didn't changed
    F1 = HLG1.F;
-   diff_U1 = new_U1 - old_U1;
+   diff_U1 = abs(new_U1 - old_U1);
    F1(logical(sum(diff_U1))) = 0;
 
    F2 = HLG2.F;
-   diff_U2 = new_U2 - old_U2;
+   diff_U2 = abs(new_U2 - old_U2);
    F2(logical(sum(diff_U2))) = 0;   
    
    HLG1.F = F1;

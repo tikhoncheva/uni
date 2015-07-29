@@ -4,23 +4,21 @@ function [LLG1, LLG2,HLG1_new, HLG2_new] = MetropolisAlg(it, LLG1, LLG2, HLG1, H
                                                LLMatches, HLMatches)                                           
 fprintf('\n---- Metropolis Algorithm');
 
-rng('default');
-    
 p = 1/it;   % temperature
 L = 1;      % repeat L time by fixed temperature p
 
-nV1 = size(LLG1.V,1); 
-nV2 = size(LLG2.V,1);
+% nV1 = size(LLG1.V,1); 
+% nV2 = size(LLG2.V,1);
 
-HLG1_new = HLG1;
-HLG2_new = HLG2;
+% HLG1_new = HLG1;
+% HLG2_new = HLG2;
 
-% save old weight of the nodes
-W1_old = LLG1.W(:, end);
-W2_old = LLG2.W(:, end);
+% % save old weight of the nodes
+% W1_old = LLG1.W(:, end);
+% W2_old = LLG2.W(:, end);
 
 
-% Step1: weigh nodes of the graphs LLG1, LLG2 on the current iteration it
+% Step1: weigh nodes of the graphs LLG1, LLG2 on the current iteration
 [affTrafo, W1, W2] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches, HLMatches);
 LLG1.W = [LLG1.W, W1];
 LLG2.W = [LLG2.W, W2];
@@ -29,12 +27,14 @@ LLG2.W = [LLG2.W, W2];
 % subgraphs with less then three nodes
 [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2, ...
                                      LLMatches, HLMatches, affTrafo);
-F1 = HLG1.F;  
-F2 = HLG2.F;
+
+% F1 = HLG1.F;  
+% F2 = HLG2.F;
                                  
-% Step3:                                  
+% Step3:        
+% rng('default');
 for it = 1:L
-% 
+
 %     % randomly shift one node in each graph no another anchor
 %     [U1_new, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1);
 %     [U2_new, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2);
@@ -48,7 +48,7 @@ for it = 1:L
 %     HLMatches.matched_pairs(affected_pairs_ind,3) = 0;
 %     affected_pairs = HLMatches.matched_pairs(affected_pairs_ind,:);
 % 
-%     % Step 4: match by the changed subgraphs
+%     % Step 4: recalculate correspondences in changed subgraphs
 %     [subgraphsNodes, corrmatrices, affmatrices] = initialization_LLGM(LLG1, LLG2, ...
 %                                                                       U1_new, U2_new,...
 %                                                                       affected_pairs);
@@ -67,8 +67,7 @@ for it = 1:L
 %     % Step 5: reweigh new matches
 %     [~, W1, W2] = weighNodes(LLG1, LLG2, U1_new, U2_new, newLLGmatches, HLMatches);
 % 
-% 
-%     % Step 5: decide for each node (in both graphs), to which anchor it should belong based on the
+%     % Step 6: decide for each node (in both graphs), to which anchor it should belong based on the
 %     % weights from two different assignments
 %     
 %     dE1 = W1 - W1_old;
@@ -78,7 +77,7 @@ for it = 1:L
 %     ind_accept = logical(ind_accept + (pA1-rand(nV1,1) > 0));
 %     HLG1_new.U(ind_accept, :) = U1_new(ind_accept, :);  
 % 
-%     % Second graph
+% 
 %     dE2 = W2 - W2_old;
 %     pA2 = min(1, exp(-dE2/p) ); % acception probability
 %     
@@ -88,13 +87,12 @@ for it = 1:L
 
 end
 
-
-% Step6:
+% Step7:
+% 
+% HLG1_new.F = F1;
+% HLG2_new.F = F2;  
 
 HLG1_new = HLG1;
-HLG2_new = HLG2;
-
-% HLG1_new.F = F1;
-% HLG2_new.F = F2;                         
+HLG2_new = HLG2;  
 
 end
