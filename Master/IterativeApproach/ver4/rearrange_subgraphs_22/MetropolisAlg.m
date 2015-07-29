@@ -7,16 +7,18 @@ fprintf('\n---- Metropolis Algorithm');
 p = 1/it;   % temperature
 L = 1;      % repeat L time by fixed temperature p
 
-% nV1 = size(LLG1.V,1); 
-% nV2 = size(LLG2.V,1);
+nV1 = size(LLG1.V,1); 
+nV2 = size(LLG2.V,1);
 
-% HLG1_new = HLG1;
-% HLG2_new = HLG2;
+HLG1_new = HLG1;
+HLG2_new = HLG2;
 
 % % save old weight of the nodes
-% W1_old = LLG1.W(:, end);
-% W2_old = LLG2.W(:, end);
+W1_old = LLG1.W(:, end);
+W2_old = LLG2.W(:, end);
 
+HLG1.F = ones(size(HLG1.V,1),1); 
+HLG2.F = ones(size(HLG2.V,1),1);
 
 % Step1: weigh nodes of the graphs LLG1, LLG2 on the current iteration
 [affTrafo, W1, W2] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches, HLMatches);
@@ -28,13 +30,13 @@ LLG2.W = [LLG2.W, W2];
 [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2, ...
                                      LLMatches, HLMatches, affTrafo);
 
-% F1 = HLG1.F;  
-% F2 = HLG2.F;
+F1 = HLG1.F;  
+F2 = HLG2.F;
                                  
 % Step3:        
 % rng('default');
-for it = 1:L
-
+% for it = 1:L
+% 
 %     % randomly shift one node in each graph no another anchor
 %     [U1_new, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1);
 %     [U2_new, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2);
@@ -73,21 +75,26 @@ for it = 1:L
 %     dE1 = W1 - W1_old;
 %     pA1 = min(1, exp(-dE1/p) ); % acception probability
 % 
-%     ind_accept = dE1<0;
-%     ind_accept = logical(ind_accept + (pA1-rand(nV1,1) > 0));
-%     HLG1_new.U(ind_accept, :) = U1_new(ind_accept, :);  
-% 
+%     ind_accepted = dE1<0;
+% %     ind_accepted = logical(ind_accepted + (pA1-rand(nV1,1) > 0));
+%     HLG1_new.U(ind_accepted, :) = U1_new(ind_accepted, :); 
+%     LLG1.W(:, end) = W1_old;
+%     LLG1.W(ind_accepted,end) = W1(ind_accepted);
 % 
 %     dE2 = W2 - W2_old;
 %     pA2 = min(1, exp(-dE2/p) ); % acception probability
 %     
-%     ind_accept = dE2<0;
-%     ind_accept = logical(ind_accept + (pA2-rand(nV2,1) > 0));
-%     HLG2_new.U(ind_accept, :) = U2_new(ind_accept, :);       
-
-end
-
-% Step7:
+%     ind_accepted = dE2<0;
+% %     ind_accepted = logical(ind_accepted + (pA2-rand(nV2,1) > 0));
+%     HLG2_new.U(ind_accepted, :) = U2_new(ind_accepted, :);   
+%     
+%     LLG2.W(:, end) = W2_old;
+%     LLG2.W(ind_accepted,end) = W2(ind_accepted);
+% 
+% end
+% 
+% % Step7
+% 
 % 
 % HLG1_new.F = F1;
 % HLG2_new.F = F2;  

@@ -142,20 +142,7 @@ varargout{1} = handles.output;
 %   Synthetic Graph Matching
 % --------------------------------------------------------------------
 % --- Executes on button press in pbToyProblem.
-function pbToyProblem_Callback(hObject, ~, handles)
-
-    set(handles.pbBuildGraphs_img1, 'Enable', 'off');
-    set(handles.pbBuildGraphs_img2, 'Enable', 'off');
-    
-    set(handles.pbSaveAnchors_img1, 'Enable', 'off');
-    set(handles.pbSaveAnchors_img2, 'Enable', 'off');
-    
-    set(handles.pbLoadAnchors_img1, 'Enable', 'off');
-    set(handles.pbLoadAnchors_img2, 'Enable', 'off');
-    
-    set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
-    set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
-    
+function pbToyProblem_Callback(hObject, ~, handles)   
     
     N = 6;
     handles.img1 = repmat(ones(N,N),1,1,3);
@@ -164,66 +151,75 @@ function pbToyProblem_Callback(hObject, ~, handles)
     handles.img1selected = 0;
     handles.img2selected = 0;
     
-    handles.features1.edges = [];
-    handles.features2.edges = [];
-    
-    handles.features1.descr = [];
-    handles.features2.descr = [];
+%     handles.features1 = [];
+%     handles.features2 = [];
        
-    it = 1;
-    [LLG1, LLG2, HLG1, HLG2, GT] = make2SyntheticGraphs();
+%     setParameters_synthetic_graphs;
+    [LLG1, LLG2, GT] = make2SyntheticGraphs();
     
-            
-    handles.HLG1 = HLG1;
-    handles.HLG2 = HLG2;
+    
+%     handles.HLG1 = HLG1;
+%     handles.HLG2 = HLG2;
     
     handles.LLG1 = LLG1;
     handles.LLG2 = LLG2;
     
-    handles.HLG1isBuilt = 1;
-    handles.HLG2isBuilt = 1;
+    handles.HLG1isBuilt = 0;
+    handles.HLG2isBuilt = 0;
     
     handles.GT = GT;                % ground truth
     
-    handles.Iteration = it;
-    handles.SummaryT = 0.0;
-        
-    handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
-    handles.LLGmatches = struct('objval', 0., 'matched_pairs', [], ...
-                                'lobjval', []); %,'subgraphNodes', [], ...
-%                                 'corrmatrices', [], 'affmatrices', []);  
+    handles.Iteration = 1;
+    handles.SummaryT = 0.; 
+    
+    handles.HLGmatches = []; 
+    handles.LLGmatches = [];
 
     guidata(hObject,handles); 
     
     % plot graphs
     axes(handles.axes1);
-    plot_2levelgraphs(handles.img1, LLG1, HLG1, true, false);
+    plot_graph(handles.img1, LLG1);
     
     axes(handles.axes2);
-    plot_2levelgraphs(handles.img2, LLG2, HLG2, true, false);
+    plot_graph(handles.img2, LLG2);
     
     axes(handles.axes3);
-    plot_2levelgraphs(handles.img1, LLG1, HLG1, true, true);
+    plot_graph(handles.img1, LLG1);
     
     axes(handles.axes4);
-    plot_2levelgraphs(handles.img2, LLG2, HLG2, true, true);
+    plot_graph(handles.img2, LLG2);
     
-    axes(handles.axes5);cla;
-    plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, HLG2, [], handles.GT.HLpairs);
-                                                                
-    axes(handles.axes6);cla;                                                               
+    % combine two images
+    img3 = combine2images(handles.img1, handles.img2);
+    axes(handles.axes5);
+    imagesc(img3), axis off;
+    
+    axes(handles.axes6);
+    imagesc(img3), axis off;
+                                                                                                                       
 
     axes(handles.axes11);cla reset;
     axes(handles.axes12);cla reset;
     axes(handles.axes13);cla reset;
     axes(handles.axes14);cla reset;
     
-    set(handles.pb_makeNSteps, 'Enable', 'on');
-    set(handles.pbMatch_HLGraphs, 'Enable', 'on');
-    set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
+    % 
+    set(handles.pbBuildGraphs_img1, 'Enable', 'on');
+    set(handles.pbBuildGraphs_img2, 'Enable', 'on');
     
-    set(handles.text_IterationCount, 'String', sprintf('Iteration: -'));
+    set(handles.pbSaveAnchors_img1, 'Enable', 'off');
+    set(handles.pbSaveAnchors_img2, 'Enable', 'off');
+    
+    set(handles.pbLoadAnchors_img1, 'Enable', 'on');
+    set(handles.pbLoadAnchors_img2, 'Enable', 'on');
+    
+    set(handles.pbMatch_HLGraphs, 'Enable', 'on');
+    
+    set(handles.text_IterationCount, 'String', sprintf('Iteration: %d',handles.Iteration));
     set(handles.text_SummaryT, 'String', sprintf('Summary time: 0.0'));
+    set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
+    set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
     
 % end
 
@@ -250,6 +246,18 @@ if filename~=0
     
     % create second image = affine_transformation(img1)
     [img1, features1, features2, GT] = transform_image(img2, edges); 
+
+    
+    display(sprintf('\n - build lower level graph'));
+    t1 = tic;
+    LLG1 = buildLLGraph(features1.edges, features1.descr);
+    display(sprintf('   finished in %f sec', toc(t1)));
+    
+    
+    display(sprintf('\n - build lower level graph'));
+    t1 = tic;
+    LLG2 = buildLLGraph(features2.edges, features2.descr);
+    display(sprintf('   finished in %f sec', toc(t1)));
     
 
     % Show img1 on the axis1
@@ -288,17 +296,20 @@ if filename~=0
     handles.img1isSelected= 1;
     handles.img2isSelected= 1;
     
-    handles.features1.edges = features1.edges;
-    handles.features1.descr = features1.descr;
+%     handles.features1.edges = features1.edges;
+%     handles.features1.descr = features1.descr;
 
     handles.features2 = features2;    
     
     handles.HLG1 = [];
     handles.HLG2 = [];
-    
-    handles.LLG1 = [];
-    handles.LLG2 = [];
-    
+%     
+%     handles.LLG1 = [];
+%     handles.LLG2 = [];
+    handles.LLG1 = LLG1;
+    handles.LLG2 = LLG2;
+
+
     handles.HLG1isBuilt = 0;
     handles.HLG2isBuilt = 0;
     
@@ -357,6 +368,11 @@ if filename~=0
     zerocol_ind = all( ~any(descr), 1);
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = []; %  and corresponding points
+    
+    display(sprintf('\n - build lower level graph'));
+    t1 = tic;
+    LLGraph = buildLLGraph(edges, descr);
+    display(sprintf('   finished in %f sec', toc(t1)));
 
     % Show it on the axis1
     axes(handles.axes1);cla reset;
@@ -384,11 +400,13 @@ if filename~=0
     % update/reset data
     handles.img1 = img1;
     handles.img1selected = 1;
-    handles.features1.edges = edges;
-    handles.features1.descr = descr;
+%     handles.features1.edges = edges;
+%     handles.features1.descr = descr;
     
     handles.HLG1 = [];
-    handles.LLG1 = [];
+    handles.LLG1 = LLG;
+%     handles.LLG1 = [];
+
     handles.HLG1isBuilt = 0;
     
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
@@ -430,6 +448,13 @@ if filename~=0
     zerocol_ind = all( ~any(descr), 1);
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = [];
+    
+    
+    display(sprintf('\n - build lower level graph'));
+    t1 = tic;
+    LLGraph = buildLLGraph(edges, descr);
+    display(sprintf('   finished in %f sec', toc(t1)));
+    
 
     % Show it on the axis2 and axis 4 
     axes(handles.axes2);cla reset;
@@ -457,11 +482,12 @@ if filename~=0
     % update/reset data
     handles.img2 = img2;
     handles.img2selected = 1;
-    handles.features2.edges = edges;
-    handles.features2.descr = descr;
+%     handles.features2.edges = edges;
+%     handles.features2.descr = descr;
     
     handles.HLG2 = [];
-    handles.LLG2 = [];
+%     handles.LLG2 = [];
+    handles.LLG2 = LLG;
     handles.HLG2isBuilt = 0;
     
     handles.HLGmatches = struct('objval', 0, 'matched_pairs', []);
@@ -509,9 +535,17 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     
     % build coarse (Anchor Graph HLG) and fine (Dependency Graph LLG) graph    
     % on the first image
-    [HLG1, LLG1] = build2LevelGraphs (handles.img1, handles.features1,...
-                                      handles.parameters.nSP1);  
-                                              
+%     [HLG1, LLG1] = build2LevelGraphs (handles.img1, handles.features1,...
+%                                       handles.parameters.nSP1);  
+    LLG1 = handles.LLG1;
+    
+    display(sprintf('\n - build higher level graph (anchor graph)'));
+    t2 = tic;
+    [HLG1, U1] = HEM_coarsen_2(LLG1, handles.parameters.nSP1);
+    HLG1.U  = U1;
+    HLG1.F = ones(size(HLG1.V,1),1);     % flags, that show if anchors were changed in previous iteration
+    display(sprintf('   finished in %f sec', toc(t2)));
+    
     % plot anchor graphs
     show_LLG = get(handles.cbShow_LLG, 'Value');
     show_HLG = get(handles.cbShow_HLG, 'Value');
@@ -562,7 +596,7 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     
     % update data
     handles.HLG1 = HLG1;
-    handles.LLG1 = LLG1;
+%     handles.LLG1 = LLG1;
     handles.HLG1isBuilt = 1;
     
     guidata(hObject,handles); 
@@ -584,9 +618,19 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
     imagesc(handles.img2); % plot_graph(handles.img1, 'Image 1', handles.LLG1);
     
     % build coarse (Anchor Graph, HLG) and fine (Dependency Graph, LLG) graph    
-    [HLG2, LLG2] = build2LevelGraphs (handles.img2, ...
-                                      handles.features2,...
-                                      handles.parameters.nSP2);  
+%     [HLG2, LLG2] = build2LevelGraphs (handles.img2, ...
+%                                       handles.features2,...
+%                                       handles.parameters.nSP2); 
+
+    LLG2 = handles.LLG2;
+    
+    display(sprintf('\n - build higher level graph (anchor graph)'));
+    t2 = tic;
+    [HLG2, U2] = HEM_coarsen_2(LLG2, handles.parameters.nSP2);
+    HLG2.U  = U2;
+    HLG2.F = ones(size(HLG2.V,1),1);     % flags, that show if anchors were changed in previous iteration                                  
+    display(sprintf('   finished in %f sec', toc(t2)));
+    
     
     % plot anchor graph
     show_LLG = get(handles.cbShow_LLG, 'Value');
@@ -634,7 +678,7 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
     
     % update data
     handles.HLG2 = HLG2;
-    handles.LLG2 = LLG2;
+%     handles.LLG2 = LLG2;
     handles.HLG2isBuilt = 1;
     guidata(hObject,handles);  
 %end
@@ -1067,9 +1111,9 @@ fprintf('\n== Update subgraphs for the next iteration');
 LLG1 = handles.LLG1; LLG2 = handles.LLG2;
 
 HLG1_old = handles.HLG1; HLG2_old = handles.HLG2;
-
-HLG1_old.F = ones(size(HLG1_old.V,1),1); 
-HLG2_old.F = ones(size(HLG2_old.V,1),1);
+% 
+% HLG1_old.F = ones(size(HLG1_old.V,1),1); 
+% HLG2_old.F = ones(size(HLG2_old.V,1),1);
 
 it = handles.Iteration;
 
@@ -1177,6 +1221,9 @@ for i = 1:N
     fprintf('\n== Update subgraphs for the next iteration');
     % ----------------------------------------------------------------------- 
 
+%     [LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
+%                                          handles.LLGmatches(it), handles.HLGmatches(it));
+                                     
     HLG1.F = ones(size(handles.HLG1.V,1),1); 
     HLG2.F = ones(size(handles.HLG2.V,1),1);
 
@@ -1187,22 +1234,22 @@ for i = 1:N
                                    handles.LLGmatches(it), handles.HLGmatches(it), ...
                                    T, inverseT);
     % -----------------------------------------------------------------------       
-%     p = 1/it; % parameters of the simulated annealing
-%     [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
-%                                        handles.LLGmatches(it), handles.HLGmatches(it), p);
-% %     % ------------------------------------------------------------------------
-%     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
-%                                                      handles.LLGmatches(it), ...
-%                                                       handles.HLGmatches(it));
-% 
-%     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
-%                                        handles.LLGmatches(it), handles.HLGmatches(it), ...
-%                                        T, inverseT);
+    p = 1/it; % parameters of the simulated annealing
+    [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
+                                       handles.LLGmatches(it), handles.HLGmatches(it), p);
+    % ------------------------------------------------------------------------
+    [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
+                                                     handles.LLGmatches(it), ...
+                                                      handles.HLGmatches(it));
+
+    [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
+                                       handles.LLGmatches(it), handles.HLGmatches(it), ...
+                                       T, inverseT);
     % -----------------------------------------------------------------------       
     it = it + 1;
     T_it = toc;
     time = time + T_it;
-    
+
     fprintf('\n');
     
 end
