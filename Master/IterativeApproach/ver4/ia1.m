@@ -371,7 +371,7 @@ if filename~=0
     
     display(sprintf('\n - build lower level graph'));
     t1 = tic;
-    LLGraph = buildLLGraph(edges, descr);
+    LLG = buildLLGraph(edges, descr);
     display(sprintf('   finished in %f sec', toc(t1)));
 
     % Show it on the axis1
@@ -452,7 +452,7 @@ if filename~=0
     
     display(sprintf('\n - build lower level graph'));
     t1 = tic;
-    LLGraph = buildLLGraph(edges, descr);
+    LLG = buildLLGraph(edges, descr);
     display(sprintf('   finished in %f sec', toc(t1)));
     
 
@@ -512,6 +512,7 @@ if filename~=0
     set(handles.text_SummaryT, 'String', sprintf('Summary time: 0.0'));    
 end
 handles.GT.HLpairs = [];
+guidata(hObject,handles); 
 %end
 
 %-------------------------------------------------------------------------
@@ -599,7 +600,6 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 %     handles.LLG1 = LLG1;
     handles.HLG1isBuilt = 1;
     
-    guidata(hObject,handles); 
     guidata(hObject,handles);     
 %end
 
@@ -1187,6 +1187,7 @@ HLG1 = handles.HLG1; HLG2 = handles.HLG2;
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------       
 for i = 1:N
+    
     display(sprintf('ITERATION %d', i));
     tic;
     % -----------------------------------------------------------------------    
@@ -1221,30 +1222,30 @@ for i = 1:N
     fprintf('\n== Update subgraphs for the next iteration');
     % ----------------------------------------------------------------------- 
 
-%     [LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
-%                                          handles.LLGmatches(it), handles.HLGmatches(it));
+    [LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
+                                         handles.LLGmatches(it), handles.HLGmatches(it));
                                      
-    HLG1.F = ones(size(handles.HLG1.V,1),1); 
-    HLG2.F = ones(size(handles.HLG2.V,1),1);
-
-    [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
-                                                     handles.LLGmatches(it), ...
-                                                     handles.HLGmatches(it));
-    [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
-                                   handles.LLGmatches(it), handles.HLGmatches(it), ...
-                                   T, inverseT);
+% %     HLG1.F = ones(size(handles.HLG1.V,1),1); 
+% %     HLG2.F = ones(size(handles.HLG2.V,1),1);
+% % 
+% %     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
+% %                                                      handles.LLGmatches(it), ...
+% %                                                      handles.HLGmatches(it));
+% %     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
+% %                                    handles.LLGmatches(it), handles.HLGmatches(it), ...
+% %                                    T, inverseT);
     % -----------------------------------------------------------------------       
-    p = 1/it; % parameters of the simulated annealing
-    [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
-                                       handles.LLGmatches(it), handles.HLGmatches(it), p);
+% %     p = 1/it; % parameters of the simulated annealing
+% %     [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
+% %                                        handles.LLGmatches(it), handles.HLGmatches(it), p);
     % ------------------------------------------------------------------------
-    [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
-                                                     handles.LLGmatches(it), ...
-                                                      handles.HLGmatches(it));
-
-    [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
-                                       handles.LLGmatches(it), handles.HLGmatches(it), ...
-                                       T, inverseT);
+% %     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
+% %                                                      handles.LLGmatches(it), ...
+% %                                                       handles.HLGmatches(it));
+% % 
+% %     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
+% %                                        handles.LLGmatches(it), handles.HLGmatches(it), ...
+% %                                        T, inverseT);
     % -----------------------------------------------------------------------       
     it = it + 1;
     T_it = toc;

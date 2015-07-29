@@ -42,6 +42,8 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
             % estimate affine transformation  
             
             % from left to right
+%             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
+%             H = H1.T';            
             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
             Ti(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
@@ -51,6 +53,8 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
 %             b_prime = - A_prime*b;
             
             % from right to left
+%             H2 = fitgeotrans(Vaj_m, Vai_m, 'affine');
+%             inverseH = H2.T';
             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
 %             inverseT(k,:) = [A_prime(1,1) A_prime(1,2) A_prime(2,1) A_prime(2,2) b_prime(1) b_prime(2)];  
             Tj(k,:) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
@@ -103,14 +107,14 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
 %                     points = V2(edges,:); points(3:3:end,:) = NaN;
 %                     line(points(:,1), 256-points(:,2), 'Color', 'g');
 % 
-%                     Tx1 = Prx1;
+%                     Tx1 = PVai_m;
 %                     Tx1(:,1) = 300 + Tx1(:,1);
 %                     plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
 % 
 % 
 %                     nans = NaN * ones(size(Tx1,1),1) ;
-%                     x = [ x1(:,1) , Tx1(:,1) , nans ] ;
-%                     y = [ x1(:,2) , Tx1(:,2) , nans ] ; 
+%                     x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
+%                     y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
 %                     line(x', 256-y', 'Color','m') ;
 %                     
 %                     matches = pairs';
@@ -139,13 +143,13 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
 %                     plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
 %                    
 % 
-%                     Tx2 = Prx2;
+%                     Tx2 = PVaj_m;
 %                     plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
 %                     
-%                     x2(:,1) = 300 + x2(:,1);
+%                     Vaj_m(:,1) = 300 + Vaj_m(:,1);
 %                     nans = NaN * ones(size(Tx2,1),1) ;
-%                     x = [ x2(:,1) , Tx2(:,1) , nans ] ;
-%                     y = [ x2(:,2) , Tx2(:,2) , nans ] ; 
+%                     x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
+%                     y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
 %                     line(x', 256-y', 'Color','m') ;
 %                     
 %                     matches = pairs';
