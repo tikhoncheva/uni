@@ -493,7 +493,7 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     it = 1;
     set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', it));
        
-    if handles.LLG2isBuilt
+    if handles.HLG2isBuilt
         axes(handles.axes5);cla reset;
         plot_LLGmatches(handles.img1, LLG1, handles.img2, handles.LLG2, [], handles.GT.LLpairs);
 %         img3 = combine2images(handles.img1, handles.img2);
