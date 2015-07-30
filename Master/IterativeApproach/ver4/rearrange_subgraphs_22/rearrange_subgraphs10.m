@@ -27,10 +27,11 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
    old_W1 = LLG1.W(:,end);
    old_W2 = LLG2.W(:,end);
    
-%    new_U1 = old_U1.* repmat(old_W1, 1, size(HLG1.V, 1)); 
-%    new_U2 = old_U2.* repmat(old_W2, 1, size(HLG2.V, 1)); 
-   new_U1 = 0.5*double(old_U1); 
-   new_U2 = 0.5*double(old_U2); 
+   % nodes that weren't matched create zero lines in new_U1, new_U2
+   new_U1 = old_U1.* repmat(exp(-old_W1), 1, size(HLG1.V, 1)); 
+   new_U2 = old_U2.* repmat(exp(-old_W2), 1, size(HLG2.V, 1)); 
+%    new_U1 = 0.5*double(old_U1); 
+%    new_U2 = 0.5*double(old_U2); 
    
    % for each pairs of anchor matches ai<->aj estimate the best local
    % affine transformation
@@ -127,20 +128,29 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
 
 
    [W1, max_pos] = max(new_U1, [], 2);
-   ind = sub2ind(size(HLG1.U), [1:nV1]', max_pos);
+   ind_W_NaN = isnan(W1);
+   
+   i = [1:nV1]'; i(ind_W_NaN) = [];  max_pos(ind_W_NaN) = [];
+   
+   ind = sub2ind(size(HLG1.U), i, max_pos);
    new_U1(:) = 0;
+   new_U1(ind_W_NaN,:) = HLG1.U(ind_W_NaN,:);
    new_U1(ind) = 1;
 
    [W2, max_pos] = max(new_U2, [], 2);
-   ind = sub2ind(size(HLG2.U), [1:nV2]', max_pos);
+   ind_W_NaN = isnan(W2);
+   
+   i = [1:nV2]'; i(ind_W_NaN) = [];  max_pos(ind_W_NaN) = [];
+   ind = sub2ind(size(HLG2.U), i, max_pos);
    new_U2(:) = 0;
+   new_U2(ind_W_NaN,:) = HLG2.U(ind_W_NaN,:);
    new_U2(ind) = 1;
    
    HLG1.U = logical(new_U1);
    HLG2.U = logical(new_U2);
    
-%    LLG1.W(:, end) = W1;
-%    LLG2.W(:, end) = W2;
+   LLG1.W(:, end) = -log(W1);
+   LLG2.W(:, end) = -log(W2);
    
 % mark anchors if corresponding subgraphs didn't changed
    F1 = HLG1.F;

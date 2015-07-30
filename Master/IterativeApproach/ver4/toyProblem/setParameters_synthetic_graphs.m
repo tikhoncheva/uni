@@ -2,7 +2,7 @@
 
 nIn  = 20;                         % number of nodes in the first graph G1 = number of inliers in
                                    % the second graph G2
-nOut = 0;                         % number of outliers in the second graph G2
+nOut = 10;                         % number of outliers in the second graph G2
 
 minDeg = 6;                        % minimal degree of nodes in the graphs on lower level
 

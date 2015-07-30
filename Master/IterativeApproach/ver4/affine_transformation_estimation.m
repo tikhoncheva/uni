@@ -43,8 +43,9 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
             
             % from left to right
 %             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
-%             H = H1.T';            
-            [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
+            H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
+            H = H1.T';            
+%             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
             Ti(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
             bi = [H(1,3); H(2,3)];
@@ -54,9 +55,10 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
             
             % from right to left
 %             H2 = fitgeotrans(Vaj_m, Vai_m, 'affine');
-%             inverseH = H2.T';
-            [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
-%             inverseT(k,:) = [A_prime(1,1) A_prime(1,2) A_prime(2,1) A_prime(2,2) b_prime(1) b_prime(2)];  
+            H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
+            inverseH = H2.T';
+%             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
+% %             inverseT(k,:) = [A_prime(1,1) A_prime(1,2) A_prime(2,1) A_prime(2,2) b_prime(1) b_prime(2)];  
             Tj(k,:) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
             Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
             bj = [ inverseH(1,3); inverseH(2,3)];     

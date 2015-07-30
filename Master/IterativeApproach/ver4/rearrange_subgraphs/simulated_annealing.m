@@ -32,8 +32,8 @@ for it = 1:nIterations
     % Step 2: randomly select one node in each of two graphs and shift
     % them to the new anchors
 
-    [U12, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1_new);
-    [U22, affected_anchors2] = randomly_shift_nodes(LLG2, HLG2_new);
+    [U12, ind_v, affected_anchors1] = randomly_shift_nodes(LLG1, HLG1_new);
+    [U22, ind_u,  affected_anchors2] = randomly_shift_nodes(LLG2, HLG2_new);
     
     F1(affected_anchors1) = 0;
     F2(affected_anchors2) = 0;

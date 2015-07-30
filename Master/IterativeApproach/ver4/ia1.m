@@ -539,6 +539,8 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
 %     [HLG1, LLG1] = build2LevelGraphs (handles.img1, handles.features1,...
 %                                       handles.parameters.nSP1);  
     LLG1 = handles.LLG1;
+%     LLG1.W = ones(size(LLG1.V,1),1)*Inf;
+    LLG1.W = ones(size(LLG1.V,1),1)*NaN;
     
     display(sprintf('\n - build higher level graph (anchor graph)'));
     t2 = tic;
@@ -597,7 +599,7 @@ function pbBuildGraphs_img1_Callback(hObject, ~ , handles)
     
     % update data
     handles.HLG1 = HLG1;
-%     handles.LLG1 = LLG1;
+    handles.LLG1 = LLG1;
     handles.HLG1isBuilt = 1;
     
     guidata(hObject,handles);     
@@ -623,6 +625,8 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
 %                                       handles.parameters.nSP2); 
 
     LLG2 = handles.LLG2;
+%     LLG2.W = ones(size(LLG2.V,1),1)*Inf;
+    LLG2.W = ones(size(LLG2.V,1),1)*NaN;
     
     display(sprintf('\n - build higher level graph (anchor graph)'));
     t2 = tic;
@@ -678,7 +682,7 @@ function pbBuildGraphs_img2_Callback(hObject, ~ , handles)
     
     % update data
     handles.HLG2 = HLG2;
-%     handles.LLG2 = LLG2;
+    handles.LLG2 = LLG2;
     handles.HLG2isBuilt = 1;
     guidata(hObject,handles);  
 %end
@@ -1185,7 +1189,7 @@ nV1 = size(handles.LLG1.V,1);  nV2 = size(handles.LLG2.V,1);
 HLG1 = handles.HLG1; HLG2 = handles.HLG2;
 
 % -----------------------------------------------------------------------       
-% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------     
 for i = 1:N
     
     display(sprintf('ITERATION %d', i));
@@ -1203,6 +1207,15 @@ for i = 1:N
     end
     handles.HLGmatches(it) = HLMatches;
     
+    set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
+
+    axes(handles.axes5); cla reset;
+    plot_HLGmatches(handles.img1, handles.HLG1, ...
+                    handles.img2, handles.HLG2, ....
+                    handles.HLGmatches(it).matched_pairs, handles.GT.HLpairs);
+    
+    pb_accuracy_HL_Callback(hObject, [], handles);    
+    drawnow;
     % -----------------------------------------------------------------------    
     fprintf('\n== Match initial graphs');
     % -----------------------------------------------------------------------   
@@ -1217,14 +1230,24 @@ for i = 1:N
                                 handles.LLGmatches(it-1));
     end
     handles.LLGmatches(it) = LLMatches;
-
+    
+    set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
+        
+    axes(handles.axes6);
+    plot_LLGmatches(handles.img1, LLG1, HLG1, ...
+                handles.img2, LLG2, HLG2, ...
+                LLMatches.matched_pairs, ...
+                HLMatches.matched_pairs, handles.GT.LLpairs); 
+    pb_accuracy_LL_Callback(hObject, [], handles);   
+    
+    drawnow;          
     % ----------------------------------------------------------------------- 
     fprintf('\n== Update subgraphs for the next iteration');
     % ----------------------------------------------------------------------- 
 
     [LLG1, LLG2, HLG1, HLG2] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
                                          handles.LLGmatches(it), handles.HLGmatches(it));
-                                     
+                       
 % %     HLG1.F = ones(size(handles.HLG1.V,1),1); 
 % %     HLG2.F = ones(size(handles.HLG2.V,1),1);
 % % 
@@ -1234,11 +1257,11 @@ for i = 1:N
 % %     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
 % %                                    handles.LLGmatches(it), handles.HLGmatches(it), ...
 % %                                    T, inverseT);
-    % -----------------------------------------------------------------------       
+% %     % -----------------------------------------------------------------------       
 % %     p = 1/it; % parameters of the simulated annealing
 % %     [HLG1, HLG2] = simulated_annealing(LLG1, LLG2, HLG1, HLG2, ...
 % %                                        handles.LLGmatches(it), handles.HLGmatches(it), p);
-    % ------------------------------------------------------------------------
+% %     % ------------------------------------------------------------------------
 % %     [T, inverseT] = affine_transformation_estimation(LLG1, LLG2, HLG1.U, HLG2.U, ...
 % %                                                      handles.LLGmatches(it), ...
 % %                                                       handles.HLGmatches(it));
@@ -1246,16 +1269,28 @@ for i = 1:N
 % %     [HLG1, HLG2] = rearrange_subgraphs2(LLG1, LLG2, HLG1, HLG2, ...
 % %                                        handles.LLGmatches(it), handles.HLGmatches(it), ...
 % %                                        T, inverseT);
-    % -----------------------------------------------------------------------       
+% %     % -----------------------------------------------------------------------       
     it = it + 1;
     T_it = toc;
     time = time + T_it;
-
-    fprintf('\n');
     
+    % -----------------------------------------------------------------------    
+    axes(handles.axes3);
+    plot_2levelgraphs(handles.img1, LLG1, HLG1, false, false, handles.HLGmatches(it-1).matched_pairs,1);
+
+    axes(handles.axes4);
+    plot_2levelgraphs(handles.img2, LLG2, HLG2, false, false, handles.HLGmatches(it-1).matched_pairs,2);
+    
+    set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', it));            
+    set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', time));
+    fprintf('\n');
+             
+    drawnow;
+    guidata(hObject, handles);
 end
 % -----------------------------------------------------------------------       
-% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------    
+
 handles.Iteration = it;
 handles.SummaryT = time;
 
@@ -1267,31 +1302,31 @@ guidata(hObject, handles);
 
 % plot results
 
-axes(handles.axes3);
-plot_2levelgraphs(handles.img1, LLG1, HLG1, false, false, handles.HLGmatches(it-1).matched_pairs,1);
-
-axes(handles.axes4);
-plot_2levelgraphs(handles.img2, LLG2, HLG2, false, false, handles.HLGmatches(it-1).matched_pairs,2);
-
-axes(handles.axes5); cla reset;
-plot_HLGmatches(handles.img1, handles.HLG1, ...
-                handles.img2, handles.HLG2, ....
-                handles.HLGmatches(it-1).matched_pairs, handles.GT.HLpairs);
+% axes(handles.axes3);
+% plot_2levelgraphs(handles.img1, LLG1, HLG1, false, false, handles.HLGmatches(it-1).matched_pairs,1);
+% 
+% axes(handles.axes4);
+% plot_2levelgraphs(handles.img2, LLG2, HLG2, false, false, handles.HLGmatches(it-1).matched_pairs,2);
+% 
+% axes(handles.axes5); cla reset;
+% plot_HLGmatches(handles.img1, handles.HLG1, ...
+%                 handles.img2, handles.HLG2, ....
+%                 handles.HLGmatches(it-1).matched_pairs, handles.GT.HLpairs);
                                                                         
-axes(handles.axes6); cla reset;
-plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
-                handles.img2, handles.LLG2, handles.HLG2, ...
-                handles.LLGmatches(it-1).matched_pairs, ...
-                handles.HLGmatches(it-1).matched_pairs, handles.GT.LLpairs); 
+% axes(handles.axes6); cla reset;
+% plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
+%                 handles.img2, handles.LLG2, handles.HLG2, ...
+%                 handles.LLGmatches(it-1).matched_pairs, ...
+%                 handles.HLGmatches(it-1).matched_pairs, handles.GT.LLpairs); 
 
-pb_accuracy_HL_Callback(hObject, [], handles);            
-pb_accuracy_LL_Callback(hObject, [], handles);            
+% pb_accuracy_HL_Callback(hObject, [], handles);            
+% pb_accuracy_LL_Callback(hObject, [], handles);            
 
 % change GUI
-set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
-set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
-set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', handles.Iteration));
-set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', handles.SummaryT));
+% set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
+% set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
+% set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', handles.Iteration));
+% set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', handles.SummaryT));
 
 set(handles.pbMatch_LLGraphs, 'Enable', 'off');
 set(handles.pb_Reweight_HLGraph, 'Enable', 'off');

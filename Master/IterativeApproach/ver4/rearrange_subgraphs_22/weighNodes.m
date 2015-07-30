@@ -24,30 +24,31 @@
 
 
 function [affTrafo, W1, W2] = weighNodes(LLG1, LLG2, U1, U2, ...
-                                         LLMatches, HLMatches)
+                                         LLmatched_pairs, HLmatched_pairs)
 
    fprintf('\n------ Estimation of affine transformation between subgraphs');
    
-   nPairs = size(HLMatches.matched_pairs,1);    
+   nPairs = size(HLmatched_pairs,1);    
    
    T = zeros(nPairs, 6);  
    Tinverse = zeros(nPairs, 6);  
    
-   M = Inf;
+%    M = Inf;
+   M = NaN;
    W1 = ones(size(LLG1.V,1),1)*M; % assume first that all nodes are unmatched
    W2 = ones(size(LLG2.V,1),1)*M;
    
    for k=1:nPairs
        
-        ai = HLMatches.matched_pairs(k,1); % \in HLG1.V
-        aj = HLMatches.matched_pairs(k,2); % \in HLG2.V
+        ai = HLmatched_pairs(k,1); % \in HLG1.V
+        aj = HLmatched_pairs(k,2); % \in HLG2.V
        
         ind_Vai = find(U1(:,ai));
         ind_Vaj = find(U2(:,aj));
         
-        [~, ind_matched_nodes] = ismember(ind_Vai, LLMatches.matched_pairs(:,1));
+        [~, ind_matched_nodes] = ismember(ind_Vai, LLmatched_pairs(:,1));
         ind_matched_nodes = ind_matched_nodes(ind_matched_nodes>0);
-        matched_nodes = LLMatches.matched_pairs(ind_matched_nodes,1:2);
+        matched_nodes = LLmatched_pairs(ind_matched_nodes,1:2);
       
         if (size(matched_nodes, 1)>=3)
             
@@ -57,14 +58,19 @@ function [affTrafo, W1, W2] = weighNodes(LLG1, LLG2, U1, U2, ...
             % estimate affine transformation  
             
             % from left to right
-            [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
+%             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
+            H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
+            H = H1.T'; 
+%             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
             T(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
             bi = [H(1,3); H(2,3)];
                        
             % from right to left
-            [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
-
+%             H2 = fitgeotrans(Vaj_m, Vai_m, 'affine');
+            H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
+            inverseH = H2.T';
+%             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
             Tinverse(k,:) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
             Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
             bj = [ inverseH(1,3); inverseH(2,3)];     

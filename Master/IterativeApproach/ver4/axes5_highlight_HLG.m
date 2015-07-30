@@ -88,14 +88,14 @@ else
     p2 = v2(1:2, nn);               % coordinates of the selected node on the second image
 end
 
-
-if (img == 1)
-    ind = nn + (nn_match-1)*nV1;
-    display(handles.HLGmatches(it).affmatrix(ind, ind));
-else
-    ind = nn_match + (nn-1)*nV1;
-    display(handles.HLGmatches(it).affmatrix(ind, ind));
-end
+% 
+% if (img == 1)
+%     ind = nn + (nn_match-1)*nV1;
+%     display(handles.HLGmatches(it).affmatrix(ind, ind));
+% else
+%     ind = nn_match + (nn-1)*nV1;
+%     display(handles.HLGmatches(it).affmatrix(ind, ind));
+% end
 
 
 % show patches

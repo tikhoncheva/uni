@@ -35,6 +35,7 @@ E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
 LLG.V = V;
 LLG.D = D;
 LLG.E = E;
-LLG.W = ones(nV,1)*Inf;
+% LLG.W = ones(nV,1)*Inf;
+LLG.W = ones(nV,1)*NaN;
 
 end
