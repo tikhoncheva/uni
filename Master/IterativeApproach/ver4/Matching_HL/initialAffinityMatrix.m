@@ -21,7 +21,7 @@ if ~isempty(LLG1.D) && ~isempty(LLG2.D)
 else
     nodesim2 = zeros(nA1*nA2,1); 
 end
-nodesim2 = zeros(nA1*nA2,1); 
+% nodesim2 = zeros(nA1*nA2,1); 
 % nodesim = nodesim1;
 % nodesim = nodesim2;
 nodesim = nodesim1 + nodesim2;
