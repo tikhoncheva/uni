@@ -1216,6 +1216,14 @@ for i = 1:N
     
     pb_accuracy_HL_Callback(hObject, [], handles);    
     drawnow;
+    
+    axes(handles.axes3);
+    plot_2levelgraphs(handles.img1, LLG1, HLG1, false, false, handles.HLGmatches(it).matched_pairs,1);
+
+    axes(handles.axes4);
+    plot_2levelgraphs(handles.img2, LLG2, HLG2, false, false, handles.HLGmatches(it).matched_pairs,2);
+    
+    drawnow;
     % -----------------------------------------------------------------------    
     fprintf('\n== Match initial graphs');
     % -----------------------------------------------------------------------   
