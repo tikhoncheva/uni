@@ -92,6 +92,20 @@ for i = 1:L
         HLG2.F(aa2) = 0;
     end
     
+    
+    if any(dErr_aa1<0) && pA1>rand(1,1) % at leat one error is negative
+        HLG1.U(ind_v1, :) = U1_new(ind_v1, :);
+        affTrafo{it}(ind_aap1,:) = affTrafo_new{it}(ind_aap1,:);
+        HLG1.F(aa1) = 0;
+    end
+
+    if any(dErr_aa2<0) && pA2>rand(1,1) % at leat one error is negative
+        HLG2.U(ind_v2, :) = U2_new(ind_v2, :);
+        affTrafo{it}(ind_aap2,:) = affTrafo_new{it}(ind_aap2,:);
+        HLG2.F(aa2) = 0;
+    end
+    
+    
 
 end
 
