@@ -370,8 +370,7 @@ if filename~=0
     descr(:, zerocol_ind) = []; % remove zero columns
     edges(:, zerocol_ind) = []; %  and corresponding points
     
-    display(sprintf('\n - build lower level graph'));
-    t1 = tic;
+    display(sprintf('\n - build lower level graph'));     t1 = tic;
     LLG = buildLLGraph(edges, descr);
     display(sprintf('   finished in %f sec', toc(t1)));
 
@@ -1305,38 +1304,13 @@ handles.SummaryT = time;
 handles.LLG1 = LLG1; handles.LLG2 = LLG2;
 handles.HLG1 = HLG1; handles.HLG2 = HLG2;
 
-% update data
-guidata(hObject, handles);
-
-% plot results
-
-% axes(handles.axes3);
-% plot_2levelgraphs(handles.img1, LLG1, HLG1, false, false, handles.HLGmatches(it-1).matched_pairs,1);
-% 
-% axes(handles.axes4);
-% plot_2levelgraphs(handles.img2, LLG2, HLG2, false, false, handles.HLGmatches(it-1).matched_pairs,2);
-% 
-% axes(handles.axes5); cla reset;
-% plot_HLGmatches(handles.img1, handles.HLG1, ...
-%                 handles.img2, handles.HLG2, ....
-%                 handles.HLGmatches(it-1).matched_pairs, handles.GT.HLpairs);
-                                                                        
-% axes(handles.axes6); cla reset;
-% plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
-%                 handles.img2, handles.LLG2, handles.HLG2, ...
-%                 handles.LLGmatches(it-1).matched_pairs, ...
-%                 handles.HLGmatches(it-1).matched_pairs, handles.GT.LLpairs); 
-
-% pb_accuracy_HL_Callback(hObject, [], handles);            
-% pb_accuracy_LL_Callback(hObject, [], handles);            
-
-% change GUI
-% set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
-% set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
-% set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', handles.Iteration));
-% set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', handles.SummaryT));
-
 set(handles.pbMatch_LLGraphs, 'Enable', 'off');
 set(handles.pb_Reweight_HLGraph, 'Enable', 'off');
 
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles}) 
+
+% update data
+guidata(hObject, handles);
 % end

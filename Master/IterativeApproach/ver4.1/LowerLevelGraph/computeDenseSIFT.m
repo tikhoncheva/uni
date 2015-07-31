@@ -38,7 +38,7 @@ magnif = 3;         % is the same as one of vl_sift
 % [F1, D1] = vl_phow(single(E), 'Sizes', [8], 'Magnif', magnif, 'Step',1); % Scales [8]
 
 Es = vl_imsmooth(E, sqrt((binSize/magnif)^2 - .25));
-[F, D] = vl_dsift(single(Es), 'size', binSize, 'Bounds', [1+border, 1+border, size(E, 1)-border, size(E,2)-border]); % single scale 
+[F, D] = vl_dsift(single(Es), 'size', binSize, 'Bounds', [1+border, 1+border, size(E, 2)-border, size(E,1)-border]); % single scale 
 % F(1,:) = F(1,:) + border;
 % F(2,:) = F(2,:) + border;
 F(3,:) = binSize/magnif ;  % scale

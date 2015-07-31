@@ -13,7 +13,7 @@ v2 = handles.LLG2.V';
 nV1 = size(v1,2);
 nV2 = size(v2,2);
 
-it = handles.Iteration;
+it = min(handles.Iteration, size(handles.LLGmatches,2));
 
 LL_matches = handles.LLGmatches(it).matched_pairs;
 
