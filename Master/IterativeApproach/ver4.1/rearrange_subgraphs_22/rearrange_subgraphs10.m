@@ -86,8 +86,11 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
                 [nn_PVai, ~] = knnsearch(LLG2.V, PVai);   %indices of nodes in LLG2.V
                 [nn_PVaj, ~] = knnsearch(LLG1.V, PVaj);   %indices of nodes in LLG1.V
                               
-                new_U1(nn_PVaj, ai) = exp(-err); %1;
-                new_U2(nn_PVai, aj) = exp(-err); %1;   
+                new_U1(ind_Vai, ai) = exp(-err);
+                new_U1(nn_PVaj, ai) = exp(-err);
+                
+                new_U2(ind_Vaj, aj) = exp(-err);
+                new_U2(nn_PVai, aj) = exp(-err); 
             end % err<err_eps
             
         else % Rule 2

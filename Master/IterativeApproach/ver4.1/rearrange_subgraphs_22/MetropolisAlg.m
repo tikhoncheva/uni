@@ -111,8 +111,8 @@ end
 
 %Step7
 
-% [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2, ...
-%                                      LLMatches, HLMatches, affTrafo);
+[LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2, ...
+                                     LLMatches, HLMatches, affTrafo);
 
 
 
