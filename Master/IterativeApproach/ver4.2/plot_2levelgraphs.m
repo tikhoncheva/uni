@@ -47,6 +47,7 @@ function plot_2levelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
 
     % vertices (color nodes in each subgraph in different color)
     col_mapping = size(cmap,1)*ones(1,size(HLG.V,1))    ;
+    
     if (nargin == 7) % assign same color to the nodes in matched subgraphs
         matching = varargin{1};
         col = varargin{2};

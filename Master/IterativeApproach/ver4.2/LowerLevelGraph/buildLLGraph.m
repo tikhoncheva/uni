@@ -22,21 +22,21 @@ D = descr;          % descriptors of the vertices
 
 nV = size(V,1);
 
-% % kNN - graph with given minimal degree minDeg
-% minDeg = 6;
-% 
-% [nodes_kNN, ~] = knnsearch(V(:, 1:2), ....
-%                            V(:, 1:2), 'k', minDeg + 1);    % nV x (minDeg+1) matrix                   
-% nodes_kNN = nodes_kNN(:,2:end); % delete loops in each vertex (first column of the matrix)
-% 
-% nodes_kNN = reshape(nodes_kNN, nV*minDeg, 1);
-% E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
+% kNN - graph with given minimal degree minDeg
+minDeg = 6;
 
-% Delaunay triangulation
-DT = delaunayTriangulation(V);
-E = [DT(:,1), DT(:,2)];
-E = [E; DT(:,2), DT(:,3)];
-E = [E; DT(:,3), DT(:,1)];
+[nodes_kNN, ~] = knnsearch(V(:, 1:2), ....
+                           V(:, 1:2), 'k', minDeg + 1);    % nV x (minDeg+1) matrix                   
+nodes_kNN = nodes_kNN(:,2:end); % delete loops in each vertex (first column of the matrix)
+
+nodes_kNN = reshape(nodes_kNN, nV*minDeg, 1);
+E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
+
+% % Delaunay triangulation
+% DT = delaunayTriangulation(V);
+% E = [DT(:,1), DT(:,2)];
+% E = [E; DT(:,2), DT(:,3)];
+% E = [E; DT(:,3), DT(:,1)];
 
 
 LLG.V = V;

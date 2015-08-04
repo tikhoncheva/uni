@@ -28,12 +28,12 @@ function [trI, features_trI, features_I, GT] = transform_image(I, keypoints_I)
     setParameters_transformation_ri;
     theta = mod(2*pi + theta, 2*pi);
     
-    I = imnoise(I,'gaussian', noise_m, noise_var);
+    I_noise = imnoise(I,'gaussian', noise_m, noise_var);
     
-    m = size(I,1);
-    n = size(I,2);      
+    m = size(I_noise,1);
+    n = size(I_noise,2);      
     
-    trI = repmat(I,1);
+    trI = repmat(I_noise,1);
     trI(:) = 0;
     
     % Rotation matrix of the affine transformation
@@ -58,10 +58,10 @@ function [trI, features_trI, features_I, GT] = transform_image(I, keypoints_I)
     
     k = size(x(mask,:),1);
     
-    ind_x = sub2ind( size(I), repmat(x(mask,1),3,1), repmat(x(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
-    ind_y = sub2ind( size(I), repmat(y(mask,1),3,1), repmat(y(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
+    ind_x = sub2ind( size(I_noise), repmat(x(mask,1),3,1), repmat(x(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
+    ind_y = sub2ind( size(I_noise), repmat(y(mask,1),3,1), repmat(y(mask,2),3,1), [ones(k,1);2*ones(k,1); 3*ones(k,1)]);
     
-    trI(ind_x) = I(ind_y);
+    trI(ind_x) = I_noise(ind_y);
     
     
     % Coordinates of the transformed keypoints
@@ -86,7 +86,6 @@ function [trI, features_trI, features_I, GT] = transform_image(I, keypoints_I)
     % new transformed image
     E = imresize(edgesDetect(imresize(trI,2), model),0.5);
     [~, D1] = vl_sift(single(E), 'frames', keypoints_trI);
-%     [F, D] = vl_sift(single(rgb2gray(trI)), 'frames', keypoints_new);
     
     features_trI.edges = keypoints_trI;
     features_trI.descr = D1;

@@ -4,20 +4,26 @@
 %
 function axes6_highlight_LLG(~, ~, handles)
 
-img1 = handles.img1;
-img2 = handles.img2;
+L = handles.IPlevel;
 
-v1 = handles.LLG1.V';
-v2 = handles.LLG2.V';
+img1 = handles.IP1(L).img;
+img2 = handles.IP2(L).img;
 
-nV1 = size(v1,2);
-nV2 = size(v2,2);
+LLG1 = handles.IP1(L).LLG; nV1 = size(LLG1.V,1);
+LLG2 = handles.IP2(L).LLG; nV2 = size(LLG2.V,1);
 
-it = min(handles.Iteration, size(handles.LLGmatches,2));
+HLG1 = handles.IP1(L).HLG;
+HLG2 = handles.IP2(L).HLG;
 
-LL_matches = handles.LLGmatches(it).matched_pairs;
+LLGmatches = handles.M(L).LLGmatches;
+HLGmatches = handles.M(L).HLGmatches;
+GT = handles.M(L).GT;
 
-GT = handles.GT.LLpairs;
+it = handles.Iteration;
+it = min(it, size(LLGmatches,2));
+
+LL_matches = LLGmatches(it).matched_pairs;
+
                  
 cP = get(gca,'Currentpoint');
 n = cP(1,1);
@@ -35,9 +41,9 @@ else
 end
       
 if img==1
-    nn = knnsearch(handles.LLG1.V,[n,m]); 
+    nn = knnsearch(LLG1.V,[n,m]); 
 else
-    nn = knnsearch(handles.LLG2.V,[n,m]);    
+    nn = knnsearch(LLG2.V,[n,m]);    
 end
       
 % show selected match
@@ -50,8 +56,8 @@ else
 end
 
 % corresponding match between anchor graphs:
-ai = handles.HLGmatches(it).matched_pairs( LL_matches(ind,3),1);
-aj = handles.HLGmatches(it).matched_pairs( LL_matches(ind,3),2);
+ai = HLGmatches(it).matched_pairs( LL_matches(ind,3),1);
+aj = HLGmatches(it).matched_pairs( LL_matches(ind,3),2);
 % ai = find( handles.HLG1.U(selected_match(:,1),:) );
 % aj = find( handles.HLG2.U(selected_match(:,2),:) );
 % 
@@ -61,21 +67,20 @@ aj = handles.HLGmatches(it).matched_pairs( LL_matches(ind,3),2);
 % is_matched = logical(ismember(pairs_ai_aj, handles.HLGmatches(it).matched_pairs, 'rows' ));
 
 % matched_anchors = pairs_ai_aj(is_matched, :);
-matched_anchors = handles.HLGmatches(it).matched_pairs( LL_matches(ind,3),1:2);
+matched_anchors = HLGmatches(it).matched_pairs( LL_matches(ind,3),1:2);
 
 % show matched anchors
 axes(handles.axes5);
 cla reset
-plot_HLGmatches(handles.img1, handles.HLG1, handles.img2, handles.HLG2, handles.HLGmatches(it).matched_pairs, ...
-                                                                        handles.GT.HLpairs, matched_anchors);
+plot_HLGmatches(img1, HLG1, img2, HLG2, HLGmatches(it).matched_pairs, GT.HLpairs, matched_anchors);
 % show matched nodes with corresponding subgraphs
 axes(handles.axes6);
 cla reset
-plot_LLGmatches(handles.img1, handles.LLG1, handles.HLG1, ...
-                handles.img2, handles.LLG2, handles.HLG2, ...  
-                handles.LLGmatches(it).matched_pairs, ...
-                handles.HLGmatches(it).matched_pairs, ...
-                GT, selected_match);   
+plot_LLGmatches(img1, LLG1, HLG1, ...
+                img2, LLG2, HLG2, ...  
+                LLGmatches(it).matched_pairs, ...
+                HLGmatches(it).matched_pairs, ...
+                GT.LLpairs, selected_match);   
 
 
 axes(handles.axes6);
