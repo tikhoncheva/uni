@@ -45,7 +45,7 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
 %             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
             H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
             H = H1.T';            
-            [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
+%             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
             Ti(k,:) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
             bi = [H(1,3); H(2,3)];
@@ -86,81 +86,81 @@ function [Ti, Tj, W1, W2] = affine_transformation_estimation(LLG1, LLG2, U1, U2,
             
             
             
-% %             figure; subplot(1,2,1);
-% %             
-% %                     plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-% % 
-% %                     V2 = LLG2.V;
-% %                     V2(:,1) = 300 + V2(:,1);
-% %                     plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
-% % 
-% % 
-% %                     plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-% % 
-% %                     X2(:,1) = 300 + X2(:,1);
-% %                     plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-% % 
-% %                    
-% %                     edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
-% %                     points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
-% %                     line(points(:,1), 256-points(:,2), 'Color', 'g');
-% % 
-% %                     edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
-% %                     points = V2(edges,:); points(3:3:end,:) = NaN;
-% %                     line(points(:,1), 256-points(:,2), 'Color', 'g');
-% % 
-% %                     Tx1 = PVai_m;
-% %                     Tx1(:,1) = 300 + Tx1(:,1);
-% %                     plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
-% % 
-% % 
-% %                     nans = NaN * ones(size(Tx1,1),1) ;
-% %                     x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
-% %                     y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
-% %                     line(x', 256-y', 'Color','m') ;
-% %                     
-% %                     matches = pairs';
-% % 
-% %                     nans = NaN * ones(size(matches,2),1) ;
-% %                     x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-% %                     y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-% %                     line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
-% %                    
-% %                     % ---------------------------------------------------- %
-% %                     subplot(1,2,2);
-% % 
-% %                     plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-% %                     plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
-% % 
-% %                     edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
-% %                     points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
-% %                     line(points(:,1), 256-points(:,2), 'Color', 'g');
-% % 
-% %                     edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
-% %                     points = V2(edges,:); points(3:3:end,:) = NaN;
-% %                     line(points(:,1), 256-points(:,2), 'Color', 'g');
-% % 
-% % 
-% %                     plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-% %                     plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-% %                    
-% % 
-% %                     Tx2 = PVaj_m;
-% %                     plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
-% %                     
-% %                     Vaj_m(:,1) = 300 + Vaj_m(:,1);
-% %                     nans = NaN * ones(size(Tx2,1),1) ;
-% %                     x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
-% %                     y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
-% %                     line(x', 256-y', 'Color','m') ;
-% %                     
-% %                     matches = pairs';
-% %                     nans = NaN * ones(size(matches,2),1) ;
-% %                     x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-% %                     y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-% %                     line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
-% %                     
-% %             hold off;
+            figure; subplot(1,2,1);
+            
+                    plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+
+                    V2 = LLG2.V;
+                    V2(:,1) = 300 + V2(:,1);
+                    plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
+
+
+                    plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+
+                    X2(:,1) = 300 + X2(:,1);
+                    plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+
+                   
+                    edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
+                    points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
+
+                    edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
+                    points = V2(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
+
+                    Tx1 = PVai_m;
+                    Tx1(:,1) = 300 + Tx1(:,1);
+                    plot(Tx1(:,1), 256-Tx1(:,2), 'm*')
+
+
+                    nans = NaN * ones(size(Tx1,1),1) ;
+                    x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
+                    y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
+                    line(x', 256-y', 'Color','m') ;
+                    
+                    matches = pairs';
+
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', 256-y', 'Color','m', 'LineStyle', '--') ;
+                   
+                    % ---------------------------------------------------- %
+                    subplot(1,2,2);
+
+                    plot(LLG1.V(:,1), 256-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+                    plot(V2(:,1), 256-V2(:,2), 'ro', 'MarkerFaceColor','r');
+
+                    edges = LLG1.E'; edges(end+1,:) = 1; edges = edges(:); 
+                    points = LLG1.V(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
+
+                    edges = LLG2.E'; edges(end+1,:) = 1; edges = edges(:);
+                    points = V2(edges,:); points(3:3:end,:) = NaN;
+                    line(points(:,1), 256-points(:,2), 'Color', 'g');
+
+
+                    plot(X1(:,1), 256-X1(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    plot(X2(:,1), 256-X2(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                   
+
+                    Tx2 = PVaj_m;
+                    plot(Tx2(:,1), 256-Tx2(:,2), 'm*')
+                    
+                    Vaj_m(:,1) = 300 + Vaj_m(:,1);
+                    nans = NaN * ones(size(Tx2,1),1) ;
+                    x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
+                    y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
+                    line(x', 256-y', 'Color','m') ;
+                    
+                    matches = pairs';
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', 256-y', 'Color','m', 'LineStyle', '--') ;                   
+                    
+            hold off;
         
         end % if each of subgraphs have at least tree nodes matched
         

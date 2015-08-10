@@ -13,18 +13,30 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 4.2
 -----------------------------------------------------------------------------
- Parallel version of ver 4, that includes image pyramid to work with the big 
+ Extansion of the version 4.1, that includes image pyramid to work with the big 
  images.
- this version be included in ver4.
  
-  + a pyramid of an image to work with big graps
+ 4.08
+ <-> simplified GUI
+  + started to create end folder with the algorithm functions
+  + started to work on a pyramid of an image
 
  ----------------------------------------------------------------------------
- 
+
 -----------------------------------------------------------------------------
 Ver 4.1
 -----------------------------------------------------------------------------
-  New version of the simulated annealing
+ New version of the simulated annealing
+ 
+ 31.07.
+ <-> wrong border in the extraction of the SIFT descriptors, should be
+   [1+b 1+b size(E,2)-b size(E,1)-b]
+  +  save estimated affine transformation from the previous iteration
+     recalculate it only for the changed subgraphs 
+   
+ 03.08. 
+ + new_HLG1_U(ind_Vai, ai) = exp(-err)
+   new_HLG3_U(ind_Vaj, aj) = exp(-err)
 
  ----------------------------------------------------------------------------
 

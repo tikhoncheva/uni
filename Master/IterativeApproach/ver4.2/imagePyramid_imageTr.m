@@ -22,7 +22,7 @@ HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
 
 M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
-                  'GT', [], 'it',1, 'affTrafo', []), nLevels,1);
+                  'GT', [], 'it', 0, 'affTrafo', []), nLevels,1);
 
 for i = 1:nLevels
    fprintf('\nLevel %d: \n', i);

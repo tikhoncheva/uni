@@ -22,7 +22,7 @@
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 04-Aug-2015 16:26:42
+% Last Modified by GUIDE v2.5 10-Aug-2015 10:34:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -98,7 +98,7 @@ addpath(genpath('./toyProblem'));
 % addpath(genpath('./RANSAC2'));
 % addpath(genpath('./GraphCoarsening'));
 % addpath(genpath('./rearrange_subgraphs'));
-addpath(genpath('./rearrange_subgraphs_22'));
+% addpath(genpath('./rearrange_subgraphs_22'));
 
 addpath(genpath('./2levelGM'));
 
@@ -158,7 +158,8 @@ function pbToyProblem_Callback(hObject, ~, handles)
     HLGmatches = struct('objval', 0, 'matched_pairs', []);
     LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
 
-    M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT);
+    M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
+               'it', 0, 'affTrafo', []);
     L = size(IP1,1);        % current level of the pyramid
     
     % plot graphs
@@ -191,6 +192,8 @@ function pbToyProblem_Callback(hObject, ~, handles)
     
     handles.IPlevel = L;
     handles.SummaryT = 0.0;     
+    
+    handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
                                                                                                                         
     axes(handles.axes11);cla reset;
     axes(handles.axes12);cla reset;
@@ -259,13 +262,15 @@ if filename~=0
     handles.IP1 = IP1;
     handles.IP2 = IP2;
     
-    handles.M = M;                         % Ground Truth 
+    handles.M = M;                         
     
     handles.IPlevel = L;
     handles.SummaryT = 0.0;
     
     handles.img1selected= 1;
     handles.img2selected= 1;  
+    
+    handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
 
     set(handles.pb_start, 'Enable', 'on');
     set(handles.pb_reset, 'Enable', 'on');
@@ -325,6 +330,8 @@ if filename~=0
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
         
+        handles.resetData = struct('initHLG1', IP1(L).HLG, 'initHLG2', handles.IP2.HLG2, 'GT', M.GT);   % initial data to reset the current test
+        
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');
         set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -368,6 +375,7 @@ if filename~=0
     
     % Show it on the axis2 and axis 4 
     axes(handles.axes2);cla reset;  plot_graph(IP2(1).img, IP2(1).LLG);
+    
     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
                                            IP2(L).HLG, false, false);
     
@@ -383,6 +391,8 @@ if filename~=0
         
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
+        
+        handles.resetData = struct('initHLG1', handles.IP1(L).HLG, 'initHLG2', IP2.HLG2, 'GT', M.GT);   % initial data to reset the current test
         
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');
@@ -412,6 +422,17 @@ end
 guidata(hObject,handles); 
 %end
 
+% --- Executes on button press in pbSaveImg_axes12.
+function pbSaveImg_axes12_Callback(~, ~, handles)
+[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+if  filename~=0
+    img1 = getframe(handles.axes1);
+    img2 = getframe(handles.axes2);
+    
+    img12 = combine2images(img1.cdata, img2.cdata);
+    imwrite(img12, [pathname, filesep, filename], 'Quality', 100);  
+end
+
 %-------------------------------------------------------------------------
 %       Panel2 : building coarse graphs (ancor graph) and fine graphs 
 %-------------------------------------------------------------------------
@@ -424,14 +445,25 @@ show_LLG = get(handles.cbShow_LLG, 'Value');
 show_HLG = get(handles.cbShow_HLG, 'Value');
 
 L = handles.IPlevel;
-% replot first anchor graph
-axes(handles.axes3);cla reset;
-plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
-                                          handles.IP1(L).HLG, show_LLG, show_HLG);
-% replot second anchor graph              
-axes(handles.axes4);cla reset;
-plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
-                                          handles.IP2(L).HLG, show_LLG, show_HLG);
+it = handles.M(L).it;
+
+if it==0
+    % replot first anchor graph
+    axes(handles.axes3); plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
+                                           handles.IP1(L).HLG, show_LLG, show_HLG);
+    % replot second anchor graph              
+    axes(handles.axes4); plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
+                                           handles.IP2(L).HLG, show_LLG, show_HLG)    
+else  
+    % replot first anchor graph
+    axes(handles.axes3); plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
+                                           handles.IP1(L).HLG, show_LLG, show_HLG, ...
+                                           handles.M(L).HLGmatches(it).matched_pairs,1);
+    % replot second anchor graph              
+    axes(handles.axes4); plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
+                                           handles.IP2(L).HLG, show_LLG, show_HLG, ...
+                                           handles.M(L).HLGmatches(it).matched_pairs,1);
+end
 %end
 
 
@@ -442,19 +474,88 @@ show_LLG = get(handles.cbShow_LLG, 'Value');
 show_HLG = get(handles.cbShow_HLG, 'Value');
 
 L = handles.IPlevel;
-% replot first anchor graph
-axes(handles.axes3);cla reset;
-plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
-                                          handles.IP1(L).HLG, show_LLG, show_HLG);
-% replot second anchor graph              
-axes(handles.axes4);cla reset;
-plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
-                                          handles.IP2(L).HLG, show_LLG, show_HLG);
+it = handles.M(L).it;
+
+if it==0
+    % replot first anchor graph
+    axes(handles.axes3); plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
+                                           handles.IP1(L).HLG, show_LLG, show_HLG);
+    % replot second anchor graph              
+    axes(handles.axes4); plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
+                                           handles.IP2(L).HLG, show_LLG, show_HLG)    
+else  
+    % replot first anchor graph
+    axes(handles.axes3); plot_2levelgraphs(handles.IP1(L).img, handles.IP1(L).LLG, ...
+                                           handles.IP1(L).HLG, show_LLG, show_HLG, ...
+                                           handles.M(L).HLGmatches(it).matched_pairs,1);
+    % replot second anchor graph              
+    axes(handles.axes4); plot_2levelgraphs(handles.IP2(L).img, handles.IP2(L).LLG, ...
+                                           handles.IP2(L).HLG, show_LLG, show_HLG, ...
+                                           handles.M(L).HLGmatches(it).matched_pairs,1);
+end
 %end
+
+% --- Executes on button press in pbSaveImg_axes34.
+function pbSaveImg_axes34_Callback(~, ~, handles)
+
+[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+if  filename~=0
+    img3 = getframe(handles.axes3);
+    img4 = getframe(handles.axes4);
+
+    img34 = combine2images(img3.cdata, img4.cdata);
+    imwrite(img34, [pathname, filesep, filename], 'Quality', 100);  
+end
+
 
 %-------------------------------------------------------------------------
 %       Panel3 : matching Higher Level Graphs
 %-------------------------------------------------------------------------
+
+% --- Executes on button press in pb_accuracy_LL.
+function pb_accuracy_HL_Callback(~, ~, handles)
+figure;
+
+nSubplots = 1;
+
+L = handles.IPlevel;
+HLGmatches = handles.M(L).HLGmatches;
+
+nIt = size(HLGmatches, 2);
+
+
+x = 1:1:nIt;
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+    y_obj(i) = HLGmatches(i).objval;
+end
+
+% if we knew the Ground Truth for the HL
+if ~isempty(handles.M(L).GT.HLpairs)
+    nSubplots = 2;
+    
+    GT = handles.M(L).GT.HLpairs;
+    y_ac = zeros(1, nIt);
+    for i=1:1:nIt
+        TP = ismember(HLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+        TP = sum(TP(:));
+        y_ac(i) = TP/ size(HLGmatches(i).matched_pairs,1)*100;
+    end
+    
+    subplot(1,2,2);
+    plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
+    xlabel('Iteration'); ylabel('Accurasy');set(gca,'FontSize',6);
+    set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
+end
+
+
+subplot(1,nSubplots,1);
+plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
+xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
+% title('          Matching result on the Higher Level');
+set(legend('Score'), 'Location', 'best', 'FontSize', 6);
+
+%end
 
 % --- Executes on button press in pbSaveImg_HL.
 function pbSaveImg_HL_Callback(~, ~, handles)
@@ -470,6 +571,46 @@ end
 %-------------------------------------------------------------------------
 %       Panel4 : matching lower level graphs
 %-------------------------------------------------------------------------
+
+% --- Executes on button press in pb_accuracy_LL.
+function pb_accuracy_LL_Callback(~, ~, handles)
+figure; nSubplots = 1;
+
+L = handles.IPlevel;
+LLGmatches = handles.M(L).LLGmatches;
+
+nIt = size(LLGmatches,2);
+
+x = 1:1:nIt;
+y_obj = zeros(1, nIt);
+for i=1:1:nIt
+    y_obj(i) = LLGmatches(i).objval;
+end
+
+% if we know the Ground Truth fot the LL
+if ~isempty(handles.M(L).GT.LLpairs)
+    nSubplots = 2;
+    
+    GT = handles.M(L).GT.LLpairs;
+    y_ac = zeros(1, nIt);
+    for i=1:1:nIt
+        TP = ismember(LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+        TP = sum(TP(:));
+        y_ac(i) = TP/ size(LLGmatches(i).matched_pairs,1) * 100;
+    end
+    
+    subplot(1,2,2);
+    plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
+    xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
+    set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
+end
+
+subplot(1,nSubplots,1);
+plot(x, y_obj), hold on; plot(x,y_obj, 'bo'), hold off;
+xlabel('Iteration'); ylabel('Score');set(gca,'FontSize',6);
+set(legend('Score'), 'Location', 'best', 'FontSize', 6);
+
+%end
 
 % --- Executes on button press in pbSaveImg_LL.
 function pbSaveImg_LL_Callback(~, ~, handles)
@@ -489,31 +630,19 @@ end
 %-------------------------------------------------------------------------
 
 
-% --- Executes on button press in pb_start.
-function pb_start_Callback(hObject, eventdata, handles)
+% ------------------         Start        --------------------------------
+function pb_start_Callback(hObject, ~, handles)
 
-%end
+setParameters;
 
-
-
-% --- Executes on button press in pb_reset.
-function pb_reset_Callback(hObject, eventdata, handles)
-
-%end
-
-% --- Executes on button press in pb_makeNSteps.
-function pb_makeNSteps_Callback(hObject, ~, handles)
-
-N = str2double(get(handles.edit_NSteps,'string')); 
+nMaxIt = algparam.nMaxIt;       % maximal number of iteration for each level of the image pyramid
+nConst = algparam.nConst;       % stop, if the matching score didn't change in last C iterations
+ 
 time = handles.SummaryT;
-
 L = handles.IPlevel;
 
-img1 = handles.IP1(L).img;
-img2 = handles.IP2(L).img;
-
-LLG1 = handles.IP1(L).LLG;  nV1 = size(LLG1.V,1);
-LLG2 = handles.IP2(L).LLG;  nV2 = size(LLG2.V,1);
+LLG1 = handles.IP1(L).LLG;
+LLG2 = handles.IP2(L).LLG;
 
 HLG1 = handles.IP1(L).HLG;
 HLG2 = handles.IP2(L).HLG;
@@ -521,120 +650,46 @@ HLG2 = handles.IP2(L).HLG;
 LLGmatches = handles.M(L).LLGmatches;
 HLGmatches = handles.M(L).HLGmatches;
 
-GT = handles.M(L).GT;
-
-it = handles.M(L).it;
-
 affTrafo = handles.M(L).affTrafo;
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------     
-for i = 1:N
-    
-    display(sprintf('ITERATION %d', i));
-    tic;
-    % -----------------------------------------------------------------------    
-    fprintf('\n== Match anchor graphs');
-    % -----------------------------------------------------------------------    
-    [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2, LLG1, LLG2);
+it = 0; count = 0;
 
-    if (it==1)
-        HLMatches = matchHLGraphs(corrmatrix, affmatrix);
-    else
-        HLMatches = matchHLGraphs(corrmatrix, affmatrix, HLG1, HLG2, HLGmatches(it-1));
-    end
-    HLGmatches(it) = HLMatches;
-    
-    set(handles.text_objval_HLG, 'String', sprintf('Objval:  %0.3f', HLMatches.objval));
-
-    axes(handles.axes5); cla reset;
-    plot_HLGmatches(img1, HLG1, img2, HLG2, HLGmatches(it).matched_pairs, GT.HLpairs);
-    
-    % plot score and accuracy
-    axes(handles.axes11); plot_score(HLGmatches);
-    if ~isempty(GT.HLpairs)  % if we know the Ground Truth fot the HL
-        axes(handles.axes12); plot_accuracy(HLGmatches, GT.HLpairs);
-    end  
-    drawnow;
-    
-    axes(handles.axes3);
-    plot_2levelgraphs(img1, LLG1, HLG1, false, false, HLGmatches(it).matched_pairs,1);
-
-    axes(handles.axes4);
-    plot_2levelgraphs(img2, LLG2, HLG2, false, false, HLGmatches(it).matched_pairs,2);
-    
-    drawnow;
-    % -----------------------------------------------------------------------    
-    fprintf('\n== Match initial graphs');
-    % -----------------------------------------------------------------------   
-    [subgraphNodes, corrmatrices, affmatrices] = initialization_LLGM(LLG1, LLG2, ...
-                                                                     HLG1.U, HLG2.U,...
-                                                                     HLGmatches(it).matched_pairs);    
-    if (it==1)
-        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, HLGmatches(it).matched_pairs);
-    else
-        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, ...
-                                  HLGmatches(it).matched_pairs, ...
-                                  LLGmatches(it-1));
-    end
-    LLGmatches(it) = LLMatches;
-    
-    set(handles.text_objval_LLG, 'String', sprintf('Objval:  %0.3f', LLMatches.objval));
-        
-    axes(handles.axes6);
-    plot_LLGmatches(img1, LLG1, HLG1, ...
-                    img2, LLG2, HLG2, ...
-                    LLMatches.matched_pairs, ...
-                    HLMatches.matched_pairs, GT.LLpairs); 
-    
-    % plot score and accuracy
-    axes(handles.axes13); plot_score(LLGmatches);
-    if ~isempty(GT.LLpairs)  % if we know the Ground Truth fot the HL
-        axes(handles.axes14); plot_accuracy(LLGmatches, GT.LLpairs);
-    end
-    
-    drawnow;          
-    % ----------------------------------------------------------------------- 
-    fprintf('\n== Update subgraphs for the next iteration');
-    % ----------------------------------------------------------------------- 
-
-    [LLG1, LLG2, HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
-                                         LLGmatches(it), HLGmatches(it), affTrafo); 
-    
+while count<nConst && it<nMaxIt
     it = it + 1;
-    T_it = toc;
-    time = time + T_it;
     
-    % -----------------------------------------------------------------------    
-    axes(handles.axes3);
-    plot_2levelgraphs(img1, LLG1, HLG1, false, false, HLGmatches(it-1).matched_pairs,1);
+    tic;
+    
+    [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+   
+    time = time + toc;   
+    
+    if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<eps)
+        count = count + 1;
+    else
+        count = 0;
+    end
+    
+    handles.SummaryT = time;
 
-    axes(handles.axes4);
-    plot_2levelgraphs(img2, LLG2, HLG2, false, false, HLGmatches(it-1).matched_pairs,2);
-    
-    set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', it));            
-    set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', time));
-    fprintf('\n');
-             
-    drawnow;
+    handles.IP1(L).LLG = LLG1;
+    handles.IP2(L).LLG = LLG2;
+
+    handles.IP1(L).HLG = HLG1;
+    handles.IP2(L).HLG = HLG2;
+
+    handles.M(L).LLGmatches = LLGmatches;
+    handles.M(L).HLGmatches = HLGmatches;
+    handles.M(L).it = it;
+    handles.M(L).affTrafo = affTrafo;
+
+    handles = update_GUI_after_one_GM_iteration(handles);        
     guidata(hObject, handles);
 end
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
-
-handles.Iteration = it;
-handles.SummaryT = time;
-
-handles.IP1(L).LLG = LLG1;
-handles.IP2(L).LLG = LLG2;
-
-handles.IP1(L).HLG = HLG1;
-handles.IP2(L).HLG = HLG2;
-
-handles.M(L).LLGmatches = LLGmatches;
-handles.M(L).HLGmatches = HLGmatches;
-handles.M(L).it = it;
-handles.M(L).affTrafo = affTrafo;
 
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
@@ -642,4 +697,143 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 
 % update data
 guidata(hObject, handles);
-% end
+% ----------------------------------------------------------------------- 
+
+
+% ------------------         Reset        --------------------------------
+function pb_reset_Callback(hObject, ~, handles)
+
+rng(1);
+
+img1 = handles.IP1(1).img;
+img2 = handles.IP2(1).img;
+
+initLLG1 = handles.IP1(1).LLG;
+initLLG2 = handles.IP2(1).LLG;
+
+initHLG1 = handles.resetData.initHLG1;
+initHLG2 = handles.resetData.initHLG2;
+
+GT = handles.resetData.GT;
+
+IP1 = struct('img', img1, 'LLG', initLLG1, 'HLG', initHLG1);
+IP2 = struct('img', img2, 'LLG', initLLG2, 'HLG', initHLG2);
+
+HLGmatches = struct('objval', 0, 'matched_pairs', []);
+LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
+
+M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
+           'it',1, 'affTrafo', []);
+
+L = size(IP1,1);        % current level of the pyramid
+
+% Show img1 on the axis1
+axes(handles.axes1);cla reset; plot_graph(IP1(1).img, IP1(1).LLG);
+% Show img2 on the axis2
+axes(handles.axes2);cla reset; plot_graph(IP2(1).img, IP2(1).LLG);   
+% Show img2 on the axis3
+axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+                                       IP1(L).HLG, false, false);
+% Show img2 on the axis4
+axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+                                       IP2(L).HLG, false, false);
+
+axes(handles.axes5);
+plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
+                IP2(L).img, IP2(L).HLG, ...
+                M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+
+img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images                
+axes(handles.axes6);  imagesc(img3), axis off;
+
+axes(handles.axes11);cla reset;
+axes(handles.axes12);cla reset;
+axes(handles.axes13);cla reset;
+axes(handles.axes14);cla reset;
+
+% update/reset data
+handles.IP1 = IP1; 
+handles.IP2 = IP2;
+
+handles.M = M;                        
+
+handles.IPlevel = L;
+handles.SummaryT = 0.0;
+
+handles.img1selected= 1;
+handles.img2selected= 1;  
+
+set(handles.pb_start, 'Enable', 'on');
+set(handles.pb_reset, 'Enable', 'on');
+set(handles.pb_makeNSteps, 'Enable', 'on');
+
+set(handles.text_IPlevel, 'String', sprintf('Level: %d',handles.IPlevel));
+set(handles.text_IterationCount, 'String', sprintf('Iteration: -'));
+set(handles.text_SummaryT, 'String', sprintf('Summary time: 0.0')); 
+set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
+set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
+
+% update data
+guidata(hObject, handles);
+% ----------------------------------------------------------------------- 
+
+
+% ------------------  Make N steps        --------------------------------
+function pb_makeNSteps_Callback(hObject, ~, handles)
+
+N = str2double(get(handles.edit_NSteps,'string')); 
+
+L = handles.IPlevel;
+
+LLG1 = handles.IP1(L).LLG;  
+LLG2 = handles.IP2(L).LLG;  
+
+HLG1 = handles.IP1(L).HLG;
+HLG2 = handles.IP2(L).HLG;
+
+LLGmatches = handles.M(L).LLGmatches;
+HLGmatches = handles.M(L).HLGmatches;
+
+affTrafo = handles.M(L).affTrafo;
+
+it = handles.M(L).it;
+time = handles.SummaryT;
+
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------     
+for i = 1:N
+    it = it + 1;
+    
+    tic;
+    
+    [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+   
+    time = time + toc;   
+    
+    handles.SummaryT = time;
+
+    handles.IP1(L).LLG = LLG1;
+    handles.IP2(L).LLG = LLG2;
+
+    handles.IP1(L).HLG = HLG1;
+    handles.IP2(L).HLG = HLG2;
+
+    handles.M(L).LLGmatches = LLGmatches;
+    handles.M(L).HLGmatches = HLGmatches;
+    handles.M(L).it = it;
+    handles.M(L).affTrafo = affTrafo;
+    
+    handles = update_GUI_after_one_GM_iteration(handles);       
+    guidata(hObject, handles);
+end
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------    
+
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles}) 
+
+% update data
+guidata(hObject, handles);
+% ------------------------------------------------------------------------

@@ -33,7 +33,7 @@ for i = 1:nLevels
    LLG = buildLLGraph(edges, descr, igparam);
    HLG = buildHLGraph(ID, LLG, agparam);
 
-   I(i) = struct('img', img, LLG', LLG, 'HLG', HLG); 
+   I(i) = struct('img', img, 'LLG', LLG, 'HLG', HLG); 
    
    img = impyramid(img, 'reduce');
 end

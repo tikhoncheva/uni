@@ -19,8 +19,7 @@ LLGmatches = handles.M(L).LLGmatches;
 HLGmatches = handles.M(L).HLGmatches;
 GT = handles.M(L).GT;
 
-it = handles.Iteration;
-it = min(it, size(LLGmatches,2));
+it = size(LLGmatches,2);
 
 LL_matches = LLGmatches(it).matched_pairs;
 

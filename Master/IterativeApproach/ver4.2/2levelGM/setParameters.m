@@ -28,7 +28,9 @@ agparam.nA = [10 10];
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
 
-%
+% algorithm
+algparam.nMaxIt = 30;           % maximal number of iteration for each level of the image pyramid
+algparam.nConst = 3;             % abort, if the matching score didn't change in last nConst iterationss
 
 
  

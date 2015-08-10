@@ -38,6 +38,9 @@ switch alg
         error('please select valid algorithm for the graph coarsening');
 end
 
+% similarity of the anchors
+
+
 HLG.F = ones(size(HLG.V,1),1);    
 
 fprintf('   finished in %f sec\n', toc(t2));

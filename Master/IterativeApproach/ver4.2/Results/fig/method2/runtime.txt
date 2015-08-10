@@ -1,0 +1,5 @@
+Test		 Iteration 	Running time
+------------------------------------------------
+test_imagetrafo1	6	15.360 sec
+test_imagetrafo2	11	29.259 sec
+test_imagetrafo3	13	33.316 sec
