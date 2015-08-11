@@ -31,9 +31,10 @@ for i = 1:nLevels
    [img1, features1, features2, GT] = transform_image(img2, edges); 
 
    LLG1 = buildLLGraph(features1.edges, features1.descr, igparam);
-   HLG1 = buildHLGraph(1, LLG1, agparam);
-   
    LLG2 = buildLLGraph(features2.edges, features2.descr, igparam);
+   
+   % build anchor graphs
+   HLG1 = buildHLGraph(1, LLG1, agparam);
    HLG2 = buildHLGraph(2, LLG2, agparam);
 
    I1(i) = struct('img', img1, 'LLG', LLG1, 'HLG', HLG1); 

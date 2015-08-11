@@ -10,7 +10,7 @@ function [cG,U] = HEM_coarsen(G, nA)
 rng(1);
 
 nV = size(G.V,1);
-
+G.V = G.V(:,1:2);
 % adjacency matrix
 adjM = zeros(nV, nV);
 E = G.E;

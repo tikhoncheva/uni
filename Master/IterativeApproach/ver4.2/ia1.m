@@ -656,14 +656,14 @@ affTrafo = handles.M(L).affTrafo;
 % -----------------------------------------------------------------------     
 it = 0; count = 0;
 
+[LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+
 while count<nConst && it<nMaxIt
     it = it + 1;
     
     tic;
-    
-    [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+    [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
         twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-   
     time = time + toc;   
     
     if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<eps)
@@ -674,18 +674,16 @@ while count<nConst && it<nMaxIt
     
     handles.SummaryT = time;
 
-    handles.IP1(L).LLG = LLG1;
-    handles.IP2(L).LLG = LLG2;
-
-    handles.IP1(L).HLG = HLG1;
-    handles.IP2(L).HLG = HLG2;
-
     handles.M(L).LLGmatches = LLGmatches;
     handles.M(L).HLGmatches = HLGmatches;
     handles.M(L).it = it;
     handles.M(L).affTrafo = affTrafo;
 
     handles = update_GUI_after_one_GM_iteration(handles);        
+    
+    handles.IP1(L).HLG = HLG1;
+    handles.IP2(L).HLG = HLG2;
+    
     guidata(hObject, handles);
 end
 % -----------------------------------------------------------------------       
@@ -723,7 +721,7 @@ HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
 
 M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
-           'it',1, 'affTrafo', []);
+           'it',0, 'affTrafo', []);
 
 L = size(IP1,1);        % current level of the pyramid
 
@@ -781,6 +779,8 @@ guidata(hObject, handles);
 % ------------------  Make N steps        --------------------------------
 function pb_makeNSteps_Callback(hObject, ~, handles)
 
+setParameters;
+
 N = str2double(get(handles.edit_NSteps,'string')); 
 
 L = handles.IPlevel;
@@ -801,23 +801,17 @@ time = handles.SummaryT;
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------     
+[LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+
 for i = 1:N
     it = it + 1;
     
     tic;
-    
-    [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
-        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-   
+    [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);  
     time = time + toc;   
     
     handles.SummaryT = time;
-
-    handles.IP1(L).LLG = LLG1;
-    handles.IP2(L).LLG = LLG2;
-
-    handles.IP1(L).HLG = HLG1;
-    handles.IP2(L).HLG = HLG2;
 
     handles.M(L).LLGmatches = LLGmatches;
     handles.M(L).HLGmatches = HLGmatches;
@@ -825,6 +819,10 @@ for i = 1:N
     handles.M(L).affTrafo = affTrafo;
     
     handles = update_GUI_after_one_GM_iteration(handles);       
+      
+    handles.IP1(L).HLG = HLG1;
+    handles.IP2(L).HLG = HLG2;
+    
     guidata(hObject, handles);
 end
 % -----------------------------------------------------------------------       

@@ -27,6 +27,7 @@ igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
 agparam.nA = [10 10];
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
+agparam.nWordsPerc = 0.4;
 
 % algorithm
 algparam.nMaxIt = 30;           % maximal number of iteration for each level of the image pyramid

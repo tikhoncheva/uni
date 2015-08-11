@@ -59,8 +59,8 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
       
         if (size(matched_nodes, 1)>=3)
             
-            Vai_m = LLG1.V(matched_nodes(:,1),:);
-            Vaj_m = LLG2.V(matched_nodes(:,2),:);
+            Vai_m = LLG1.V(matched_nodes(:,1),1:2);
+            Vaj_m = LLG2.V(matched_nodes(:,2),1:2);
                    
             % estimate affine transformation  
             

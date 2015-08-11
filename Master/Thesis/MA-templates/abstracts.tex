@@ -1,0 +1,29 @@
+%% Abstract page
+%% =============
+%%
+%% Content of abstract pages has been put into seperate pages to simplify
+%% word counting. Use e.g. the unix command
+%%   wc abstract-ger.tex
+%% or
+%%   wc abstract-eng.tex
+%% to get the number of words contained in these files.
+\thispagestyle{empty}
+\begin{center}
+  \begin{minipage}[c][0.48\textheight][b]{0.9\textwidth}
+    \small
+    \textbf{
+      (Titel der Masterarbeit - deutsch):
+    }\par
+    \vspace{\baselineskip}
+    \input{abstract-ger}
+  \end{minipage}\par
+  \vfill
+  \begin{minipage}[c][0.48\textheight][b]{0.9\textwidth}
+    \small
+    \textbf{
+      (Title of Master thesis - english):
+    }\par
+    \vspace{\baselineskip}
+    \input{abstract-eng}
+  \end{minipage}
+\end{center}

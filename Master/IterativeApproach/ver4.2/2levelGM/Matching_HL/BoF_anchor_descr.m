@@ -2,29 +2,26 @@
 %
 % Input
 %  HLG              higher level graph
-%  LLG              lower level graph
 %    k              number of words in the codebook
 %  codebook_ind     mapping between nodes of LLG and codewords
 %
 % Output
 % anchor_hist       appearence descriptors of the anchors
 
-function [anchor_hist] = BoF_anchor_descr(HLG, LLG, k, codebook_ind)
+function [HLG] = BoF_anchor_descr(HLG, k, codebook_ind)
             
 nA = size(HLG.V,1);    % number of anchors
-% nV = size(LLG.V,1);    % number of nodes in the corresponding subgraph
-
-% k = round(0.5*nV);     % number of word in the codebook
-
-% LLG.D has the size 128xnV
-% codebook_ind = kmeans(double(LLG.D'), k, 'MaxIter',1000);
+% I = [1:nA];
+I = find(HLG.F==0);
 
 codebook_ind = repmat(codebook_ind, 1, nA);
 codebook_ind = codebook_ind.*HLG.U;
 
+
 anchor_hist = zeros(nA, k);
 
-for i = 1:nA
+for q = 1:numel(I)
+    i = I(q);
     if sum(codebook_ind(:,i)>0)
         
         [lwords,~,l_ind] = unique(codebook_ind(:,i));
@@ -43,7 +40,7 @@ for i = 1:nA
 end
 
 
-
+HLG.D_appear(I,:) = anchor_hist(I,:);
 
 
 end

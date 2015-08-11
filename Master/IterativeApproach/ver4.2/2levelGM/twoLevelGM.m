@@ -1,6 +1,6 @@
 %% One iteration of the two-level Graph Matching Algorithm
 
-function [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
                    twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo)
     
     fprintf('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
@@ -10,7 +10,7 @@ function [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
     % -----------------------------------------------------------------------    
     fprintf('\n== Matching on the Higher Level');
     % -----------------------------------------------------------------------  
-    [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2, LLG1, LLG2);
+    [corrmatrix, affmatrix, HLG1, HLG2] = initialization_HLGM(LLG1, LLG2, HLG1, HLG2);
 
     if (it==1)
         HLMatches = matchHLGraphs(corrmatrix, affmatrix);
@@ -39,7 +39,7 @@ function [LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
     % ----------------------------------------------------------------------- 
     fprintf('\n== Update graph partitioning for the next iteration');
     % -----------------------------------------------------------------------     
-    [LLG1, LLG2, HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
+    [HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
                                          LLGmatches(it), HLGmatches(it), affTrafo);
 
     fprintf('\n');                                     

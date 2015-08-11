@@ -1,32 +1,26 @@
  
-function [S] = BoF_node_similarity(HLG1, HLG2, LLG1, LLG2, corrmatrix)
+function [S, HLG1, HLG2] = BoF_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix)
             
 nA1 = size(HLG1.V,1);
 nA2 = size(HLG2.V,1);
 
-nV1 = size(LLG1.V,1);    % number of nodes in LLG1
-nV2 = size(LLG2.V,1);    % number of nodes in LLG2
+% load IDs of nodes in the common codebook
+nWords = LLG1.nWords; % == LLG2.nWords;
+codebook1_ind = LLG1.V(:,3);
+codebook2_ind = LLG2.V(:,3);
 
-k = round(0.4* (nV1+nV2)/2);
-
-% create a codebook
-D = [LLG1.D, LLG2.D]'; % (nV1+nV2)x128
-codebook_ind = kmeans(double(D), k, 'MaxIter',1000);
-
-vA1_hist = BoF_anchor_descr(HLG1, LLG1, k, codebook_ind(1:nV1));
-vA2_hist = BoF_anchor_descr(HLG2, LLG2, k, codebook_ind(nV1+1:end));
-
+HLG1 = BoF_anchor_descr(HLG1, nWords, codebook1_ind);
+HLG2= BoF_anchor_descr(HLG2, nWords, codebook2_ind);
 
 S = zeros(nA1*nA2,1);
-
 for i = 1:nA1
-    hist_ai = vA1_hist(i, :);
+    hist_ai = HLG1.D_appear(i, :);
         
     ai_pairs = find(corrmatrix(i,:)>0)';  
     
     for k = 1:numel(ai_pairs)
         j = ai_pairs(k);
-        hist_aj = vA2_hist(j, :);
+        hist_aj = HLG2.D_appear(j, :);
 
         C = ((hist_ai-hist_aj).^2)./(hist_ai+hist_aj); %* 0.5;
         C(isnan(C)) =0;
@@ -39,8 +33,5 @@ end
 
 % S = S / norm
 % S = exp(-S );
-
-    
-
 
 end

@@ -19,7 +19,7 @@
 %       U  matrix of correspondences between initial graph and anchor graph
 %       F  0/1 vector with the size equal number of anchors
 %          shows, wheter the anchors where changed cmparing to previous
-%          iteration
+%          iteration (0) or remain unchanged(1)
 function [HLG] = buildHLGraph(ID, LLG, agparam)
 
 fprintf(' - build higher level graph (anchor graph)');
@@ -38,10 +38,12 @@ switch alg
         error('please select valid algorithm for the graph coarsening');
 end
 
+% HLG.F = ones(size(HLG.V,1),1); 
+HLG.F = zeros(size(HLG.V,1),1);
+
 % similarity of the anchors
-
-
-HLG.F = ones(size(HLG.V,1),1);    
+HLG.D_appear = [];
+HLG.D_struct = [];   
 
 fprintf('   finished in %f sec\n', toc(t2));
     

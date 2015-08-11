@@ -13,8 +13,8 @@
 % the subgraph to the anchor, to which the nearest neighbors of this nodes
 % belong to
 
-function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2, ...
-                                              LLGmatches, HLGmatches, affTrafo)
+function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
+                                         LLGmatches, HLGmatches, affTrafo)
    fprintf('\n------ Rearrange subgraphs');
    error_eps = 1.0;
 
@@ -58,8 +58,8 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
         ind_matched_pairs = ind_matched_pairs(ind_matched_pairs>0);
         pairs = LLGmatches.matched_pairs(ind_matched_pairs,1:2);
 
-        Vai = LLG1.V(ind_Vai,:);      % coordinates of the nodes in the subgraph G_ai
-        Vaj = LLG2.V(ind_Vaj,:);      % coordinates of the nodes in the subgraph G_aj
+        Vai = LLG1.V(ind_Vai,1:2);      % coordinates of the nodes in the subgraph G_ai
+        Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_aj
         
         
         if (size(pairs, 1)>=3)
@@ -83,8 +83,8 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
 
                 % calculate the nearest neighbours of the projections and
                 % include them into corresponding graphs
-                [nn_PVai, ~] = knnsearch(LLG2.V, PVai);   %indices of nodes in LLG2.V
-                [nn_PVaj, ~] = knnsearch(LLG1.V, PVaj);   %indices of nodes in LLG1.V
+                [nn_PVai, ~] = knnsearch(LLG2.V(:,1:2), PVai);   %indices of nodes in LLG2.V
+                [nn_PVaj, ~] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V
                               
                 new_U1(ind_Vai, ai) = exp(-err);
                 new_U1(nn_PVaj, ai) = exp(-err);
@@ -95,13 +95,13 @@ function [LLG1, LLG2, HLG1, HLG2] = rearrange_subgraphs10(LLG1, LLG2, HLG1, HLG2
             
         else % Rule 2
             if size(Vai,1)<3
-                nn_Vai = knnsearch(LLG1.V, Vai, 'K', 2);   %indices of nodes in LLG2.V
+                nn_Vai = knnsearch(LLG1.V(:,1:2), Vai, 'K', 2);   %indices of nodes in LLG2.V
                 nn_Vai(:,1) = [];                
                 new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
  
             end
             if size(Vaj,1)<3
-                nn_Vaj = knnsearch(LLG2.V, Vaj, 'K', 2);   %indices of nodes in LLG2.V
+                nn_Vaj = knnsearch(LLG2.V(:,1:2), Vaj, 'K', 2);   %indices of nodes in LLG2.V
                 nn_Vaj(:,1) = [];             
                 new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
           

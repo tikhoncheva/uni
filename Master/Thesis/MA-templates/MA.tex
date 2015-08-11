@@ -1,0 +1,59 @@
+%% Template for Master thesis
+%% ===========================
+%%
+%% You need at least KomaScript v3.0.0,
+%% e.g. available in Texlive 2009
+\documentclass  [
+  paper    = a4,
+  BCOR     = 10mm,
+  twoside,
+  fontsize = 12pt,
+  fleqn,
+  toc      = bibnumbered,
+  toc      = listofnumbered,
+  numbers  = noendperiod,
+  headings = normal,
+  listof   = leveldown,
+  version  = 3.03
+]                                       {scrreprt}
+
+% used pagages
+\usepackage     [utf8]                  {inputenc}
+\usepackage     [T1]                    {fontenc}
+\usepackage                             {color}
+\usepackage                             {amsmath}
+\usepackage                             {graphicx}
+\usepackage     [english]               {babel}
+\usepackage                             {natbib}
+\usepackage                             {hyperref}
+
+% links
+\definecolor{darkblue}{rgb}{0.0,0.0,0.4}
+\definecolor{darkgreen}{rgb}{0.0,0.4,0.0}
+\hypersetup{
+    colorlinks,
+    linkcolor=black,
+    citecolor=darkgreen,
+    urlcolor=darkblue
+}
+
+\begin{document}
+  %% title pages similar to providet template instead of maketitle
+  \include{titlepages-ger} % select either german
+  \include{titlepages-eng} % or english title page
+  \include{abstracts}
+
+  \tableofcontents
+  %% Put your contents here
+
+  \part{Appendix}
+  \begin{appendix}
+    \chapter{Lists}
+    \listoffigures
+    \listoftables
+    \bibliography{references}{}
+    \citestyle{egu}
+    \bibliographystyle{plainnat}
+    \include{deposition}
+  \end{appendix}
+\end{document}

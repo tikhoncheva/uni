@@ -1,6 +1,6 @@
 
 % use idea of simulated annealing to rearrange nodes in subgraphs 
-function [LLG1, LLG2,HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2, ...
+function [HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2, ...
                                                LLMatches, HLMatches, affTrafo)                                           
 fprintf('\n---- Metropolis Algorithm');
 
@@ -23,8 +23,8 @@ HLG2.F = ones(size(HLG2.V,1),1);
 % Step2: expand subgraphs with small transformation errors and eliminate
 % subgraphs with less then three nodes
 
-[LLG1, LLG2, HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
-                                     LLMatches, HLMatches, affTrafo);
+[HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
+                                LLMatches, HLMatches, affTrafo);
 
 % Step3:        
 % rng('default');
@@ -111,8 +111,8 @@ end
 
 % Step7
 
-[LLG1, LLG2, HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
-                                     LLMatches, HLMatches, affTrafo);
+[HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
+                                LLMatches, HLMatches, affTrafo);
 
 
 

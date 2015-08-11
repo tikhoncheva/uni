@@ -2,7 +2,7 @@
  %
  %
  
-function [corrmatrix, affmatrix] = initialization_HLGM(HLG1, HLG2, LLG1, LLG2, varargin)
+function [corrmatrix, affmatrix, HLG1, HLG2] = initialization_HLGM(LLG1, LLG2, HLG1, HLG2, varargin)
 
 fprintf('\n---- preprocessing: ');
 
@@ -16,7 +16,7 @@ nV2 = size(HLG2.V,1);
 corrmatrix = ones(nV1,nV2);                                                 %  !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
 
 % compute initial affinity matrix
-affmatrix = initialAffinityMatrix(HLG1, HLG2, LLG1, LLG2, corrmatrix);
+[affmatrix, HLG1, HLG2] = initialAffinityMatrix(LLG1, LLG2, HLG1, HLG2, corrmatrix);
 
 
 % % add affine transformation similarity of the anchors
