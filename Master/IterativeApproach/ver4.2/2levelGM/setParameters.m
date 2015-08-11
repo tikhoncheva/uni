@@ -27,7 +27,12 @@ igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
 agparam.nA = [10 10];
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
-agparam.nWordsPerc = 0.4;
+
+% appearence descriptor of the anchors
+agparam.nWordsPerc = 0.4;      % percentage of nodes to be taken into the codebook
+% structural descriptor of the anchors
+agparam.R = 30;                % radius of the local neighborhood around a node in the initial graphs
+agparam.nbins = 50;            % number of bins in the structural descriptor of the
 
 % algorithm
 algparam.nMaxIt = 30;           % maximal number of iteration for each level of the image pyramid

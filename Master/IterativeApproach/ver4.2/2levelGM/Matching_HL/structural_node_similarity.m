@@ -1,5 +1,5 @@
  
-function [S] = structural_node_similarity(HLG1, HLG2, LLG1, LLG2, corrmatrix)
+function [S, HLG1, HLG2] = structural_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix)
 
 vA1 = HLG1.V;  %2xnV1
 vA2 = HLG2.V;  %2xnV2
@@ -10,83 +10,48 @@ nA2 = size(vA2,1);
 nV1 = size(LLG1.V,1);
 nV2 = size(LLG2.V,1);
 
+setParameters;
+
 % define size of the local neighborhood of a node
-R = 30;                                         %  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+R = agparam.R;
 
-% adjacency matrix of the first dependency graph
-adjM1 = zeros(nV1, nV1);
-E1 = LLG1.E;
-E1 = [E1; [E1(:,2) E1(:,1)]];
-ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
-adjM1(ind) = 1;
-
-% adjacency matrix of the second dependency graph
-adjM2 = zeros(nV2, nV2);
-E2 = LLG2.E;
-E2 = [E2; [E2(:,2) E2(:,1)]];
-ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
-adjM2(ind) = 1; 
-    
+% update structural descriptors of the anchors
+HLG1 = struct_anchor_descr(LLG1, HLG1);
+HLG2 = struct_anchor_descr(LLG2, HLG2);  
 
 S = zeros(nA1*nA2,1); % similarity vector
 
 for ai = 1:nA1 % consider anchor i
-   % subgraph underlying the anchor i
-   ai_x = HLG1.U(:,ai);
-   if sum(ai_x)==0
+   
+   descr_ai = HLG1.D_struct{ai};      % descriptor of the anchor ai
+   if isempty(descr_ai)
        continue;
    end
-   
-   V1 = LLG1.V(ai_x,:);
-   
-   if (~isempty(LLG1.D))
-        D1 = LLG1.D(:, ai_x);
-   else 
-        D1 = [];
-   end
-   adjM1cut = adjM1(ai_x, ai_x');
-   if max(adjM1cut(:))==1
-       [subE1(:,1), subE1(:,2)] = find(adjM1cut);
-   else
-       subE1 = [];
-   end
-   subG1 = struct('V', V1, 'D', D1, 'E', subE1);
+   n1 = size(descr_ai,1);
           
-   % list of possible matches of the anchor ai to the anchors of the second
-   % graph
-   seed_pairs = find(corrmatrix(ai,:)>0)';  
+   % list of possible matches of the anchor ai to the anchors of the second graph
+   ai_pairs = find(corrmatrix(ai,:)>0)';  
    
-   for p = 1:numel(seed_pairs)
-       aj = seed_pairs(p);
-       % define subgraphs underlying the anchor aj of the second graph
-       aj_x = HLG2.U(:,aj);
-       if sum(aj_x)==0
+   for p = 1:numel(ai_pairs)
+       aj = ai_pairs(p);
+       descr_aj = HLG2.D_struct{aj};  % descriptor of the anchor aj
+       if isempty(descr_aj)
            continue;
        end
-
-       V2 = LLG2.V(aj_x,:);
-       if (~isempty(LLG1.D))
-            D2 = LLG2.D(:, aj_x);
-       else 
-            D2 = [];
-       end
-       adjM2cut = adjM2(aj_x, aj_x');
-       if max(adjM2cut(:))==1
-           [subE2(:,1), subE2(:,2)] = find(adjM2cut);
-       else
-           subE2 = [];
-       end
-       subG2 = struct('V', V2, 'D', D2, 'E', subE2);
-   
-       % compair two subgraphs
-       simval = compair_subgraphs(subG1, subG2, R);
+       n2 = size(descr_aj,1);
        
-       S((aj-1)*nA1+ai) = simval;
-      
-       clear V2; clear D2; clear subE2; clear subG2;
-   end
+       % similarity value between descriptors
+       D1 = repmat(descr_ai, n2, 1);
+       D2 = kron(descr_aj, ones(n1,1));
+    
+       C = ((D1-D2).^2)./(D1+D2) * 0.5;
+       C(isnan(C)) =0;
+       C = sum(C, 2);
    
-   clear V1; clear D1; clear subE1; clear subG1;
+       simval = exp(-sum(C(:))/n1/n2);
+             
+       S((aj-1)*nA1+ai) = simval; 
+   end
     
 end
 

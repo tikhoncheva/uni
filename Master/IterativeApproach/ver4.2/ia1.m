@@ -330,7 +330,7 @@ if filename~=0
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
         
-        handles.resetData = struct('initHLG1', IP1(L).HLG, 'initHLG2', handles.IP2.HLG2, 'GT', M.GT);   % initial data to reset the current test
+        handles.resetData = struct('initHLG1', IP1(L).HLG, 'initHLG2', handles.IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
         
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');
@@ -392,7 +392,7 @@ if filename~=0
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
         
-        handles.resetData = struct('initHLG1', handles.IP1(L).HLG, 'initHLG2', IP2.HLG2, 'GT', M.GT);   % initial data to reset the current test
+        handles.resetData = struct('initHLG1', handles.IP1(L).HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
         
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');

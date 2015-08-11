@@ -11,7 +11,7 @@ fprintf('\n---- preprocessing: initialize %d subgraphs', size(HLG_matched_pairs,
 try
 %     tic 
     
-    nV1 = size(LLG1.V,1);
+    nV1 = size(LLG1.V,1); 
     nV2 = size(LLG2.V,1);
 
     % adjacency matrix of the first dependency graph
@@ -55,7 +55,7 @@ try
         ai = HLG_matched_pairs(ind_new_subgraphPairs(i),1);
         
         ai_x = U1(:,ai);
-        V1{i} = LLG1.V(ai_x,:)';
+        V1{i} = LLG1.V(ai_x,1:2)';
         if (~isempty(LLG1.D))
             D1{i} = LLG1.D(:, ai_x);
         else 
@@ -67,7 +67,7 @@ try
         aj = HLG_matched_pairs(ind_new_subgraphPairs(i),2);
         
         aj_x = U2(:, aj);
-        V2{i} = LLG2.V(aj_x,:)';
+        V2{i} = LLG2.V(aj_x,1:2)';
         if (~isempty(LLG2.D))
             D2{i} = LLG2.D(:, aj_x);
         else 

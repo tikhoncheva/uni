@@ -9,9 +9,11 @@ nWords = LLG1.nWords; % == LLG2.nWords;
 codebook1_ind = LLG1.V(:,3);
 codebook2_ind = LLG2.V(:,3);
 
+% update appearence descriptors of the anchors
 HLG1 = BoF_anchor_descr(HLG1, nWords, codebook1_ind);
-HLG2= BoF_anchor_descr(HLG2, nWords, codebook2_ind);
+HLG2 = BoF_anchor_descr(HLG2, nWords, codebook2_ind);
 
+% calculate similarity vector
 S = zeros(nA1*nA2,1);
 for i = 1:nA1
     hist_ai = HLG1.D_appear(i, :);

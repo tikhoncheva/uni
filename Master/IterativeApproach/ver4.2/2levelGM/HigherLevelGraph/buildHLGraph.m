@@ -43,7 +43,7 @@ HLG.F = zeros(size(HLG.V,1),1);
 
 % similarity of the anchors
 HLG.D_appear = [];
-HLG.D_struct = [];   
+HLG.D_struct = cell(nA,1);   
 
 fprintf('   finished in %f sec\n', toc(t2));
     

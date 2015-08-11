@@ -14,7 +14,7 @@ nA1 = size(HLG1.V,1);
 nA2 = size(HLG2.V,1);
 
 % node similarity = diag of the affinity matrix
-nodesim1 = structural_node_similarity(HLG1, HLG2, LLG1, LLG2, corrmatrix); % using structur of the anchor subgraphs
+[nodesim1, HLG1, HLG2] = structural_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix); % using structur of the anchor subgraphs
  
 if ~isempty(LLG1.D) && ~isempty(LLG2.D)
     [nodesim2, HLG1, HLG2] = BoF_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix); % using Back Of Features Representation

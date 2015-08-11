@@ -16,6 +16,15 @@ Ver 4.2
  Extansion of the version 4.1, that includes image pyramid to work with the big 
  images.
  
+ 11.08
+  + codebook of the node descriptors is calculated once in the preprocessing step
+    before graph matching
+  + additional column to LLG.V, which saves the IDs nodes in the codebook
+  + according to this use only two first columns in LLG.V (i.e. node coordinates)
+    in the functions in GraphCoarsening, HigherLevelGraph, update_partition
+  + appearence similarity of anchors will be recalculated only for changed subgraphs
+ <-> whole algortihm should not change anything in the LLGraphs, so there is no need
+     to return/update them in functions from update_partition
  4.08
  <-> simplified GUI
   + started to create end folder with the algorithm functions

@@ -6,7 +6,7 @@
 %  codebook_ind     mapping between nodes of LLG and codewords
 %
 % Output
-% anchor_hist       appearence descriptors of the anchors
+%   HLG             HLG with the updated D_appear matrix
 
 function [HLG] = BoF_anchor_descr(HLG, k, codebook_ind)
             
