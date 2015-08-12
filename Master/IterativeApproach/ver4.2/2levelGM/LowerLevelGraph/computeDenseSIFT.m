@@ -24,6 +24,9 @@ addpath(genpath('../../Tools/edges-master/'));
 load '../../Tools/edges-master/edgesModel.mat'   % model
 
 % find edge points
+if size(img,3)==1
+    img = cat(3, img, img, img); % make rgb image from grayscale image
+end
 E = imresize(edgesDetect(imresize(img,2), model),0.5);
 
 % apply non-maximum suppression
