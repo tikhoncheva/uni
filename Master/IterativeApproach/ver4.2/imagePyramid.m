@@ -32,7 +32,9 @@ for i = 1:nLevels
     
    LLG = buildLLGraph(edges, descr, igparam);
 %    HLG = buildHLGraph(ID, LLG, agparam);
-    HLG = buildHLGraph(i, LLG, agparam);
+
+%     HLG = buildHLGraph(i, LLG, agparam);
+   HLG = [];
 
    I(i) = struct('img', img, 'LLG', LLG, 'HLG', HLG); 
    

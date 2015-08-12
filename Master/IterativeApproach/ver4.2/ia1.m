@@ -149,8 +149,10 @@ function pbToyProblem_Callback(hObject, ~, handles)
     setParameters;
     [img1, img2, LLG1, LLG2, GT] = make2SyntheticGraphs(igparam);
     
-    HLG1 = buildHLGraph(1, LLG1, agparam);
-    HLG2 = buildHLGraph(2, LLG2, agparam);
+%     HLG1 = buildHLGraph(1, LLG1, agparam);
+%     HLG2 = buildHLGraph(1, LLG2, agparam);
+    HLG1 = [];
+    HLG2 = [];
 
     IP1 = struct('img', img1, 'LLG', LLG1, 'HLG', HLG1);
     IP2 = struct('img', img2, 'LLG', LLG2, 'HLG', HLG2);
@@ -166,18 +168,21 @@ function pbToyProblem_Callback(hObject, ~, handles)
     axes(handles.axes1); plot_graph(IP1(L).img, IP1(L).LLG);
     axes(handles.axes2); plot_graph(IP2(L).img, IP2(L).LLG);
     
-    axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
-                                           IP1(L).HLG, false, false);
-    axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
-                                           IP2(L).HLG, false, false);
+%     axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+%                                            IP1(L).HLG, false, false);
+%     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+%                                            IP2(L).HLG, false, false);
+    axes(handles.axes3); plot_graph(IP1(L).img, IP1(L).LLG);
+    axes(handles.axes4); plot_graph(IP2(L).img, IP2(L).LLG);
     
-    axes(handles.axes5); cla reset
-    plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
-                handles.IP2(L).img, handles.IP2(L).HLG, ...
-                M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+    img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images   
     
+    axes(handles.axes5); cla reset; imagesc(img3), axis off;
+%     plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
+%                     IP2(L).img, IP2(L).HLG, ...
+%                     M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
     
-    img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images        
+         
     axes(handles.axes6); cla reset; imagesc(img3), axis off;
     
         
@@ -193,8 +198,11 @@ function pbToyProblem_Callback(hObject, ~, handles)
     handles.IPlevel = L;
     handles.SummaryT = 0.0;     
     
-    handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
-                                                                                                                        
+%     handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
+    handles.initIP1 = IP1;
+    handles.initIP2 = IP2;
+    handles.initM = M; 
+    
     axes(handles.axes11);cla reset;
     axes(handles.axes12);cla reset;
     axes(handles.axes13);cla reset;
@@ -239,20 +247,22 @@ if filename~=0
     axes(handles.axes1);cla reset; plot_graph(IP1(1).img, IP1(1).LLG);
     % Show img2 on the axis2
     axes(handles.axes2);cla reset; plot_graph(IP2(1).img, IP2(1).LLG);   
-    % Show img2 on the axis3
-    axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
-                                           IP1(L).HLG, false, false);
-    % Show img2 on the axis4
-    axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
-                                           IP2(L).HLG, false, false);
-                                       
+%     % Show img1 on the axis3
+%     axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+%                                            IP1(L).HLG, false, false);
+%     % Show img2 on the axis4
+%     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+%                                            IP2(L).HLG, false, false);
+    axes(handles.axes3); plot_graph(IP1(L).img, IP1(L).LLG);
+    axes(handles.axes4); plot_graph(IP2(L).img, IP2(L).LLG);       
     
-    axes(handles.axes5);
-    plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
-                    IP2(L).img, IP2(L).HLG, ...
-                    M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+    img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images    
     
-    img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images                
+    axes(handles.axes5); imagesc(img3), axis off;
+%     plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
+%                     IP2(L).img, IP2(L).HLG, ...
+%                     M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+       
     axes(handles.axes6);  imagesc(img3), axis off;
     
     axes(handles.axes11);cla reset;
@@ -321,19 +331,20 @@ if filename~=0
     axes(handles.axes1);cla reset; plot_graph(img1, IP1(1).LLG);
     
     % Show LLG1 on the axis3
-    axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
-                                           IP1(L).HLG, false, false);
+    axes(handles.axes3);cla reset; plot_graph(IP1(L).img, IP1(L).LLG);    
+%     axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+%                                            IP1(L).HLG, false, false);
     
     if handles.img2selected
+        
         img3 = combine2images(IP1(L).img, handles.IP2(L).img);
         
-        axes(handles.axes5);
-        plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
-                        handles.IP2(L).img, handles.IP2(L).HLG, ...
-                        M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+        axes(handles.axes5); imagesc(img3), axis off; 
+%         plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
+%                         handles.IP2(L).img, handles.IP2(L).HLG, ...
+%                         M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
         
-        axes(handles.axes6);
-        imagesc(img3), axis off;  
+        axes(handles.axes6); imagesc(img3), axis off;  
         
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
@@ -389,19 +400,19 @@ if filename~=0
     
     % Show it on the axis2 and axis 4 
     axes(handles.axes2);cla reset;  plot_graph(IP2(1).img, IP2(1).LLG);
+    axes(handles.axes4);cla reset;  plot_graph(IP2(L).img, IP2(L).LLG);
     
-    axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
-                                           IP2(L).HLG, false, false);
+%     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+%                                            IP2(L).HLG, false, false);
     
     if handles.img1selected
         img3 = combine2images(handles.IP1(L).img, IP2(L).img);
         
-        axes(handles.axes5);cla reset;
-        plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
-                        IP2(L).img, IP2(L).HLG, ...
-                        M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
-        axes(handles.axes6);
-        imagesc(img3), axis off;
+        axes(handles.axes5); imagesc(img3), axis off;
+%         plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
+%                         IP2(L).img, IP2(L).HLG, ...
+%                         M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+        axes(handles.axes6); imagesc(img3), axis off;
         
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
@@ -665,11 +676,13 @@ HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
 
 for i = 1:size(IP1,1)
-    IP1(i).HLG.D_appear = [];
-    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
-
-    IP2(i).HLG.D_appear = [];
-    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+    IP1(i).HLG = [];
+    IP2(i).HLG = [];
+%     IP1(i).HLG.D_appear = [];
+%     IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
+% 
+%     IP2(i).HLG.D_appear = [];
+%     IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
 
     M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
                'it',0, 'affTrafo', []);
@@ -732,7 +745,7 @@ affTrafo = M(L).affTrafo;
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
-    twoLevelGM(LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+    twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
 handles.SummaryT = time;
 
@@ -765,6 +778,8 @@ function pb_reset_Callback(hObject, ~, handles)
 
 rng(1);
 
+L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
+
 IP1 = handles.initIP1;
 IP2 = handles.initIP2;
 
@@ -772,11 +787,13 @@ HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
 
 for i = 1:size(IP1,1)
-    IP1(i).HLG.D_appear = [];
-    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
-
-    IP2(i).HLG.D_appear = [];
-    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+    IP1(i).HLG = [];
+    IP2(i).HLG = [];
+%     IP1(i).HLG.D_appear = [];
+%     IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
+% 
+%     IP2(i).HLG.D_appear = [];
+%     IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
 
     M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
                'it',0, 'affTrafo', []);
@@ -802,25 +819,26 @@ end
 % M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
 %            'it',0, 'affTrafo', []);
 
-L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
 % Show img1 on the axis1
 axes(handles.axes1);cla reset; plot_graph(IP1(1).img, IP1(1).LLG);
 % Show img2 on the axis2
 axes(handles.axes2);cla reset; plot_graph(IP2(1).img, IP2(1).LLG);   
 % Show img2 on the axis3
-axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
-                                       IP1(L).HLG, false, false);
+axes(handles.axes3);cla reset; plot_graph(IP1(L).img, IP1(L).LLG);
+% axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+%                                        IP1(L).HLG, false, false);
 % Show img2 on the axis4
-axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
-                                       IP2(L).HLG, false, false);
+axes(handles.axes4);cla reset; plot_graph(IP2(L).img, IP2(L).LLG);   
+% axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+%                                        IP2(L).HLG, false, false);
 
-axes(handles.axes5);
-plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
-                IP2(L).img, IP2(L).HLG, ...
-                M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images     
 
-img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images                
+axes(handles.axes5); imagesc(img3), axis off;
+% plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
+%                 IP2(L).img, IP2(L).HLG, ...
+%                 M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);           
 axes(handles.axes6);  imagesc(img3), axis off;
 
 axes(handles.axes11);cla reset;
@@ -909,7 +927,7 @@ affTrafo = handles.M(L).affTrafo;
 % -----------------------------------------------------------------------    
 it = handles.M(L).it;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
-    twoLevelGM_nSteps(N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+    twoLevelGM_nSteps(L, N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
 handles.SummaryT = time;
 
@@ -919,11 +937,10 @@ handles.M(L).it = it;
 handles.M(L).affTrafo = affTrafo;
 guidata(hObject, handles);
 
-handles = update_GUI_after_one_GM_iteration(L, handles);      
-
 handles.IP1(L).HLG = HLG1;
 handles.IP2(L).HLG = HLG2;
 
+handles = update_GUI_after_one_GM_iteration(L, handles);      
 guidata(hObject, handles);
 
 % -----------------------------------------------------------------------       
@@ -955,11 +972,13 @@ HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
 
 for i = 1:size(IP1,1)
-    IP1(i).HLG.D_appear = [];
-    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
+    IP1(i).HLG = [];
+    IP2(i).HLG = [];
+%     IP1(i).HLG.D_appear = [];
+%     IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
 
-    IP2(i).HLG.D_appear = [];
-    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+%     IP2(i).HLG.D_appear = [];
+%     IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
 
     M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
                'it',0, 'affTrafo', []);

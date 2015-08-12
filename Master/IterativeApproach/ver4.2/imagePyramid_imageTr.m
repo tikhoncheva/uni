@@ -36,8 +36,11 @@ for i = 1:nLevels
    % build anchor graphs   
 %    HLG1 = buildHLGraph(1, LLG1, agparam);
 %    HLG2 = buildHLGraph(2, LLG2, agparam);
-   HLG1 = buildHLGraph(i, LLG1, agparam);
-   HLG2 = buildHLGraph(i, LLG2, agparam);
+
+%    HLG1 = buildHLGraph(i, LLG1, agparam);
+%    HLG2 = buildHLGraph(i, LLG2, agparam);
+   HLG1 = [];
+   HLG2 = [];
 
    I1(i) = struct('img', img1, 'LLG', LLG1, 'HLG', HLG1); 
    I2(i) = struct('img', img2, 'LLG', LLG2, 'HLG', HLG2); 

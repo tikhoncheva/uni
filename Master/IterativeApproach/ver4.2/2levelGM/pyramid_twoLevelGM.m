@@ -2,11 +2,12 @@
 
 function [IP1, IP2, M, time] = pyramid_twoLevelGM(IP1, IP2, M)
     
+    setParameters;
     nLevels = size(IP1,1);
     
     time = zeros(nLevels,1);
     
-    for L = 1:nLevels
+    for L = nLevels:-1:1
         
         fprintf('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
         fprintf('Level %d\n', L);
@@ -16,16 +17,24 @@ function [IP1, IP2, M, time] = pyramid_twoLevelGM(IP1, IP2, M)
         LLG1 = IP1(L).LLG;
         LLG2 = IP2(L).LLG;
 
-        HLG1 = IP1(L).HLG;
-        HLG2 = IP2(L).HLG;
-
+        if L==nLevels
+            HLG1 = buildHLGraph(L, LLG1, agparam);
+            HLG2 = buildHLGraph(L, LLG2, agparam);
+        else
+            HLG1 = buildHLGraph_inImagePyramid(LLG1, IP1(L+1).LLG, M(L+1).LLGmatches);
+            HLG2 = buildHLGraph_inImagePyramid(LLG2, IP2(L+1).LLG, M(L+1).LLGmatches);
+            
+%             figure, subplot(1,2,1); plot_2levelgraphs(IP1(L).img, LLG1, HLG1, true, true);
+%             subplot(1,2,2);  plot_2levelgraphs(IP2(L).img, LLG2, HLG2, true, true);
+        end
+        
         LLGmatches = M(L).LLGmatches;
         HLGmatches = M(L).HLGmatches;
 
         affTrafo = M(L).affTrafo;
         
         [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time_L, it] = ...
-        twoLevelGM(LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+        twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
         time(L) = time_L;
 

@@ -1,7 +1,7 @@
 %% One iteration of the two-level Graph Matching Algorithm
 
 function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
-                   twoLevelGM(LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo)
+                   twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo)
     
     setParameters;
     
@@ -13,7 +13,16 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     count = 0;
 
     [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
-
+    
+    %
+    if isempty(HLG1)
+        HLG1 = buildHLGraph(L, LLG1, agparam);
+    end
+    if isempty(HLG2)
+        HLG2 = buildHLGraph(L, LLG2, agparam);
+    end
+    %
+    
     while count<nConst && it<nMaxIt
         it = it + 1;
 
