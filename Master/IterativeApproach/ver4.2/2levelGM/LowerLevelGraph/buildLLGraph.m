@@ -28,6 +28,7 @@ if igparam.NNconnectivity % nearest neighbor relations between nodes
 
     [nodes_kNN, ~] = knnsearch(V(:, 1:2), V(:, 1:2), 'k', minDeg + 1);    % nV x (minDeg+1) matrix                   
     nodes_kNN = nodes_kNN(:,2:end); % delete loops in each vertex (first column of the matrix)
+    minDeg = min(size(nodes_kNN,2),minDeg);
     nodes_kNN = reshape(nodes_kNN, nV*minDeg, 1);
     E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
 end

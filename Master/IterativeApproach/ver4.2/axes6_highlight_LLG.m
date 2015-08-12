@@ -4,7 +4,7 @@
 %
 function axes6_highlight_LLG(~, ~, handles)
 
-L = handles.IPlevel;
+L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
 img1 = handles.IP1(L).img;
 img2 = handles.IP2(L).img;

@@ -20,7 +20,7 @@ GT.LLpairs = [];
 GT.HLpairs = [];
 
 M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
-                  'GT', GT, 'it', 1, 'affTrafo', []), nLevels,1);
+                  'GT', GT, 'it', 0, 'affTrafo', []), nLevels,1);
               
 for i = 1:nLevels
    fprintf('\nLevel %d: \n', i);
@@ -31,7 +31,8 @@ for i = 1:nLevels
    edges(:, zerocol_ind) = []; %  and corresponding points
     
    LLG = buildLLGraph(edges, descr, igparam);
-   HLG = buildHLGraph(ID, LLG, agparam);
+%    HLG = buildHLGraph(ID, LLG, agparam);
+    HLG = buildHLGraph(i, LLG, agparam);
 
    I(i) = struct('img', img, 'LLG', LLG, 'HLG', HLG); 
    

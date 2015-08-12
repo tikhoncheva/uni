@@ -1,12 +1,11 @@
-function [handles] = update_GUI_after_one_GM_iteration(handles) %, it, time, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches)
+function [handles] = update_GUI_after_one_GM_iteration(L,handles) %, it, time, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches)
     
-    L = handles.IPlevel;
+%     L = handles.IPlevel;
 
     img1 = handles.IP1(L).img;
     img2 = handles.IP2(L).img;
     
     time = handles.SummaryT;
-    L = handles.IPlevel;
     it = handles.M(L).it;
 
     LLG1 = handles.IP1(L).LLG;
@@ -21,6 +20,7 @@ function [handles] = update_GUI_after_one_GM_iteration(handles) %, it, time, LLG
     GT = handles.M(L).GT;
 
     % update plots and labels   
+    set(handles.text_IPlevel, 'String', sprintf('Level: %d', L))
     set(handles.text_IterationCount, 'String', sprintf('Iteration: %d', it));   
     set(handles.text_SummaryT, 'String', sprintf('Summary time: %0.3f', time));
     

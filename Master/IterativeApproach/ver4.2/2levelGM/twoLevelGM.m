@@ -1,46 +1,33 @@
 %% One iteration of the two-level Graph Matching Algorithm
 
-function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
-                   twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo)
+function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
+                   twoLevelGM(LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo)
     
-    fprintf('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
-    fprintf('ITERATION %d\n', it);
-    fprintf('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
+    setParameters;
     
-    % -----------------------------------------------------------------------    
-    fprintf('\n== Matching on the Higher Level');
-    % -----------------------------------------------------------------------  
-    [corrmatrix, affmatrix, HLG1, HLG2] = initialization_HLGM(LLG1, LLG2, HLG1, HLG2);
+    nMaxIt = algparam.nMaxIt;       % maximal number of iteration for each level of the image pyramid
+    nConst = algparam.nConst;       % stop, if the matching score didn't change in last C iterations    
+    
+    time = 0;
+    it = 0; 
+    count = 0;
 
-    if (it==1)
-        HLMatches = matchHLGraphs(corrmatrix, affmatrix);
-    else
-        HLMatches = matchHLGraphs(corrmatrix, affmatrix, HLG1, HLG2, HLGmatches(it-1));
+    [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+
+    while count<nConst && it<nMaxIt
+        it = it + 1;
+
+        tic;
+        [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+                twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+        time = time + toc;   
+
+        if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<eps)
+            count = count + 1;
+        else
+            count = 0;
+        end
+        
     end
-    HLGmatches(it) = HLMatches;
     
-    % -----------------------------------------------------------------------    
-    fprintf('\n== Matching on the Lower Level');
-    % -----------------------------------------------------------------------   
-    [subgraphNodes, corrmatrices, affmatrices] = initialization_LLGM(LLG1, LLG2, ...
-                                                                     HLG1.U, HLG2.U,...
-                                                                     HLGmatches(it).matched_pairs);    
-    nV1 = size(LLG1.V,1);   nV2 = size(LLG2.V,1);                                                                 
-    if (it==1)
-        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, HLGmatches(it).matched_pairs);
-    else
-        LLMatches = matchLLGraphs(nV1, nV2, subgraphNodes, corrmatrices, affmatrices, ...
-                                  HLGmatches(it).matched_pairs, ...
-                                  LLGmatches(it-1));
-    end
-    LLGmatches(it) = LLMatches; 
-
-    
-    % ----------------------------------------------------------------------- 
-    fprintf('\n== Update graph partitioning for the next iteration');
-    % -----------------------------------------------------------------------     
-    [HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2,...
-                                         LLGmatches(it), HLGmatches(it), affTrafo);
-
-    fprintf('\n');                                     
 end

@@ -12,7 +12,7 @@ fparam.SIFT.binSize = 8;	% size of a spatial bin
 fparam.SIFT.magnif = 3;		% magnification factor
 
 %% Parameters for image pyramid
-ipparam.nLevels = 1;	% number of levels in the pyramid
+ipparam.nLevels = 2;	% number of levels in the pyramid
 ipparam.scalef = 2;	% scale factor
 
 %% Parameters for initial graph construction
@@ -24,7 +24,7 @@ igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs
-agparam.nA = [10 10];
+agparam.nA = [10 5]  ;        % coarsening ration: #anchors=nA*#nodes
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
 

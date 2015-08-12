@@ -25,7 +25,10 @@ function [HLG] = buildHLGraph(ID, LLG, agparam)
 fprintf(' - build higher level graph (anchor graph)');
 t2 = tic;
 
-nA = agparam.nA(ID);
+nV = size(LLG.V,1);     % number of nodes in the LLG
+% p = agparam.nA(ID);
+% nA = round(p*nV);       % number of anchors
+nA = min(nV, agparam.nA(ID));
 
 alg = agparam.coarsAlg{agparam.coarsAlgInd};
 

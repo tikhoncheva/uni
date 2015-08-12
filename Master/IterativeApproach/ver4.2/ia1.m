@@ -22,7 +22,7 @@
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 10-Aug-2015 10:34:39
+% Last Modified by GUIDE v2.5 12-Aug-2015 16:52:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -200,6 +200,8 @@ function pbToyProblem_Callback(hObject, ~, handles)
     axes(handles.axes13);cla reset;
     axes(handles.axes14);cla reset;
     
+    
+    set(handles.pb_start_MultiLGM, 'Enable', 'on');
     set(handles.pb_start, 'Enable', 'on');
     set(handles.pb_reset, 'Enable', 'on');
     set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -270,8 +272,14 @@ if filename~=0
     handles.img1selected= 1;
     handles.img2selected= 1;  
     
-    handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
-
+    % initial data to reset the current test
+%     handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   
+    handles.initIP1 = IP1;
+    handles.initIP2 = IP2;
+    handles.initM = M; 
+    
+    
+    set(handles.pb_start_MultiLGM, 'Enable', 'on');
     set(handles.pb_start, 'Enable', 'on');
     set(handles.pb_reset, 'Enable', 'on');
     set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -329,9 +337,15 @@ if filename~=0
         
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
+       
+        % initial data to reset the current test        
+%         handles.resetData = struct('initHLG1', IP1(L).HLG, 'initHLG2', handles.IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
+        handles.initIP1 = IP1;
+        handles.initIP2 = handles.IP2;
+        handles.initM = M; 
         
-        handles.resetData = struct('initHLG1', IP1(L).HLG, 'initHLG2', handles.IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
         
+        set(handles.pb_start_MultiLGM, 'Enable', 'on');
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');
         set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -384,7 +398,7 @@ if filename~=0
         
         axes(handles.axes5);cla reset;
         plot_HLGmatches(handles.IP1(L).img, handles.IP1(L).HLG, ...
-                        handles.IP2(L).img, handles.IP2(L).HLG, ...
+                        IP2(L).img, IP2(L).HLG, ...
                         M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
         axes(handles.axes6);
         imagesc(img3), axis off;
@@ -392,8 +406,14 @@ if filename~=0
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
         
-        handles.resetData = struct('initHLG1', handles.IP1(L).HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
+        % initial data to reset the current test        
+%         handles.resetData = struct('initHLG1', handles.IP1(L).HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   % initial data to reset the current test
+        handles.initIP1 = handles.IP1;
+        handles.initIP2 = IP2;
+        handles.initM = M; 
+    
         
+        set(handles.pb_start_MultiLGM, 'Enable', 'on');
         set(handles.pb_start, 'Enable', 'on');
         set(handles.pb_reset, 'Enable', 'on');
         set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -633,62 +653,104 @@ end
 % ------------------         Start        --------------------------------
 function pb_start_Callback(hObject, ~, handles)
 
-setParameters;
+L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
-nMaxIt = algparam.nMaxIt;       % maximal number of iteration for each level of the image pyramid
-nConst = algparam.nConst;       % stop, if the matching score didn't change in last C iterations
- 
-time = handles.SummaryT;
-L = handles.IPlevel;
+% pb_reset_Callback(hObject, [], handles);
 
-LLG1 = handles.IP1(L).LLG;
-LLG2 = handles.IP2(L).LLG;
+% reset data
+IP1 = handles.initIP1;
+IP2 = handles.initIP2;
 
-HLG1 = handles.IP1(L).HLG;
-HLG2 = handles.IP2(L).HLG;
+HLGmatches = struct('objval', 0, 'matched_pairs', []);
+LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
 
-LLGmatches = handles.M(L).LLGmatches;
-HLGmatches = handles.M(L).HLGmatches;
+for i = 1:size(IP1,1)
+    IP1(i).HLG.D_appear = [];
+    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
 
-affTrafo = handles.M(L).affTrafo;
+    IP2(i).HLG.D_appear = [];
+    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+
+    M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
+               'it',0, 'affTrafo', []);
+end
+
+LLG1 = IP1(L).LLG;
+LLG2 = IP2(L).LLG;
+
+HLG1 = IP1(L).HLG;
+HLG2 = IP2(L).HLG;
+
+LLGmatches = M(L).LLGmatches;
+HLGmatches = M(L).HLGmatches;
+
+affTrafo = M(L).affTrafo;
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------     
-it = 0; count = 0;
 
-[LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+% setParameters;
 
-while count<nConst && it<nMaxIt
-    it = it + 1;
-    
-    tic;
-    [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
-        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-    time = time + toc;   
-    
-    if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<eps)
-        count = count + 1;
-    else
-        count = 0;
-    end
-    
-    handles.SummaryT = time;
+% nMaxIt = algparam.nMaxIt;       % maximal number of iteration for each level of the image pyramid
+% nConst = algparam.nConst;       % stop, if the matching score didn't change in last C iterations
+ 
+% time = handles.SummaryT;
 
-    handles.M(L).LLGmatches = LLGmatches;
-    handles.M(L).HLGmatches = HLGmatches;
-    handles.M(L).it = it;
-    handles.M(L).affTrafo = affTrafo;
+% it = 0; count = 0;
+% 
+% [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+% 
+% while count<nConst && it<nMaxIt
+%     it = it + 1;
+%     
+%     tic;
+%     [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+%         twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+%     time = time + toc;   
+%     
+%     if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<eps)
+%         count = count + 1;
+%     else
+%         count = 0;
+%     end
+%     
+%     handles.SummaryT = time;
+% 
+%     handles.M(L).LLGmatches = LLGmatches;
+%     handles.M(L).HLGmatches = HLGmatches;
+%     handles.M(L).it = it;
+%     handles.M(L).affTrafo = affTrafo;
+% 
+%     handles = update_GUI_after_one_GM_iteration(handles);        
+%     
+%     handles.IP1(L).HLG = HLG1;
+%     handles.IP2(L).HLG = HLG2;
+%     
+%     guidata(hObject, handles);
+% end
 
-    handles = update_GUI_after_one_GM_iteration(handles);        
-    
-    handles.IP1(L).HLG = HLG1;
-    handles.IP2(L).HLG = HLG2;
-    
-    guidata(hObject, handles);
-end
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
+[HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
+    twoLevelGM(LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
+handles.SummaryT = time;
+
+handles.M(L).LLGmatches = LLGmatches;
+handles.M(L).HLGmatches = HLGmatches;
+handles.M(L).it = it;
+handles.M(L).affTrafo = affTrafo;
+guidata(hObject, handles);
+
+handles.IP1(L).HLG = HLG1;
+handles.IP2(L).HLG = HLG2;
+
+handles = update_GUI_after_one_GM_iteration(L, handles);        
+
+guidata(hObject, handles);
+
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------    
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles}) 
@@ -703,27 +765,44 @@ function pb_reset_Callback(hObject, ~, handles)
 
 rng(1);
 
-img1 = handles.IP1(1).img;
-img2 = handles.IP2(1).img;
-
-initLLG1 = handles.IP1(1).LLG;
-initLLG2 = handles.IP2(1).LLG;
-
-initHLG1 = handles.resetData.initHLG1;
-initHLG2 = handles.resetData.initHLG2;
-
-GT = handles.resetData.GT;
-
-IP1 = struct('img', img1, 'LLG', initLLG1, 'HLG', initHLG1);
-IP2 = struct('img', img2, 'LLG', initLLG2, 'HLG', initHLG2);
+IP1 = handles.initIP1;
+IP2 = handles.initIP2;
 
 HLGmatches = struct('objval', 0, 'matched_pairs', []);
-LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
+LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
 
-M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
-           'it',0, 'affTrafo', []);
+for i = 1:size(IP1,1)
+    IP1(i).HLG.D_appear = [];
+    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
 
-L = size(IP1,1);        % current level of the pyramid
+    IP2(i).HLG.D_appear = [];
+    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+
+    M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
+               'it',0, 'affTrafo', []);
+end
+
+% img1 = handles.IP1(1).img;
+% img2 = handles.IP2(1).img;
+% 
+% initLLG1 = handles.IP1(1).LLG;
+% initLLG2 = handles.IP2(1).LLG;
+% 
+% initHLG1 = handles.resetData.initHLG1;
+% initHLG2 = handles.resetData.initHLG2;
+% 
+% GT = handles.resetData.GT;
+% 
+% IP1 = struct('img', img1, 'LLG', initLLG1, 'HLG', initHLG1);
+% IP2 = struct('img', img2, 'LLG', initLLG2, 'HLG', initHLG2);
+% 
+% HLGmatches = struct('objval', 0, 'matched_pairs', []);
+% LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
+% 
+% M = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', GT, ...
+%            'it',0, 'affTrafo', []);
+
+L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
 % Show img1 on the axis1
 axes(handles.axes1);cla reset; plot_graph(IP1(1).img, IP1(1).LLG);
@@ -761,6 +840,7 @@ handles.SummaryT = 0.0;
 handles.img1selected= 1;
 handles.img2selected= 1;  
 
+set(handles.pb_start_MultiLGM, 'Enable', 'on');
 set(handles.pb_start, 'Enable', 'on');
 set(handles.pb_reset, 'Enable', 'on');
 set(handles.pb_makeNSteps, 'Enable', 'on');
@@ -779,11 +859,8 @@ guidata(hObject, handles);
 % ------------------  Make N steps        --------------------------------
 function pb_makeNSteps_Callback(hObject, ~, handles)
 
-setParameters;
-
 N = str2double(get(handles.edit_NSteps,'string')); 
-
-L = handles.IPlevel;
+L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
 LLG1 = handles.IP1(L).LLG;  
 LLG2 = handles.IP2(L).LLG;  
@@ -796,37 +873,61 @@ HLGmatches = handles.M(L).HLGmatches;
 
 affTrafo = handles.M(L).affTrafo;
 
-it = handles.M(L).it;
-time = handles.SummaryT;
-
 % -----------------------------------------------------------------------       
-% -----------------------------------------------------------------------     
-[LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+% -----------------------------------------------------------------------   
 
-for i = 1:N
-    it = it + 1;
-    
-    tic;
-    [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
-        twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);  
-    time = time + toc;   
-    
-    handles.SummaryT = time;
+% setParameters;
 
-    handles.M(L).LLGmatches = LLGmatches;
-    handles.M(L).HLGmatches = HLGmatches;
-    handles.M(L).it = it;
-    handles.M(L).affTrafo = affTrafo;
-    
-    handles = update_GUI_after_one_GM_iteration(handles);       
-      
-    handles.IP1(L).HLG = HLG1;
-    handles.IP2(L).HLG = HLG2;
-    
-    guidata(hObject, handles);
-end
+% it = handles.M(L).it;
+% time = handles.SummaryT;
+
+% [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+% 
+% for i = 1:N
+%     it = it + 1;
+%     
+%     tic;
+%     [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
+%         twoLevelGM(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);  
+%     time = time + toc;   
+%     
+%     handles.SummaryT = time;
+% 
+%     handles.M(L).LLGmatches = LLGmatches;
+%     handles.M(L).HLGmatches = HLGmatches;
+%     handles.M(L).it = it;
+%     handles.M(L).affTrafo = affTrafo;
+%     
+%     handles = update_GUI_after_one_GM_iteration(handles);       
+%       
+%     handles.IP1(L).HLG = HLG1;
+%     handles.IP2(L).HLG = HLG2;
+%     
+%     guidata(hObject, handles);
+% end
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
+it = handles.M(L).it;
+[HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
+    twoLevelGM_nSteps(N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+
+handles.SummaryT = time;
+
+handles.M(L).LLGmatches = LLGmatches;
+handles.M(L).HLGmatches = HLGmatches;
+handles.M(L).it = it;
+handles.M(L).affTrafo = affTrafo;
+guidata(hObject, handles);
+
+handles = update_GUI_after_one_GM_iteration(L, handles);      
+
+handles.IP1(L).HLG = HLG1;
+handles.IP2(L).HLG = HLG2;
+
+guidata(hObject, handles);
+
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------   
 
 axes(handles.axes6);
 set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
@@ -835,3 +936,55 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 % update data
 guidata(hObject, handles);
 % ------------------------------------------------------------------------
+
+
+% ----------         Start  Multi Level Algorithm   ----------------------
+function pb_start_MultiLGM_Callback(hObject, eventdata, handles)
+setParameters;
+
+% nMaxIt = algparam.nMaxIt;       % maximal number of iteration for each level of the image pyramid
+% nConst = algparam.nConst;       % stop, if the matching score didn't change in last C iterations
+ 
+% time = handles.SummaryT;
+
+% reset data
+IP1 = handles.initIP1;
+IP2 = handles.initIP2;
+
+HLGmatches = struct('objval', 0, 'matched_pairs', []);
+LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
+
+for i = 1:size(IP1,1)
+    IP1(i).HLG.D_appear = [];
+    IP1(i).HLG.D_struct = cell(size(IP1(i).HLG.V,1),1);
+
+    IP2(i).HLG.D_appear = [];
+    IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
+
+    M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
+               'it',0, 'affTrafo', []);
+end
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------    
+
+[IP1, IP2, M, time] = pyramid_twoLevelGM(IP1, IP2, M);
+
+% -----------------------------------------------------------------------       
+% -----------------------------------------------------------------------  
+
+handles.SummaryT = sum(time(:));
+handles.M = M;
+handles.IP1 = IP1;
+handles.IP2 = IP2;
+guidata(hObject, handles);
+
+L = 1;
+handles = update_GUI_after_one_GM_iteration(L, handles);        
+
+axes(handles.axes6);
+set(gca,'ButtonDownFcn', {@axes6_highlight_LLG, handles})
+set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles}) 
+
+% update data
+guidata(hObject, handles);
+%end
