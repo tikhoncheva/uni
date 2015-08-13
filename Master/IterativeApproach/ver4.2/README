@@ -20,6 +20,9 @@ Ver 4.2
   + changed objective function of the lower level GM: now it is equal to the objective
     function of the standart one level formulation
  <-> delete double edges in list of edges in LLGraphs, HLGraphs
+  + separat function to calculate edge similarity
+  + give LLG1, LLG2 into Lower Level GM
+
 
  12.08
   + image pyramid : do not calculate HLGraphs in the preprocessing step, do it

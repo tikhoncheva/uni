@@ -1,4 +1,12 @@
 %% two-level Graph Matching Algorithm for an image pyramid
+% each two levels build an instance of the 2-Level-GM
+% for the highest level one creates an additional anchor graph 
+
+% NOTE: number of levels in the pyramid must be even
+%       in each lower level unmatched nodes are omited
+
+% NOTE: the problem is getting bigger with each pair of levelss, so that is
+% not a simplification of the initial problem
 
 function [IP1, IP2, M, time] = pyramid_twoLevelGM(IP1, IP2, M)
     

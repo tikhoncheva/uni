@@ -31,6 +31,9 @@ nV_prev = size(LLG_prevL.V,1);
 unmatched_nodes = [];
 if (nargin == 3)
     LLGmatches_prevL = varargin{1};
+    if isempty(LLGmatches_prevL(end).matched_pairs(:,1))
+        error('nothing was matched on the previous level!');
+    end
     are_matched = ismember([1:nV_prev]', LLGmatches_prevL(end).matched_pairs(:,1));
     unmatched_nodes = find(are_matched==0);
 end
