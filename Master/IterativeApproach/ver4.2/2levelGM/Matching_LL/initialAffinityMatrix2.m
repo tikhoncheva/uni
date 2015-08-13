@@ -40,10 +40,16 @@ G2(~AdjM2) = NaN;
 % G2 = G2./sigma2;
 
 
-sigma = 0.15; % 100     % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
-D = exp(-D./sigma);                  
-D(isnan(D)) = 0;
+% sigma = 0.15; % 100     % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
+% D = exp(-D./sigma);                  
+% D(isnan(D)) = 0;
+
+nV = nV1*nV2;
+D = edgeSimilarity(reshape(repmat(G1, nV2, nV2), nV*nV,1), ...
+                    reshape(kron(G2,ones(nV1)), nV*nV,1) );
+D = reshape(D, nV, nV);
+
 % D = D+D'; 
 
 

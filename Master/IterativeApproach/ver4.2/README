@@ -16,6 +16,11 @@ Ver 4.2
  Extansion of the version 4.1, that includes image pyramid to work with the big 
  images.
  
+ 13.08
+  + changed objective function of the lower level GM: now it is equal to the objective
+    function of the standart one level formulation
+ <-> delete double edges in list of edges in LLGraphs, HLGraphs
+
  12.08
   + image pyramid : do not calculate HLGraphs in the preprocessing step, do it
     after finishing to work on one level

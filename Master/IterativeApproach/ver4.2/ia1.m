@@ -22,7 +22,7 @@
 
 % Edit the above text to modify the response to help ia1
 
-% Last Modified by GUIDE v2.5 12-Aug-2015 16:52:26
+% Last Modified by GUIDE v2.5 13-Aug-2015 10:40:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -236,6 +236,9 @@ function pbToyProble_realImage_Callback(hObject, ~, handles)
 if filename~=0
     
     img2 = imread([pathname filesep filename]);
+    if size(img2,3)==1
+        img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
+    end
 
     setParameters;  
     
@@ -312,6 +315,95 @@ end
 %    descriptors
 %-------------------------------------------------------------------------
 
+% select two images
+function pbSelect_2images_Callback(hObject, eventdata, handles)
+
+[filename1, pathname1] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
+if filename1~=0  
+    [filename2, pathname2] = uigetfile({'*.jpg';'*.png'}, 'Select second image');
+
+    if filename2~=0
+        display(sprintf('First image:'));
+
+        setParameters;
+
+        img1 = imread([pathname1 filesep filename1]);
+        if size(img1,3)==1
+            img1 = cat(3, img1, img1, img1); % make rgb image from grayscale image
+        end    
+        
+        img2 = imread([pathname2 filesep filename2]);
+        if size(img2,3)==1
+            img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
+        end    
+        
+        [IP1, ~] = imagePyramid(1, img1, fparam, ipparam, igparam, agparam);
+        [IP2, M] = imagePyramid(1, img2, fparam, ipparam, igparam, agparam);
+        
+        L = size(IP1,1);        % current level of the pyramid
+
+        % Show img1 on the axis1
+        axes(handles.axes1);cla reset; plot_graph(IP1(1).img, IP1(1).LLG);
+        % Show img2 on the axis2
+        axes(handles.axes2);cla reset; plot_graph(IP2(1).img, IP2(1).LLG);   
+    %     % Show img1 on the axis3
+    %     axes(handles.axes3); plot_2levelgraphs(IP1(L).img, IP1(L).LLG, ...
+    %                                            IP1(L).HLG, false, false);
+    %     % Show img2 on the axis4
+    %     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
+    %                                            IP2(L).HLG, false, false);
+        axes(handles.axes3); plot_graph(IP1(L).img, IP1(L).LLG);
+        axes(handles.axes4); plot_graph(IP2(L).img, IP2(L).LLG);       
+
+        img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images    
+
+        axes(handles.axes5); imagesc(img3), axis off;
+    %     plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
+    %                     IP2(L).img, IP2(L).HLG, ...
+    %                     M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
+
+        axes(handles.axes6);  imagesc(img3), axis off;
+
+        axes(handles.axes11);cla reset;
+        axes(handles.axes12);cla reset;
+        axes(handles.axes13);cla reset;
+        axes(handles.axes14);cla reset;
+
+        % update/reset data
+        handles.IP1 = IP1;
+        handles.IP2 = IP2;
+
+        handles.M = M;                         
+
+        handles.IPlevel = L;
+        handles.SummaryT = 0.0;
+
+        handles.img1selected= 1;
+        handles.img2selected= 1;  
+
+        % initial data to reset the current test
+    %     handles.resetData = struct('initHLG1', IP1.HLG, 'initHLG2', IP2.HLG, 'GT', M.GT);   
+        handles.initIP1 = IP1;
+        handles.initIP2 = IP2;
+        handles.initM = M; 
+
+
+        set(handles.pb_start_MultiLGM, 'Enable', 'on');
+        set(handles.pb_start, 'Enable', 'on');
+        set(handles.pb_reset, 'Enable', 'on');
+        set(handles.pb_makeNSteps, 'Enable', 'on');
+
+        set(handles.text_IPlevel, 'String', sprintf('Level: %d',handles.IPlevel));
+        set(handles.text_IterationCount, 'String', sprintf('Iteration: -'));
+        set(handles.text_SummaryT, 'String', sprintf('Summary time: 0.0')); 
+        set(handles.text_objval_HLG, 'String', sprintf('Objval: -'));
+        set(handles.text_objval_LLG, 'String', sprintf('Objval: -'));
+
+    end
+end
+guidata(hObject,handles); 
+
+
 %
 % Select first image
 function pbSelect_img1_Callback(hObject, ~, handles)
@@ -323,6 +415,9 @@ if filename~=0
     setParameters;
     
     img1 = imread([pathname filesep filename]);
+    if size(img1,3)==1
+        img1 = cat(3, img1, img1, img1); % make rgb image from grayscale image
+    end    
     [IP1, M] = imagePyramid(1, img1, fparam, ipparam, igparam, agparam);
 
     L = size(IP1,1);
@@ -395,6 +490,9 @@ if filename~=0
     setParameters;
     
     img2 = imread([pathname filesep filename]);
+    if size(img2,3)==1
+        img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
+    end      
     [IP2, M] = imagePyramid(2, img2, fparam, ipparam, igparam, agparam);
     L = size(IP2,1);    % current level of the pyramid
     
@@ -664,7 +762,10 @@ end
 % ------------------         Start        --------------------------------
 function pb_start_Callback(hObject, ~, handles)
 
+rng(1);
+
 L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
+assert(L<=size(handles.IP1,1), 'image pyramid has only %d level(s)', size(handles.IP1,1));
 
 % pb_reset_Callback(hObject, [], handles);
 
@@ -1007,3 +1108,4 @@ set(get(gca,'Children'),'ButtonDownFcn', {@axes6_highlight_LLG, handles})
 % update data
 guidata(hObject, handles);
 %end
+

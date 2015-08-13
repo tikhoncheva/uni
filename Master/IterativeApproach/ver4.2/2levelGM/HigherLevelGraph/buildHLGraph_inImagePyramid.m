@@ -21,29 +21,39 @@
 %          shows, wheter the anchors where changed cmparing to previous
 %          iteration (0) or remain unchanged(1)
 %
-function [HLG] = buildHLGraph_inImagePyramid(LLG, LLG_prevL, LLGmatches_prevL)
+function [HLG] = buildHLGraph_inImagePyramid(LLG, LLG_prevL, varargin)
 
 fprintf(' - build higher level graph (anchor graph) based on LLG from previous level');
 t2 = tic;
 
 % find unmatched nodes in LLG_prev
 nV_prev = size(LLG_prevL.V,1);
-are_matched = ismember([1:nV_prev]', LLGmatches_prevL(end).matched_pairs(:,1));
-unmatched_nodes = find(are_matched==0);
+unmatched_nodes = [];
+if (nargin == 3)
+    LLGmatches_prevL = varargin{1};
+    are_matched = ismember([1:nV_prev]', LLGmatches_prevL(end).matched_pairs(:,1));
+    unmatched_nodes = find(are_matched==0);
+end
 
 
 HLG = LLG_prevL;
 % delete unmatched nodes, their descriptors and edges to them
 HLG.V(unmatched_nodes, :) = []; HLG.V = HLG.V(:,1:2);
+HLG.V = HLG.V * 2; 
+nA = size(HLG.V,1);     % number of anchors
 HLG.D(:,unmatched_nodes) = [];
 ind1 = ismember(HLG.E(:,1), unmatched_nodes);
 ind2 = ismember(HLG.E(:,2), unmatched_nodes);
-ind = ind1|ind2;
-HLG.E(ind,:) = [];
+HLG.E(ind1|ind2,:) = [];
+HLG.E = unique(sort(HLG.E,2), 'rows');  % delete same edges
+% after deletion the indexing of nodes in E is probably wrong, so we correct it
+old_ind = [1:nV_prev]'; old_ind(unmatched_nodes) = [];
+new_ind = zeros(nV_prev,1); new_ind(old_ind) = [1:nA]; 
+HLG.E(:,1) = new_ind(HLG.E(:,1));
+HLG.E(:,2) = new_ind(HLG.E(:,2));
 
 % correspondences between nodes of LLG and HLG (matrix U);
 nV = size(LLG.V,1);     % number of nodes in the LLG
-nA = size(HLG.V,1);     % number of anchors
 U = false(nV, nA);
 [nn, ~] = knnsearch(HLG.V, LLG.V(:,1:2));   %indices of nodes in LLG2.V
 ind = sub2ind(size(U), [1:nV]', nn);

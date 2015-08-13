@@ -40,6 +40,8 @@ if igparam.DelaunayTriang % Delaunay triangulation
     E = [E; DT(:,3), DT(:,1)];
 end
 
+E = unique(sort(E,2), 'rows');  % delete same edges
+
 LLG.V = V;
 LLG.D = D;
 LLG.E = E;

@@ -45,7 +45,7 @@ for i = 1:L
                                                                       U1_new, U2_new,...
                                                                       aap);
 %     partLLMatches = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices, HLMatches.matched_pairs ); 
-    LLMatches_new = matchLLGraphs(nV1, nV2, subgraphsNodes, corrmatrices, affmatrices, aap ); 
+    LLMatches_new = matchLLGraphs(LLG1, LLG2, subgraphsNodes, corrmatrices, affmatrices, aap ); 
     new_matches = LLMatches_new.matched_pairs;
     new_matches(:,3) = ind_aap(new_matches(:,3));
     

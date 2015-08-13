@@ -21,11 +21,11 @@
 
 % function [objval, pairs, ...
 %           local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices)
-function [LLMatches] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices, HLG_matched_pairs, varargin)      
+function [LLMatches] = matchLLGraphs(LLG1, LLG2, indOfSubgraphNodes, corrmatrices, affmatrices, HLG_matched_pairs, varargin)      
 
 fprintf('\n---- LLGM');
 
-% tic 
+nV1 = size(LLG1.V,1);   nV2 = size(LLG2.V,1);  
 
 nMatches = size(HLG_matched_pairs,1);
 nV = nV1 * nV2;
@@ -128,7 +128,8 @@ if (nIterations>0)
     pairs = [pairs1, pairs2, anchor_match_id(matches_tmp(ind))];
 
     lobjval(anchor_match_id) = local_objval;
-     objval = sum(local_objval);
+%     objval = sum(local_objval);
+    objval = sum(lobjval) + matching_score_LL(LLG1, LLG2, pairs);
     
 end % if nIterations>0
 
@@ -160,7 +161,8 @@ if (nargin == 7)
     % combine both results
    LLMatches.lobjval = lobjval;
    LLMatches.matched_pairs = [LLMatches.matched_pairs; matched_pairs_prev_it];
-   LLMatches.objval = sum(lobjval);
+%    LLMatches.objval = sum(lobjval);
+   LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
     
 end
     

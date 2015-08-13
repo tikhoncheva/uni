@@ -26,9 +26,10 @@ fprintf(' - build higher level graph (anchor graph)');
 t2 = tic;
 
 nV = size(LLG.V,1);     % number of nodes in the LLG
-% p = agparam.nA(ID);
+% p = agparam.nA;
 % nA = round(p*nV);       % number of anchors
-nA = min(nV, agparam.nA(ID));
+% nA = min(nV, agparam.nA(ID));
+nA = min(nV, agparam.nA);
 
 alg = agparam.coarsAlg{agparam.coarsAlgInd};
 
@@ -40,6 +41,8 @@ switch alg
     otherwise
         error('please select valid algorithm for the graph coarsening');
 end
+
+HLG.E = unique(sort(HLG.E,2), 'rows');  % delete same edges
 
 % HLG.F = ones(size(HLG.V,1),1); 
 HLG.F = zeros(size(HLG.V,1),1);

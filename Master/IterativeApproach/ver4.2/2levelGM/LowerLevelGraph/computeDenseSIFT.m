@@ -24,9 +24,6 @@ addpath(genpath('../../Tools/edges-master/'));
 load '../../Tools/edges-master/edgesModel.mat'   % model
 
 % find edge points
-if size(img,3)==1
-    img = cat(3, img, img, img); % make rgb image from grayscale image
-end
 E = imresize(edgesDetect(imresize(img,2), model),0.5);
 
 % apply non-maximum suppression
@@ -61,7 +58,7 @@ lia = ismember(F([2,1],:)', subs, 'rows');
 F = F(:,lia);
 D = D(:,lia);
 
-fprintf('   finished in %f sec \n', toc(t1));
+fprintf('   %d keypoints in %f sec \n', size(F,2), toc(t1));
 
 rmpath(genpath('../../Tools/piotr_toolbox_V3.26/'))
 rmpath(genpath('../../Tools/edges-master/'))
