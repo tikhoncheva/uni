@@ -240,10 +240,13 @@ if filename~=0
         img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
     end
 
+    filePathName = [pathname, filename];
+%     [F,D] = features_Cho(filePathName, img2);
+    
     setParameters;  
     
     % Image Pyramid
-    [IP1, IP2, M] = imagePyramid_imageTr(img2, fparam, ipparam, igparam, agparam);
+    [IP1, IP2, M] = imagePyramid_imageTr(filePathName, img2);
     L = size(IP1,1);        % current level of the pyramid
 
     % Show img1 on the axis1
@@ -316,7 +319,7 @@ end
 %-------------------------------------------------------------------------
 
 % select two images
-function pbSelect_2images_Callback(hObject, eventdata, handles)
+function pbSelect_2images_Callback(hObject, ~, handles)
 
 [filename1, pathname1] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
 if filename1~=0  
@@ -337,8 +340,11 @@ if filename1~=0
             img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
         end    
         
-        [IP1, ~] = imagePyramid(1, img1, fparam, ipparam, igparam, agparam);
-        [IP2, M] = imagePyramid(1, img2, fparam, ipparam, igparam, agparam);
+        filePathName1 = [pathname1, filename1];
+        filePathName2 = [pathname2, filename2];
+        
+        [IP1, ~] = imagePyramid(filePathName1, img1);
+        [IP2, M] = imagePyramid(filePathName2, img2);
         
         L = size(IP1,1);        % current level of the pyramid
 
@@ -418,7 +424,8 @@ if filename~=0
     if size(img1,3)==1
         img1 = cat(3, img1, img1, img1); % make rgb image from grayscale image
     end    
-    [IP1, M] = imagePyramid(1, img1, fparam, ipparam, igparam, agparam);
+    filePathName = [pathname, filename];
+    [IP1, M] = imagePyramid(filePathName, img1);
 
     L = size(IP1,1);
     
@@ -493,7 +500,8 @@ if filename~=0
     if size(img2,3)==1
         img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
     end      
-    [IP2, M] = imagePyramid(2, img2, fparam, ipparam, igparam, agparam);
+    filePathName = [pathname, filename];
+    [IP2, M] = imagePyramid(filePathName, img2);
     L = size(IP2,1);    % current level of the pyramid
     
     % Show it on the axis2 and axis 4 

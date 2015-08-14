@@ -7,7 +7,9 @@
 % ipparam.nLevels   number of the levels
 % fparam            parameters of the feature detection
 % igparam           parameters of the initial graph construction
-function [I,M] = imagePyramid(ID, img, fparam, ipparam, igparam, agparam)
+function [I,M] = imagePyramid(filePathName, img)
+
+setParameters;
 
 scalef = ipparam.scalef;
 nLevels = ipparam.nLevels;
@@ -25,10 +27,14 @@ M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
 for i = 1:nLevels
    fprintf('\nLevel %d: \n', i);
    
-   [edges, descr] = computeDenseSIFT(img, fparam);
-   zerocol_ind = all( ~any(descr), 1);
-   descr(:, zerocol_ind) = []; % remove zero columns
-   edges(:, zerocol_ind) = []; %  and corresponding points
+%    [edges, descr] = computeDenseSIFT(img, fparam);
+%    zerocol_ind = all( ~any(descr), 1);
+%    descr(:, zerocol_ind) = []; % remove zero columns
+%    edges(:, zerocol_ind) = []; %  and corresponding points
+   
+   [featInfo] = features_Cho(filePathName, img);
+   edges = featInfo.feat(:,1:2)';
+   descr = featInfo.desc';
     
    LLG = buildLLGraph(edges, descr, igparam);
 %    HLG = buildHLGraph(ID, LLG, agparam);

@@ -12,19 +12,19 @@ fparam.SIFT.binSize = 8;	% size of a spatial bin
 fparam.SIFT.magnif = 3;		% magnification factor
 
 %% Parameters for image pyramid
-ipparam.nLevels = 2;	% number of levels in the pyramid
+ipparam.nLevels = 1;	% number of levels in the pyramid
 ipparam.scalef = 2;	% scale factor
 
 %% Parameters for initial graph construction
 
-igparam.NNconnectivity = 1; 	% connecte each node with its minDeg- nearest neighbors
+igparam.NNconnectivity = 0; 	% connecte each node with its minDeg- nearest neighbors
 igparam.minDeg		   = 6; 	% minimal degree of a graph
-igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
+igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
 
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs
-agparam.nA = 5;        % number of anchors
+agparam.nA = 10;        % number of anchors
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
 

@@ -10,7 +10,9 @@
 %
 % Output
 %
-function [I1, I2, M] = imagePyramid_imageTr(img2, fparam, ipparam, igparam, agparam)
+function [I1, I2, M] = imagePyramid_imageTr(filePathName2, img2)
+
+setParameters;
 
 scalef = ipparam.scalef;
 nLevels = ipparam.nLevels;
@@ -27,9 +29,17 @@ M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
 for i = 1:nLevels
    fprintf('\nLevel %d: \n', i);
    
-   [edges, ~] = computeDenseSIFT(img2,fparam);        % Extract keypoitns
-   [img1, features1, features2, GT] = transform_image(img2, edges); 
-
+%    [edges, ~] = computeDenseSIFT(img2,fparam);        % Extract keypoitns
+%    [img1, features1, features2, GT] = transform_image(img2, edges); 
+   
+   [featInfo2] = features_Cho(filePathName2, img2);
+   features2.edges = featInfo2.feat(:,1:2)';
+   features2.descr = featInfo2.desc';
+   
+   [img1, featInfo1, GT] = transform_image_lite(img2, featInfo2); 
+   features1.edges = featInfo1.feat(:,1:2)';
+   features1.descr = featInfo1.desc';
+   
    LLG1 = buildLLGraph(features1.edges, features1.descr, igparam);
    LLG2 = buildLLGraph(features2.edges, features2.descr, igparam);
    
@@ -45,7 +55,7 @@ for i = 1:nLevels
    I1(i) = struct('img', img1, 'LLG', LLG1, 'HLG', HLG1); 
    I2(i) = struct('img', img2, 'LLG', LLG2, 'HLG', HLG2); 
    
-   GT.LLpairs = [GT.LLpairs(:,2), GT.LLpairs(:,1)];
+%    GT.LLpairs = [GT.LLpairs(:,2), GT.LLpairs(:,1)];
    M(i).GT = GT;
    
    img2 = impyramid(img2, 'reduce');
