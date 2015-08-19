@@ -35,6 +35,13 @@ for i = 1:nLevels
    [featInfo] = features_Cho(filePathName, img);
    edges = featInfo.feat(:,1:2)';
    descr = featInfo.desc';
+   
+   nV = size(edges,2);
+   if nV>500
+       ind_rand = datasample(1:nV,500,'Replace',false);
+       edges = edges(:, ind_rand);
+       descr = descr(:, ind_rand);
+   end
     
    LLG = buildLLGraph(edges, descr, igparam);
 %    HLG = buildHLGraph(ID, LLG, agparam);

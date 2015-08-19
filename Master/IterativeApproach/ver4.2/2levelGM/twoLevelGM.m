@@ -31,7 +31,7 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
                 twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
         time = time + toc;   
 
-        if it>=2 && (LLGmatches(it).objval-LLGmatches(it-1).objval<10^(-5))
+        if it>=2 && abs(LLGmatches(it).objval-LLGmatches(it-1).objval)<10^(-5)
             count = count + 1;
         else
             count = 0;

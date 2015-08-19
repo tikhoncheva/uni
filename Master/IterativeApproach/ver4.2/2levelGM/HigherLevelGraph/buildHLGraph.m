@@ -29,7 +29,11 @@ nV = size(LLG.V,1);     % number of nodes in the LLG
 % p = agparam.nA;
 % nA = round(p*nV);       % number of anchors
 % nA = min(nV, agparam.nA(ID));
-nA = min(nV, agparam.nA);
+
+appSizeOfSubgraph = agparam.appSizeOfSubgraph;
+nA = floor(nV/appSizeOfSubgraph);
+%nA = min(nV, agparam.nA);
+
 
 alg = agparam.coarsAlg{agparam.coarsAlgInd};
 
