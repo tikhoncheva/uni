@@ -16,6 +16,20 @@ Ver 4.2
  Extansion of the version 4.1, that includes image pyramid to work with the big 
  images.
  
+ 19.08    
+ + update_subgraphs
+       set confidence of nodes in the unmatched subgraphs (err = Inf) to be 0.01 (new weighted matrix U)
+
+ <-> convergence in twoLevelGM till |Objval(t-1)-Objval(t)|< eps (there was no abs)
+ <-> coloring of the subgraph nodes, when two anchor graphs have different number of anchors
+ <-> deside how many anchor your need based on the number of nodes and approximate number of nodes in subgraphs (builtHLGraph.m)
+ <-> restrict number of nodes to 500, when we work with different images (imagePyramid.m) -> easy to compair results with other methods
+     <-> change sige of axes (ia1.m)
+ 
+ 
+ 14.08
+ <-> change feature extraction/description based on the settings of ProgGM
+ 
  13.08
   + changed objective function of the lower level GM: now it is equal to the objective
     function of the standart one level formulation

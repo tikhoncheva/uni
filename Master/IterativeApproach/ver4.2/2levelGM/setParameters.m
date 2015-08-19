@@ -24,7 +24,8 @@ igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs
-agparam.nA = 10;        % number of anchors
+agparam.nA = 60;        % number of anchors
+agparam.appSizeOfSubgraph = 30;  % approximate number of nodes in one subgraph
 agparam.coarsAlg    = {'LEM_coarsen_2', 'HEM_coarsen_2'};
 agparam.coarsAlgInd = logical([ 0, 1 ]);
 
