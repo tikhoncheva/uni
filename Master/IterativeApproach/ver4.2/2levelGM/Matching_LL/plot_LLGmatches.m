@@ -20,8 +20,13 @@ G2.V(:,1) = n1 + G2.V(:,1);	% shift x-coordinates of the second graphs
 %                      ------------------------------------
 %                              plot first graph (G1)
 
-cmap = hsv(size(HLG1.V,1));
-cmap = [cmap; [0.0 0.0 0.0]];
+nColors = max(size(HLG1.V,1), size(HLG2.V,1));
+
+cmap = hsv(nColors+1);
+cmap(end,:) = [0.0 0.0 0.0];
+
+% cmap = hsv(size(HLG1.V,1));
+% cmap = [cmap; [0.0 0.0 0.0]];
     
 % % % edges = G1.E'; edges(end+1,:) = 1; edges = edges(:);
 % % % points = G1.V(edges,:); points(3:3:end,:) = NaN;

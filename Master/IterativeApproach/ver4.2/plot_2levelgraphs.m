@@ -18,7 +18,7 @@
 % show_HLGraphs   show eLLGes of the HLG
 % show_LLGraphs   show eLLGes of the LLG
 
-function plot_2levelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
+function plot_2levelgraphs(img, LLG, HLG, nColors, show_LLG, show_HLG, varargin)
 
     if (ndims(img)>1)
         imagesc(img);
@@ -27,8 +27,14 @@ function plot_2levelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
     hold on ;
     axis off;
     
-    cmap = hsv(size(HLG.V,1));
-    cmap = [cmap; [0.0 0.0 0.0]];
+    cmap = hsv(nColors+1);
+    d = nColors +1 - size(HLG.V,1);
+    cmap(size(HLG.V,1)+1:end,:) = repmat([0.0 0.0 0.0], d,1);
+%     if nColors> size(HLG.V,1)
+%         cmap(size(HLG.V,1)+1:end,:) = [0.0 0.0 0.0];
+%     end
+%     cmap = hsv(size(HLG.V,1));
+%     cmap = [cmap; [0.0 0.0 0.0]];
     
 %                      ------------------------------------
 %                            initial graph       
@@ -48,7 +54,7 @@ function plot_2levelgraphs(img, LLG, HLG, show_LLG, show_HLG, varargin)
     % vertices (color nodes in each subgraph in different color)
     col_mapping = size(cmap,1)*ones(1,size(HLG.V,1))    ;
     
-    if (nargin == 7) % assign same color to the nodes in matched subgraphs
+    if (nargin == 8) % assign same color to the nodes in matched subgraphs
         matching = varargin{1};
         col = varargin{2};
 %         col_mapping(matching(:,2)) = matching(:,1);

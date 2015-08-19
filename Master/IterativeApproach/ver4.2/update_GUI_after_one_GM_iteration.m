@@ -26,9 +26,10 @@ function [handles] = update_GUI_after_one_GM_iteration(L,handles) %, it, time, L
     
     % plot current partition
     axes(handles.axes3);
-    plot_2levelgraphs(img1, LLG1, HLG1, false, false, HLGmatches(it).matched_pairs,1);
+    nColors = max(size(HLG1.V,1), size(HLG2.V,1));
+    plot_2levelgraphs(img1, LLG1, HLG1, nColors, false, false, HLGmatches(it).matched_pairs,1);
     axes(handles.axes4);
-    plot_2levelgraphs(img2, LLG2, HLG2, false, false, HLGmatches(it).matched_pairs,2);    
+    plot_2levelgraphs(img2, LLG2, HLG2, nColors, false, false, HLGmatches(it).matched_pairs,2);    
 
     drawnow;
     

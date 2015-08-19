@@ -37,6 +37,12 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    new_U1 = old_U1.* repmat(exp(-W1), nV1, 1); 
    new_U2 = old_U2.* repmat(exp(-W2), nV2, 1); 
 
+      ind_anchors1_inf = W1==Inf;
+   new_U1(:,ind_anchors1_inf) = old_U1(:,ind_anchors1_inf)*0.01;
+   
+   ind_anchors2_inf = W2==Inf;
+   new_U2(:,ind_anchors2_inf) = old_U2(:,ind_anchors2_inf)*0.01;
+
 %    new_U1 = 0.5*double(old_U1); 
 %    new_U2 = 0.5*double(old_U2); 
    
