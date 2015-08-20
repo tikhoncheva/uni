@@ -80,7 +80,8 @@ addpath(genpath('../../Tools/SLIC_MATLAB/'));
 % clc;
 
 % Graph matching algorithm
-addpath(genpath('../../Tools/RRWM_release_v1.22'));
+addpath(genpath('/export/home/etikhonc/Documents/Tools/MPM_release_v1/Methods/RRWM'));
+% addpath(genpath('../../Tools/RRWM_release_v1.22'));
 % clc;
 
 % Export figure
@@ -854,10 +855,10 @@ affTrafo = M(L).affTrafo;
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
-% tic;
-[HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
+tic;
+[HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, it] = ...
     twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-% time = toc;
+time = toc;
 
 handles.SummaryT = time;
 
