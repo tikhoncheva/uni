@@ -1,0 +1,21 @@
+==================================================
+Delaunay traingulation
+==================================================
+Test		 Iteration 	Running time
+------------------------------------------------
+test2images1		13	34.036 sec	un_acbyhthgqafvxzuc sun_aceptgukywfsbtcs
+test2images2		13	38.712 sec	se0 seq10
+
+
+==================================================
+kNN Graph
+==================================================
+
+Test		 Iteration 	Running time
+------------------------------------------------
+test2images1		10	18.064 sec	sun_acbyhthgqafvxzuc sun_aceptgukywfsbtcs
+test2images2		25	1.5188 sec	se0 seq10
+test2images3		10	43.451 sec	se0 seq20
+test2images3		25	185.0935 sec	se0 seq30
+
+
