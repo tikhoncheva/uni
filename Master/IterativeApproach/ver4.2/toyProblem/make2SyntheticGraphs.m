@@ -1,4 +1,5 @@
- 
+% based on Minsu Cho, makePointMatchingProblem, MPM_release_v1
+
 %% make 2 synthetic graphs for testing graph matching algorithm
 % Output
 %   G1 = (V,D,E) first graph;  NOTE: D = []
@@ -6,7 +7,7 @@
 %   GT = (LLpairs) ground thruth for matching on each of two
 %                           levels
 
-function [img1, img2, G1, G2, GT] = make2SyntheticGraphs(igparam)
+function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
 
     rng('default');
     
@@ -17,67 +18,48 @@ function [img1, img2, G1, G2, GT] = make2SyntheticGraphs(igparam)
     
     
     setParameters_synthetic_graphs;
-    n1 = nIn;           % number of nodes in the first graph
-    n2 = nIn + nOut;    % number of nodes in the second graph
     
-    % rotation matrix
-    rotMatrix = [cos(aff_transfo_angle) -sin(aff_transfo_angle); ... 
-                 sin(aff_transfo_angle)  cos(aff_transfo_angle)];    
-             
-
-    % create first graphs
-    G1.V = randn(nIn, 2);       % nIn standard normal distributed numbers
-    G1.D = [];                  % set of node descriptors of the first graph
-    G1.W = Inf*ones(n1,1);
-
-      
-    % create second graphs
-    V = aff_transfo_scale * G1.V * rotMatrix + sig*randn(n1, 2); % apply transformation to the nodes of the first graph
-    G2.V = [V; randn(nOut, 2)]; % + nOut oitliers
-    assert(size(G2.V,1)==n2);
-    G2.D = [];                  % set of node descriptors of the second graph
-    G2.W = Inf*ones(n2,1);
-    
-    % permute graph nodes
-    if to_permute
-        seq = randperm(n2);
-        G2.V(seq,:) = G2.V;
+    if bOutBoth
+      n1 = nIn + nOut;		% number of nodes in the first set
     else
-        seq  = 1:n2;
+      n1 = nIn;
+    end       
+    n2 = nIn + nOut;    % number of nodes in the second set
+    
+    % Generate two graphs
+    
+    if bPermute
+      seq = randperm(n2);
+    else 
+      seq = 1:n1;
     end
+ 
+    % Generate graph 1
+    G1 = tril(rand(n1),-1); % lower triangular graph
+    G1 = G1+G1';
+    P = tril(rand(n1),-1);
+    P = P+P';
+    P = P > ratioFill;
+    G1(P) = NaN;
     
+    N = deformation*tril(randn(n2),-1);
+    N = N+N';
     
-    % Add edges
-    G1 = buildLLGraph(G1.V', G1.D, igparam);
-    G2 = buildLLGraph(G2.V', G2.D, igparam);
-    
-%     [nodes_kNN, ~] = knnsearch(G1.V(:, 1:2), G1.V(:, 1:2), 'k', minDeg + 1); % n1 x (minDeg+1) matrix                   
-%     nodes_kNN = nodes_kNN(:,2:end);                                          % delete loops in each vertex
-%     nodes_kNN = reshape(nodes_kNN, n1*minDeg, 1);
-%     G1.E = [repmat([1:n1]', minDeg, 1) nodes_kNN];
-% 
-%     [nodes_kNN, ~] = knnsearch(G2.V(:, 1:2), G2.V(:, 1:2), 'k', minDeg + 1); % n2 x (minDeg+1) matrix                   
-%     nodes_kNN = nodes_kNN(:,2:end);                                          % delete loops in each vertex
-%     nodes_kNN = reshape(nodes_kNN, n2*minDeg, 1);
-%     G2.E = [repmat([1:n2]', minDeg, 1) nodes_kNN];  
+    % Generate graph 2
+    G2 = tril(rand(nP2),-1);
+    G2 = G2+G2';
+    P = tril(rand(nP2),-1);
+    P = P+P';
+    P = P > ratioFill;
+    G2(P) = NaN;
+    G2(seq(1:nInlier),seq(1:nInlier)) = G1(1:nInlier,1:nInlier);
+    G2 = G2+N;
 
-    % Ground Truth
-    corr_G1G2 = [[1:n1]', [1:n1]'];
-    GT.LLpairs = [corr_G1G2(:,1)  , seq(corr_G1G2(:,2) )'];
+    
+    %% Ground Truth
+    GT.LLpairs = [ [1:n1]'  , seq(1:n1)'];
     GT.HLpairs = [];
-    
-    % shift coordinates of the nodes to plot it nicer    
-    min_x = min([ min(G1.V(:,1)), min(G2.V(:,1)) ]);
-    max_x = max([ max(G1.V(:,1)), max(G2.V(:,1)) ]);
-    
-    min_y = min([ min(G1.V(:,2)), min(G2.V(:,2)) ]);
-    max_y = min([ max(G1.V(:,2)), max(G2.V(:,2)) ]);
-    
-    G1.V(:,1) = 1 + (G1.V(:,1) - min_x) * (s-1) / (max_x-min_x);
-    G1.V(:,2) = 1 +(G1.V(:,2) - min_y) * (s-1) / (max_y-min_y);
-    
-    G2.V(:,1) = 1 + (G2.V(:,1) - min_x) * (s-1) / (max_x-min_x);
-    G2.V(:,2) = 1 + (G2.V(:,2) - min_y) * (s-1) / (max_y-min_y);
+
     
     
 end

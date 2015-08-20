@@ -147,7 +147,8 @@ function pbToyProblem_Callback(hObject, ~, handles)
        
     % two random graphs
     setParameters;
-    [img1, img2, LLG1, LLG2, GT] = make2SyntheticGraphs(igparam);
+%     [img1, img2, LLG1, LLG2, GT] = make2SyntheticGraphs(igparam);
+    [img1, img2, LLG1, LLG2, GT] = make2SyntheticPointSets();
     
 %     HLG1 = buildHLGraph(1, LLG1, agparam);
 %     HLG2 = buildHLGraph(1, LLG2, agparam);
