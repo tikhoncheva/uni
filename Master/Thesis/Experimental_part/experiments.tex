@@ -1,0 +1,165 @@
+% ---------------------------------------          Preamble
+\documentclass[
+	fontsize=12pt,
+	paper=a4,
+	twoside=false,
+	numbers=noenddot,
+	plainheadsepline,
+	toc=listof,
+	toc=bibliography
+]{scrartcl}
+
+\usepackage[english]{babel} 
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{array}
+
+\usepackage{placeins}
+\usepackage{float}
+
+\usepackage{graphicx}
+\restylefloat{figure}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage{subfigure} 
+\usepackage{tikz}
+
+%\usepackage{pdfpages} % insert images saved as pdf
+
+% pseudo algorithms
+\usepackage[ruled,vlined]{algorithm2e}
+
+% lscape.sty Produce landscape pages in a (mainly) portrait document.
+\usepackage{lscape}
+
+\usepackage{hyperref}
+
+\setlength{\parindent}{0pt}
+
+\usepackage[sort, numbers]{natbib}
+% ---------------------------------------          New commands
+%\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\def\argmax{\mathop{\rm argmax}}						% argmax
+\def\argmax{\mathop{\rm argmin}}						% argmin
+\def\median{\mathop{\rm median}} 						% median
+\def\dist{\mathop{\rm dist}} 						    % dist
+
+\makeatletter
+\providecommand\phantomcaption{\caption@refstepcounter\@captype}
+\makeatother
+
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\usepackage{xcolor} 
+\newcommand\ToDo[1]{\textcolor{red}{#1}} 
+
+% ------------------------------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------------------------------------
+
+\begin{document}
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------          Title
+\title{Graph Matching Framework}
+\author{Ekaterina Tikhoncheva}
+\date{} 
+
+\maketitle 
+
+
+
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Experimantal Evaluation
+\section{Experimental Evaluation}
+
+In this chapter we present the evaluation results of the proposed algorithm on some synthetic data and on some real images.
+
+\subsection{Synthetic Point set Matching}
+
+For the first test we adopted a commonly used approach of evaluating a Graph Matching algorithm on the synthetic generated set of nodes (see \cite{Cho2014_Haystack}, \cite{Cho2010_RRWM}, \cite{Leordeanu2009_IPFP}). 
+
+For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R^2}$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional points distributed with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
+
+In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following state of the art methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. We fixed the number $n_1$ to $100$ and vary the number of outliers $\bar{n}$ and the standard deviation $\sigma^2$ of the noise in the inlier positions. The discretization of the continuous solution is performed in all cases using greedy assignment from \cite{Leordeanu2005}.
+
+The 
+
+\begin{figure}[ht] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/deformation_test/accuracy_greedy"} 
+%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/deformation_test/score_greedy"} 
+%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/deformation_test/time_greedy"} 
+%		\caption{} 
+	\end{subfigure} 	
+	\caption{ Deformation test: $n_1=100$, $n_2=100$, $m_1=$, $m_2=$, $\sigma^2\in[0, 0.2]$}
+\end{figure}
+
+\FloatBarrier	
+
+\begin{figure}[ht] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/accuracy_greedy"} 
+		%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/score_greedy"} 
+		%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/time_greedy"} 
+		%		\caption{} 
+	\end{subfigure} 	
+	\caption{ Outliers test:$n_1=100$, $\bar{n}\in[0,50]$, $m_1=$, $m_2=$, $\sigma^2=0.03$}
+\end{figure}
+
+%\begin{figure}[ht] 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/accuracy_greedy"} 
+%		%		\caption{} 
+%	\end{subfigure}%% 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/score_greedy"} 
+%		%		\caption{} 
+%	\end{subfigure} 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2008/syntheticPointSets/outliertest_n50/time_greedy"} 
+%		%		\caption{} 
+%	\end{subfigure} 	
+%	\caption{ Outliers test: $n_1=100$, $\bar{n}\in[0,50]$, $m_1=1$, $m_2=1$, $\sigma^2=0.03$}
+%\end{figure}
+
+\subsection{Image Affine Transformation}
+
+
+\subsection{Real Images}
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        Bibliography
+\bibliographystyle{abbrv}
+\bibliography{bibliography}
+	
+\end{document}

@@ -854,8 +854,10 @@ affTrafo = M(L).affTrafo;
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
+% tic;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+% time = toc;
 
 handles.SummaryT = time;
 
@@ -871,6 +873,12 @@ handles.IP2(L).HLG = HLG2;
 handles = update_GUI_after_one_GM_iteration(L, handles);        
 
 guidata(hObject, handles);
+
+fileID = fopen('result.txt','w');
+fprintf(fileID,'n1\t n2\t nIt\t  objval\t  runtime\n');
+fprintf(fileID,'%4d\t %4d\t %4d\t %6.3f\t %6.3f', size(LLG1.V,1), size(LLG1.V,1), ...
+             it, LLGmatches(it).objval, time);
+fclose(fileID);
 
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    

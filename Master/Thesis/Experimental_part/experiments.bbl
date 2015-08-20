@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{Cho2014_Haystack}
+M.~Cho and O.~Duchenne.
+\newblock {Finding Matches in a Haystack : A Max-Pooling Strategy for Graph
+  Matching in the Presence of Outliers}.
+\newblock {\em CVPR}, 2014.
+
+\bibitem{Cho2010_RRWM}
+M.~Cho, J.~Lee, and K.~M. Lee.
+\newblock {Reweighted Random Walks for Graph Matching}.
+\newblock {\em ECCV}, 2010.
+
+\bibitem{Leordeanu2005}
+M.~Leordeanu and M.~Hebert.
+\newblock {A spectral technique for correspondence problems using pairwise
+  constraints}.
+\newblock In {\em ICCV}, 2005.
+
+\bibitem{Leordeanu2009_IPFP}
+M.~Leordeanu, M.~Hebert, R.~Sukthankar, and M.~Herbert.
+\newblock {An Integer Projected Fixed Point Method for Graph Matching and MAP
+  Inference}.
+\newblock In {\em NIPS}, 2009.
+
+\end{thebibliography}
