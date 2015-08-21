@@ -12,7 +12,25 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 4.3
 -----------------------------------------------------------------------------
-
+ 21.08
+  new simulated annealing function for the subgraphs and the whole graph
+  
+  Corrected Error: (weightNodes.m)
+  
+  was T(ind_aiaj_T_old,:) = T_old(ind_aiaj, T_old);
+  now T(ind_old_subgraphs(k),:) = T_old(ind_aiaj, T_old);
+  
+ 20.08
+  
+  
+ 19.08
+  Use subgraph matching score as the similarity of the anchors
+ 
+-----------------------------------------------------------------------------
+Ver 4.2.1
+-----------------------------------------------------------------------------
+21.08
+Ver4.2 with the new Simulated Annealing Function
 
 -----------------------------------------------------------------------------
 Ver 4.2
