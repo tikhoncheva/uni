@@ -59,19 +59,21 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
 
        % compute initial affinity matrix
-       if (nV1==0 || nV2==0)
+       if (size(Vai,2)==0 || size(Vaj,2)==0)
            continue;
        else
            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
        end
 
-       [score, ~] = GraphMatching(corrmatrix, affmatrix);
+       [score, X] = GraphMatching(corrmatrix, affmatrix);
 
        % subgraph weights
-       Ai = 1/nV1;
-       Aj = 1/nV2;
+       Ai = 1/sum(X(:)); %/nV1;
+       Aj = 1; %/nV2;
 
        sim((aj-1)*nA1 + ai) = Ai*Aj*score;
     end 
+    
+    sim;
     
 end

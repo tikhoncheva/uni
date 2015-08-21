@@ -147,7 +147,7 @@ function pbToyProblem_Callback(hObject, ~, handles)
        
     % two random graphs
     setParameters;
-    [img1, img2, LLG1, LLG2, GT] = make2SyntheticGraphs(igparam);
+    [img1, img2, LLG1, LLG2, GT] = make2SyntheticPointSets();
     
 %     HLG1 = buildHLGraph(1, LLG1, agparam);
 %     HLG2 = buildHLGraph(1, LLG2, agparam);
@@ -731,9 +731,11 @@ if ~isempty(handles.M(L).GT.LLpairs)
     GT = handles.M(L).GT.LLpairs;
     y_ac = zeros(1, nIt);
     for i=1:1:nIt
-        TP = ismember(LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
-        TP = sum(TP(:));
-        y_ac(i) = TP/ size(LLGmatches(i).matched_pairs,1) * 100;
+        if ~isempty(LLGmatches(i).matched_pairs)
+            TP = ismember(LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
+            TP = sum(TP(:));
+            y_ac(i) = TP/ size(LLGmatches(i).matched_pairs,1) * 100;
+        end
     end
     
     subplot(1,2,2);
@@ -868,6 +870,8 @@ handles.IP1(L).HLG = HLG1;
 handles.IP2(L).HLG = HLG2;
 
 handles = update_GUI_after_one_GM_iteration(L, handles);        
+energy_gap(LLG1, LLG2, LLGmatches, handles.M.GT.LLpairs);
+
 
 guidata(hObject, handles);
 

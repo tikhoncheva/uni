@@ -42,89 +42,89 @@ D = zeros(nA1*nA2);
 % % % % W1 = edgeWeights_HLG(HLG1, LLG1); ind1 = sub2ind([nA1, nA1], HLG1.E(:,1), HLG1.E(:,2));
 % % % % W2 = edgeWeights_HLG(HLG2, LLG2); ind2 = sub2ind([nA2, nA2], HLG2.E(:,1), HLG2.E(:,2));
 
-% distance matrix of the first anchor graph
-G1 = zeros(nA1);
-% G1(ind1) = W1; 
-
-for i = 1:nA1
-    ai = i;
-    for j = 1:i-1
-       aj = j;
-
-       % nodes of the subgraph Ai
-       ind_Vai = HLG1.U(:,ai);
-       if sum(ind_Vai)==0
-           continue;
-       end 
-       Vai = LLG1.V(ind_Vai,:);
-       nVai = size(Vai, 1);
-
-       % nodes of the subgraph Aj
-       ind_Vaj = HLG1.U(:,aj);
-       if sum(ind_Vaj)==0
-           continue;
-       end 
-       Vaj = LLG1.V(ind_Vaj,:);   
-       nVaj = size(Vaj, 1);
-
-       % calculate pairwise distance between nodes in Vai and Vaj
-       dist = repmat(Vai(:,1:2), nVaj,1) ...
-            - kron  (Vaj(:,1:2), ones(nVai, 1));
-       dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
-
-       % take median
-       G1(i,j) = median(dist(:));
-    end
-
- end
-    
-G1 = G1 + G1';
-G1 = G1./max(G1(:));                          % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-% distance matrix of the second anchor graph
-G2 = zeros(nA2);
-% G2(ind2) = W2;
-for i = 1:nA2
-    ai = i;
-    for j = 1:i-1
-       aj = j;
-
-       % nodes of the subgraph Ai
-       ind_Vai = HLG2.U(:,ai);
-       if sum(ind_Vai)==0
-           continue;
-       end 
-       Vai = LLG2.V(ind_Vai,:);
-       nVai = size(Vai, 1);
-
-       % nodes of the subgraph Aj
-       ind_Vaj = HLG2.U(:,aj);
-       if sum(ind_Vaj)==0
-           continue;
-       end 
-       Vaj = LLG2.V(ind_Vaj,:);   
-       nVaj = size(Vaj, 1);
-
-       % calculate pairwise distance between nodes in Vai and Vaj
-       dist = repmat(Vai(:,1:2), nVaj,1) ...
-            - kron  (Vaj(:,1:2), ones(nVai, 1));
-       dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
-
-       % take median
-       G2(i,j) = median(dist(:));
-    end
-
-end
- 
-G2 = G2 + G2';
-G2 = G2./max(G2(:));                    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-% edge similarity matrix of two anchor graphs
-sigma = 10;                            % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-D = (repmat(G1, nA2, nA2)-kron(G2,ones(nA1))).^2;
-D = exp(-D./sigma);                  
-D(isnan(D)) = 0;
-D(1:size(D,1)+1:end) = 0;
+% % distance matrix of the first anchor graph
+% G1 = zeros(nA1);
+% % G1(ind1) = W1; 
+% 
+% for i = 1:nA1
+%     ai = i;
+%     for j = 1:i-1
+%        aj = j;
+% 
+%        % nodes of the subgraph Ai
+%        ind_Vai = HLG1.U(:,ai);
+%        if sum(ind_Vai)==0
+%            continue;
+%        end 
+%        Vai = LLG1.V(ind_Vai,:);
+%        nVai = size(Vai, 1);
+% 
+%        % nodes of the subgraph Aj
+%        ind_Vaj = HLG1.U(:,aj);
+%        if sum(ind_Vaj)==0
+%            continue;
+%        end 
+%        Vaj = LLG1.V(ind_Vaj,:);   
+%        nVaj = size(Vaj, 1);
+% 
+%        % calculate pairwise distance between nodes in Vai and Vaj
+%        dist = repmat(Vai(:,1:2), nVaj,1) ...
+%             - kron  (Vaj(:,1:2), ones(nVai, 1));
+%        dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
+% 
+%        % take median
+%        G1(i,j) = median(dist(:));
+%     end
+% 
+%  end
+%     
+% G1 = G1 + G1';
+% G1 = G1./max(G1(:));                          % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% 
+% % distance matrix of the second anchor graph
+% G2 = zeros(nA2);
+% % G2(ind2) = W2;
+% for i = 1:nA2
+%     ai = i;
+%     for j = 1:i-1
+%        aj = j;
+% 
+%        % nodes of the subgraph Ai
+%        ind_Vai = HLG2.U(:,ai);
+%        if sum(ind_Vai)==0
+%            continue;
+%        end 
+%        Vai = LLG2.V(ind_Vai,:);
+%        nVai = size(Vai, 1);
+% 
+%        % nodes of the subgraph Aj
+%        ind_Vaj = HLG2.U(:,aj);
+%        if sum(ind_Vaj)==0
+%            continue;
+%        end 
+%        Vaj = LLG2.V(ind_Vaj,:);   
+%        nVaj = size(Vaj, 1);
+% 
+%        % calculate pairwise distance between nodes in Vai and Vaj
+%        dist = repmat(Vai(:,1:2), nVaj,1) ...
+%             - kron  (Vaj(:,1:2), ones(nVai, 1));
+%        dist = sqrt(dist(:,1).^2 + dist(:,2).^2);
+% 
+%        % take median
+%        G2(i,j) = median(dist(:));
+%     end
+% 
+% end
+%  
+% G2 = G2 + G2';
+% G2 = G2./max(G2(:));                    % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% 
+% % edge similarity matrix of two anchor graphs
+% sigma = 10;                            % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% D = (repmat(G1, nA2, nA2)-kron(G2,ones(nA1))).^2;
+% D = exp(-D./sigma);                  
+% D(isnan(D)) = 0;
+% D(1:size(D,1)+1:end) = 0;
 
 
 

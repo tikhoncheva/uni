@@ -21,8 +21,8 @@ function [HLMatches] = matchHLGraphs(corrmatrix, affmatrix, varargin)
 fprintf('\n---- ');
 
 try 
-    nV1 = size(corrmatrix, 1);  % number of nodes in the first graph
-    nV2 = size(corrmatrix, 2);  % number of nodes in the second graph
+    n1 = size(corrmatrix, 1);  % number of nodes in the first graph
+    n2 = size(corrmatrix, 2);  % number of nodes in the second graph
     
     % conflict groups
     [L12(:,1), L12(:,2)] = find(corrmatrix);
@@ -35,6 +35,8 @@ try
 %     display(sprintf('==================================================\n'));
         
     X = greedyMapping(x, group1, group2);
+    
+    affmatrix = affmatrix();
     objval = X'*affmatrix * X;
 
 %     matches = logical(reshape(X,nV1, nV2));

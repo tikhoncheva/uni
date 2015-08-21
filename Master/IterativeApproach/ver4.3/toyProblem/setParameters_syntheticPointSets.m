@@ -1,7 +1,7 @@
 %% Parameters of the graphs
 
 nIn  = 100;                       % number of inliers
-nOut = 100;                         % number of outliers
+nOut = 50;                         % number of outliers
 
 % Parameters of affine transformation
 aff_transfo_scale = 1;          % scale factor

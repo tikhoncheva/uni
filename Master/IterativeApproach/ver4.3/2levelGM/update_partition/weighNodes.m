@@ -124,7 +124,7 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
        aiaj = HLmatched_pairs(ind_old_subgraphPairs(k),1:2);
        [~, ind_aiaj_T_old] = ismember(aiaj, T_old(:,1:2), 'rows');
        assert(ind_aiaj_T_old~=0, 'cannot copy transformation matrix from previous iteration, because there is now such anchor match');
-       T(ind_aiaj_T_old,:) = T_old(ind_aiaj_T_old,:);
+       T(ind_old_subgraphPairs(k),:) = T_old(ind_aiaj_T_old,:);
    end
    
    affTrafo{it+1,1} = T;
