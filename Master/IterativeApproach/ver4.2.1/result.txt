@@ -1,0 +1,2 @@
+n1	 n2	 nIt	  objval	  runtime
+ 126	  126	    6	 873.885	  5.719

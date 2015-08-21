@@ -1,0 +1,250 @@
+=============================================================================
+Iterative Approach
+=============================================================================
+
+
+Graph matching as an iterative approach:
+
+graph -> coarse graph (anchor graph)
+
+coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse graph matching
+
+-----------------------------------------------------------------------------
+Ver 4.2.1
+-----------------------------------------------------------------------------
+
+Ver4.2 with the new Simulated Annealing Function
+
+-----------------------------------------------------------------------------
+Ver 4.2
+-----------------------------------------------------------------------------
+ Extansion of the version 4.1, that includes image pyramid to work with the big 
+ images.
+ 
+ 19.08    
+ + update_subgraphs
+       set confidence of nodes in the unmatched subgraphs (err = Inf) to be 0.01 (new weighted matrix U)
+
+ <-> convergence in twoLevelGM till |Objval(t-1)-Objval(t)|< eps (there was no abs)
+ <-> coloring of the subgraph nodes, when two anchor graphs have different number of anchors
+ <-> deside how many anchor your need based on the number of nodes and approximate number of nodes in subgraphs (builtHLGraph.m)
+ <-> restrict number of nodes to 500, when we work with different images (imagePyramid.m) -> easy to compair results with other methods
+     <-> change sige of axes (ia1.m)
+ 
+ 
+ 14.08
+ <-> change feature extraction/description based on the settings of ProgGM
+ 
+ 13.08
+  + changed objective function of the lower level GM: now it is equal to the objective
+    function of the standart one level formulation
+ <-> delete double edges in list of edges in LLGraphs, HLGraphs
+  + separat function to calculate edge similarity
+  + give LLG1, LLG2 into Lower Level GM
+
+
+ 12.08
+  + image pyramid : do not calculate HLGraphs in the preprocessing step, do it
+    after finishing to work on one level
+ 11.08
+  + codebook of the node descriptors is calculated once in the preprocessing step
+    before graph matching
+  + additional column to LLG.V, which saves the IDs nodes in the codebook
+  + according to this use only two first columns in LLG.V (i.e. node coordinates)
+    in the functions in GraphCoarsening, HigherLevelGraph, update_partition
+  + appearence similarity of anchors will be recalculated only for changed subgraphs
+ <-> whole algortihm should not change anything in the LLGraphs, so there is no need
+     to return/update them in functions from update_partition
+ <-> recalculate anchor similarities inly for the anchors, changed in previous iteration
+ 
+ 
+ 4.08
+ <-> simplified GUI
+  + started to create end folder with the algorithm functions
+  + started to work on a pyramid of an image
+
+ ----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Ver 4.1
+-----------------------------------------------------------------------------
+ New version of the simulated annealing
+ 
+ 31.07.
+ <-> wrong border in the extraction of the SIFT descriptors, should be
+   [1+b 1+b size(E,2)-b size(E,1)-b]
+  +  save estimated affine transformation from the previous iteration
+     recalculate it only for the changed subgraphs 
+   
+ 03.08. 
+ + new_HLG1_U(ind_Vai, ai) = exp(-err)
+   new_HLG3_U(ind_Vaj, aj) = exp(-err)
+
+ ----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Ver 4
+-----------------------------------------------------------------------------
+ <-> Simulated Annealing:
+     compair energy state (sum of the transformation errors) not only on the corrent 
+     iteration before and after node swap, but with the energy state on the previous
+     iteration
+         
+
+ ----------------------------------------------------------------------------
+ 
+ 
+-----------------------------------------------------------------------------
+Ver 3.1 
+-----------------------------------------------------------------------------
+
+Same as ver3, but with possibility to make several iterations without clicking
+each time on the individual steps
+
+-----------------------------------------------------------------------------
+ 
+-----------------------------------------------------------------------------
+Ver 3
+-----------------------------------------------------------------------------
+!!! deleted normalizetion of the distance matrices by the calculation of affinity matrix
+ +  G1(~adjM) = NaN instead of G1(~adjM) = 0
+<->  cosine similarity of nodes in affinity matrix instead of euclidean distance
+    
+<-> new approach for graph coarsening (LEM, HEM)
+<-> new reweighting function
+<-> anchor graph matching:
+    use structure of the subgraphs and descriptors of nodes in the subgraphs to
+    calculate anchor similarity
+    edge length between two anchors is equal to mean distanance between the nodes
+    in corresponding subgraphs
+
+ ----------------------------------------------------------------------------
+ 
+ 
+
+-----------------------------------------------------------------------------
+Ver 21
+-----------------------------------------------------------------------------
+<-> Anchor points are not moving
+<-> subgraphs do not have intersections
+<-> always reinitialize subgraphs affinity matrices    
+
+ ----------------------------------------------------------------------------
+ 
+
+-----------------------------------------------------------------------------
+Ver 2
+-----------------------------------------------------------------------------
+<-> given lower level graphs (kNN - relations), 
+    construction of the anchor graphs is based on the superpixel segmentation
+<-> additive re-weighting functions
+    node similarity = euclidean dist in feature space
+    edge similarity based on the length of the anchor and cosine similarity
+ +  estimation of affine transformation
+ ----------------------------------------------------------------------------
+ 
+
+ 
+ 
+
+-----------------------------------------------------------------------------
+Ver 1
+-----------------------------------------------------------------------------
+    higher level graph  construction based on the superpixel segmentation
+<-> lower level graph construction based on superpixel segmentation
+    lower level graphs are built after construction of higher level (anchor) graphs
+ 
+ +  multiplicative re-weighting functions
+    node similarity = euclidean dist in feature space
+    edge similarity based on the length of the anchor and cosine similarity
+    no estimation of affine transformation
+ ----------------------------------------------------------------------------
+
+ Use hierarchical structure of superpixels to constract initial graph and 
+ corresponding coarse graph:
+ 
+  Given an image img
+  
+  0) Extract edge points (Piotr Dollar edge detector + SIFT)
+  1) Build the coarse graph (Higher Level Graph)
+    segment image img in M superpixels (coarse superpixels)
+    each superpixel defines one anchor node:
+    
+      a center of mass of the edge points inside of one coarse superpixel 
+      gives the coordinates of an anchor 
+      
+      extract HoG descriptor around anchor node
+    
+    => anchor nodes a_1, a_2, ... a_m, m<=M
+    
+    conect anchor nodes if the corresponding coarse superpixel have a common edge
+    (i.e. rectangles around superpixels intersect)
+  
+  2) For each anchor a_i construct corresponding subgraph G_i:
+    the nodes of the subgraph G_i are edge points inside the superpixel area of
+    the anchor a_i
+    
+    to connect the nodes we use segementation of the rectangle around superpixel,
+    that corresponds to a_i, into N finer superpixels
+    
+    nodes inside one fine superpixel are fully connected
+    nodes inside one fine superpixel are connected to all nodes inside another
+    superpixel if the rectangles around those superpixels intersect
+    
+  3) All subgraphs  G_i build the Lower Level Graph 
+  
+  
+  We use multiplicative re-weighting functions between two levels to propagate,
+  firstly, the result of graph matching on the higher level to the lower level,
+  secondary, the result of lower level graph matching on the higher lvel.
+  
+    
+-----------------------------------------------------------------------------
+Ver 0 (not iterative, just two levels approach)
+-----------------------------------------------------------------------------
+    higher level graph  construction based on the superpixel segmentation
+<-> lower level graph construction based on kNN-relationships to anchors
+    lower level graphs are built after construction of higher level (anchor) graphs
+ 
+    not iterative
+    node similarity = euclidean dist in feature space
+    edge similarity based on the length of the anchor and cosine similarity
+    no estimation of affine transformation
+ ----------------------------------------------------------------------------
+Initial grah of a given image:
+
+  Use edge points of a given image as nodes of the corresponding graph 
+
+Anchor graph of a given image:
+
+  Extract super pixels of a given image.
+  For each edge point decide to which super pixel it belongs to.
+  Take center of mass of the edge points inside one super pixel as it's center.
+  Nodes of the anchor graph = center of the super pixels
+  
+  Connect vertices that correspond to the superpixels with a common edge
+  
+  Cluster vertices of the original graph according to the k nearest anchor nodes.
+  
+Correspondece graph between two anchor graphs
+  complete graph
+  
+Matching of the anchor graphs
+  Use Reweighted Random Walk algorithm (RRW) for matching of the anchor graphs
+  
+Matching of the original graphs (works not so good)
+  for each pair (a_i, b_i) of matched anchors, where anchor a_i belongs to 
+  the first anchor graph  and anchor b_j to the second anchor graph 
+  run matching algorithm for the nodes of the initial graphs,
+  that correpond to anchor nodes a_j and b_j
+    
+  for each node of the first initial graph
+    select best match over all matches (max)
+  
+------------------------------------------------------------------------------------------------------
+
+    
+    
+    
+    
+    

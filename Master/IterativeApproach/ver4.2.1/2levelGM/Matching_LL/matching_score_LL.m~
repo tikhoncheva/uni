@@ -14,14 +14,14 @@ N = size(corresp,1);    % number of correspondences
 
 % similarity between matched nodes
 sim_V = 0;
-if (~isempty(LLG1.D) && ~isempty(LLG2.D))
-    sim_V = zeros(N,1);
-    for i = 1:N
-%         sim_V(i) = nodeSimilarity(LLG1.D(:,corresp(i,1)), LLG2.D(:,corresp(i,2)), 'euclidean');
-        sim_V(i) = nodeSimilarity(LLG1.D(:,corresp(i,1)), LLG2.D(:,corresp(i,2)), 'cosine');
-    end
-    sim_V = sum(sim_V(:));
-end
+% if (~isempty(LLG1.D) && ~isempty(LLG2.D))
+%     sim_V = zeros(N,1);
+%     for i = 1:N
+% %         sim_V(i) = nodeSimilarity(LLG1.D(:,corresp(i,1)), LLG2.D(:,corresp(i,2)), 'euclidean');
+%         sim_V(i) = nodeSimilarity(LLG1.D(:,corresp(i,1)), LLG2.D(:,corresp(i,2)), 'cosine');
+%     end
+%     sim_V = sum(sim_V(:));
+% end
 
 % similarity between matched edges
 ind = [1:N];
