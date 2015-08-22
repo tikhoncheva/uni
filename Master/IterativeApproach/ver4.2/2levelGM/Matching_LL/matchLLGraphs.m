@@ -163,7 +163,7 @@ if (nargin == 7)
    LLMatches.matched_pairs = [LLMatches.matched_pairs; matched_pairs_prev_it];
 %    LLMatches.objval = sum(lobjval);
 %    LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
-    LLMatches.objval = matching_score_LL(LLG1, LLG2, pairs);
+    LLMatches.objval = matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
 end
     
 % display(sprintf('Summary %f sec', toc));
