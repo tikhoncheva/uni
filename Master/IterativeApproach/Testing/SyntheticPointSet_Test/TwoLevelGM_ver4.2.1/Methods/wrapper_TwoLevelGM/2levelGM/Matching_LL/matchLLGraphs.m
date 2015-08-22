@@ -129,7 +129,8 @@ if (nIterations>0)
 
     lobjval(anchor_match_id) = local_objval;
 %     objval = sum(local_objval);
-    objval = sum(lobjval) + matching_score_LL(LLG1, LLG2, pairs);
+%    objval = sum(lobjval) + matching_score_LL(LLG1, LLG2, pairs);
+    objval = matching_score_LL(LLG1, LLG2, pairs);
     
 end % if nIterations>0
 
@@ -162,7 +163,8 @@ if (nargin == 7)
    LLMatches.lobjval = lobjval;
    LLMatches.matched_pairs = [LLMatches.matched_pairs; matched_pairs_prev_it];
 %    LLMatches.objval = sum(lobjval);
-   LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
+%   LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
+   LLMatches.objval = matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
     
 end
     
