@@ -16,14 +16,14 @@ nV2 = size(HLG2.V,1);
 if isempty(LLG1.D) || isempty(LLG2.D)
     corrmatrix = ones(nV1,nV2);  %  all-to-all correspondences
 else
-%     corrmatrix = ones(nV1,nV2);                                                 %  !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
-%     [I, J] = find(corrmatrix);
-%     cand_matches = [I, J];
+    corrmatrix = ones(nV1,nV2);                                                 %  !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
+    [I, J] = find(corrmatrix);
+    cand_matches = [I, J];
     
-    cand_matches = find_cand_anchor_matches(LLG1, LLG2, HLG1, HLG2);
-                                                     
-    ind = sub2ind([nV1, nV2], cand_matches(:,1), cand_matches(:,2));
-    corrmatrix = zeros(nV1,nV2); corrmatrix(ind) = 1;
+%     cand_matches = find_cand_anchor_matches(LLG1, LLG2, HLG1, HLG2);
+%                                                      
+%     ind = sub2ind([nV1, nV2], cand_matches(:,1), cand_matches(:,2));
+%     corrmatrix = zeros(nV1,nV2); corrmatrix(ind) = 1;
 end
 
 % compute initial affinity matrix

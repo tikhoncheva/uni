@@ -129,7 +129,8 @@ if (nIterations>0)
 
     lobjval(anchor_match_id) = local_objval;
 %     objval = sum(local_objval);
-    objval = sum(lobjval) + matching_score_LL(LLG1, LLG2, pairs);
+%    objval = sum(lobjval) + matching_score_LL(LLG1, LLG2, pairs);
+	objval = matching_score_LL(LLG1, LLG2, pairs);
     
 end % if nIterations>0
 

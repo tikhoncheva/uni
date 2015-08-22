@@ -86,13 +86,13 @@ In this chapter we present the evaluation results of the proposed algorithm on s
 
 \subsection{Synthetic Point set Matching}
 
-For the first test we adopted a commonly used approach of evaluating a Graph Matching algorithm on the synthetic generated set of nodes (see \cite{Cho2014_Haystack}, \cite{Cho2010_RRWM}, \cite{Leordeanu2009_IPFP}). 
+For the first test we adopted a commonly used approach of evaluation Graph Matching algorithms on the synthetic generated set of nodes (see \cite{Cho2014_Haystack}, \cite{Cho2010_RRWM}, \cite{Leordeanu2009_IPFP}). 
 
-For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R^2}$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional points distributed with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
+For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R}^2$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional normal distributed points with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
 
 In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following state of the art methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. We fixed the number $n_1$ to $100$ and vary the number of outliers $\bar{n}$ and the standard deviation $\sigma^2$ of the noise in the inlier positions. The discretization of the continuous solution is performed in all cases using greedy assignment from \cite{Leordeanu2005}.
 
-The 
+
 
 \begin{figure}[ht] 
 	\begin{subfigure}[b]{0.3\textwidth}
