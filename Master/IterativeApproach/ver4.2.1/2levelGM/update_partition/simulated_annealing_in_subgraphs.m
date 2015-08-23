@@ -14,6 +14,10 @@ for k = 1:nIt
     is_matched = ismember(ind_Vai, LLmatches(:,1));   
     ind_mVai = ind_Vai(is_matched); % indices of the matched nodes in the subgraph ai
     
+	if numel(ind_mVai)<2
+        LLmatches_new = LLmatches;
+        continue;
+    end
     % select two random matched nodes in the subgraph ai
     v1v2 = datasample(ind_mVai, 2,'Replace',false)';
     
