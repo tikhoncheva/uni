@@ -8,7 +8,7 @@ opt_score = matching_score_LL(LLG1,LLG2, GT);
 for i = 1:nIt
    score = solution(i).objval;
    
-   f(i) = abs(score-opt_score)/(abs(score) + 1^(-10));
+   f(i) = abs(score-opt_score)/(abs(opt_score) + 1^(-10));
     
 end
 

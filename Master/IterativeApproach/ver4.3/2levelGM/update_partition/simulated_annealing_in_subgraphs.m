@@ -3,6 +3,11 @@
 function [LLmatches_new] = simulated_annealing_in_subgraphs(LLG1, LLG2, HLG1, HLG2, HLmatches, LLmatches, Mscore, T)
 
 nIt = 1;
+
+if size(HLmatches,1)<1
+    nIt = 0;
+end
+
 display(sprintf('Temperature T=%f', T));
 
 for k = 1:nIt
@@ -14,6 +19,10 @@ for k = 1:nIt
     is_matched = ismember(ind_Vai, LLmatches(:,1));   
     ind_mVai = ind_Vai(is_matched); % indices of the matched nodes in the subgraph ai
     
+    if numel(ind_mVai)<2
+        LLmatches_new = LLmatches;
+        continue;
+    end
     % select two random matched nodes in the subgraph ai
     v1v2 = datasample(ind_mVai, 2,'Replace',false)';
     

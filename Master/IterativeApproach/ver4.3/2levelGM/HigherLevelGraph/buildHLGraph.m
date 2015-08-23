@@ -35,7 +35,7 @@ nV = size(LLG.V,1);                 % number of nodes in the LLG
 % nA = min(nV, agparam.nA(ID));
 
 appSizeOfSubgraph = agparam.appSizeOfSubgraph;
-nA = ceil(nV/appSizeOfSubgraph);   % number of anchors in HLG
+nA = floor(nV/appSizeOfSubgraph);   % number of anchors in HLG
 %nA = min(nV, agparam.nA);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 fprintf('Number of Anchors %d', nA );
 
@@ -48,7 +48,24 @@ switch alg
     otherwise
         error('please select valid algorithm for the graph coarsening');
 end
-% HLG.E = unique(sort(HLG.E,2), 'rows');  % delete same edges
+
+% [ind_U,V] = kmeans(LLG.V, nA);
+% ind = sub2ind([nV, nA], [1:nV]', ind_U);
+% 
+% U = false(nV, nA);
+% U(ind) = true;
+% HLG.U = U;
+% 
+% HLG.V = V;
+% HLG.E = LLG.E;
+% for i = 1:size(LLG.E,1)
+%    e = LLG.E(i,1:2);
+%    a1 = find(HLG.U(e(1),:));
+%    a2 = find(HLG.U(e(2),:));
+%    HLG.E(i,1:2) = [a1,a2];
+% end
+
+HLG.E = unique(sort(HLG.E,2), 'rows');  % delete same edges
 
 
 HLG.F = zeros(size(HLG.V,1),1); % mark all subgraphs as new

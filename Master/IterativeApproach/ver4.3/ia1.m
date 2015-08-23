@@ -87,6 +87,11 @@ addpath(genpath('../../Tools/RRWM_release_v1.22'));
 addpath(genpath('../../Tools/altmany_export_fig'));
 % clc;
 
+% 
+addpath(genpath('../../Tools/CPD2'))
+
+addpath(genpath('../../Tools/graph_cut/GCMex'));
+
 % Additional functions
 addpath(genpath('./toyProblem_realimg'));
 addpath(genpath('./toyProblem'));

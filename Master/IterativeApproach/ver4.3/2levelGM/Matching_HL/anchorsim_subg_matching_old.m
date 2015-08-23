@@ -8,6 +8,7 @@
 %
 function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 
+
     nV1 = size(LLG1.V,1); nV2 = size(LLG2.V,1);
     nA1 = size(HLG1.V,1); nA2 = size(HLG2.V,1);
     
@@ -63,36 +64,13 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        else
            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
        end
-       
-%        opt.method='affine';
-%        opt.corresp=1;
-%        opt.viz=0;
-%        
-%        Vai = Vai';
-%        Vaj = Vaj';
-%        
-%        if nVai<nVaj
-%            Vai = [Vai; zeros(nVaj-nVai,2)];
-%        end
-%        if nVaj<nVai
-%            Vaj = [Vaj; zeros(nVai-nVaj,2)];
-%        end
-%        [Transform, C]=cpd_register(Vaj, Vai, opt); 
-%        
-%        ind = [1:nVai]';
-%        if nVaj<nVai
-%            ind = ismember(C, [1:nVaj]);
-%        end
-%        
-%        err = sum((Vaj(C(ind),1:2) - Vai(ind,1:2)).^2,2);
-%        err= sum(err(:))/numel(C);
-%        sim((aj-1)*nA1 + ai) = 1/err;
-       
 
        [score, X] = GraphMatching(corrmatrix, affmatrix);
+
        % subgraph weights
        Ai = 1/sum(X(:)); %/nV1;
        Aj = 1; %/nV2;
+
        sim((aj-1)*nA1 + ai) = Ai*Aj*score;
     end 
     

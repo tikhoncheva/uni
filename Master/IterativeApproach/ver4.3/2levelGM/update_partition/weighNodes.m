@@ -26,6 +26,7 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
                                          LLmatched_pairs, HLmatched_pairs, affTrafo)
 
    fprintf('\n------ Estimation of affine transformation between new subgraph pairs');
+   M = Inf;
    
    nPairs = size(HLmatched_pairs,1);    
    
@@ -110,7 +111,7 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
             T(ind_new_subgraphPairs(k), 10:15) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
         else % if (size(matched_nodes, 1)<3) it is impossible to estimate affine transformation
             T(ind_new_subgraphPairs(k), 1:2) = [ai, aj];
-            T(ind_new_subgraphPairs(k), 3) = Inf;
+            T(ind_new_subgraphPairs(k), 3) = M;
         end % if each of subgraphs have at least tree nodes matched
         
         clear pairs;

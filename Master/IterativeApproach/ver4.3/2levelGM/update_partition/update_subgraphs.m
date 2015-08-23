@@ -37,24 +37,112 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    new_U1 = old_U1.* repmat(exp(-W1), nV1, 1); 
    new_U2 = old_U2.* repmat(exp(-W2), nV2, 1); 
 
-      ind_anchors1_inf = W1==Inf;
+   ind_anchors1_inf = (W1==Inf);
    new_U1(:,ind_anchors1_inf) = old_U1(:,ind_anchors1_inf)*0.01;
    
-   ind_anchors2_inf = W2==Inf;
+   ind_anchors2_inf = (W2==Inf);
    new_U2(:,ind_anchors2_inf) = old_U2(:,ind_anchors2_inf)*0.01;
 
 %    new_U1 = 0.5*double(old_U1); 
 %    new_U2 = 0.5*double(old_U2); 
    
+   % ---------------------------------------------------------------------
+   
    % for each pairs of anchor matches ai<->aj , check if the transformation
    % error between the corresponding subgraphs is small and than try to
    % extand those subgraphs by including missing correspondences of the
    % nodes
-   nMatchedSubg = size(HLGmatches.matched_pairs,1); 
-   for k=1:nMatchedSubg
-       
-        ai = HLGmatches.matched_pairs(k,1); % \in HLG1.V
-        aj = HLGmatches.matched_pairs(k,2); % \in HLG2.V
+   
+
+   % find anchors with more than 3 nodes in the underlying subgraphs
+   sum_nodes_in_subG1 = sum(old_U1);
+   ind_anchors1_rule1 = sum_nodes_in_subG1>=3;
+
+   sum_nodes_in_subG2 = sum(old_U2);
+   ind_anchors2_rule1 = sum_nodes_in_subG2>=3;
+
+   % --------------------------------------------------------------------
+   % Rule 2
+   % --------------------------------------------------------------------
+   
+   % subgraphs of the first graph
+   ind_anchors1_rule2 = find(~ind_anchors1_rule1);
+   for i = 1:numel(ind_anchors1_rule2)
+       ai = ind_anchors1_rule2(i);
+
+       new_bU1 = logical(new_U1); % binary matrix
+
+       ind_Vai = find(new_bU1(:,ai));
+       Vai = LLG1.V(ind_Vai,1:2);      % coordinates of the nodes in the subgraph G_ai
+
+       if ~isempty(Vai)   % it can happen, that nodes were already adjust to the new anchors
+           new_U1_cut = new_bU1(:,ind_anchors1_rule1);
+           [ind_feas_neighb, ~]= find(new_U1_cut);
+           ind_feas_neighb = unique(ind_feas_neighb);
+
+           nn_Vai = knnsearch(LLG1.V(ind_feas_neighb,1:2), Vai, 'K', 1);   %indices of nodes in LLG2.V
+           nn_Vai = ind_feas_neighb(nn_Vai);
+           new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
+       end
+   end
+
+
+   % subgraphs of the second graph
+   ind_anchors2_rule2 = find(~ind_anchors2_rule1);
+   for j = 1:numel(ind_anchors2_rule2)
+       aj = ind_anchors2_rule2(j);
+
+       new_bU2 = logical(new_U2); % binary matrix
+
+%        ind_Vaj = find(HLG2.U(   :,aj));
+       ind_Vaj = find(new_bU2(:,aj));
+       Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_ai
+
+       if ~isempty(Vaj)   % it can happen, that nodes were already adjusted to the new anchors
+           new_U2_cut = new_bU2(:,ind_anchors2_rule1);
+           [ind_feas_neighb, ~]= find(new_U2_cut);
+           ind_feas_neighb = unique(ind_feas_neighb);
+
+           nn_Vaj = knnsearch(LLG2.V(ind_feas_neighb,1:2), Vaj, 'K', 1);   %indices of nodes in LLG2.V
+           nn_Vaj = ind_feas_neighb(nn_Vaj);
+           new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
+       end
+   end
+
+
+   % --------------------------------------------------------------------
+   % Rule 1
+   % --------------------------------------------------------------------
+
+   % find anchors with more than 3 nodes in the underlying subgraphs
+   sum_nodes_in_subG1 = sum(old_U1);
+   ind_anchors1_rule1 = sum_nodes_in_subG1>=3;
+   assert(sum(ind_anchors1_rule1)==size(new_U1,2));
+
+   sum_nodes_in_subG2 = sum(old_U2);
+   ind_anchors2_rule1 = sum_nodes_in_subG2>=3;
+   assert(sum(ind_anchors2_rule1)==size(new_U2,2));
+   
+   ind_matched_subG_rule1 = find(ind_anchors1_rule1(HLGmatches.matched_pairs(:,1))...
+                               & ind_anchors2_rule1(HLGmatches.matched_pairs(:,2)));
+   nMatchedSubG_rule1 = numel(ind_matched_subG_rule1);
+
+   % for each pairs of anchor matches ai<->aj , check if the transformation
+   % error between the corresponding subgraphs is small and than try to
+   % extand those subgraphs by including missing correspondences of the
+   % nodes
+        
+%    nMatchedSubg = size(HLGmatches.matched_pairs,1); 
+%    for k=1:nMatchedSubg
+   for k=1:nMatchedSubG_rule1
+         
+        I = ind_matched_subG_rule1(k);
+
+        ai = HLGmatches.matched_pairs(I,1); % \in HLG1.V
+        aj = HLGmatches.matched_pairs(I,2); % \in HLG2.V
+        
+%         ai = HLGmatches.matched_pairs(k,1); % \in HLG1.V
+%         aj = HLGmatches.matched_pairs(k,2); % \in HLG2.V
        
         
         ind_Vai = find(HLG1.U(:,ai));
@@ -100,25 +188,71 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
             end % err<err_eps
             
         else % Rule 2
-            if size(Vai,1)<3
-                nn_Vai = knnsearch(LLG1.V(:,1:2), Vai, 'K', 2);   %indices of nodes in LLG2.V
-                nn_Vai(:,1) = [];                
-                new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
- 
-            end
-            if size(Vaj,1)<3
-                nn_Vaj = knnsearch(LLG2.V(:,1:2), Vaj, 'K', 2);   %indices of nodes in LLG2.V
-                nn_Vaj(:,1) = [];             
-                new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
-          
-            end
+%             if size(Vai,1)<3
+%                 nn_Vai = knnsearch(LLG1.V(:,1:2), Vai, 'K', 2);   %indices of nodes in LLG2.V
+%                 nn_Vai(:,1) = [];                
+%                 new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
+%  
+%             end
+%             if size(Vaj,1)<3
+%                 nn_Vaj = knnsearch(LLG2.V(:,1:2), Vaj, 'K', 2);   %indices of nodes in LLG2.V
+%                 nn_Vaj(:,1) = [];             
+%                 new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
+%           
+%             end
         end
        
         clear pairs;
         clear ind_V1;
         clear ind_matched_pairs;
    end
-   
+   % --------------------------------------------------------------------
+   % Rule 2
+   % --------------------------------------------------------------------
+
+%    % subgraphs of the first graph
+%    ind_anchors1_rule2 = find(~ind_anchors1_rule1);
+%    for i = 1:numel(ind_anchors1_rule2)
+%        ai = ind_anchors1_rule2(i);
+% 
+%        new_bU1 = logical(new_U1); % binary matrix
+% 
+%        ind_Vai = find(new_bU1(:,ai));
+%        Vai = LLG1.V(ind_Vai,1:2);      % coordinates of the nodes in the subgraph G_ai
+% 
+%        if ~isempty(Vai)   % it can happen, that nodes were already adjust to the new anchors
+%            new_U1_cut = new_bU1(:,ind_anchors1_rule1);
+%            [ind_feas_neighb, ~]= find(new_U1_cut);
+%            ind_feas_neighb = unique(ind_feas_neighb);
+% 
+%            nn_Vai = knnsearch(LLG1.V(ind_feas_neighb,1:2), Vai, 'K', 1);   %indices of nodes in LLG2.V
+%            nn_Vai = ind_feas_neighb(nn_Vai);
+%            new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
+%        end
+%    end
+% 
+% 
+%    % subgraphs of the second graph
+%    ind_anchors2_rule2 = find(~ind_anchors2_rule1);
+%    for j = 1:numel(ind_anchors2_rule2)
+%        aj = ind_anchors2_rule2(j);
+% 
+%        new_bU2 = logical(new_U2); % binary matrix
+% 
+% %        ind_Vaj = find(HLG2.U(   :,aj));
+%        ind_Vaj = find(new_bU2(:,aj));
+%        Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_ai
+% 
+%        if ~isempty(Vaj)   % it can happen, that nodes were already adjusted to the new anchors
+%            new_U2_cut = new_bU2(:,ind_anchors2_rule1);
+%            [ind_feas_neighb, ~]= find(new_U2_cut);
+%            ind_feas_neighb = unique(ind_feas_neighb);
+% 
+%            nn_Vaj = knnsearch(LLG2.V(ind_feas_neighb,1:2), Vaj, 'K', 1);   %indices of nodes in LLG2.V
+%            nn_Vaj = ind_feas_neighb(nn_Vaj);
+%            new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
+%        end
+%    end
 
 % new correspondence matrix between nodes and anchors
    [W1, max_pos] = max(new_U1, [], 2);
