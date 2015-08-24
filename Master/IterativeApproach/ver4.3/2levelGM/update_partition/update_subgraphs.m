@@ -16,7 +16,7 @@
 function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
                                          LLGmatches, HLGmatches, affTrafo)
    fprintf('\n------ Rearrange subgraphs');
-   error_eps = 1.0;
+   error_eps = .5; %%%
 
    nV1 = size(LLG1.V, 1);  nV2 = size(LLG2.V, 1);
    
@@ -115,13 +115,15 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    % --------------------------------------------------------------------
 
    % find anchors with more than 3 nodes in the underlying subgraphs
-   sum_nodes_in_subG1 = sum(old_U1);
+%    sum_nodes_in_subG1 = sum(old_U1);
+   sum_nodes_in_subG1 = sum(logical(new_U1));
    ind_anchors1_rule1 = sum_nodes_in_subG1>=3;
-   assert(sum(ind_anchors1_rule1)==size(new_U1,2));
+%    assert(sum(ind_anchors1_rule1)==size(new_U1,2));
 
-   sum_nodes_in_subG2 = sum(old_U2);
+%    sum_nodes_in_subG2 = sum(old_U2);
+   sum_nodes_in_subG2 = sum(logical(new_U2));
    ind_anchors2_rule1 = sum_nodes_in_subG2>=3;
-   assert(sum(ind_anchors2_rule1)==size(new_U2,2));
+%    assert(sum(ind_anchors2_rule1)==size(new_U2,2));
    
    ind_matched_subG_rule1 = find(ind_anchors1_rule1(HLGmatches.matched_pairs(:,1))...
                                & ind_anchors2_rule1(HLGmatches.matched_pairs(:,2)));

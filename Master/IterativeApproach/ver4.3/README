@@ -12,6 +12,12 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 4.3
 -----------------------------------------------------------------------------
+
+ 24.08
+  changed subgraph update function: first spread nodes in small cluster (#n<3)
+  over the other cluster
+  use simulated annealing on the whole graph to get out from the local minima
+  
  21.08
   new simulated annealing function for the subgraphs and the whole graph
   

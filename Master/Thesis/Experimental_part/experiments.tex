@@ -90,11 +90,13 @@ For the first test we adopted a commonly used approach of evaluation Graph Match
 
 For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R}^2$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional normal distributed points with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
 
-In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following state of the art methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. We fixed the number $n_1$ to $100$ and vary the number of outliers $\bar{n}$ and the standard deviation $\sigma^2$ of the noise in the inlier positions. The discretization of the continuous solution is performed in all cases using greedy assignment from \cite{Leordeanu2005}.
+In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following state of the art methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. Because of those algorithms work with the full affinity matrix of the Graph Matching Problem, whose size is equal to $n_1n_2\times n_1n_2$, it is time and memory consuming to perform tests for graphs with more than $200$ nodes each. Our algorithms, however, was created to work with graphs bigger than that. To be able to perform the comparison, we fixed the number $n_1$ of points in the first set to $100$ and vary the number of outliers $\bar{n}$ in the second set from $0$ to $50$. The discretization of the continuous solution is performed in all cases using greedy assignment from \cite{Leordeanu2005}.
 
+For the first test we set number of outliers $\bar{n}$ to zero and vary only the deformation noise $\sigma^2$. We call this test \emph{deformation test}. It's results are shown at the Fig.~\ref{fig:def_test1} and \ref{fig:def_test2}.
 
+In the second test, $outlier test$, we fix deformation noise $\sigma^2= 0.03$ and compare the behavior of the algorithms in case of increasing number of outliers $\bar{n}$ (see Fig.~\ref{fig:outlier_test1} and \ref{fig:outlier_test2}). 
 
-\begin{figure}[ht] 
+\begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
 		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/accuracy_greedy"} 
@@ -111,11 +113,12 @@ In this test we follow the setup in \cite{Cho2014_Haystack} and compare our appr
 %		\caption{} 
 	\end{subfigure} 	
 	\caption{ Deformation test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+	\label{fig:def_test1}
 \end{figure}
 
 \FloatBarrier	
 
-\begin{figure}[ht] 
+\begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
 		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/accuracy_avg10tests"} 
@@ -132,11 +135,12 @@ In this test we follow the setup in \cite{Cho2014_Haystack} and compare our appr
 %		\caption{} 
 	\end{subfigure} 	
 	\caption{ Average of $10$ deformation tests: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+	\label{fig:def_test2}	
 \end{figure}
 
 \FloatBarrier	
 
-\begin{figure}[ht] 
+\begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
 		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/accuracy_greedy"} 
@@ -153,11 +157,12 @@ In this test we follow the setup in \cite{Cho2014_Haystack} and compare our appr
 		%		\caption{} 
 	\end{subfigure} 	
 	\caption{ Outliers test:$n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+	\label{fig:outlier_test1}
 \end{figure}
 
 \FloatBarrier	
 
-\begin{figure}[ht] 
+\begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
 		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/accuracy_avg10tests"} 
@@ -174,7 +179,10 @@ In this test we follow the setup in \cite{Cho2014_Haystack} and compare our appr
 		%		\caption{} 
 	\end{subfigure} 	
 	\caption{ Average of $10$ outlier tests:$n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+	\label{fig:outlier_test2}
 \end{figure}
+
+\FloatBarrier
 
 \subsection{Image Affine Transformation}
 

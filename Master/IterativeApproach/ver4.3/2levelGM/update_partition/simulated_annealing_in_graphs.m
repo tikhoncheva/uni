@@ -4,6 +4,9 @@
 function [LLmatches_new, HLG1, HLG2] = simulated_annealing_in_graphs(LLG1, LLG2, HLG1, HLG2, LLmatches, Mscore, T)
 nIt = 1;
 
+if size(LLmatches,1)<2
+    nIt = 0;
+end 
 
 for k = 1:nIt
     

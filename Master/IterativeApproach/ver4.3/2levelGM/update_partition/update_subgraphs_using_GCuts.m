@@ -52,8 +52,8 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
        Pr_mV2 = [invH(1), invH(2); invH(3), invH(4)] * mV2' + repmat([invH(5);invH(6)],1,size(mV2,1));
        Pr_mV2 = Pr_mV2';
        
-       D1_2(ind_mV1,ai) = sqrt((mV2(:,1)-Pr_mV1(:,1)).^2+(mV2(:,2)-Pr_mV1(:,2)).^2) ...
-                        + sqrt((Pr_mV2(:,1)-mV1(:,1)).^2+(Pr_mV2(:,2)-mV1(:,2)).^2);
+       D1_2(ind_mV1,ai) = 0.5*sqrt((mV2(:,1)-Pr_mV1(:,1)).^2+(mV2(:,2)-Pr_mV1(:,2)).^2) ...
+                        + 0.5*sqrt((Pr_mV2(:,1)-mV1(:,1)).^2+(Pr_mV2(:,2)-mV1(:,2)).^2);
        D2_2(ind_mV2,aj) = D1_2(ind_mV1,ai);
    end
    
