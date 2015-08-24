@@ -6,7 +6,7 @@ nOut = 50;                         % number of outliers
 % Parameters of affine transformation
 aff_transfo_scale = 1;          % scale factor
 aff_transfo_angle = 0;          % rotation angle
-sig = 0.03;                     % deformation
+sig = 0.00;                     % deformation
 
 % Permute nodes in the second graph
 bPermute = 1;                 % boolean, permute the nodes of the second graph

@@ -56,10 +56,10 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
 
    % find anchors with more than 3 nodes in the underlying subgraphs
    sum_nodes_in_subG1 = sum(old_U1);
-   ind_anchors1_rule1 = sum_nodes_in_subG1>=3;
+   ind_anchors1_rule1 = sum_nodes_in_subG1>3;
 
    sum_nodes_in_subG2 = sum(old_U2);
-   ind_anchors2_rule1 = sum_nodes_in_subG2>=3;
+   ind_anchors2_rule1 = sum_nodes_in_subG2>3;
 
    % --------------------------------------------------------------------
    % Rule 2
