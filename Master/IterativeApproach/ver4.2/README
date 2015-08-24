@@ -13,8 +13,13 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 4.2
 -----------------------------------------------------------------------------
- Extansion of the version 4.1, that includes image pyramid to work with the big 
+Extansion of the version 4.1, that includes image pyramid to work with the big 
  images.
+ 
+ 
+ 24.08
+ <->  Error in matchLLGraphs.m
+ 
  
  19.08    
  + update_subgraphs

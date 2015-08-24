@@ -18,6 +18,8 @@ Ver 4.3
   over the other cluster
   use simulated annealing on the whole graph to get out from the local minima
   
+  <-> Error in matchLLGraphs.m
+  
  21.08
   new simulated annealing function for the subgraphs and the whole graph
   

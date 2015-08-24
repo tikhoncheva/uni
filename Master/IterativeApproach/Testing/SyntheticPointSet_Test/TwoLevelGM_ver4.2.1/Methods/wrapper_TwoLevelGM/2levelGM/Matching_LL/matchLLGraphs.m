@@ -152,20 +152,21 @@ if (nargin == 7)
    LLG_matched_pairs_prev = LLMatched_prev.matched_pairs;
    
    % for unachanged subraphs copy matching results from prev iterations
-   ind_same_anchor_matches = HLG_matched_pairs(:,3);
-   ind_same_anchor_matches(ind_same_anchor_matches==0) = [];   
-   ind_same_matches = ismember(LLG_matched_pairs_prev(:,3), ind_same_anchor_matches);                                       
-   matched_pairs_prev_it = LLG_matched_pairs_prev(ind_same_matches,1:3);
+   I = [HLG_matched_pairs(:,3), (1:size(HLG_matched_pairs,1))']; % first column : indices of the unchanged anchor matches in prev iteration
+   I(I(:,1)==0,:) = [];                                          % second column: indices of the unchanged anchor matches in curr iteration
    
-   lobjval(ind_same_anchor_matches) = LLMatched_prev.lobjval(ind_same_anchor_matches);
-    
+   ind_same_matches = ismember(LLG_matched_pairs_prev(:,3), I(:,1));       
+   same_matches_prev_it = LLG_matched_pairs_prev(ind_same_matches,1:3);
+   [~, indI] = ismember(same_matches_prev_it(:,3), I(:,1));
+   same_matches_prev_it(:,3) = I(indI,2);                       % replace old indices (prev it) with the new one
+   
+   lobjval(I(:,2)) = LLMatched_prev.lobjval(I(:,1));
     % combine both results
    LLMatches.lobjval = lobjval;
-   LLMatches.matched_pairs = [LLMatches.matched_pairs; matched_pairs_prev_it];
+   LLMatches.matched_pairs = [LLMatches.matched_pairs; same_matches_prev_it];
 %    LLMatches.objval = sum(lobjval);
-%   LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
-   LLMatches.objval = matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
-    
+%    LLMatches.objval = sum(lobjval)+ matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
+    LLMatches.objval = matching_score_LL(LLG1, LLG2, LLMatches.matched_pairs);
 end
     
 % display(sprintf('Summary %f sec', toc));
