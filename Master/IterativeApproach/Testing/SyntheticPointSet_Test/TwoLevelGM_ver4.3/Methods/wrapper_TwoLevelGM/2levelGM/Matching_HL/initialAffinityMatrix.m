@@ -8,7 +8,9 @@
 
 function [affmatrix, HLG1, HLG2] = initialAffinityMatrix(LLG1, LLG2, HLG1, HLG2, corrmatrix)
 
-t1 = tic;
+fprintf('initialize affinity matrix (HL)\n');
+
+% t1 = tic;
 
 nA1 = size(HLG1.V,1);
 nA2 = size(HLG2.V,1);

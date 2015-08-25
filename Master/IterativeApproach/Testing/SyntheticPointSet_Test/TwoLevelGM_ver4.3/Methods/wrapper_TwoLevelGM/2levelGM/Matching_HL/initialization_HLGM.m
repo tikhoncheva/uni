@@ -4,7 +4,7 @@
  
 function [corrmatrix, affmatrix, HLG1, HLG2] = initialization_HLGM(LLG1, LLG2, HLG1, HLG2, varargin)
 
-% fprintf('\n---- preprocessing: ');
+fprintf('\n---- preprocessing: ');
 
 % initial affinity matrix for matching Higher Level Graphs
 % tic

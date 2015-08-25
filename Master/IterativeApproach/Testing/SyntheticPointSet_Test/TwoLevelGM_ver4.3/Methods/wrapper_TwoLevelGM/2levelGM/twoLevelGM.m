@@ -30,10 +30,10 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
         if it==24
             display('');
         end
-        tic;
+%         tic;
         [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
                 twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-        time = time + toc;   
+%         time = time + toc;   
             
         if it>=2 && abs(LLGmatches(it).objval-LLGmatches(it-1).objval)<10^(-5)
             count = count + 1;

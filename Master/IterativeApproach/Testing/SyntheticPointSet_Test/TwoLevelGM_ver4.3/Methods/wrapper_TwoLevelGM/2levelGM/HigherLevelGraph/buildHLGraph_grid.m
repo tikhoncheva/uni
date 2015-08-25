@@ -27,13 +27,13 @@
 function [HLG] = buildHLGraph_grid(ID, LLG, agparam)
 
 fprintf(' - build higher level graph (anchor graph)');
-t2 = tic;
+% t2 = tic;
 
 nr = agparam.grid_nr;       % number of rows in the grid
 nc = agparam.grid_nc;       % number of columns in the grid
 
 nA = nr*nc;                 % each grid cell is represented by the anchor
-fprintf('Number of Anchors %d', nA );
+fprintf('Number of Anchors %d\n', nA );
 
 nV = size(LLG.V,1);                 % number of nodes in the LLG
 
@@ -75,7 +75,7 @@ HLG.F = zeros(size(HLG.V,1),1); % mark all subgraphs as new
 HLG.D_appear = [];
 HLG.D_struct = cell(nA,1);   
 
-fprintf('   finished in %f sec\n', toc(t2));
+% fprintf('   finished in %f sec\n', toc(t2));
     
 
 end

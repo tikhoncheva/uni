@@ -1,6 +1,6 @@
 %% Configuration Settings
 nSet=0; %% Display (bool) / Display Name / Variable Name / Variable Value, Vector, String
-nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 1};
+nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 2};
 switch 1
     case 1 % Outlier Test
         nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};

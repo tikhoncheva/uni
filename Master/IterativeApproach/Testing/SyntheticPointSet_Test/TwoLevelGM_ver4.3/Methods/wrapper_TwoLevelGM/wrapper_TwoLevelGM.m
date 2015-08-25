@@ -20,5 +20,4 @@ X(ind) = 1;
 X = X(:);
 score = LLGmatches(it).objval;
 
-
 end

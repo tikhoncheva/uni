@@ -18,7 +18,7 @@
 
 function [HLMatches] = matchHLGraphs(corrmatrix, affmatrix, varargin)
 
-% fprintf('\n---- ');
+% fprintf('\n----');
 
 try 
     n1 = size(corrmatrix, 1);  % number of nodes in the first graph

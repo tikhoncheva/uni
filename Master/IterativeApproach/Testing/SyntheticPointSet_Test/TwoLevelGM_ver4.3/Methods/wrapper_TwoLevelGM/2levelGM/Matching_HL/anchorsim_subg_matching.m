@@ -8,6 +8,8 @@
 %
 function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 
+fprintf('--- anchor similarity');
+
     nV1 = size(LLG1.V,1); nV2 = size(LLG2.V,1);
     nA1 = size(HLG1.V,1); nA2 = size(HLG2.V,1);
     
@@ -37,6 +39,7 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        ind_Vai = HLG1.U(:,ai);
        
        Vai = LLG1.V(ind_Vai,1:2)'; nVai = size(Vai,2); % 2 x nVai
+       
        if (~isempty(LLG1.D))
            Dai = LLG1.D(:, ind_Vai);
        else 
@@ -47,6 +50,7 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 
        ind_Vaj = HLG2.U(:, aj);
        Vaj = LLG2.V(ind_Vaj,1:2)'; nVaj = size(Vaj,2);  % 2 x  nVaj
+       
        if (~isempty(LLG2.D))
            Daj = LLG2.D(:, ind_Vaj);
        else 
@@ -58,7 +62,7 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
 
        % compute initial affinity matrix
-       if (size(Vai,2)==0 || size(Vaj,2)==0)
+       if (nVai==0 || nVaj==0 || nVai==1 || nVaj==1)
            continue;
        else
            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
