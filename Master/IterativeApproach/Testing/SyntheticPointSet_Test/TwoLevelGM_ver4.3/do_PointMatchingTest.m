@@ -75,9 +75,18 @@ meanMatchScoreMP = mean(MatchScoreMP,3);
 
 %%
 handleCount = 0;
-yData = meanAccuracy; yLabelText = 'accuracy'; plotResults;
-yData = meanMatchScore; yLabelText = 'objective score'; plotResults;
-yData = meanTime; yLabelText = 'running time'; plotResults;
+yData = meanAccuracy; 
+L = meanAccuracy-min(Accuracy,[],3);
+U = max(Accuracy,[],3)-meanAccuracy; yLabelText = 'accuracy'; plotResults;
+
+yData = meanMatchScore;
+L = meanMatchScore-min(MatchScore,[],3);
+U = max(MatchScore,[],3)-meanMatchScore; yLabelText = 'objective score'; plotResults;
+
+yData = meanTime;
+L = meanTime-min(Time,[],3);
+U = max(Time,[],3)-meanTime;
+yLabelText = 'running time'; plotResults;
 
 %%
 T1 = repmat(Time_init(:,1,:), 1, length(methods)-1,1);
@@ -86,4 +95,7 @@ Time1 = Time + [T1, T2];
 
 meanTime1 = mean(Time1,3);
 
-yData = meanTime1; yLabelText = 'running time + initialization'; plotResults;
+yData = meanTime1;
+L = meanTime1-min(Time1,[],3);
+U = max(Time1,[],3)-meanTime1;
+yLabelText = 'running time + initialization'; plotResults;

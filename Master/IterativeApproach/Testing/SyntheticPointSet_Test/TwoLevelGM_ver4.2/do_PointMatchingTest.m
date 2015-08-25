@@ -32,6 +32,10 @@ plotSet.font = '\fontname{Arial}'; % Font default
 %% Test Methods
 Accuracy = zeros(length(settings{Con}{4}), length(methods), Set.nTest);
 MatchScore = zeros(length(settings{Con}{4}), length(methods), Set.nTest);
+
+% etikhonc, 25.08.2015, time for initialization of the problem
+Time_init = zeros(length(settings{Con}{4}), 2, Set.nTest);
+
 Time = zeros(length(settings{Con}{4}), length(methods), Set.nTest);
 MatchScoreRaw = zeros(length(settings{Con}{4}), length(methods), Set.nTest);
 MatchScoreMP = zeros(length(settings{Con}{4}), length(methods), Set.nTest);
@@ -41,7 +45,12 @@ fprintf(['Experiment starts: ' num2str(t_start(4)) ':' num2str(t_start(5)) ':' n
 for kk = 1:Set.nTest, fprintf('Test: %d of %d ', kk, Set.nTest);
     for i = 1:length(settings{Con}{4})
         eval(['Set.' settings{Con}{3} '=' num2str(settings{Con}{4}(i)) ';']);
-        problem = makePointMatchingProblem(Set);
+        
+        % etikhonc, 25.08.2015
+        [problem, time_s, time_g] = makePointMatchingProblem(Set);
+        Time_init(i,1,kk) = time_s;
+        Time_init(i,2,kk) = time_g;
+        
         eval(['Set.' settings{Con}{3} '= settings{' num2str(Con) '}{4};']);
         for j = 1:length(methods)
             [Accuracy(i,j,kk) MatchScore(i,j,kk) Time(i,j,kk) tmpX tmpXraw MatchScoreRaw(i,j,kk) MatchScoreMP(i,j,kk)] ...
@@ -66,6 +75,27 @@ meanMatchScoreMP = mean(MatchScoreMP,3);
 
 %%
 handleCount = 0;
-yData = meanAccuracy; yLabelText = 'accuracy'; plotResults;
-yData = meanMatchScore; yLabelText = 'objective score'; plotResults;
-yData = meanTime; yLabelText = 'time'; plotResults;
+yData = meanAccuracy; 
+L = meanAccuracy-min(Accuracy,[],3);
+U = max(Accuracy,[],3)-meanAccuracy; yLabelText = 'accuracy'; plotResults;
+
+yData = meanMatchScore;
+L = meanMatchScore-min(MatchScore,[],3);
+U = max(MatchScore,[],3)-meanMatchScore; yLabelText = 'objective score'; plotResults;
+
+yData = meanTime;
+L = meanTime-min(Time,[],3);
+U = max(Time,[],3)-meanTime;
+yLabelText = 'running time'; plotResults;
+
+%%
+T1 = repmat(Time_init(:,1,:), 1, length(methods)-1,1);
+T2 = Time_init(:,2,:);
+Time1 = Time + [T1, T2];
+
+meanTime1 = mean(Time1,3);
+
+yData = meanTime1;
+L = meanTime1-min(Time1,[],3);
+U = max(Time1,[],3)-meanTime1;
+yLabelText = 'running time + initialization'; plotResults;

@@ -7,7 +7,10 @@ for k = 1:length(methods)
         'LineStyle', methods(k).lineStyle, ...
         'Marker', methods(k).marker, ...
         'MarkerSize', plotSet.markerSize);
+    
 end
+errorbar(settings{Con}{4}, yData(:,end), L(:,end), U(:,end));
+
 Xmin = min(settings{Con}{4}); Xmax = max(settings{Con}{4});
 Ymin = min(yData(:)); Ymax = max(yData(:));
 axis([Xmin Xmax Ymin-0.02*(Ymax-Ymin) Ymax+0.02*(Ymax-Ymin)]);
@@ -32,4 +35,4 @@ for k = length(methods):-1:1
 end
 hold off;
 
-clear Xmin Xmax Ymin Ymax yData yLabelText hLegend k
+clear Xmin Xmax Ymin Ymax yData L U yLabelText hLegend k
