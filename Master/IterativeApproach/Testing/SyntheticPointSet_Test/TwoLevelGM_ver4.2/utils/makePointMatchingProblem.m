@@ -1,5 +1,7 @@
 %% Make test problem
-function [ problem ] = makePointMatchingProblem( Set )
+function [ problem, T_summary, T_InitGraphs ] = makePointMatchingProblem( Set )
+
+t1 = tic; t2 = tic;
 %% Get values from structure
 strNames = fieldnames(Set);
 for i = 1:length(strNames), eval([strNames{i} '= Set.' strNames{i} ';']); end
@@ -20,6 +22,24 @@ if bOutBoth, P2(:,(nInlier+1):end) = Pout; else P2 = [P2 Pout]; end
 if bPermute, seq = randperm(nP2); P2(:,seq) = P2; seq = seq(1:nP1); else seq = 1:nP1; end
 %0
 P1 = P1'; P2 = P2';
+
+
+%% Create two initial (lower level) graphs (Changes E.Tikhonc)
+E1 = ones(nP1); E2 = ones(nP2); 
+E1(1:nP1+1:end) = 0; E2(1:nP2+1:end) = 0;
+clear L1; clear L2;
+
+[L1(:,1), L1(:,2)] = find(E1);
+[L2(:,1), L2(:,2)] = find(E2);
+
+E1 = unique(sort(L1,2), 'rows');  % delete same edges
+E2 = unique(sort(L2,2), 'rows');  % delete same edges
+
+LLG1 = struct('V', P1,'D', [], 'E', E1, 'W', Inf*ones(nP1,1));
+LLG2 = struct('V', P2,'D', [], 'E', E2, 'W', Inf*ones(nP2,1));
+
+T_InitGraphs = toc(t2);
+clear L1; clear L2; clear E1; clear E2;
 
 %% 2nd Order Matrix
 E12 = ones(nP1,nP2);
@@ -57,18 +77,6 @@ GT.matrix = zeros(nP1, nP2);
 for i = 1:nP1, GT.matrix(i,seq(i)) = 1; end
 GT.bool = GT.matrix(:);
 
-%% Create two initial (lower level) graphs (Changes E.Tikhonc)
-
-E1(1:nP1+1:end) = 0; E2(1:nP2+1:end) = 0;
-clear L1; clear L2;
-[L1(:,1), L1(:,2)] = find(E1);
-[L2(:,1), L2(:,2)] = find(E2);
-
-E1 = unique(sort(L1,2), 'rows');  % delete same edges
-E2 = unique(sort(L2,2), 'rows');  % delete same edges
-
-LLG1 = struct('V', P1,'D', [], 'E', E1, 'W', Inf*ones(nP1,1));
-LLG2 = struct('V', P2,'D', [], 'E', E2, 'W', Inf*ones(nP2,1));
 
 %% Return the value
 problem.nP1 = nP1;
@@ -88,4 +96,6 @@ problem.GTbool = GT.bool;
 problem.LLG1 = LLG1;
 problem.LLG2 = LLG2;
 
+%%
+T_summary = toc(t1);
 end
