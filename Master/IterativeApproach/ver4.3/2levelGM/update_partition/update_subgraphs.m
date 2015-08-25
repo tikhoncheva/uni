@@ -65,12 +65,12 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    % Rule 2
    % --------------------------------------------------------------------
    
+   new_bU1 = logical(new_U1); % binary matrix
+   
    % subgraphs of the first graph
    ind_anchors1_rule2 = find(~ind_anchors1_rule1);
    for i = 1:numel(ind_anchors1_rule2)
        ai = ind_anchors1_rule2(i);
-
-       new_bU1 = logical(new_U1); % binary matrix
 
        ind_Vai = find(new_bU1(:,ai));
        Vai = LLG1.V(ind_Vai,1:2);      % coordinates of the nodes in the subgraph G_ai
@@ -83,20 +83,35 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
            nn_Vai = knnsearch(LLG1.V(ind_feas_neighb,1:2), Vai, 'K', 1);   %indices of nodes in LLG2.V
            nn_Vai = ind_feas_neighb(nn_Vai);
            new_U1(ind_Vai, :) = new_U1(nn_Vai, :);
+           
+           % if nodes were matched move their matches in the curresponding
+           % subgraphs in the second graph
+           [~, is_matched] = ismember(ind_Vai, LLGmatches.matched_pairs(:,1));
+           is_matched(is_matched==0) = [];
+           ind_MVai = LLGmatches.matched_pairs(is_matched,2);
+           
+           if sum(logical(is_matched))>0
+                [new_ai,~] = find(new_U1(nn_Vai, :)');
+                [~,ind_new_aj] = ismember(new_ai, HLGmatches.matched_pairs(:,1));
+                new_aj = HLGmatches.matched_pairs(ind_new_aj,2);
+                
+                ind_new_aj = sub2ind(size(new_U2), ind_MVai, new_aj);
+                new_U2(ind_MVai,:) = 0; new_U2(ind_new_aj) = 1;
+                new_U2(ind_MVai, new_aj) = new_U2(ind_MVai, new_aj).*repmat(exp(-W2(new_aj)), numel(ind_MVai), 1);
+            
+           end
        end
    end
 
+   new_bU2 = logical(new_U2); % binary matrix
 
    % subgraphs of the second graph
    ind_anchors2_rule2 = find(~ind_anchors2_rule1);
    for j = 1:numel(ind_anchors2_rule2)
        aj = ind_anchors2_rule2(j);
 
-       new_bU2 = logical(new_U2); % binary matrix
-
-%        ind_Vaj = find(HLG2.U(   :,aj));
        ind_Vaj = find(new_bU2(:,aj));
-       Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_ai
+       Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_aj
 
        if ~isempty(Vaj)   % it can happen, that nodes were already adjusted to the new anchors
            new_U2_cut = new_bU2(:,ind_anchors2_rule1);
@@ -106,6 +121,23 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
            nn_Vaj = knnsearch(LLG2.V(ind_feas_neighb,1:2), Vaj, 'K', 1);   %indices of nodes in LLG2.V
            nn_Vaj = ind_feas_neighb(nn_Vaj);
            new_U2(ind_Vaj, :) = new_U2(nn_Vaj, :);
+           
+           % if nodes were matched move their matches in the curresponding
+           % subgraphs in the second graph
+           [~, ind_MVaj] = ismember(ind_Vaj, LLGmatches.matched_pairs(:,2));
+           
+           if sum(logical(ind_MVaj))>0
+                [new_aj,~] = find(new_U2(nn_Vaj, :)');
+                [~,ind_new_ai] = ismember(new_aj, HLGmatches.matched_pairs(:,2));
+                new_ai = HLGmatches.matched_pairs(ind_new_ai,1);
+                
+                ind_MVaj(ind_MVaj==0) = [];
+                ind_new_ai = sub2ind(size(new_U1), ind_MVaj, new_ai);
+                new_U2(ind_MVaj,:) = 0; new_U1(ind_new_ai) = 1;
+                new_U1(ind_MVaj, new_ai) = new_U1(ind_MVaj, new_ai).*repmat(exp(-W1(new_ai)), numel(ind_MVaj), 1);
+            
+           end
+           
        end
    end
 
@@ -182,11 +214,11 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
                 [nn_PVai, ~] = knnsearch(LLG2.V(:,1:2), PVai);   %indices of nodes in LLG2.V
                 [nn_PVaj, ~] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V
                               
-                new_U1(ind_Vai, ai) = exp(-err);
-                new_U1(nn_PVaj, ai) = exp(-err);
+                new_U1(ind_Vai, ai) = min(0.975, exp(-err));
+                new_U1(nn_PVaj, ai) = min(0.975, exp(-err));
                 
-                new_U2(ind_Vaj, aj) = exp(-err);
-                new_U2(nn_PVai, aj) = exp(-err);
+                new_U2(ind_Vaj, aj) = min(0.975,exp(-err));
+                new_U2(nn_PVai, aj) = min(0.975,exp(-err));
             end % err<err_eps
             
         else % Rule 2

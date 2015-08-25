@@ -62,30 +62,52 @@ function [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
    
    
    %% Pairwise: Adjacency matrix of the graphs
-   pairwise1 = sparse(LLG1.E(:,1), LLG1.E(:,2),ones(size(LLG1.E,1),1));
-   pairwise2 = sparse(LLG2.E(:,1), LLG2.E(:,2),ones(size(LLG2.E,1),1));
+    AdjM1 = zeros(nV1, nV1);
+    E1 = LLG1.E;
+    E1 = [E1; [E1(:,2) E1(:,1)]];
+    ind = sub2ind(size(AdjM1), E1(:,1), E1(:,2));
+    AdjM1(ind) = 1;
+    
+    G1 = squareform(pdist(LLG1.V(:,1:2), 'euclidean')); if isempty(G1) G1=[0]; end;
+    G1(~AdjM1) = 0;
+    
+    pairwise1 = sparse(G1);
+    
+    AdjM2 = zeros(nV2, nV2);
+    E2 = LLG2.E;
+    E2 = [E2; [E2(:,2) E2(:,1)]];
+    ind = sub2ind(size(AdjM2), E2(:,1), E2(:,2));
+    AdjM2(ind) = 1;
+    
+    G2 = squareform(pdist(LLG2.V(:,1:2), 'euclidean')); if isempty(G1) G2=[0]; end;
+    G2(~AdjM2) = 0;
+    
+    pairwise2 = sparse(G2);    
+
+%    pairwise1 = sparse(LLG1.E(:,1), LLG1.E(:,2),ones(size(LLG1.E,1),1));
+%    pairwise2 = sparse(LLG2.E(:,1), LLG2.E(:,2),ones(size(LLG2.E,1),1));
    
    %% Labelcost:
    ind_HLG1_E = sub2ind([nA1,nA1], HLG1.E(:,1), HLG1.E(:,2));
-   labelcost1 = zeros(nA1);
-   labelcost1(ind_HLG1_E) = 1;
+   labelcost1 = ones(nA1);
+   labelcost1(ind_HLG1_E) = 0;
    
    ind_HLG2_E = sub2ind([nA2,nA2], HLG2.E(:,1), HLG2.E(:,2));
-   labelcost2 = zeros(nA2);
-   labelcost2(ind_HLG2_E) = 1;
+   labelcost2 = ones(nA2);
+   labelcost2(ind_HLG2_E) = 0;
    
    %% Apply Graph Cut   
    [Lab1, E1, E1_new] = GCMex(initLab1, single(unary1), pairwise1, single(labelcost1),0); % use swap
    [Lab2, E2, E2_new] = GCMex(initLab2, single(unary2), pairwise2, single(labelcost2),0); % use swap
 
    
-   %% new correspondence matrix between nodes and anchors
-   ind_Lab1 = sub2ind([nV1, nA1], [1:nV1]', Lab1);
+   %% new correspondence matrix between nodes and anchors 
+   ind_Lab1 = sub2ind([nV1, nA1], ind_V1, Lab1);
    new_U1 = false(nV1, nA1);
    new_U1(ind_Lab1) = true;
    HLG1.U = new_U1;
-  
-   ind_Lab2 = sub2ind([nV2, nA2], [1:nV2]', Lab2);
+   
+   ind_Lab2 = sub2ind([nV2, nA2], ind_V2, Lab2);
    new_U2 = false(nV2, nA2);
    new_U2(ind_Lab2) = true;
    HLG2.U = new_U2;

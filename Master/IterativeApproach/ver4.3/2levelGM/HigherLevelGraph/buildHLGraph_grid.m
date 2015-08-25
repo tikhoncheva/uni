@@ -66,6 +66,36 @@ for j = 1:nc
 end
 assert(sum(HLG.U(:))==nV, 'not all nodes were assigned to the anchors');
 
+% eliminate subgraphs with less than 4 nodes
+sum_nodes_in_subG = sum(HLG.U);
+sum_nodes_in_subG(sum_nodes_in_subG==0) = inf;
+ind_subG_to_del = sum_nodes_in_subG>0 & sum_nodes_in_subG<=3; % also subgraph with 3 nodes is is too small
+while sum(ind_subG_to_del)>0
+    
+    [~, minpos] = min(sum_nodes_in_subG);
+    a = minpos;
+    
+    ind_Va = find(HLG.U(:,a));
+    Va = LLG.V(ind_Va,1:2);      % coordinates of the nodes in the subgraph G_a
+    
+    ind_feas_anchors = (1:nA);
+    ind_feas_anchors(a) = []; ind_feas_anchors(sum_nodes_in_subG==0) = [];
+    
+    U_cut = HLG.U(:,ind_feas_anchors);
+    [ind_feas_neighb, ~]= find(U_cut);
+    ind_feas_neighb = unique(ind_feas_neighb);
+
+    nn_Va = knnsearch(LLG.V(ind_feas_neighb,1:2), Va, 'K', 1);   %indices of nodes in LLG2.V
+    nn_Va = ind_feas_neighb(nn_Va);
+    HLG.U(ind_Va, :) = HLG.U(nn_Va, :);
+    
+    
+    sum_nodes_in_subG = sum(HLG.U);
+    sum_nodes_in_subG(sum_nodes_in_subG==0) = inf;
+    ind_subG_to_del = sum_nodes_in_subG>0 & sum_nodes_in_subG<=3;
+end
+
+
 HLG.E(HLG.E(:,1)==HLG.E(:,2),:) = [];
 HLG.E = unique(sort(HLG.E,2), 'rows');  % delete same edges
 
