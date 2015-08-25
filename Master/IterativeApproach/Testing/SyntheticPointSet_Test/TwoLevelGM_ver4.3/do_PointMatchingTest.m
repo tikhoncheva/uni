@@ -80,7 +80,7 @@ yData = meanMatchScore; yLabelText = 'objective score'; plotResults;
 yData = meanTime; yLabelText = 'running time'; plotResults;
 
 %%
-T1 = rempat(Time_init(:,1,:), 1, Set.nTest-1,1);
+T1 = repmat(Time_init(:,1,:), 1, length(methods)-1,1);
 T2 = Time_init(:,2,:);
 Time1 = Time + [T1, T2];
 
