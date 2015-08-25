@@ -88,6 +88,11 @@ L = meanTime-min(Time,[],3);
 U = max(Time,[],3)-meanTime;
 yLabelText = 'running time'; plotResults;
 
+%yData = meanAccuracy; yLabelText = 'accuracy'; plotResults;
+%yData = meanMatchScore; yLabelText = 'objective score'; plotResults;
+%yData = meanTime; yLabelText = 'running time'; plotResults;
+
+
 %%
 T1 = repmat(Time_init(:,1,:), 1, length(methods)-1,1);
 T2 = Time_init(:,2,:);
@@ -99,3 +104,5 @@ yData = meanTime1;
 L = meanTime1-min(Time1,[],3);
 U = max(Time1,[],3)-meanTime1;
 yLabelText = 'running time + initialization'; plotResults;
+
+%yData = meanTime1; yLabelText = 'running time + initialization'; plotResults;
