@@ -28,7 +28,7 @@
 %\usepackage{pdfpages} % insert images saved as pdf
 
 % pseudo algorithms
-\usepackage[ruled,vlined]{algorithm2e}
+	\usepackage[ruled,vlined]{algorithm2e}
 
 % lscape.sty Produce landscape pages in a (mainly) portrait document.
 \usepackage{lscape}
@@ -44,6 +44,8 @@
 \def\argmax{\mathop{\rm argmin}}						% argmin
 \def\median{\mathop{\rm median}} 						% median
 \def\dist{\mathop{\rm dist}} 						    % dist
+
+\def\datum{Version of 26.08.2015} 
 
 \makeatletter
 \providecommand\phantomcaption{\caption@refstepcounter\@captype}
@@ -72,7 +74,7 @@
 % ---------------------------------------          Title
 \title{Graph Matching Framework}
 \author{Ekaterina Tikhoncheva}
-\date{} 
+\date{\datum} 
 
 \maketitle 
 
@@ -82,7 +84,7 @@
 % ---------------------------------------        Experimantal Evaluation
 \section{Experimental Evaluation}
 
-In this chapter we present the evaluation results of the proposed algorithm on some synthetic data and on some real images.
+In this chapter we present the evaluation results of the proposed algorithm (we call it further \emph{2LevelGM}) on some synthetic data and on some real images.
 
 \subsection{Synthetic Point set Matching}
 
@@ -90,99 +92,267 @@ For the first test we adopted a commonly used approach of evaluation Graph Match
 
 For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R}^2$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional normal distributed points with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
 
-In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following state of the art methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. Because of those algorithms work with the full affinity matrix of the Graph Matching Problem, whose size is equal to $n_1n_2\times n_1n_2$, it is time and memory consuming to perform tests for graphs with more than $200$ nodes each. Our algorithms, however, was created to work with graphs bigger than that. To be able to perform the comparison, we fixed the number $n_1$ of points in the first set to $100$ and vary the number of outliers $\bar{n}$ in the second set from $0$ to $50$. The discretization of the continuous solution is performed in all cases using greedy assignment from \cite{Leordeanu2005}.
+In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following well known 
+%\comments{state of the art
+methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. By performing the comparison, one should consider following differences between the selected algorithms and our one.
 
-For the first test we set number of outliers $\bar{n}$ to zero and vary only the deformation noise $\sigma^2$. We call this test \emph{deformation test}. It's results are shown at the Fig.~\ref{fig:def_test1} and \ref{fig:def_test2}.
+First of all, it is time and memory consuming to perform tests for graphs with more than $200$ nodes each, because of the \emph{MPM}, \emph{RRWM}, \emph{SM}, \emph{IPFP} algorithms work with the full affinity matrix of the Graph Matching Problem, whose size is equal to $n_1n_2\times n_1n_2$.\footnote{The affinity matrix between two graphs with $200$ nodes each need then approximately $12Gb$ memory (double precision).} Our algorithms, however, was created to work with graphs bigger than that. To be able to perform the comparison, we fixed the number $n_1$ of points in the first set to $100$ and vary the number of outliers $\bar{n}$ in the second set from $0$ to $50$.
 
-In the second test, $outlier test$, we fix deformation noise $\sigma^2= 0.03$ and compare the behavior of the algorithms in case of increasing number of outliers $\bar{n}$ (see Fig.~\ref{fig:outlier_test1} and \ref{fig:outlier_test2}). 
+Secondary, we need to include initialization time and time for solution discretization into time measurement of the other algorithms. That was not initially done in \cite{Cho2014_Haystack}, but as \emph{2LevelGM} does this steps almost\footnote{Except the iterations where the local solution did not change} at each iteration, this change makes the comparison more fair. We use also greedy assignment based on \cite{Leordeanu2005} to discretize a solution and not Hungarian Algorithm as it was done in \cite{Cho2014_Haystack}.
+
+Thirdly, the used implementations of \emph{2LevelGM}, \emph{SM} and \emph{IPFP} are purely $MATLAB$ implementations, where some steps of \emph{MPM} and \emph{RRWM} were written using $C++$. This have important influence on the running time performance of the algorithms: optimized $C++$ code can be much faster, than vectorized $MATLAB$ version \ToDo{ref}.
+
+We perform two (\ToDo{three}) kinds of tests. In the first test we set number of outliers $\bar{n}$ to zero and vary only the deformation noise $\sigma^2$. We call this test \emph{deformation test}. \ToDo{In the second test, \emph{outlier test}, we do not have deformation noise ($\sigma^2= 0.0$) and compare the behavior of the algorithms in case of increasing number of outliers $\bar{n}$.} At least, in the third test, we perform Graph Matching in presence of both \emph{outliers} and \emph{deformation}. For this we fix deformation noise $\sigma^2= 0.03$ and increase iteratively the number of outliers $\bar{n}$. 
+
+During the work on the topic we had tried out different modifications of the initial idea of the Two Level Graph Matching Algorithm described in the section~\ToDo{ref}. In the following we shortly describe different setups of the algorithm and present results of the described tests.
+
+\subsubsection{\emph{2LevelGM} version 4.2}
+
+This version of the $2LevelGM$ uses \emph{HEM} aggregation schema to create the Higher Level Graph. Each anchor has two types of the descriptors: appearance based descriptor and structure based descriptor (see Sec.~\ToDo{ref} for more information). We use the Algorithm~\ToDo{1 ref} to update subgraphs after one iteration of our algorithm and following Simulated Annealing algorithm to avoid be caught in a local maximum:
+
+\vspace{10pt}
+\setcounter{algocf}{1}
+\begin{algorithm}[H]
+	\KwIn{ correspondence matrices between nodes of the initial\\
+		\hspace{45pt}graphs and anchors: $U^{Ia}$, $U^{Ja}$\\
+		\hspace{45pt}list of matches between the subgraphs: $m^a = \{(a_k, a_p)\}$;\\
+		\hspace{45pt}list of matches between the nodes: $m = \{(v_i, v_j)\}$;\\
+		\hspace{45pt}list of estimated affine transformations for each matched \\
+		\hspace{45pt}pair: $\{(T_{kp}, T_{pk})\}$ }
+		\hspace{45pt}current temperature $t$\\
+	\KwOut{updated $U^{Ia}$, $U^{Ja}$}
+	\nl $K=3$\\
+	\nl assign to each anchor $a_k\in V^{Ia}$ and $a_p\in V^{Ja}$, where $(a_k, a_p)\in m^a$ an error equal to $E = \min(err(T_{kp}), err(T_{pk}))$\\
+	\nl randomly select one nodes $v_i$ in the first graph $G^I$; move $v_i$ from the anchor $a_k$ to the one of its $K$ nearest anchors: $a_{k'}$\\
+	\nl randomly select one nodes $v_j$ in the second graph $G^J$; move $v_i$ from the anchor $a_p$ to the one of its $K$ nearest anchors: $a_{p'}$\\
+	\nl estimate new affine transformations between the anchors based on the this changes:$\{(\bar{T}_{kp}, \bar{T}_{pk})\}$ \\
+	\nl new error of the anchor pair  $(a_k, a_p)$ is $E^{new}=\min(err(\bar{T}_{kp}), err(\bar{T}_{pk}))$\\
+	\nl calculate the difference between the errors of the anchors $a_k, a_p$, affected by the move of the nodes $v_i$, $v_j$:\\
+	    $\Delta E_{a_k} = E^{new}_{a_k} - E_{a_k}$, $\Delta E_{a_k'} = E^{new}_{a_k'} - E_{a_k'}$\\
+  	    $\Delta E_{a_p} = E^{new}_{a_p} - E_{a_p}$  $\Delta E_{a_p'} = E^{new}_{a_p'} - E_{a_p'}$\\  	    
+  	\nl Are both $\Delta E_{a_k}$,  $\Delta E_{a_k'}$ ($\Delta E_{a_p}$, $\Delta E_{a_p'}$) negative, accept the changes in the $G^I$ ($G^J$) \\
+  	\nl Is only one of the differences negative, accept the changes in $G^I$ ($G^J$) with probability
+  	 $\exp(-\frac{\max(\Delta E_{a_k}, \Delta E_{a_k'})}{t})$ ($\exp(-\frac{\max(\Delta E_{a_p}, \Delta E_{a_p'})}{t})$)
+
+	\Return updated $U^{Ia}$, $U^{Ja}$
+	
+	\caption{SimulatedAnnealing}    \label{alg:sim_annealing_ver42}
+\end{algorithm}
+
+The changes in the temperature depending on the iteration number $it$ are defined by the function $t(it) = \frac{1}{it}$.
+To compensate possible error, accepted by the Simulated Annealaing, we apply afterwards again the Algorithm~\ToDo{1 ref}.
+
+\subsubsection{\emph{2LevelGM} version 4.2.1}
+
+This version of the $2LevelGM$ also uses Algorithm~\ToDo{1 ref} to update the subgraphs, but another annealing algorithm based on \cite{herault1990_SA} (see Algorithms~\ref{alg:SA_inSubg},~\ref{alg:SA_inGraph}). The whole subgraph updating procedure is the sequnce of following steps: apply first the Algorithm~\ref{alg:SA_inSubg}, than Algorithm~\ToDo{1 ref} to update subgraph and add afterwards additional distortion by using Algorithm~\ref{alg:SA_inGraph}.
+
+\vspace{10pt}
+\begin{algorithm}[H]
+	\nl calculate current global matching score $M$ \\
+	\nl select randomly a matched anchor $a_k\in V^{Ia}$ \\
+	\nl select randomly two matched nodes inside the subgraph associated with $a_k$: ($v^1_i, v^1_j$) and
+	($v^2_i, v^2_j$) \\
+	\nl delete those two matches and add two new one: ($v^1_i, v^2_j$) and ($v^2_i, v^1_j$) \\
+	\nl Calculate new global matching score $\bar{M}$ \\
+	\nl If $\Delta M = M - \bar{M}$ is negative accept the change, otherwise accept the change with probability $\exp(-\Delta M/t)$, where $t$ is the current temperature of the system
+	\caption{Simulated annealing in a subgraph}    \label{alg:SA_inSubg}
+\end{algorithm}
+
+\vspace{10pt}
+\begin{algorithm}[H]
+	\nl calculate current global matching score $M$ \\
+	\nl select randomly two pairs of matched nodes from the current list of matches  $m = \{(v_i, v_j)\}$: ($v^1_i, v^1_j$) and
+	($v^2_i, v^2_j$) \\
+	\nl delete those two matches from $m$ and add two new one: ($v^1_i, v^2_j$) and ($v^2_i, v^1_j$) \\
+	\nl Calculate new global matching score $\bar{M}$ \\
+	\nl If $\Delta M = M - \bar{M}$ is negative accept the change, otherwise accept the change with probability $\exp(-\Delta M/t)$, where $t$ is the current temperature of the system
+	\caption{Simulated annealing in a graph}    \label{alg:SA_inGraph}
+\end{algorithm}
+
+We also changed the colling law of the temperature: $t(it) = t_0\times 0.95^{it}$, where $t_0$ is initial temperature at the start of the algorithm. We set it to $200$.  
+
+The  results of test are represented on the Fig.\ref{fig:test1_ver421}-. The vertical sticks show the variation in the performance of the $2LevelGM$ Algorithms in all runs.
 
 \begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/accuracy_greedy"} 
-%		\caption{} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/accuracy_avg10t"} 
+		%		\caption{} 
 	\end{subfigure}%% 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/score_greedy"} 
-%		\caption{} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/score_avg10t"} 
+		%		\caption{} 
 	\end{subfigure} 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/time_greedy"} 
-%		\caption{} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/time_summary_avg10t"} 
+		%		\caption{} 
 	\end{subfigure} 	
-	\caption{ Deformation test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
-	\label{fig:def_test1}
+	\caption{Deformation test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+	\label{fig:test1_ver421}
 \end{figure}
 
 \FloatBarrier	
 
+%\begin{figure}[h] 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/accuracy_avg10tests"} 
+%		%		\caption{} 
+%	\end{subfigure}%% 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/score_avg10tests"} 
+%		%		\caption{} 
+%	\end{subfigure} 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/time_avg10tests"} 
+%		%		\caption{} 
+%	\end{subfigure} 	
+%	\caption{Average of $10$ outlier tests: $n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+%	\label{fig:test3_ver421}
+%\end{figure}
+
+\FloatBarrier
+
+\subsubsection{\emph{2LevelGM} version 4.3}
+
+After some test, we noticed, that the used previously coarsening algorithm to create Higher Level Graphs depends extremely on the graph density \ToDo{img}. In the case of the two synthetic points sets, where all points are assumed to be fully connected, this leads to great difference between the subgraph partitions of initial graphs at the fist iteration and therefor in divergence of the algorithm. 
+To cope with this problem, we replaced the coarsening algorithm by the following approach: we place a grid with the fix number of rows and columns over a graph $G$ and associate a nodes inside one cell of the grid with one anchor. The anchor graph created this way describes better the coarse spatial structure of the initial graph.
+
+Additionally to this we decline direct descriptors of the anchors and use the matching score of the two subgraphs as a similarity measure between the corresponding anchors. We also ignore the edges between the anchors. 
+
+It is important, that computation of the similarities between the anchors implies the solving Graph Matching Problem between all possible pairs of subgraphs at each iteration. This leads to the same complexity as initial one level matching problem on the whole graphs. Nevertheless we do perform the test of this version to verify the quality of the function for updating the subgraphs.
+
+We use the slightly modified Algorithm~\ToDo{1 ref} for the updating the subgraphs between the iterations: we first perform the second rule to eliminate subgraphs with less than $4$\footnote{Although $3$ nodes are sufficient to estimate an affine transformation, but the estimated affine transformation will always overfit} nodes and then apply the rule $1$~(see Sec.~\ToDo{ref}). To help the algorithm not to stay in a local maximum we use the Algorithm~\ref{alg:SA_inGraph} afterwards.
+
+The results of test can be seen on the Fig.~\ref{fig:test3_ver43}.
+
+%\begin{figure}[h] 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/accuracy_avg10t"} 
+%				\caption{} 
+%	\end{subfigure}%% 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/score_avg10t"} 
+%				\caption{} 
+%	\end{subfigure} 
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/time_avg10t"} 
+%				\caption{} 
+%	\end{subfigure} 	
+%	\caption{Outliers test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+%	\label{fig:test1_ver43}
+%\end{figure}
+%
+%\FloatBarrier	
+
 \begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/accuracy_avg10tests"} 
-%		\caption{} 
-	\end{subfigure}%% 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/score_avg10tests"} 
-%		\caption{} 
-	\end{subfigure} 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/deformation_test/time_avg10tests"} 
-%		\caption{} 
-	\end{subfigure} 	
-	\caption{ Average of $10$ deformation tests: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
-	\label{fig:def_test2}	
-\end{figure}
-
-\FloatBarrier	
-
-\begin{figure}[h] 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/accuracy_greedy"} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/outliertest_n50/accuracy_avg10t"} 
 		%		\caption{} 
 	\end{subfigure}%% 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/score_greedy"} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/outliertest_n50/score_avg10t"} 
 		%		\caption{} 
 	\end{subfigure} 
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/time_greedy"} 
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/outliertest_n50/time_summary_avg10t"} 
 		%		\caption{} 
 	\end{subfigure} 	
-	\caption{ Outliers test:$n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
-	\label{fig:outlier_test1}
-\end{figure}
-
-\FloatBarrier	
-
-\begin{figure}[h] 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/accuracy_avg10tests"} 
-		%		\caption{} 
-	\end{subfigure}%% 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/score_avg10tests"} 
-		%		\caption{} 
-	\end{subfigure} 
-	\begin{subfigure}[b]{0.3\textwidth}
-		\centering
-		\includegraphics[scale=0.25]{"fig_ver2108/syntheticPointSets/outliertest_n50/time_avg10tests"} 
-		%		\caption{} 
-	\end{subfigure} 	
-	\caption{ Average of $10$ outlier tests:$n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
-	\label{fig:outlier_test2}
+	\caption{Average of $10$ outlier tests: $n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+	\label{fig:test3_ver43}
 \end{figure}
 
 \FloatBarrier
+
+\subsubsection{\emph{2LevelGM} version 4.3.1}
+
+In this versions we adopt the main ideas of the previous version, but replace the Algorithm~\ToDo{1 ref} with the new one (see Algorithm~\ref*{alg:update_subgraphs_2}). This algorithm uses the estimated correspondences between the subgraphs to align them relative to each other (see Fig.~\ToDo{}).
+
+Assume, that we have anchor correspondence $(a_k,a_p), a_k\in V^{Ia}, a_p\in V^{Ja}$. According to the estimated transformation between the subgraphs $G_k^I$, $G_p^J$ we can place $G_k^I$ over $G_p^J$ in the second graph. The nodes in $V^J$, that are not included in $G_p^J$, but covered by $G_k^I$ can be then  included into the underlying subgraph based on their distance to nodes in overlying subgraph.
+
+\vspace{20pt}
+\begin{algorithm}[H]
+	\KwIn{ correspondence matrices between nodes of the initial\\
+		\hspace{45pt}graphs and anchors: $U^{Ia}$, $U^{Ja}$\\
+		\hspace{45pt}list of matches between the subgraphs: $m^a = \{(a_k, a_p)\}$;\\
+		\hspace{45pt}list of estimated affine transformations for each matched \\
+		\hspace{45pt}pair: $\{(T_{kp}, T_{pk})\}$ }
+	\KwOut{new correspondence matrices $\hat{U}^{Ia}$, $\hat{U}^{Ja}$}
+	\nl Set all entries in $\hat{U}^{Ia}$, $\hat{U}^{Ja}$ to be equal $\infty$ \\
+	\nl \ForEach{matched subgraph pair $(a_k, a_p)$}
+	{ project all nodes in $G_k^{I}$ according to the $T_{kp}$ into nodes of $G^{J}$ \\
+	  \ForEach{ projection $pv_i$ of the node $v_i\in V_k^{I}$}
+	  { find its nearest neighbor $v_j\in G^{J}$\\
+	  	$\hat{U}^{Ja}(v_j, a_p) = dist(pv_i, v_j)$
+	  }
+	  project all nodes in $G_p^{J}$ according to the $T_{pk}$ into nodes of $G^{I}$ \\
+	  \ForEach{ projection $pv_j$ of the node $v_j\in V_p^{J}$}
+	  { find its nearest neighbor $v_i\in G^{I}$\\
+	 	$\hat{U}^{Ia}(v_i, a_k) = dist(v_i, pv_j)$
+	  }
+	}			
+	\nl  set in each row of $\hat{U}^{Ia}$($\hat{U}^{Ja}$) the minimum element to $1$ and all other to $0$\\
+	\nl replace the rows with the minimum element $\infty$ with the same rows in $U^{Ia}$($U^{Ja}$) 
+	\Return $\hat{U}^{Ia}$, $\hat{U}^{Ja}$
+	
+	\caption{UpdateSubgraphs2}    \label{alg:update_subgraphs_2}
+\end{algorithm}
+
+
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/deformation/accuracy_avg10t"} 
+		%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/deformation/score_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/deformation/time_summary_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 	
+	\caption{Deformation test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+	\label{fig:test1_ver431}
+\end{figure}
+
+\FloatBarrier	
+
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/outliertest_n50/accuracy_avg10t"} 
+		%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/outliertest_n50/score_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3.1/outliertest_n50/time_summary_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 	
+	\caption{Average of $10$ outlier tests: $n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+	\label{fig:test3_ver431}
+\end{figure}
+
+\FloatBarrier
+
 
 \subsection{Image Affine Transformation}
 
