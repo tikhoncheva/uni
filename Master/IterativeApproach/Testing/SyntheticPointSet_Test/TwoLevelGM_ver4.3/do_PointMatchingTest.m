@@ -58,7 +58,12 @@ for kk = 1:Set.nTest, fprintf('Test: %d of %d ', kk, Set.nTest);
         end
         fprintf('.');
     end
-    clf; handleCount = 0; yData = mean(Accuracy(:,:,1:kk),3); yLabelText = 'Accuracy'; plotResults;
+    clf; handleCount = 0; 
+    yData = mean(Accuracy(:,:,1:kk),3);
+    L = yData-min(Accuracy(:,:,1:kk),[],3);
+    U = max(Accuracy(:,:,1:kk),[],3)-yData;
+    yLabelText = 'Accuracy'; plotResults;
+    
     str = ['Average accuracy from test 1 to test ' num2str(kk)]; title(str, 'FontSize', 16); drawnow;
     t_now = clock; elap = etime(t_now, t_start); t_end = add_time(t_start, elap/(kk)*(Set.nTest));
     fprintf(['  expected time to end' num2str(t_end(4)) ':' num2str(t_end(5)) ':' num2str(round(t_end(6))) '\n']);
