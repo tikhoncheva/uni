@@ -41,7 +41,7 @@ for i=1:maxFeatType
     end
     if isempty(range1) || isempty(range2),  continue;   end
     
-    tic;
+    %tic;
     if mparam.bReflective
         [ tmpInitialMatch, sqdist ] = descmatch_mcho_mex( viewInfo(view1).desc(range1,:)',...
             viewInfo(view2).desc_ref(range2,:)',bSelf , mparam.distRatio, mparam.distThres, mparam.kNN ) ;

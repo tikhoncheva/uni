@@ -29,7 +29,7 @@ labels = L12(:,1)';
 nodes = L12(:,2)';
 sol0 = ones(length(M),1)/length(M);
 
-tic;
+%tic;
 
 maxSteps = 50;
 

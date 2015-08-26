@@ -15,7 +15,7 @@
 
 function [LLG] = buildLLGraph(edges, descr, igparam)
 
-fprintf(' - build lower level graph');     t1 = tic;
+%fprintf(' - build lower level graph');     t1 = tic;
 
 V = edges(1:2,:)';   % vertices
 D = descr;          % descriptors of the vertices
@@ -47,5 +47,5 @@ LLG.D = D;
 LLG.E = E;
 % % LLG.W = ones(nV,1)*Inf;
 % LLG.W = ones(nV,1)*NaN;
-fprintf('   finished in %f sec\n', toc(t1));
+%fprintf('   finished in %f sec\n', toc(t1));
 end

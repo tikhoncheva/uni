@@ -1,6 +1,6 @@
 function [F,D] = computeDenseSIFT(img, fparam)
 
-fprintf(' - extract keypoints'); t1 = tic;
+fprintf(' - extract keypoints'); %t1 = tic;
 % border = 0;
 
 % radius = 6; %2;
@@ -58,7 +58,7 @@ lia = ismember(F([2,1],:)', subs, 'rows');
 F = F(:,lia);
 D = D(:,lia);
 
-fprintf('   %d keypoints in %f sec \n', size(F,2), toc(t1));
+%fprintf('   %d keypoints in %f sec \n', size(F,2), toc(t1));
 
 rmpath(genpath('../../Tools/piotr_toolbox_V3.26/'))
 rmpath(genpath('../../Tools/edges-master/'))

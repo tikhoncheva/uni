@@ -1,15 +1,15 @@
 %% Configuration Settings
 nSet=0; %% Display (bool) / Display Name / Variable Name / Variable Value, Vector, String
-nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 10};
-switch 1
+nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 1};
+switch 2
     case 1 % Outlier Test
-        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
-        nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:100};
-        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.03};
+        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 10};
+        nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:200};
+        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.00};
     case 2 % Deformation Test
         nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
         nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0};
-        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0:0.02:0.2};
+        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0:0.01:0.2};
     
     otherwise
 end
