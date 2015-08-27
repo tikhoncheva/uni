@@ -108,7 +108,7 @@ During the work on the topic we had tried out different modifications of the ini
 
 \subsubsection{\emph{2LevelGM} version 4.2}
 
-This version of the $2LevelGM$ uses \emph{HEM} aggregation schema to create the Higher Level Graph. Each anchor has two types of the descriptors: appearance based descriptor and structure based descriptor (see Sec.~\ToDo{ref} for more information). We use the Algorithm~\ToDo{1 ref} to update subgraphs after one iteration of our algorithm and following Simulated Annealing algorithm to avoid be caught in a local maximum:
+This version of the $2LevelGM$ uses \emph{HEM} aggregation schema to create the Higher Level Graph. Each anchor has two types of the descriptors: appearance based descriptor and structure based descriptor (see Sec.~\ToDo{ref} for more information). We use the Algorithm~\ToDo{1 ref} to update subgraphs after one iteration of our algorithm and following Simulated Annealing algorithm to avoid be caught in a local maximum (see Algorithm~\ref{alg:sim_annealing_ver42}): each matched anchor pair $(a_k,a_p)$ has an assigned error based on the results of the affine transformation estimation between the anchors; we randomly select one node in the first graph $G^I$ and one in the second $G^J$ and move them to the other anchors; this leads to changes in at most $4$ subgraph in each graph; for the changed subgraphs we reestimate a affinity transformation, which gives us new error for the changed subgraphs; we accept the changes, if the error difference of the subgraphs within one graph is negative; otherwise we accept changes with some probability, when at least one subgraph has got smaller error.
 
 \vspace{10pt}
 \setcounter{algocf}{1}
@@ -128,8 +128,8 @@ This version of the $2LevelGM$ uses \emph{HEM} aggregation schema to create the 
 	\nl estimate new affine transformations between the anchors based on the this changes:$\{(\bar{T}_{kp}, \bar{T}_{pk})\}$ \\
 	\nl new error of the anchor pair  $(a_k, a_p)$ is $E^{new}=\min(err(\bar{T}_{kp}), err(\bar{T}_{pk}))$\\
 	\nl calculate the difference between the errors of the anchors $a_k, a_p$, affected by the move of the nodes $v_i$, $v_j$:\\
-	    $\Delta E_{a_k} = E^{new}_{a_k} - E_{a_k}$, $\Delta E_{a_k'} = E^{new}_{a_k'} - E_{a_k'}$\\
-  	    $\Delta E_{a_p} = E^{new}_{a_p} - E_{a_p}$  $\Delta E_{a_p'} = E^{new}_{a_p'} - E_{a_p'}$\\  	    
+	    $\Delta E_{a_k} = E^{new}_{a_k} - E_{a_k}$, $\Delta E_{a_{k'}} = E^{new}_{a_{k'}} - E_{a_{k'}}$\\
+  	    $\Delta E_{a_p} = E^{new}_{a_p} - E_{a_p}$  $\Delta E_{a_{p'}} = E^{new}_{a_{p'}} - E_{a_{p'}}$\\  	    
   	\nl Are both $\Delta E_{a_k}$,  $\Delta E_{a_k'}$ ($\Delta E_{a_p}$, $\Delta E_{a_p'}$) negative, accept the changes in the $G^I$ ($G^J$) \\
   	\nl Is only one of the differences negative, accept the changes in $G^I$ ($G^J$) with probability
   	 $\exp(-\frac{\max(\Delta E_{a_k}, \Delta E_{a_k'})}{t})$ ($\exp(-\frac{\max(\Delta E_{a_p}, \Delta E_{a_p'})}{t})$)
@@ -219,7 +219,7 @@ The  results of test are represented on the Fig.\ref{fig:test1_ver421}-\ref{fig:
 
 \subsubsection{\emph{2LevelGM} version 4.3}
 
-After some tests, we noticed, that the used previously coarsening algorithm to create Higher Level Graphs depends extremely on the graph density \ToDo{img}. In the case of the two synthetic points sets, where all points are assumed to be fully connected, this leads to great difference between the subgraph partitions of the initial graphs at the fist iteration and therefor to the divergence of the algorithm. 
+After some tests, we noticed, that the coarsening algorithm used previously to create Higher Level Graphs depends extremely on the graph density \ToDo{img}. In the case of the two synthetic points sets, where all points are assumed to be fully connected, this leads to great difference between the subgraph partitions of the initial graphs at the first iteration and therefor to the divergence of the algorithm. 
 To cope with this problem, we replaced the coarsening algorithm by the following approach: we place a grid with the fix number of rows and columns over a graph $G$ and associate nodes inside one cell of the grid with one anchor. The anchor graph created this way describes better the coarse spatial structure of the initial graph.
 
 Additionally to this we decline direct descriptors of the anchors and use the matching score of the two subgraphs as a similarity measure between the corresponding anchors. We also ignore the edges between the anchors. 
@@ -228,29 +228,29 @@ It is important, that computation of the similarities between the anchors implie
 
 We use the slightly modified Algorithm~\ToDo{1 ref} for updating the subgraphs between the iterations: we first perform the second rule to eliminate subgraphs with less than $4$\footnote{Although $3$ nodes are sufficient to estimate an affine transformation, but the estimated affine transformation will always overfit} nodes and then apply the rule $1$~(see Sec.~\ToDo{ref}). To help the algorithm not to stay in a local maximum we use the Algorithm~\ref{alg:SA_inGraph} afterwards.
 
-The results of test can be seen on the Fig.~\ref{fig:test3_ver43}.
+The results of test can be seen on the Fig.~\ref{fig:test1_ver43}-~\ref{fig:test3_ver43}.
 
-%\begin{figure}[h] 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/accuracy_avg10t"} 
-%				\caption{} 
-%	\end{subfigure}%% 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/score_avg10t"} 
-%				\caption{} 
-%	\end{subfigure} 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/deformation/time_avg10t"} 
-%				\caption{} 
-%	\end{subfigure} 	
-%	\caption{Outliers test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
-%	\label{fig:test1_ver43}
-%\end{figure}
-%
-%\FloatBarrier	
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/deformation/accuracy_avg10t"} 
+				\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/deformation/score_avg10t"} 
+				\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.3/deformation/time_summary_avg10t"} 
+				\caption{} 
+	\end{subfigure} 	
+	\caption{Outliers test: $n_1=100$, $n_2=100$, $\sigma^2\in[0, 0.2]$}
+	\label{fig:test1_ver43}
+\end{figure}
+
+\FloatBarrier	
 
 \begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
@@ -276,9 +276,9 @@ The results of test can be seen on the Fig.~\ref{fig:test3_ver43}.
 
 \subsubsection{\emph{2LevelGM} version 4.3.1}
 
-In this versions we adopt the main ideas of the previous version, but replace the Algorithm~\ToDo{1 ref} with the new one (see Algorithm~\ref*{alg:update_subgraphs_2}). This algorithm uses the estimated correspondences between the subgraphs to align them relative to each other (see Fig.~\ToDo{}).
+In this versions we adopt the main ideas of the previous version, but replace the Algorithm~\ToDo{1 ref} with the new one (see Algorithm~\ref*{alg:update_subgraphs_2}). This algorithm uses the estimated correspondences between the subgraphs to align them relative to each other (see Fig.~\ToDo{Fig}).
 
-Assume, that we have anchor correspondence $(a_k,a_p), a_k\in V^{Ia}, a_p\in V^{Ja}$. According to the estimated transformation between the subgraphs $G_k^I$, $G_p^J$ we can place $G_k^I$ over $G_p^J$ in the second graph. The nodes in $V^J$, that are not included in $G_p^J$, but covered by $G_k^I$ can be then  included into the underlying subgraph based on their distance to nodes in overlying subgraph.
+Assume, that we have anchor correspondence $(a_k,a_p), a_k\in V^{Ia}, a_p\in V^{Ja}$. According to the estimated transformation between the subgraphs $G_k^I$, $G_p^J$ we can place $G_k^I$ over $G_p^J$ in the second graph. The nodes in $V^J$, that are not included in $G_p^J$, but covered by $G_k^I$ can be then  included into the underlying subgraph based on their distance to the nodes in overlying subgraph.
 
 \vspace{20pt}
 \begin{algorithm}[H]
