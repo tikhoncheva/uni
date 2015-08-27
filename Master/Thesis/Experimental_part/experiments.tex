@@ -90,13 +90,13 @@ In this chapter we present the evaluation results of the proposed algorithm (we 
 
 For the first test we adopted a commonly used approach of evaluation Graph Matching algorithms on the synthetic generated set of nodes (see \cite{Cho2014_Haystack}, \cite{Cho2010_RRWM}, \cite{Leordeanu2009_IPFP}). 
 
-For this propose one generates first $n_1$ normal distributed points $V_1\subset\mathbb{R}^2$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional normal distributed points with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
+For this propose one generates first a set of $n_1$ normal distributed points $V_1\subset\mathbb{R}^2$ with zero mean and standard deviation $1$. The second set $V_2$ is created from the first one by adding noise $\mathcal{N}(0,\sigma^2)$ to the positions of points in $V_1$ and $m$ additional normal distributed points with $\mathcal{N}(0,1)$.  That means, that the set $V_2$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points are inliers and $\bar{n}$ points are outliers. The task is to find the correspondences between points in two sets.
 
 In this test we follow the setup in \cite{Cho2014_Haystack} and compare our approach with following well known 
 %\comments{state of the art
 methods: \emph{MPM}~\cite{Cho2014_Haystack}, \emph{RRWM}~\cite{Cho2010_RRWM}, \emph{SM}~\cite{Leordeanu2005}, \emph{IPFP}~\cite{Leordeanu2009_IPFP}. By performing the comparison, one should consider following differences between the selected algorithms and our one.
 
-First of all, it is time and memory consuming to perform tests for graphs with more than $200$ nodes each, because of the \emph{MPM}, \emph{RRWM}, \emph{SM}, \emph{IPFP} algorithms work with the full affinity matrix of the Graph Matching Problem, whose size is equal to $n_1n_2\times n_1n_2$.\footnote{The affinity matrix between two graphs with $200$ nodes each need then approximately $12Gb$ memory (double precision).} Our algorithms, however, was created to work with graphs bigger than that. To be able to perform the comparison, we fixed the number $n_1$ of points in the first set to $100$ and vary the number of outliers $\bar{n}$ in the second set from $0$ to $50$.
+First of all, it is time and memory consuming to perform tests for graphs with more than $200$ nodes each, because of the \emph{MPM}, \emph{RRWM}, \emph{SM}, \emph{IPFP} algorithms work with the full affinity matrix of the Graph Matching Problem, whose size is equal to $n_1n_2\times n_1n_2$.\footnote{The affinity matrix between two graphs with $200$ nodes each needs approximately $12Gb$ memory (double precision).} Our algorithms, however, was created to work with graphs bigger than that. To be able to perform the comparison, we fixed the number $n_1$ of points in the first set to $100$ and vary the number of outliers $\bar{n}$ in the second set from $0$ to $50$.
 
 Secondary, we need to include initialization time and time for solution discretization into time measurement of the other algorithms. That was not initially done in \cite{Cho2014_Haystack}, but as \emph{2LevelGM} does this steps almost\footnote{Except the iterations where the local solution did not change} at each iteration, this change makes the comparison more fair. We use also greedy assignment based on \cite{Leordeanu2005} to discretize a solution and not Hungarian Algorithm as it was done in \cite{Cho2014_Haystack}.
 
@@ -169,9 +169,9 @@ This version of the $2LevelGM$ also uses Algorithm~\ToDo{1 ref} to update the su
 	\caption{Simulated annealing in a graph}    \label{alg:SA_inGraph}
 \end{algorithm}
 
-We also changed the colling law of the temperature: $t(it) = t_0\times 0.95^{it}$, where $t_0$ is initial temperature at the start of the algorithm. We set it to $200$.  
+We also changed the cooling law of the temperature: $t(it) = t_0\times 0.95^{it}$, where $t_0$ is initial temperature at the start of the algorithm. We set it to $200$.  
 
-The  results of test are represented on the Fig.\ref{fig:test1_ver421}-. The vertical sticks show the variation in the performance of the $2LevelGM$ Algorithms in all runs.
+The  results of test are represented on the Fig.\ref{fig:test1_ver421}-\ref{fig:test3_ver421}. The vertical sticks show the variation in the performance of the $2LevelGM$ Algorithms in all runs.
 
 \begin{figure}[h] 
 	\begin{subfigure}[b]{0.3\textwidth}
@@ -195,38 +195,38 @@ The  results of test are represented on the Fig.\ref{fig:test1_ver421}-. The ver
 
 \FloatBarrier	
 
-%\begin{figure}[h] 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/accuracy_avg10tests"} 
-%		%		\caption{} 
-%	\end{subfigure}%% 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/score_avg10tests"} 
-%		%		\caption{} 
-%	\end{subfigure} 
-%	\begin{subfigure}[b]{0.3\textwidth}
-%		\centering
-%		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/time_avg10tests"} 
-%		%		\caption{} 
-%	\end{subfigure} 	
-%	\caption{Average of $10$ outlier tests: $n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
-%	\label{fig:test3_ver421}
-%\end{figure}
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/accuracy_avg10t"} 
+		%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/score_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/syntheticPointSets/ver4.2.1/outliertest_n50/time_avg10t"} 
+		%		\caption{} 
+	\end{subfigure} 	
+	\caption{Average of $10$ outlier tests: $n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$}
+	\label{fig:test3_ver421}
+\end{figure}
 
 \FloatBarrier
 
 \subsubsection{\emph{2LevelGM} version 4.3}
 
-After some test, we noticed, that the used previously coarsening algorithm to create Higher Level Graphs depends extremely on the graph density \ToDo{img}. In the case of the two synthetic points sets, where all points are assumed to be fully connected, this leads to great difference between the subgraph partitions of initial graphs at the fist iteration and therefor in divergence of the algorithm. 
-To cope with this problem, we replaced the coarsening algorithm by the following approach: we place a grid with the fix number of rows and columns over a graph $G$ and associate a nodes inside one cell of the grid with one anchor. The anchor graph created this way describes better the coarse spatial structure of the initial graph.
+After some tests, we noticed, that the used previously coarsening algorithm to create Higher Level Graphs depends extremely on the graph density \ToDo{img}. In the case of the two synthetic points sets, where all points are assumed to be fully connected, this leads to great difference between the subgraph partitions of the initial graphs at the fist iteration and therefor to the divergence of the algorithm. 
+To cope with this problem, we replaced the coarsening algorithm by the following approach: we place a grid with the fix number of rows and columns over a graph $G$ and associate nodes inside one cell of the grid with one anchor. The anchor graph created this way describes better the coarse spatial structure of the initial graph.
 
 Additionally to this we decline direct descriptors of the anchors and use the matching score of the two subgraphs as a similarity measure between the corresponding anchors. We also ignore the edges between the anchors. 
 
 It is important, that computation of the similarities between the anchors implies the solving Graph Matching Problem between all possible pairs of subgraphs at each iteration. This leads to the same complexity as initial one level matching problem on the whole graphs. Nevertheless we do perform the test of this version to verify the quality of the function for updating the subgraphs.
 
-We use the slightly modified Algorithm~\ToDo{1 ref} for the updating the subgraphs between the iterations: we first perform the second rule to eliminate subgraphs with less than $4$\footnote{Although $3$ nodes are sufficient to estimate an affine transformation, but the estimated affine transformation will always overfit} nodes and then apply the rule $1$~(see Sec.~\ToDo{ref}). To help the algorithm not to stay in a local maximum we use the Algorithm~\ref{alg:SA_inGraph} afterwards.
+We use the slightly modified Algorithm~\ToDo{1 ref} for updating the subgraphs between the iterations: we first perform the second rule to eliminate subgraphs with less than $4$\footnote{Although $3$ nodes are sufficient to estimate an affine transformation, but the estimated affine transformation will always overfit} nodes and then apply the rule $1$~(see Sec.~\ToDo{ref}). To help the algorithm not to stay in a local maximum we use the Algorithm~\ref{alg:SA_inGraph} afterwards.
 
 The results of test can be seen on the Fig.~\ref{fig:test3_ver43}.
 
