@@ -31,8 +31,8 @@ nV = size(LLG.V,1);     % number of nodes in the LLG
 % nA = min(nV, agparam.nA(ID));
 
 appSizeOfSubgraph = agparam.appSizeOfSubgraph;
-% nA = max(1, min(nV, floor(nV/appSizeOfSubgraph)) );
-nA = 1;
+nA = max(1, min(nV, floor(nV/appSizeOfSubgraph)) );
+% nA = 1;
 %nA = min(nV, agparam.nA);
 
 

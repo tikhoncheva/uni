@@ -26,10 +26,10 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     while count<nConst && it<nMaxIt
         it = it + 1;
 
-        tic;
+%         tic;
         [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
                 twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
-        time = time + toc;   
+%         time = time + toc;   
 
         if it>=2 && abs(LLGmatches(it).objval-LLGmatches(it-1).objval)<10^(-5)
             count = count + 1;
