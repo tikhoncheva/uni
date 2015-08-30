@@ -9,12 +9,14 @@ sol_matrix = dlmread(fsolution_name);
 
 n = prob_matrix(1,1);           % number of nodes in the graphs
 assert(2*n+1 == size(prob_matrix,1), 'Error: wrong input file format');
-G1 = prob_matrix(2:1+n,1:n);      % distance matrix of the first graph
-G2 = prob_matrix(2+n:1+2*n,1:n);  % distance matrix of the first graph
+A = prob_matrix(2:1+n,1:n);      % distance matrix of the first graph
+B = prob_matrix(2+n:1+2*n,1:n);  % distance matrix of the first graph
 
 assert(n==sol_matrix(1,1), 'Error: wrong input file format');
-assert(n==size(sol_matrix,2), 'Error: wrong input file format');
-seq = sol_matrix(2,:);
+seq = sol_matrix(2:end,:)';
+seq = seq(:);
+seq(seq==0) = [];
+assert(n==numel(seq), 'Error: wrong input file format');
 
 %%
 t1 = tic; 
@@ -24,9 +26,9 @@ E12 = ones(n,n);
 [group1, group2] = make_group12(L12);
 
 %%
-M = (repmat(G1, n, n)-kron(G2,ones(n))).^2;
-M = exp(-M./Set.scale_2D);
-M(1:(n+1):end)=0;
+G1 = B;
+G2 = A;
+M = -kron(transpose(B), transpose(A));
 
 %% Ground Truth
 GT.seq = seq;
@@ -43,6 +45,11 @@ problem.E12 = E12;
 
 problem.G1 = G1;
 problem.G2 = G2;
+
+% FAQ
+problem.A = A;
+problem.B = B;
+problem.nIt = 10;
 
 problem.affinityMatrix = M;
 problem.group1 = group1;

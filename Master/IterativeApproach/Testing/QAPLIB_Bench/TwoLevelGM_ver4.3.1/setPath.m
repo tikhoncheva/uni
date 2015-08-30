@@ -10,3 +10,4 @@ addpath('./Methods/SM/'); % Spectral Matching by Leordeanu and Hebert. ICCV2005
 addpath('./Methods/IPFP/'); % Integer Projected Fixed Point Method by Leordeanu et al. NIPS 2009
 
 addpath(genpath('./Methods/wrapper_TwoLevelGM/')); % new algorithm
+addpath(genpath('./Methods/FAQ/FAQ')); % new algorithm

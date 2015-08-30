@@ -66,6 +66,19 @@ if 0
     
 end
 
+% new Two Level Graph Matching algorithm
+if 1
+    nMethods = nMethods + 1;
+    methods(nMethods).fhandle = @sfw;
+    methods(nMethods).variable = {'A', 'B', 'nIt'};
+    methods(nMethods).param = {};
+    methods(nMethods).strName = 'FAQ';
+    methods(nMethods).color = 'c';
+    methods(nMethods).lineStyle = '--';
+    methods(nMethods).marker = '*';    
+    
+end
+
 %% Show the algorithms to run
 disp('* Algorithms to run *');
 for k = 1:nMethods, disp([methods(k).strName ' : @' func2str(methods(k).fhandle)]); end; disp(' ')
