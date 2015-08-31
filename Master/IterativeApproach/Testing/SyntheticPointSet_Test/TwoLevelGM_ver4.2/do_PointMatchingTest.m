@@ -58,9 +58,9 @@ for kk = 1:Set.nTest, fprintf('Test: %d of %d ', kk, Set.nTest);
         end
         fprintf('.');
     end
-    clf; handleCount = 0; 
+    clf; handleCount = 0;
     yData = mean(Accuracy(:,:,1:kk),3);
-    L = yData-min(Accuracy(:,:,1:kk),[],3);
+    E = yData-min(Accuracy(:,:,1:kk),[],3);
     U = max(Accuracy(:,:,1:kk),[],3)-yData;
     yLabelText = 'Accuracy'; plotResults;
     
@@ -72,31 +72,25 @@ clear i j k temp X Xbin ind p val str
 close all
 
 %% Plot Results
+% Mean
 meanAccuracy = mean(Accuracy,3);
 meanMatchScore = mean(MatchScore,3);
 meanTime = mean(Time,3);
 meanMatchScoreRaw = mean(MatchScoreRaw,3);
 meanMatchScoreMP = mean(MatchScoreMP,3);
 
+% Std
+stdAccuracy = sqrt( sum( (Accuracy - repmat(meanAccuracy, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
+stdMatchScore = sqrt( sum((MatchScore - repmat(meanMatchScore, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
+stdTime = sqrt( sum((Time - repmat(meanTime, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
+stdMatchScoreRaw = sqrt( sum((MatchScoreRaw - repmat(meanMatchScoreRaw, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
+stdMatchScoreMP = sqrt( sum((MatchScoreMP - repmat(meanMatchScoreMP, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
+
 %%
 handleCount = 0;
-yData = meanAccuracy; 
-L = meanAccuracy-min(Accuracy,[],3);
-U = max(Accuracy,[],3)-meanAccuracy; yLabelText = 'accuracy'; plotResults;
-
-yData = meanMatchScore;
-L = meanMatchScore-min(MatchScore,[],3);
-U = max(MatchScore,[],3)-meanMatchScore; yLabelText = 'objective score'; plotResults;
-
-yData = meanTime;
-L = meanTime-min(Time,[],3);
-U = max(Time,[],3)-meanTime;
-yLabelText = 'running time'; plotResults;
-
-%yData = meanAccuracy; yLabelText = 'accuracy'; plotResults;
-%yData = meanMatchScore; yLabelText = 'objective score'; plotResults;
-%yData = meanTime; yLabelText = 'running time'; plotResults;
-
+yData = meanAccuracy; E = stdAccuracy; yLabelText = 'accuracy'; plotResults;
+yData = meanMatchScore; E = stdMatchScore; yLabelText = 'objective score'; plotResults;
+yData = meanTime; E = stdTime; yLabelText = 'running time'; plotResults;
 
 %%
 T1 = repmat(Time_init(:,1,:), 1, length(methods)-1,1);
@@ -104,10 +98,6 @@ T2 = Time_init(:,2,:);
 Time1 = Time + [T1, T2];
 
 meanTime1 = mean(Time1,3);
+stdTime1 = sqrt( sum((Time1 - repmat(meanTime1, 1, 1, Set.nTest)).^2, 3)./Set.nTest );
 
-yData = meanTime1;
-L = meanTime1-min(Time1,[],3);
-U = max(Time1,[],3)-meanTime1;
-yLabelText = 'running time + initialization'; plotResults;
-
-%yData = meanTime1; yLabelText = 'running time + initialization'; plotResults;
+yData = meanTime1; E = stdTime1; yLabelText = 'running time + initialization'; plotResults;

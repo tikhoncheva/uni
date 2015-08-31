@@ -7,9 +7,9 @@ for k = 1:length(methods)
         'LineStyle', methods(k).lineStyle, ...
         'Marker', methods(k).marker, ...
         'MarkerSize', plotSet.markerSize);
-    
+    errorbar(settings{Con}{4}, yData(:,k), E(:,k), 'Color', methods(k).color);
 end
-errorbar(settings{Con}{4}, yData(:,end), L(:,end), U(:,end));
+% errorbar(settings{Con}{4}, yData(:,end), E(:,end));
 
 Xmin = min(settings{Con}{4}); Xmax = max(settings{Con}{4});
 Ymin = min(yData(:)); Ymax = max(yData(:));
