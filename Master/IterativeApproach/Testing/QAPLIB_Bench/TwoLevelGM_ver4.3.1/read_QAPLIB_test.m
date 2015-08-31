@@ -26,8 +26,8 @@ E12 = ones(n,n);
 [group1, group2] = make_group12(L12);
 
 %%
-G1 = B;
-G2 = A;
+G1 = A;
+G2 = B;
 M = -kron(transpose(B), transpose(A));
 
 %% Ground Truth
