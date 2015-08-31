@@ -13,6 +13,16 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 Ver 4.3
 -----------------------------------------------------------------------------
 
+ 31.08
+  + new function to update subgraphs: subgraph_updaye_3.m
+  
+ <-> weighNodes.m
+   use cpd algorihtm (by Myronenko) to estimate affine transformation between the clusters
+ <-> simulated_annealing_in_graphs.m
+   perform several steps (10) of the SA and select the best at the end
+   
+ 25.08
+  new function to update subgraphs: subgraph_updaye_2.m
  24.08
   changed subgraph update function: first spread nodes in small cluster (#n<3)
   over the other cluster

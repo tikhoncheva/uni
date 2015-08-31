@@ -31,18 +31,23 @@ HLG2.F = ones(size(HLG2.V,1),1);
 % [HLG1, HLG2] = update_subgraphs_using_GCuts(LLG1, LLG2, HLG1, HLG2, ...
 %                                 LLMatches, HLMatches, affTrafo{it});
 
-[HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
-                                LLMatches, HLMatches, affTrafo{it});
-
 
 % [HLG1, HLG2] = update_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
 %                                 LLMatches, HLMatches, affTrafo);
 
+% [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
+%                                 LLMatches, HLMatches, affTrafo{it});
+
+[HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
+                                LLMatches, HLMatches, affTrafo{it});
+
+
+
                             
-[LLmatches_matched_pairs, HLG1, HLG2] = simulated_annealing_in_graphs(LLG1, LLG2, HLG1, HLG2, ...
-                                                              LLMatches.matched_pairs, ...
-                                                              LLMatches.objval, p);
-LLMatches.matched_pairs = LLmatches_matched_pairs;
+% [LLmatches_matched_pairs, HLG1, HLG2] = simulated_annealing_in_graphs(LLG1, LLG2, HLG1, HLG2, ...
+%                                                               LLMatches.matched_pairs, ...
+%                                                               LLMatches.objval, p);
+% LLMatches.matched_pairs = LLmatches_matched_pairs;
 
 % % Step3:        
 % % rng('default');

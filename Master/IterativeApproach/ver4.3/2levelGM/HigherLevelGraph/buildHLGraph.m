@@ -74,6 +74,9 @@ HLG.F = zeros(size(HLG.V,1),1); % mark all subgraphs as new
 HLG.D_appear = [];
 HLG.D_struct = cell(nA,1);   
 
+
+HLG.H = [];
+
 fprintf('   finished in %f sec\n', toc(t2));
     
 

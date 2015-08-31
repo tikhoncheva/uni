@@ -2,12 +2,14 @@
 % L.Herault, R.Horaud, "Symbolic Image Matching by Simulated Annealing"
 
 function [LLmatches_new, HLG1, HLG2] = simulated_annealing_in_graphs(LLG1, LLG2, HLG1, HLG2, LLmatches, Mscore, T)
-nIt = 1;
-LLmatches_new = LLmatches;
+nIt = 10;
 
 if size(LLmatches,1)<2
     nIt = 0;
+    LLmatches_new = LLmatches;
 end 
+
+state = struct('Score', [], 'LLmatches_new', []);
 
 for k = 1:nIt
     
@@ -22,11 +24,13 @@ for k = 1:nIt
     u2 = LLmatches(ind_u1u2(:,2),2);   % v2 <-> u2
     
     % exchange correspondences between the nodes:  v1 <-> u2, v2 <-> u1
+    LLmatches_new = LLmatches;
     LLmatches_new(ind_u1u2(1),2) = u2;
     LLmatches_new(ind_u1u2(2),2) = u1;
 
     % calculate energy change
-    delta_E = Mscore - matching_score_LL(LLG1, LLG2, LLmatches_new);
+    Mscore_new = matching_score_LL(LLG1, LLG2, LLmatches_new);
+    delta_E = Mscore - Mscore_new;
                 
     if delta_E>0 && 1/(1+exp(delta_E/T))<rand(1,1) %exp(-delta_E/T)>rand(1,1) 
         f_accept = 0;
@@ -42,5 +46,15 @@ for k = 1:nIt
         HLG2.U(u2, aj_u2) = 0; HLG2.U(u2, aj_u1) = 1;
         
     end        
+    
+    state.Score(k) = Mscore_new;
+    state.LLmatches_new{k} = LLmatches_new;
+
+end
+
+%% find the best state change over nIt tries
+[~,kk] = max(state.Score);
+LLmatches_new = state.LLmatches_new{kk};
+
 
 end

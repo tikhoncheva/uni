@@ -9,7 +9,7 @@
 
 function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
 
-    rng('default');
+%     rng('default');
     
     % create two empty images
     s = 6;                                      % size of the images

@@ -59,6 +59,12 @@ function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
       new_U1(nn_PVaj, ai) = dist_ai;         
    end
    
+%    D1 = pdist2(LLG1.V, HLG1.V);
+%    D2 = pdist2(LLG2.V, HLG2.V);
+%    
+%    new_U1 = 0.5*(new_U1+D1);
+%    new_U2 = 0.5*(new_U2+D2);
+   
    % new correspondence matrix between nodes and anchors
    [W1, minpos] = min(new_U1, [], 2);
    ind_U1_not_assigned = (W1==Inf);

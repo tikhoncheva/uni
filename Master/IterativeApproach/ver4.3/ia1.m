@@ -777,7 +777,7 @@ end
 % ------------------         Start        --------------------------------
 function pb_start_Callback(hObject, ~, handles)
 
-rng(1);
+rng('default');
 
 L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 assert(L<=size(handles.IP1,1), 'image pyramid has only %d level(s)', size(handles.IP1,1));
@@ -894,7 +894,7 @@ guidata(hObject, handles);
 % ------------------         Reset        --------------------------------
 function pb_reset_Callback(hObject, ~, handles)
 
-rng(1);
+rng('default');
 
 L = str2double(get(handles.edit_selectLevel,'string'));  %handles.IPlevel;
 
