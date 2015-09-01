@@ -7,7 +7,7 @@ for k = 1:length(methods)
         'LineStyle', methods(k).lineStyle, ...
         'Marker', methods(k).marker, ...
         'MarkerSize', plotSet.markerSize);
-    errorbar(settings{Con}{4}, yData(:,k), E(:,k), 'Color', methods(k).color);
+%     errorbar(settings{Con}{4}, yData(:,k), E(:,k), 'Color', methods(k).color);
 end
 % errorbar(settings{Con}{4}, yData(:,end), E(:,end));
 
@@ -32,6 +32,7 @@ for k = length(methods):-1:1
         'LineStyle', methods(k).lineStyle, ...
         'Marker', methods(k).marker, ...
         'MarkerSize', plotSet.markerSize);
+    errorbar(settings{Con}{4}, yData(:,k), E(:,k), 'Color', methods(k).color);
 end
 hold off;
 

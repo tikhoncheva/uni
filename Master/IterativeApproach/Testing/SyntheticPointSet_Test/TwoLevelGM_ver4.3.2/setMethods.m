@@ -12,7 +12,7 @@
 %methods(nMethods).marker = 'marker';                          % Marker for plots
 
 nMethods = 0;
-if 0
+if 1
     nMethods = nMethods + 1;
     methods(nMethods).fhandle = @MPM;
     methods(nMethods).variable = {'affinityMatrix', 'group1', 'group2'};
@@ -22,7 +22,7 @@ if 0
     methods(nMethods).lineStyle = '-';
     methods(nMethods).marker = 'o';
 end
-if 0
+if 1
     nMethods = nMethods + 1;
     methods(nMethods).fhandle = @RRWM;
     methods(nMethods).variable = {'affinityMatrix', 'group1', 'group2'};
@@ -32,7 +32,7 @@ if 0
     methods(nMethods).lineStyle = '-';
     methods(nMethods).marker = 's';
 end
-if 0
+if 1
     nMethods = nMethods + 1;
     methods(nMethods).fhandle = @ipfp_gm;
     methods(nMethods).variable = {'affinityMatrix', 'L12'};
@@ -42,7 +42,7 @@ if 0
     methods(nMethods).lineStyle = '-';
     methods(nMethods).marker = 'x';
 end
-if 0
+if 1
     nMethods = nMethods + 1;
     methods(nMethods).fhandle = @SM;
     methods(nMethods).variable = {'affinityMatrix'};

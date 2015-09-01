@@ -60,8 +60,7 @@ for kk = 1:Set.nTest, fprintf('Test: %d of %d ', kk, Set.nTest);
     end
     clf; handleCount = 0;
     yData = mean(Accuracy(:,:,1:kk),3);
-    E = yData-min(Accuracy(:,:,1:kk),[],3);
-    U = max(Accuracy(:,:,1:kk),[],3)-yData;
+    E = sqrt( sum( (Accuracy(:,:,1:kk) - repmat(yData, 1, 1, kk)).^2, 3)./kk );
     yLabelText = 'Accuracy'; plotResults;
     
     str = ['Average accuracy from test 1 to test ' num2str(kk)]; title(str, 'FontSize', 16); drawnow;
