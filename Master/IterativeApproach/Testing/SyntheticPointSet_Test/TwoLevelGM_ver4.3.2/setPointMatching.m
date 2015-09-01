@@ -1,7 +1,7 @@
 %% Configuration Settings
 nSet=0; %% Display (bool) / Display Name / Variable Name / Variable Value, Vector, String
 nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 1};
-switch 1
+switch 3
     case 1 % Outlier Test
         nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
         nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:50};

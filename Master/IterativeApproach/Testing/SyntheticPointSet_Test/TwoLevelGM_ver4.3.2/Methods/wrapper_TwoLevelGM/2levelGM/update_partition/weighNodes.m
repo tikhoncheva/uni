@@ -25,7 +25,7 @@
 function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
                                          LLmatched_pairs, HLmatched_pairs, affTrafo)
 
-   fprintf('\n------ Estimation of affine transformation between new subgraph pairs');
+%    fprintf('\n------ Estimation of affine transformation between new subgraph pairs');
    M = Inf;
    
    nPairs = size(HLmatched_pairs,1);    
@@ -78,6 +78,8 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
 
             Ai = Transform.R;
             bi = Transform.t;
+            
+            H = [[Ai, bi]; [0,0,1]];
 %             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
 %             bi = [H(1,3); H(2,3)];
                        
@@ -89,6 +91,7 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
             [Transform, ~]=cpd_register(Vai_m, Vaj_m, opt); 
             Aj = Transform.R;
             bj = Transform.t;
+            inverseH = [[Aj, bj]; [0,0,1]];
             
 %             Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
 %             bj = [ inverseH(1,3); inverseH(2,3)];     
