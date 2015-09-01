@@ -28,9 +28,6 @@ function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
    for k = 1:size(affTrafo,1)
       ai = affTrafo(k,1); 
       aj = affTrafo(k,2);
-%       if ai==5
-%          display(''); 
-%       end
 
       err = affTrafo(k, 3);
       
@@ -54,31 +51,35 @@ function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
       PVai = PVai';
       % find nearest neighbors of the projected nodes
       [nn_PVai, dist_aj] = knnsearch(LLG2.V(:,1:2), PVai);   %indices of nodes in LLG2.V
+      ind = dist_aj>0.1;
+      dist_aj(ind) = [];
+      nn_PVai(ind) = [];  
+      
       % for the multiple entries of one node select the oe with smallest
       % distance
       tmp = [nn_PVai, dist_aj];
       [~,ind] = sort(tmp(:,2));
       [~,ia] = unique(tmp(ind,1));
       tmp = tmp(ind(ia),:);
-%       tmp = accumarray( nn_PVai, dist_aj, [], @min, 0, true);
-%       tmpM = [find(tmp) nonzeros(tmp)];
+
       new_U2(uint8(tmp(:,1)), aj) = tmp(:,2);   
-%       new_U2(nn_PVai, aj) = dist_aj;
       
       % Project Vaj into LLG1.V
       PVaj = Aj * Vaj' + repmat(bj,1,size(Vaj,1)); % projection of Vaj_nm nodes
       PVaj = PVaj';
       % find nearest neighbors of the projected nodes      
-      [nn_PVaj, dist_ai] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V    
-      % for the multiple entries of one node select the oe with smallest
+      [nn_PVaj, dist_ai] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V   
+      ind = dist_ai>0.1;
+      dist_ai(ind) = [];
+      nn_PVaj(ind) = [];      
+      
+      % for the multiple entries of one node select the one with smallest
       % distance
       tmp = [nn_PVaj, dist_ai];
       [~,ind] = sort(tmp(:,2));
       [~,ia] = unique(tmp(ind,1));
       tmp = tmp(ind(ia),:);
-      
-%       tmp = accumarray( nn_PVaj, dist_ai, [], @min, 0, true);
-%       tmpM = [find(tmp) nonzeros(tmp)];
+
       new_U1(uint8(tmp(:,1)), ai) = tmp(:,2);
       
 %       figure; subplot(1,2,1);

@@ -58,7 +58,7 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
         ind_matched_nodes = ind_matched_nodes(ind_matched_nodes>0);
         matched_nodes = LLmatched_pairs(ind_matched_nodes,1:2);
       
-        if (size(matched_nodes, 1)>3)
+        if (size(matched_nodes, 1)>1) % (size(matched_nodes, 1)>3)
             
             Vai_m = LLG1.V(matched_nodes(:,1),1:2);
             Vaj_m = LLG2.V(matched_nodes(:,2),1:2);
@@ -66,32 +66,31 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
             % estimate affine transformation  
             
             % from left to right
-%             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
-            H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
-            H = H1.T'; 
 %             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
+%             H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
+%             H = H1.T'; 
+%             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
+%             bi = [H(1,3); H(2,3)];
 
             opt.method='rigid';
             opt.viz=0;
             opt.scale=0; 
             [Transform, ~]=cpd_register(Vaj_m, Vai_m, opt); 
-
             Ai = Transform.R;
             bi = Transform.t;
-%             Ai = [[H(1,1) H(1,2)];[H(2,1) H(2,2)]];
-%             bi = [H(1,3); H(2,3)];
+            H = [[Ai, bi];[0 0 1]];
                        
             % from right to left
-%             H2 = fitgeotrans(Vaj_m, Vai_m, 'affine');
-            H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
-            inverseH = H2.T';
-%             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
+%             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);            
+%             H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
+%             inverseH = H2.T';
+%             Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
+%             bj = [ inverseH(1,3); inverseH(2,3)]; 
+
             [Transform, ~]=cpd_register(Vai_m, Vaj_m, opt); 
             Aj = Transform.R;
-            bj = Transform.t;
-            
-%             Aj = [[inverseH(1,1)  inverseH(1,2)];[inverseH(2,1) inverseH(2,2)]];
-%             bj = [ inverseH(1,3); inverseH(2,3)];     
+            bj = Transform.t;            
+            inverseH = [[Aj, bj];[0 0 1]];    
                         
             PVai_m = Ai * Vai_m' + repmat(bi,1,size(Vai_m,1)); % proejction of Vai_m nodes
             PVai_m = PVai_m';
