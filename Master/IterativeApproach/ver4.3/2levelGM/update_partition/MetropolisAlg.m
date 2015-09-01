@@ -41,6 +41,8 @@ HLG2.F = ones(size(HLG2.V,1),1);
 [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
                                 LLMatches, HLMatches, affTrafo{it});
 
+% [HLG1, HLG2] = grid_coclustering(LLG1, LLG2, HLG1, HLG2, ...
+%                                 LLMatches, HLMatches, affTrafo{it});
 
 
                             

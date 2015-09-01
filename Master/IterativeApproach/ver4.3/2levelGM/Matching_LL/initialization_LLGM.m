@@ -123,7 +123,7 @@ try
         
         ind_origin_vertices{i} = [nVi, nVj, (1:nVi*nVj)];
         
-        %% add dummy nodes into affinity matrix
+       %% add dummy nodes into affinity matrix
 %         dNi = max(0, nVj-nVi) ; dNj = max(0, nVi-nVj);
 %         affmatrixD = 0.0*ones((nVi+dNi)*(nVj+dNj));
 %         
@@ -142,6 +142,7 @@ try
 %         corrmatrix{i} = ones(nVi+dNi, nVj+dNj); 
 %     
 %         ind_origin_vertices{i} = [nVi, nVj, ind_same'];
+        % 
         
 %         display(sprintf('matrix %d x %d ... finished', nVi, nVj));
     end
