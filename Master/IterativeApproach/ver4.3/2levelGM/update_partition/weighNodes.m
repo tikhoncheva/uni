@@ -67,8 +67,8 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
             
             % from left to right
 %             H1 = fitgeotrans(Vai_m, Vaj_m, 'affine');
-%             H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
-%             H = H1.T'; 
+            H1 = estimateGeometricTransform(Vai_m,Vaj_m,'affine');
+            H = H1.T'; 
 %             [H, ~] = ransacfitaffine(Vai_m', Vaj_m', 0.01);        
 
             opt.method='rigid';
@@ -83,8 +83,8 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
                        
             % from right to left
 %             H2 = fitgeotrans(Vaj_m, Vai_m, 'affine');
-%             H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
-%             inverseH = H2.T';
+            H2 = estimateGeometricTransform(Vaj_m,Vai_m,'affine');
+            inverseH = H2.T';
 %             [inverseH, ~] = ransacfitaffine(Vaj_m', Vai_m', 0.01);
             [Transform, ~]=cpd_register(Vai_m, Vaj_m, opt); 
             Aj = Transform.R;
