@@ -21,7 +21,7 @@
 
 % function [objval, pairs, ...
 %           local_objval, local_weights] = matchLLGraphs(nV1, nV2, indOfSubgraphNodes, corrmatrices, affmatrices)
-function [LLMatches] = matchLLGraphs(LLG1, LLG2, indOfSubgraphNodes, corrmatrices, affmatrices, HLG_matched_pairs, varargin)      
+function [LLMatches] = matchLLGraphs(LLG1, LLG2, indOfSubgraphNodes, corrmatrices, affmatrices, ind_origin_vertices, HLG_matched_pairs, varargin)      
 
 fprintf('\n---- LLGM');
 
@@ -81,6 +81,13 @@ if (nIterations>0)
 
             [objval, X] = GraphMatching(corrmatrix, affmatrix);
             
+            ind_same = ind_origin_vertices{it}; 
+            nVi = ind_same(1,1); nVj = ind_same(1,2);
+            ind_same = ind_same(3:end)';
+            
+            X = X(ind_same);
+            objval = X' * affmatrix(ind_same, ind_same) * X;
+            
             W_local = reshape(X, [nVi, nVj]);
             W = zeros(nV1, nV2);
             W(ai_x, aj_x') = W_local;
@@ -133,7 +140,7 @@ LLMatches.lobjval = lobjval;
 % LLMatches.corrmatrices = corrmatrices;
 % LLMatches.affmatrices  = affmatrices;
     
-if (nargin == 7)
+if (nargin == 8)
     
 %    HLG_matched_pairs = varargin{1};
 % LLG_matched_pairs_prev = varargin{1};

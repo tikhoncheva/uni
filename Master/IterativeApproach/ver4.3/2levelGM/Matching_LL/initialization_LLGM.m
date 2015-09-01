@@ -2,7 +2,7 @@
  %
  %
  
-function [indOfSubgraphsNodes, corrmatrix, affmatrix] = initialization_LLGM(LLG1, LLG2, ...
+function [indOfSubgraphsNodes, corrmatrix, affmatrix, ind_origin_vertices] = initialization_LLGM(LLG1, LLG2, ...
                                                                               U1, U2, ....
                                                                             HLG_matched_pairs)
 
@@ -11,18 +11,18 @@ fprintf('\n---- preprocessing: initialize %d subgraphs', size(HLG_matched_pairs,
 try
 %     tic 
     
-    nV1 = size(LLG1.V,1); 
-    nV2 = size(LLG2.V,1);
+    nVi = size(LLG1.V,1); 
+    nVj = size(LLG2.V,1);
 
     % adjacency matrix of the first dependency graph
-    adjM1 = zeros(nV1, nV1);
+    adjM1 = zeros(nVi, nVi);
     E1 = LLG1.E;
     E1 = [E1; [E1(:,2) E1(:,1)]];
     ind = sub2ind(size(adjM1), E1(:,1), E1(:,2));
     adjM1(ind) = 1;
 
     % adjacency matrix of the second dependency graph
-    adjM2 = zeros(nV2, nV2);
+    adjM2 = zeros(nVj, nVj);
     E2 = LLG2.E;
     E2 = [E2; [E2(:,2) E2(:,1)]];
     ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
@@ -35,7 +35,7 @@ try
 
     % build pairs of subgraph to match
 
-    indOfSubgraphsNodes = zeros(nPairs, 1 + nV1 + nV2); % indices of nodes, that can be matched parallel
+    indOfSubgraphsNodes = zeros(nPairs, 1 + nVi + nVj); % indices of nodes, that can be matched parallel
 
     localAdjMatrices1 = cell(nPairs,1);
     localAdjMatrices2 = cell(nPairs,1);
@@ -48,6 +48,8 @@ try
     
     corrmatrix = cell(nPairs,1);     
     affmatrix = cell(nPairs,1);
+    
+    ind_origin_vertices = cell(nPairs,1);
     
     for i = 1:nPairs % for each match ai<->aj on the High Level
         
@@ -118,6 +120,28 @@ try
         else
             affmatrix{i} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{i});
         end
+        
+        ind_origin_vertices{i} = [nVi, nVj, (1:nVi*nVj)];
+        
+        %% add dummy nodes into affinity matrix
+%         dNi = max(0, nVj-nVi) ; dNj = max(0, nVi-nVj);
+%         affmatrixD = 0.0*ones((nVi+dNi)*(nVj+dNj));
+%         
+%         I = repmat([1:nVi+dNi]', nVj+dNj, 1);
+%         J = kron([1:nVj+dNj]', ones(nVj+dNj, 1));
+%         
+%         Io = repmat([1:nVi]', nVj, 1);
+%         Jo = kron([1:nVj]', ones(nVi, 1));
+%         
+%         [~,ind_same] = ismember([Io,Jo], [I,J], 'rows');
+%         [x,y] = meshgrid(ind_same, ind_same);
+%         ind = sub2ind(size(affmatrixD), x(:), y(:));
+%         
+%         affmatrixD(ind) = affmatrix{i};
+%         affmatrix{i} = affmatrixD;
+%         corrmatrix{i} = ones(nVi+dNi, nVj+dNj); 
+%     
+%         ind_origin_vertices{i} = [nVi, nVj, ind_same'];
         
 %         display(sprintf('matrix %d x %d ... finished', nVi, nVj));
     end
