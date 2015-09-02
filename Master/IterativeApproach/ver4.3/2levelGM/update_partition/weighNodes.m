@@ -20,7 +20,7 @@
 %               matched subgraphs (is given in HLMatches)
 
 
-function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
+function [affTrafo, U1, U2] = weighNodes(LLG1, LLG2, U1, U2, ...
                                          LLmatched_pairs, HLmatched_pairs, affTrafo)
 
    fprintf('\n------ Estimation of affine transformation between new subgraph pairs');
@@ -42,6 +42,48 @@ function [affTrafo] = weighNodes(LLG1, LLG2, U1, U2, ...
    end
    
    T = zeros(nPairs, 15);  
+   
+   % eliminate subgraphs with less than 1 node
+   ind_feas_anchors = ~(sum(U1,1)==1);
+   ind_subg_to_del = find(sum(U1,1) == 1);
+   for i = 1:numel(ind_subg_to_del)   
+       ai = ind_subg_to_del(i);
+
+       ind_Vai = find(U1(:,ai));
+       Vai = LLG1.V(ind_Vai,1:2);      % coordinates of the nodes in the subgraph G_ai
+
+       if ~isempty(Vai)   % it can happen, that nodes were already adjust to the new anchors
+           new_U1_cut = U1(:,ind_feas_anchors);
+           [ind_feas_neighb, ~]= find(new_U1_cut);
+           ind_feas_neighb = unique(ind_feas_neighb);
+
+           nn_Vai = knnsearch(LLG1.V(ind_feas_neighb,1:2), Vai, 'K', 1);   %indices of nodes in LLG2.V
+           nn_Vai = ind_feas_neighb(nn_Vai);
+           U1(ind_Vai, :) = U1(nn_Vai, :);
+       end
+   end   
+   clear i ai ind_feas_anchors ind_feas_neighb ind_subg_to_del ind_Vai Vai nn_Vai;
+   
+   ind_feas_anchors = ~(sum(U2,1)==1);
+   ind_subg_to_del = find(sum(U2,1) == 1);
+   for j = 1:numel(ind_subg_to_del)   
+       aj = ind_subg_to_del(j);
+
+       ind_Vaj = find(U2(:,aj));
+       Vaj = LLG2.V(ind_Vaj,1:2);      % coordinates of the nodes in the subgraph G_ai
+
+       if ~isempty(Vaj)   % it can happen, that nodes were already adjust to the new anchors
+           new_U2_cut = U2(:,ind_feas_anchors);
+           [ind_feas_neighb, ~]= find(new_U2_cut);
+           ind_feas_neighb = unique(ind_feas_neighb);
+
+           nn_Vaj = knnsearch(LLG2.V(ind_feas_neighb,1:2), Vaj, 'K', 1);   %indices of nodes in LLG2.V
+           nn_Vaj = ind_feas_neighb(nn_Vaj);
+           U2(ind_Vaj, :) = U2(nn_Vaj, :);
+       end
+   end
+   clear j aj ind_feas_anchors ind_feas_neighb ind_subg_to_del ind_Vai Vai nn_Vai;
+   %
 
    % estimate Transformation for new or changed subgraphs pairs
    for k = 1:nNewT

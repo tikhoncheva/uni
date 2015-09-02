@@ -22,9 +22,12 @@ HLG2.F = ones(size(HLG2.V,1),1);
 % LLMatches.matched_pairs = LLmatches_matched_pairs;
 
 % Step1: weigh nodes of the graphs LLG1, LLG2 on the current iteration
-[affTrafo] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+
+[affTrafo, HLG1.U, HLG2.U] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
                                                             HLMatches.matched_pairs, affTrafo);
 
+% [affTrafo, HLG1.U, HLG2.U] = weighNodes_2(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+%                                                             HLMatches.matched_pairs, affTrafo);
 
 % Step2: expand subgraphs with small transformation errors and eliminate
 % subgraphs with less then three nodes
@@ -39,7 +42,7 @@ HLG2.F = ones(size(HLG2.V,1),1);
 %                                 LLMatches, HLMatches, affTrafo{it});
 
 [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
-                                LLMatches, HLMatches, affTrafo{it});
+                                LLMatches, HLMatches, affTrafo{it});                        
 
 % [HLG1, HLG2] = grid_coclustering(LLG1, LLG2, HLG1, HLG2, ...
 %                                 LLMatches, HLMatches, affTrafo{it});

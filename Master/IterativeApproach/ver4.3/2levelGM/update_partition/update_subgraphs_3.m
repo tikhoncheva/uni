@@ -53,7 +53,7 @@ function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
       dist_aj(ind) = [];
       nn_PVai(ind) = [];  
       
-      % for the multiple entries of one node select the oe with smallest
+      % for the multiple entries of one node select the one with smallest
       % distance
       tmp = [nn_PVai, dist_aj];
       [~,ind] = sort(tmp(:,2));

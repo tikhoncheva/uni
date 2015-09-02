@@ -58,7 +58,7 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
 
        % compute initial affinity matrix
-       if (size(Vai,2)==0 || size(Vaj,2)==0)
+       if (size(Vai,2)<=1 || size(Vaj,2)<=1)
            continue;
        else
            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
