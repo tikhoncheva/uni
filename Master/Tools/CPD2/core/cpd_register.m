@@ -132,7 +132,7 @@ normal.xscale=1; normal.yscale=1;
 % Normalize to zero mean and unit variance
 if opt.normalize, [X,Y,normal]=cpd_normalize(X,Y); end;
 
-disp(['%%%%% Starting CPD-' upper(opt.method) ' registration. %%%' ]); tic;
+% disp(['%%%%% Starting CPD-' upper(opt.method) ' registration. %%%' ]); tic;
 
 %%%% Choose the method and start CPD point-set registration
 switch lower(opt.method),
@@ -148,7 +148,7 @@ switch lower(opt.method),
         error('The opt.method value is invalid. Supported methods are: rigid, affine, nonrigid, nonrigid_lowrank');
 end
 %%%% 
-disptime(toc);
+% disptime(toc);
 
 Transform.iter=iter;
 Transform.method=opt.method;

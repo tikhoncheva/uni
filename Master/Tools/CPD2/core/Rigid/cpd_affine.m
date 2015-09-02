@@ -79,7 +79,7 @@ while (iter<max_it) && (ntol > tol) && (sigma2 > 10*eps)
     end
     
     ntol=abs((L-L_old)/L);
-    disp([' CPD Affine ' st ' : dL= ' num2str(ntol) ', iter= ' num2str(iter) ' sigma2= ' num2str(sigma2)]);
+%     disp([' CPD Affine ' st ' : dL= ' num2str(ntol) ', iter= ' num2str(iter) ' sigma2= ' num2str(sigma2)]);
   
     % Precompute 
     Np=sum(P1);

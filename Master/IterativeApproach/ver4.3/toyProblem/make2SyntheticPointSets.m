@@ -10,14 +10,12 @@
 function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
 
 %     rng('default');
-    
+    setParameters_syntheticPointSets;
+        
     % create two empty images
-    s = 6;                                      % size of the images
     img1 = repmat(ones(s,s),1,1,3);
     img2 = repmat(ones(s,s),1,1,3);
     
-    
-    setParameters_syntheticPointSets;
     
     if bOutBoth
       n1 = nIn + nOut;		% number of nodes in the first set
@@ -28,15 +26,15 @@ function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
     
     %% Generate Nodes
     switch typeDistribution
-	case 'normal', V1 = randn(n1, 2); Pout = randn(nOut, 2); 
-	case 'uniform', V1 = rand(n1, 2); Pout = rand(nOut, 2); 
+	case 'normal', V1 = F*randn(n1, 2); Pout = F*randn(nOut, 2); 
+	case 'uniform', V1 = F*rand(n1, 2); Pout = F*rand(nOut, 2); 
 	otherwise, disp(''); error('Insert Point Distribution');
     end
     % rotation matrix
     rotMatrix = [cos(aff_transfo_angle) -sin(aff_transfo_angle); ... 
                  sin(aff_transfo_angle)  cos(aff_transfo_angle)];    
 
-    V2 = aff_transfo_scale * V1 * rotMatrix + sig*randn(n1, 2); % apply transformation to the nodes of the first graph
+    V2 = aff_transfo_scale * V1 * rotMatrix + sig*F*randn(n1, 2); % apply transformation to the nodes of the first graph
 
     if bOutBoth
       V2((nIn+1):end, :) = Pout;
@@ -56,9 +54,23 @@ function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
     %% 2nd Order Matrix
     E1 = ones(n1); E1(1:size(E1,1)+1:end) = 0;
     [L1(:,1), L1(:,2)] = find(E1);
+    L1 = unique(sort(L1,2), 'rows');  % delete same edges
+    
+    % omit (1-edgeDen)% of edges
+    nOmit1 = round(n1*(n1-1)*(1-edge_den)/2); 
+    ind_omit1 = datasample(1:size(L1,1), nOmit1, 'Replace',false)';
+    L1(ind_omit1,:) = [];
+
     
     E2 = ones(n2); E2(1:size(E2,1)+1:end) = 0;
     [L2(:,1), L2(:,2)] = find(E2);
+    L2 = unique(sort(L2,2), 'rows');  % delete same edges
+    
+    % omit (1-edgeDen)% of edges
+    nOmit2 = round( n2*(n2-1)*(1-edge_den)/2); 
+    ind_omit2 = datasample(1:size(L2,1), nOmit2, 'Replace',false)';
+    L2(ind_omit2,:) = [];
+    
     
     % create first graphs
     G1.V = V1;
@@ -83,11 +95,11 @@ function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
     min_y = min([ min(G1.V(:,2)), min(G2.V(:,2)) ]);
     max_y = min([ max(G1.V(:,2)), max(G2.V(:,2)) ]);
     
-    G1.V(:,1) = 1 + (G1.V(:,1) - min_x) * (s-1) / (max_x-min_x);
-    G1.V(:,2) = 1 +(G1.V(:,2) - min_y) * (s-1) / (max_y-min_y);
+    G1.V(:,1) = b + (G1.V(:,1) - min_x) * (s-2*b) / (max_x-min_x);
+    G1.V(:,2) = b +(G1.V(:,2) - min_y) * (s-2*b) / (max_y-min_y);
     
-    G2.V(:,1) = 1 + (G2.V(:,1) - min_x) * (s-1) / (max_x-min_x);
-    G2.V(:,2) = 1 + (G2.V(:,2) - min_y) * (s-1) / (max_y-min_y);
+    G2.V(:,1) = b + (G2.V(:,1) - min_x) * (s-2*b) / (max_x-min_x);
+    G2.V(:,2) = b + (G2.V(:,2) - min_y) * (s-2*b) / (max_y-min_y);
     
     
 end
