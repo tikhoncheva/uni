@@ -3,15 +3,13 @@
 % HLGmatches    result of higher level graph matching (pairs of correspondence nodes)
 %
 
-% Rule 1:
-% if the aff.transformation between graphs is reliable, for all nodes in
-% both subgraphs add their nearest neighbors (according to the transformattion)
-% in the opposite subgraph
-
-% Rule 2:
-% If some subgraph consists of less than 3 nodes, assign the nodes of
-% the subgraph to the anchor, to which the nearest neighbors of this nodes
-% belong to
+% Assume, that we have anchor correspondence (ak; ap); ak\in HLG1.V; ap\in HLG2.V
+% According to the estimated transformation between the subgraphs G_ak,
+% G_ap we can place G_ak over G_ap in the second graph. The nodes in LLG2.V,
+% that are not included in G_ap, but covered by the projection of G_ap can be 
+% included in G_ap
+% The decision to include a node into subgraph is based on the distance 
+% between the node and the closest node of the projections
 
 function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
                                          LLGmatches, HLGmatches, affTrafo)

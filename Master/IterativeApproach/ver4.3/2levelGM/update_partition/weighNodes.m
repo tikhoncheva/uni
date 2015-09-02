@@ -1,12 +1,10 @@
 %% Weigh nodes of the initial graphs based on the node correspondences
 
-% - for each matched subgraph pair estimate an affine transformation based
-% on the node correspondences
-% - for each node v in the first subgraph calculate the weight w as
-%   an error between projected Point Tv and the correspondence Mv of v
-%   do the same for the nodes in the second subgraphs, but use the inverse
-%   transformation
-%   the weight of an unmatched node is set to be M=const
+% for each matched subgraph pair estimate an affine transformation based
+% on the node correspondences; do it both directions; assign to each
+% transformation an error: error = median(dist(projection, matche))
+% the quality of the subgraph pair is set to be a minimum from to errors
+% (error of the affine transformation in two directions)
 
 % Input
 %   LLG1        first graph
