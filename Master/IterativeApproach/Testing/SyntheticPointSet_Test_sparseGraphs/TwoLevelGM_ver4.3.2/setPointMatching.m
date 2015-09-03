@@ -25,7 +25,7 @@ nSet=nSet+1; settings{nSet} = {0, 'Scale for 3rd order', 'scale_3D', 0.5}; % Use
 nSet=nSet+1; settings{nSet} = {0, 'Permute Nodes', 'bPermute', 1}; % boolean
 nSet=nSet+1; settings{nSet} = {0, 'Outliers Both Side', 'bOutBoth', 0}; % boolean
 nSet=nSet+1; settings{nSet} = {0, 'Use Displacement', 'bDisplacement', 0}; % boolean
-nSet=nSet+1; settings{nSet} = {0, 'Edge Density', 'edge_den', 0.5}; % boolean
+nSet=nSet+1; settings{nSet} = {0, 'Edge Density', 'edge_den', 1.}; % boolean
 %% Evaluate Settings
 nFix = 0; nCon = 0;
 for n = 1:nSet

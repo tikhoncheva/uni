@@ -5,11 +5,12 @@ function conflictMatrix = getConflictMatrix(group1, group2)
 
 group = [ group1 group2 ];
 nMatch = size(group,1);
-%conflictMatrix = logical(sparse(nMatch,nMatch));
-conflictMatrix = zeros(nMatch,nMatch);
+conflictMatrix = logical(sparse(nMatch,nMatch));
+% conflictMatrix = zeros(nMatch,nMatch);
 
 for i = 1:size(group,2)
     conflictMatrix(group(:,i),group(:,i)) = true;
 end
 conflictMatrix(1:size(conflictMatrix,1)+1:end) = false; 
+
      

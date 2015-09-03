@@ -63,7 +63,8 @@ end
 idx1 = idx1-1; idx2 = idx2-1;
 
 % eliminate conflicting elements to prevent conflicting walks
-M = M.*~full(getConflictMatrix(group1, group2));
+M = M.*~sparse(full(getConflictMatrix(group1, group2)));
+% M = M.*sparse(full(getInverseConflictMatrix(group1, group2)));
 
 % note that this matrix is column-wise stochastic
 d = sum(M, 1); % degree : col sum

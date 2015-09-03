@@ -26,7 +26,7 @@ P1 = P1'; P2 = P2';
 
 %% Create two initial (lower level) graphs (Changes E.Tikhonc)
 
-E1 = ones(nP1); E1(1:size(E1,1)+1:end) = 0;
+E1 = ones(nP1); %E1(1:size(E1,1)+1:end) = 0;
 [L1(:,1), L1(:,2)] = find(E1);
 L1 = unique(sort(L1,2), 'rows');  % delete same edges
 
@@ -37,7 +37,7 @@ E1(sub2ind([nP1, nP1], L1(ind_omit1,1), L1(ind_omit1,2))) = 0;
 E1(sub2ind([nP1, nP1], L1(ind_omit1,2), L1(ind_omit1,1))) = 0;
 L1(ind_omit1,:) = [];
 
-E2 = ones(nP2); E2(1:size(E2,1)+1:end) = 0;
+E2 = ones(nP2); %E2(1:size(E2,1)+1:end) = 0;
 [L2(:,1), L2(:,2)] = find(E2);
 L2 = unique(sort(L2,2), 'rows');  % delete same edges
 
@@ -65,11 +65,9 @@ nP12 = nnz(E12);
 % E1f = ones(nP1); E2f = ones(nP2);
 % [L1(:,1), L1(:,2)] = find(E1f);
 % [L2(:,1), L2(:,2)] = find(E2f);
-% G1 = P1(L1(:,1),:)-P1(L1(:,2),:);
-% G2 = P2(L2(:,1),:)-P2(L2(:,2),:);
-
 [L1(:,1), L1(:,2)] = find(E1);
 [L2(:,1), L2(:,2)] = find(E2);
+
 G1 = P1(L1(:,1),:)-P1(L1(:,2),:);
 G2 = P2(L2(:,1),:)-P2(L2(:,2),:);
 
@@ -96,18 +94,41 @@ G2 = P2(L2(:,1),:)-P2(L2(:,2),:);
 G1 = sqrt(G1(:,1).^2+G1(:,2).^2);
 G2 = sqrt(G2(:,1).^2+G2(:,2).^2);
 
-M = sparse(nP1*nP2, nP1*nP2);
+% nE1 = size(L1,1);
+% nE2 = size(L2,1);
+% G11 = repmat(G1, nE2,1);
+% G22 = kron(G2, ones(nE1,1));
+% L11 = repmat(L1, nE2,1);
+% L22 = kron(L2, ones(nE1,1));
+% I = (L22(:,1)-1)*nP1 + L11(:,1);
+% J = (L22(:,2)-1)*nP1 + L11(:,2);
+% val = exp(-(G11-G22).^2/scale_2D);
+% 
+% M = sparse(I,J,val);
+
+nM = nP1*nP2;
+M = sparse(nM, nM);
 
 for ij = 1:size(L1,1)
     i = L1(ij,1);
     j = L1(ij,2);
     
-    for ab = 1:size(L2,1)
-        a = L2(ab,1);
-        b = L2(ab,2);
-        
-        M((a-1)*nP1+i, (b-1)*nP1+j) = exp(-(G1(ij)-G2(ab)).^2/scale_2D);
-    end
+    ind1 = (L2(:,1)-1)*nP1 + i;
+    ind2 = (L2(:,2)-1)*nP1 + j;
+    
+    ind = sub2ind([nM, nM], ind1, ind2);
+    
+    val = exp(-(repmat(G1(ij),size(G2,1),1)-G2).^2/scale_2D);
+%     
+%     for ab = 1:size(L2,1)
+%         a = L2(ab,1);
+%         b = L2(ab,2);
+%         
+%         M((a-1)*nP1+i, (b-1)*nP1+j) = exp(-(G1(ij)-G2(ab)).^2/scale_2D);
+%     end
+
+
+    M(ind) = val;
 end
 
 M(isnan(M)) = 0;
