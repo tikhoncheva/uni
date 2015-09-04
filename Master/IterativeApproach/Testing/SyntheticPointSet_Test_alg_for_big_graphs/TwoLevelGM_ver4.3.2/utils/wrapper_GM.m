@@ -6,54 +6,53 @@ for j = 1:length(method.variable), str = [str ',cdata.' method.variable{j} ]; en
 if ~isempty(method.param), for i = 1:length(method.param), str = [str, ',method.param{' num2str(i) '}']; end; end
 str = [str, ')']; 
 
-if ~strcmp(func2str(method.fhandle), 'wrapper_TwoLevelGM')
-    
-    %% PATH
+
+%% PATH
 %     if strcmp(func2str(method.fhandle), 'PATH')
 %      
 %     end
 
-    %% FAQ
-    if strcmp(func2str(method.fhandle), 'sfw')
+%% FAQ
+if strcmp(func2str(method.fhandle), 'sfw')
 
-        start = tic;
-        for i=1:cdata.FAQ_nIt,
-            % If it it the first start then start in the center of the space
-            if i>1
-                [mn(i).s,mn(i).p,~,~,~,~] = sfw(cdata.A, cdata.B, 30,-1); %eval(str);
-                % otherwise pick a point near the center of the space.
-            else
-                [mn(i).s,mn(i).p,~,~,~,~] = sfw(cdata.A, cdata.B, 30);
-            end
-
+    start = tic;
+    for i=1:cdata.FAQ_nIt,
+        % If it it the first start then start in the center of the space
+        if i>1
+            [mn(i).s,mn(i).p,~,~,~,~] = sfw(cdata.A, cdata.B, 30,-1); %eval(str);
+            % otherwise pick a point near the center of the space.
+        else
+            [mn(i).s,mn(i).p,~,~,~,~] = sfw(cdata.A, cdata.B, 30);
         end
-        S=[mn.s]';
-        [f, indopt] = min(S(1:cdata.FAQ_nIt));
 
-        seq = mn(indopt).p;
-        time = toc(start);
+    end
+    S=[mn.s]';
+    [f, indopt] = min(S(1:cdata.FAQ_nIt));
 
-        X = zeros(cdata.nP1, cdata.nP2);
-        ind = sub2ind(size(X), (1:cdata.nP1)', seq');
-        X(ind) = 1;
+    seq = mn(indopt).p;
+    time = toc(start);
 
-        [corr(:,1), corr(:,2)] = find(X);
-        score = matching_score_LL(cdata.LLG1, cdata.LLG2, corr);
-        X = X(:);
+    X = zeros(cdata.nP1, cdata.nP2);
+    ind = sub2ind(size(X), (1:cdata.nP1)', seq');
+    X(ind) = 1;
+
+    [corr(:,1), corr(:,2)] = find(X);
+    score = matching_score_LL(cdata.LLG1, cdata.LLG2, corr);
+    X = X(:);
 %         score = f;
 
-    end
+end
     
-    %% GLAG
-    if strcmp(func2str(method.fhandle), 'GLAG')
-        start = tic;
-        param = struct('verbose', 0);
-        [~,X]=graph_matching(cdata.A,cdata.B, param);
-        [corr(:,1), corr(:,2)] = find(X);
-        score = matching_score_LL(cdata.LLG1, cdata.LLG2, corr);
-        X = X(:);
-        time = toc(start);
-    end
+%% GLAG
+if strcmp(func2str(method.fhandle), 'GLAG')
+    start = tic;
+    param = struct('verbose', 0);
+    [~,X]=graph_matching(cdata.A,cdata.B, param);
+    [corr(:,1), corr(:,2)] = find(X);
+    score = matching_score_LL(cdata.LLG1, cdata.LLG2, corr);
+    X = X(:);
+    time = toc(start);
+end
     
 %     tic;
 %     s = 0;
@@ -82,7 +81,9 @@ if ~strcmp(func2str(method.fhandle), 'wrapper_TwoLevelGM')
 %     % Matching Score
 %     score = X'*cdata.affinityMatrix*X; % objective score function
 %     time = toc; % @ETikhonc: move toc to the end, because TwoLevelGM does also discretization
-else
+
+%% 2LevelGM
+if strcmp(func2str(method.fhandle), 'wrapper_TwoLevelGM') 
     start = tic; [Xraw, score] = eval(str); time = toc(start);
     X = Xraw;
 end

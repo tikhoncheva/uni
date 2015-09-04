@@ -3,17 +3,17 @@ nSet=0; %% Display (bool) / Display Name / Variable Name / Variable Value, Vecto
 nSet=nSet+1; settings{nSet} = {0, '# of tests', 'nTest', 1};
 switch 2
     case 1 % Outlier Test
-        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
-        nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:50};
-        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.03};
+%         nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
+%         nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:50};
+%         nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.03};
     case 2 % Deformation Test
-        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
+        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 300};
         nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0};
         nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0:0.02:0.2};
     case 3 % Outlier Test without deformation (ETikhoncheva 31.08.2015)
-        nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
-        nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:50};
-        nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.0};        
+%         nSet=nSet+1; settings{nSet} = {1, '# of inliers \itn_{\rmin}\rm', 'nInlier', 100};
+%         nSet=nSet+1; settings{nSet} = {1, '# of outliers \itn_{\rmout}\rm', 'nOutlier', 0:10:50};
+%         nSet=nSet+1; settings{nSet} = {1, 'deformation noise \it\sigma\rm', 'deformation', 0.0};        
     otherwise
 end
 

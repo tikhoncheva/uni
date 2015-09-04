@@ -94,7 +94,7 @@ GT.matrix = zeros(nP1, nP2);
 for i = 1:nP1, GT.matrix(i,seq(i)) = 1; end
 GT.bool = GT.matrix(:);
 
-corr = [(1:100)', seq'];
+corr = [(1:numel(seq))', seq'];
 GT.optscore = matching_score_LL(LLG1, LLG2, corr);
 
 %% Return the value
