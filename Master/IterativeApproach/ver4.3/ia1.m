@@ -240,18 +240,29 @@ function pbToyProble_realImage_Callback(hObject, ~, handles)
 
 if filename~=0
     
-    img2 = imread([pathname filesep filename]);
-    if size(img2,3)==1
-        img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
-    end
+%     img2 = imread([pathname filesep filename]);
+%     if size(img2,3)==1
+%         img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
+%     end
+% 
+%     filePathName = [pathname, filename];
+% %     [F,D] = features_Cho(filePathName, img2);
 
-    filePathName = [pathname, filename];
-%     [F,D] = features_Cho(filePathName, img2);
-    
+    setParams; % params for feature extraction and matching
+    % read ground truth if available
+
+   %% load FILE names
+    iparam.view(1).fileName = filename;
+    iparam.view(1).filePathName = [pathname,filename];      
+    iparam.nView = 1;   iparam.bPair = 0;  iparam.bShow = 0;
+
+    cdata = features_Cho( iparam, fparam, mparam );
+    cdata.GT = []; % no ground truth for one image
+
     setParameters;  
     
     % Image Pyramid
-    [IP1, IP2, M] = imagePyramid_imageTr(filePathName, img2);
+    [IP1, IP2, M] = imagePyramid_imageTr(cdata.view);
     L = size(IP1,1);        % current level of the pyramid
 
     % Show img1 on the axis1
@@ -326,30 +337,53 @@ end
 % select two images
 function pbSelect_2images_Callback(hObject, ~, handles)
 
-[filename1, pathname1] = uigetfile({'*.jpg';'*.png'}, 'Select first image');
+[filename1, pathname] = uigetfile( fullfile('../../data/','*a.jpg;*a.png'), 'Select first image');
 if filename1~=0  
-    [filename2, pathname2] = uigetfile({'*.jpg';'*.png'}, 'Select second image');
-
-    if filename2~=0
-        display(sprintf('First image:'));
+    [filename2, ~] = uigetfile(fullfile(pathname,'*b.jpg;*b.png'), 'Select second image');
+    if filename2~=0      
+        setParams; % params for feature extraction and matching
+        % read ground truth if available
+        
+       %% load FILE names
+        iparam.view(1).fileName = filename1;
+        iparam.view(1).filePathName = [pathname,filename1];
+        iparam.view(2).fileName = filename2;
+        iparam.view(2).filePathName = [pathname,filename2];        
+        iparam.nView = 2;   iparam.bPair = 1;
+        iparam.bShow = 0;
+        
+        
+        disp ([ 'loading features from' pathname ' and make new matches.']);
+        info_filename = [pathname, 'fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat'];
+        
+%         cdata = features_Cho( iparam, fparam, mparam );
+         
+        if exist(info_filename, 'file')
+            load([pathname, 'fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat']);          
+        else
+            cdata = features_Cho( iparam, fparam, mparam );
+            cdata.GT = [];
+        end
 
         setParameters;
 
-        img1 = imread([pathname1 filesep filename1]);
-        if size(img1,3)==1
-            img1 = cat(3, img1, img1, img1); % make rgb image from grayscale image
-        end    
+%         img1 = imread([pathname filesep filename1]);
+%         if size(img1,3)==1
+%             img1 = cat(3, img1, img1, img1); % make rgb image from grayscale image
+%         end    
+%         
+%         img2 = imread([pathname filesep filename2]);
+%         if size(img2,3)==1
+%             img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
+%         end    
         
-        img2 = imread([pathname2 filesep filename2]);
-        if size(img2,3)==1
-            img2 = cat(3, img2, img2, img2); % make rgb image from grayscale image
-        end    
+%         filePathName1 = [pathname, filename1];
+%         filePathName2 = [pathname, filename2];
         
-        filePathName1 = [pathname1, filename1];
-        filePathName2 = [pathname2, filename2];
+        [IP1, ~] = imagePyramid(cdata.view(1)); % filePathName1, img1);
+        [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
-        [IP1, ~] = imagePyramid(filePathName1, img1);
-        [IP2, M] = imagePyramid(filePathName2, img2);
+        M.GT.LLpairs = cdata.GT;
         
         L = size(IP1,1);        % current level of the pyramid
 
