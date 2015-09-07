@@ -359,7 +359,7 @@ if filename1~=0
 %         cdata = features_Cho( iparam, fparam, mparam );
          
         if exist(info_filename, 'file')
-            load([pathname, 'fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat']);          
+            load([pathname, 'fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat']);  
         else
             cdata = features_Cho( iparam, fparam, mparam );
             cdata.GT = [];
@@ -383,6 +383,8 @@ if filename1~=0
         [IP1, ~] = imagePyramid(cdata.view(1)); % filePathName1, img1);
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
+        cdata.GT(cdata.GT(:,1)>500,:) = [];
+        cdata.GT(cdata.GT(:,2)>500,:) = [];
         M.GT.LLpairs = cdata.GT;
         
         L = size(IP1,1);        % current level of the pyramid
@@ -766,16 +768,9 @@ end
 % if we know the Ground Truth fot the LL
 if ~isempty(handles.M(L).GT.LLpairs)
     nSubplots = 2;
-    
+
     GT = handles.M(L).GT.LLpairs;
-    y_ac = zeros(1, nIt);
-    for i=1:1:nIt
-        if ~isempty(LLGmatches(i).matched_pairs)
-            TP = ismember(LLGmatches(i).matched_pairs(:,1:2), GT, 'rows');
-            TP = sum(TP(:));
-            y_ac(i) = TP/ size(LLGmatches(i).matched_pairs,1) * 100;
-        end
-    end
+    y_ac = calculateAccuracy(LLGmatches, GT);
     
     subplot(1,2,2);
     plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
@@ -896,6 +891,8 @@ affTrafo = M(L).affTrafo;
 % -----------------------------------------------------------------------    
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+
+handles.Accuracy = calculateAccuracy(LLGmatches, handles.M(1).GT.LLpairs);
 
 handles.SummaryT = time;
 
@@ -1081,6 +1078,7 @@ it = handles.M(L).it;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     twoLevelGM_nSteps(L, N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
+handles.Accuracy = calculateAccuracy(LLGmatches, handles.M(1).GT.LLpairs);
 handles.SummaryT = time;
 
 handles.M(L).LLGmatches = LLGmatches;
