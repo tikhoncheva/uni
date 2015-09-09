@@ -107,7 +107,7 @@ for iterGM = 1:maxIterGM
     nVote = 0;
     for iter_i = 1:length(matchIdx_GM) % for each match
         
-        if mod(iter_i,100)==0, fprintf('%3d.',iter_i);   end;
+%         if mod(iter_i,100)==0, fprintf('%3d.',iter_i);   end;
         scoreAnchor = matchScore_GM(iter_i);
         matchAnchor = matchList_GM(iter_i,:);
         
@@ -147,8 +147,8 @@ for iterGM = 1:maxIterGM
     end
     kdtree_delete(kdtreeNS1);
     kdtree_delete(kdtreeNS2);
-    fprintf('\n');
-    fprintf('Match-growing iter #%d: anchor %d , voting %d',iterGM, length(matchIdx_GM), nVote );
+%     fprintf('\n');
+%     fprintf('Match-growing iter #%d: anchor %d , voting %d',iterGM, length(matchIdx_GM), nVote );
     %spy(voting_space)
     
     % make sure that the current GM matches are included
@@ -163,7 +163,7 @@ for iterGM = 1:maxIterGM
         max_candidates, threshold_dissim, cdata.mparam );
     
     nCandMatch = size(cand_matchlist_new,1);
-    fprintf('-> new candidates %d\n',nCandMatch  );
+%     fprintf('-> new candidates %d\n',nCandMatch  );
     % caculate affinity matrix of initial matches by reprojection error
 %     [ cdata.distanceMatrix cdata.flipMatrix ] = computeAffineTransferDistanceMEX( ...
     [ cdata.distanceMatrix, cdata.flipMatrix ] = computeEuclidDistance( ...

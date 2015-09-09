@@ -1,6 +1,6 @@
-function plotMatches(method, problem, accuracy, score, X)
+function [fig] = plotMatches(method, problem, accuracy, score, X)
 
-    figure;
+    fig = figure;
     
     img1 = problem.cdata.view(1).img;
     img2 = problem.cdata.view(2).img;
