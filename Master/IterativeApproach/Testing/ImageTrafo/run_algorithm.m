@@ -21,6 +21,7 @@ if strcmp(alg, 'wrapper_ProgGM')
               cand_matchlist_init(logical(X_EXT'),2) )) = 1;
     [matches(:,1), matches(:,2)] = find(X_EXT_mat);  
     
+    X = X_EXT;
     score = matching_score(invar.LLG1, invar.LLG2, matches);
       
 %     Xfull = zeros(invar.n1, invar.n2);
@@ -46,6 +47,7 @@ if strcmp(alg, 'wrapper_TwoLevelGM')
               cand_matchlist_init(logical(X_EXT'),2) )) = 1;
     [matches(:,1), matches(:,2)] = find(X_EXT_mat);  
     
+    X = X_EXT;
     score = matching_score(invar.LLG1, invar.LLG2, matches);
     
 %     accuracy = (X(:)'*invar.cdata.GTbool(:))/sum(invar.cdata.GTbool);
@@ -66,6 +68,7 @@ if strcmp(alg, 'wrapper_featureMatching')
               cand_matchlist_init(logical(X_EXT'),2) )) = 1;
     [matches(:,1), matches(:,2)] = find(X_EXT_mat);  
     
+    X = X_EXT;
     score = matching_score(invar.LLG1, invar.LLG2, matches);
     
 %    accuracy = (X(:)'*invar.cdata.GTbool(:))/sum(invar.cdata.GTbool);
