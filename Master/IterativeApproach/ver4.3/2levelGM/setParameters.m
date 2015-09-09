@@ -26,8 +26,8 @@ igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
 % anchor graphs
 % agparam.nA = 60;        % number of anchors
 agparam.appSizeOfSubgraph = 30;  % approximate number of nodes in one subgraph
-agparam.grid_nr = 4;      % number of rows in a grid over a graph
-agparam.grid_nc = 5;      % number of columns -//- 
+agparam.grid_nr = 2;      % number of rows in a grid over a graph
+agparam.grid_nc = 2;      % number of columns -//- 
                           % #subgraphs = grid_nr x grid_nc
 agparam.ncand = 3;        % number of candidate matches of each anchor
 
@@ -41,7 +41,7 @@ agparam.R = 30;                % radius of the local neighborhood around a node 
 agparam.nbins = 50;            % number of bins in the structural descriptor of the
 
 % algorithm
-algparam.nMaxIt = 30;           % maximal number of iteration for each level of the image pyramid
+algparam.nMaxIt = 15;           % maximal number of iteration for each level of the image pyramid
 algparam.nConst = 3;            % abort, if the matching score didn't change in last nConst iterationss
 
 

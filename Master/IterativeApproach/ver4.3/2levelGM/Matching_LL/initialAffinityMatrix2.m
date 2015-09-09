@@ -30,56 +30,29 @@ nV2 = size(v2,2);
 % Affinity matrix (non-diagonal elements: edge similarity)
 
 G1 = squareform(pdist(v1', 'euclidean')); if isempty(G1) G1=[0]; end;
-G1(~AdjM1) = NaN;
+% G1(~AdjM1) = NaN;
 % sigma1 = sum(G1(:))/nV1/nV1;
 % G1 = G1./sigma1;
 
 G2 = squareform(pdist(v2', 'euclidean')); if isempty(G2) G2=[0]; end;
-G2(~AdjM2) = NaN;
+% G2(~AdjM2) = NaN;
 % sigma2 = sum(G2(:))/nV2/nV2;
 % G2 = G2./sigma2;
 
 
-% sigma = 0.15; % 100     % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-% D = (repmat(G1, nV2, nV2)-kron(G2,ones(nV1))).^2;
-% D = exp(-D./sigma);                  
-% D(isnan(D)) = 0;
-
 nV = nV1*nV2;
-D = edgeSimilarity(reshape(repmat(G1, nV2, nV2), nV*nV,1), ...
+D = edgeSimilarity_exp(reshape(repmat(G1, nV2, nV2), nV*nV,1), ...
                     reshape(kron(G2,ones(nV1)), nV*nV,1) );
 D = reshape(D, nV, nV);
-
-% D = D+D'; 
-
-
-% Affinity matrix (non-diagonal elements: cosine node similarity)
-% node_cossimilarity = nodeSimilarity(v1, v2, 'cosine');
-% D1 = repmat(node_cossimilarity, numel(node_cossimilarity), 1);
-
-% D1 = angleBetweenEdges(v1,v2);
-% D1 = (D1 + D1');
-% 
-% D = D + D1;
-
-
-% combine two matrices
-% alpha = 0.6;
-% D = alpha*D + (1-alpha)*D1;
-
-% D = max(D(:)) - D;
-% D1 = D1 - D;
-% D1(D1<0) = 0;
-% D = D1;
-
 
 % Affinity matrix (diagonal elements: node similarity)
 if (isempty(d1) || isempty(d2))
    D(1:(length(D)+1):end) = 0; 
 else
 %     node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
-    node_eusimilarity = nodeSimilarity(d1, d2, 'cosine');
-    D(1:(length(D)+1):end) = node_eusimilarity;
+    D(1:(length(D)+1):end) = 0; 
+%     node_eusimilarity = nodeSimilarity(d1, d2, 'cosine');
+%     D(1:(length(D)+1):end) = node_eusimilarity;
 end
 
 % D = D.*~full(conflictMatrix);     % it also will be done in the matching

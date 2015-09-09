@@ -54,56 +54,56 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
        end
        adjM2cut = adjM2(ind_Vaj, ind_Vaj');
 
-%        % correspondence matrix 
-%        corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
-% 
-%        % compute initial affinity matrix
-%        if (size(Vai,2)<=1 || size(Vaj,2)<=1)
-%            continue;
-%        else
-%            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
-%        end    
-% 
-%        [score, X] = GraphMatching(corrmatrix, affmatrix);
-%        % subgraph weights
-%        Ai = 1/sum(X(:)); %/nV1;
-%        Aj = 1; %/nV2;
-%        sim((aj-1)*nA1 + ai) = Ai*Aj*score;
-       
-       Vai = Vai';
-       Vaj = Vaj';
-       
-       if size(Vai,1)<=1 || size(Vaj,1)<=1
+       % correspondence matrix 
+       corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
+
+       % compute initial affinity matrix
+       if (size(Vai,2)<=1 || size(Vaj,2)<=1)
            continue;
-       end
-           
-          
+       else
+           affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
+       end    
+
+       [score, X] = GraphMatching(corrmatrix, affmatrix);
+       % subgraph weights
+       Ai = 1/sum(X(:)); %/nV1;
+       Aj = 1; %/nV2;
+       sim((aj-1)*nA1 + ai) = Ai*Aj*score;
        
-       opt.method='rigid'; opt.viz=0; opt.scale=0;
-       
-       [Transform, ~]=cpd_register(Vaj, Vai, opt); 
-       Ai = Transform.R;
-       bi = Transform.t;
- 
-       [Transform, ~]=cpd_register(Vai, Vaj, opt); 
-       Aj = Transform.R;
-       bj = Transform.t;              
-            
-       PVai = Ai * Vai' + repmat(bi,1,size(Vai,1)); % proejction of Vai nodes
-       PVai = PVai';
-       
-       [nn_PVai, dist_aj] = knnsearch(LLG2.V(:,1:2), PVai);   %indices of nodes in LLG2.V
-       
-       PVaj = Aj * Vaj' + repmat(bj,1,size(Vaj,1)); % projection of Vaj nodes
-       PVaj = PVaj';       
-       
-       [nn_PVaj, dist_ai] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V  
-       
-       err1 = median(dist_aj);  
-       err2 = median(dist_ai);
-       err = min([err1, err2]);
-       
-       sim((aj-1)*nA1 + ai) = exp(-err);
+%        Vai = Vai';
+%        Vaj = Vaj';
+%        
+%        if size(Vai,1)<=1 || size(Vaj,1)<=1
+%            continue;
+%        end
+%            
+%           
+%        
+%        opt.method='rigid'; opt.viz=0; opt.scale=0;
+%        
+%        [Transform, ~]=cpd_register(Vaj, Vai, opt); 
+%        Ai = Transform.R;
+%        bi = Transform.t;
+%  
+%        [Transform, ~]=cpd_register(Vai, Vaj, opt); 
+%        Aj = Transform.R;
+%        bj = Transform.t;              
+%             
+%        PVai = Ai * Vai' + repmat(bi,1,size(Vai,1)); % proejction of Vai nodes
+%        PVai = PVai';
+%        
+%        [nn_PVai, dist_aj] = knnsearch(LLG2.V(:,1:2), PVai);   %indices of nodes in LLG2.V
+%        
+%        PVaj = Aj * Vaj' + repmat(bj,1,size(Vaj,1)); % projection of Vaj nodes
+%        PVaj = PVaj';       
+%        
+%        [nn_PVaj, dist_ai] = knnsearch(LLG1.V(:,1:2), PVaj);   %indices of nodes in LLG1.V  
+%        
+%        err1 = median(dist_aj);  
+%        err2 = median(dist_ai);
+%        err = min([err1, err2]);
+%        
+%        sim((aj-1)*nA1 + ai) = exp(-err);
 
     end 
     

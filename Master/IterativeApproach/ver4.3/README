@@ -12,9 +12,34 @@ coarse graph matching -> graph matching -> graph update (re-weighting) -> coarse
 -----------------------------------------------------------------------------
 Ver 4.3
 -----------------------------------------------------------------------------
-
+ 09.09
+  In update_subgraphs: 
+    + weighNodes_3.m : use RANSAC idea to improve estimation of the affine transformation
+                       use the best found transformations in both directions
+    + ransac_cdf.m : use RANSAC idea to improve quality of the afftrafo estimated with CDF-Algorithm
+    + ransac_afftrafo.m : use RANSAC idea to improve quality of the afftrafo estimated with MATLAB function
+  
+  In matching_LL:
+    to compare with ProgGM, which does not uses node descriptors and assumes fully connected affinity matrix,
+    we have made corresponding changes in matching of LLGs:
+    <-> initialAffinityMatrix2.m: diagonal = 0; assume fully connected subgraphs
+    <-> matching_score_LL.m:assume fully connected subgraphs
+    
+  In matching_HL:
+    <-> use RRW to calculate similarity between the anchors (slow)
+    
+  Generally: use less anchors for the image set img_trafo
+   
+  
+ 08.09
+  + edge similarity as in ProgGM
+    From ProgGM: kdtree, extrapolateGT.m, extrapolateMatchIndicator.m
+    changes in LowerLevelGraph/imagePyramid_imageTr.m , LowerLevelGraph/imagePyramid.m
+    
+ 07.09
+  + feature extraction and GT expantion same as in ProgGM
  31.08
-  + new function to update subgraphs: subgraph_updaye_3.m
+  + new function to update subgraphs: subgraph_update_3.m
   
  <-> weighNodes.m
    use cpd algorihtm (by Myronenko) to estimate affine transformation between the clusters

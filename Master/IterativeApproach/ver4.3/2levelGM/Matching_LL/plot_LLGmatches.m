@@ -98,13 +98,13 @@ if (nargin == 10)
         nans = NaN * ones(size(matches_hl,1),1) ;
         x = [ G1.V(matches_hl(:,1),1) , G2.V(matches_hl(:,2),1) , nans ] ;
         y = [ G1.V(matches_hl(:,1),2) , G2.V(matches_hl(:,2),2) , nans ] ; 
-        line(x', y', 'Color','w','LineWidth', 2) ;
+        line(x', y', 'Color','k','LineWidth', 2) ;
         
         if (~isempty(GT) )
             [~,right_matches] = ismember(matches_hl(:,1), GT(:,1));
             x = [ G1.V(matches_hl(:,1),1) , G2.V(GT(right_matches,2),1) , nans ] ;
             y = [ G1.V(matches_hl(:,1),2) , G2.V(GT(right_matches,2),2) , nans ] ; 
-            line(x', y', 'Color','w', 'LineWidth', 2, 'LineStyle', '--') ;        
+            line(x', y', 'Color','k', 'LineWidth', 2, 'LineStyle', '--') ;        
         end
     end
     

@@ -11,7 +11,7 @@
 % The decision to include a node into subgraph is based on the distance 
 % between the node and the closest node of the projections
 
-function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
+function [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
                                          LLGmatches, HLGmatches, affTrafo)
    fprintf('\n------ Rearrange subgraphs');
 
@@ -81,49 +81,50 @@ function [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
       new_U1(uint8(tmp(:,1)), ai) = tmp(:,2);
       
 %       figure; subplot(1,2,1);
-%             
-%                     plot(LLG1.V(:,1), 8-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+%                     
+%                     m = 250;
+%                     plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
 % 
-%                     V2 = LLG2.V; V2(:,1) = 8 + V2(:,1);
-%                     plot(V2(:,1), 8-V2(:,2), 'ro', 'MarkerFaceColor','r');
+%                     V2 = LLG2.V; V2(:,1) = m + V2(:,1);
+%                     plot(V2(:,1), m-V2(:,2), 'ro', 'MarkerFaceColor','r');
 % 
 % 
-%                     plot(Vai(:,1), 8-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     Vaj(:,1) = 8 + Vaj(:,1);
-%                     plot(Vaj(:,1), 8-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                     plot(Vai(:,1), m-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                     Vaj(:,1) = m + Vaj(:,1);
+%                     plot(Vaj(:,1), m-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
 %                     
 %                     
-%                     plot(V2(nn_PVai,1), 8-V2(nn_PVai,2), 'ko', 'MarkerFaceColor','k');
+%                     plot(V2(nn_PVai,1), m-V2(nn_PVai,2), 'ko', 'MarkerFaceColor','k');
 %                     
 %                     Tx1 = PVai;
-%                     Tx1(:,1) = 8 + Tx1(:,1);
-%                     plot(Tx1(:,1), 8-Tx1(:,2), 'm*')
+%                     Tx1(:,1) = m + Tx1(:,1);
+%                     plot(Tx1(:,1), m-Tx1(:,2), 'm*')
 % 
 % 
 %                     nans = NaN * ones(size(Tx1,1),1) ;
 %                     x = [ Vai(:,1) , Tx1(:,1) , nans ] ;
 %                     y = [ Vai(:,2) , Tx1(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m') ;
+%                     line(x', m-y', 'Color','m') ;
 %                     
 %                     title(sprintf('Error=%0.3f', err));
 % 
 %               subplot(1,2,2);
 % 
-%                     plot(LLG1.V(:,1), 8-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-%                     plot(V2(:,1), 8-V2(:,2), 'ro', 'MarkerFaceColor','r');
+%                     plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+%                     plot(V2(:,1), m-V2(:,2), 'ro', 'MarkerFaceColor','r');
 %                     
-%                     plot(Vai(:,1), 8-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     plot(Vaj(:,1), 8-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                     plot(Vai(:,1), m-Vai(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+%                     plot(Vaj(:,1), m-Vaj(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
 %                    
-%                     plot(LLG1.V(nn_PVaj,1), 8-LLG1.V(nn_PVaj,2), 'ko', 'MarkerFaceColor','k');
+%                     plot(LLG1.V(nn_PVaj,1), m-LLG1.V(nn_PVaj,2), 'ko', 'MarkerFaceColor','k');
 %                     
 %                     Tx2 = PVaj;
-%                     plot(Tx2(:,1), 8-Tx2(:,2), 'm*')
+%                     plot(Tx2(:,1), m-Tx2(:,2), 'm*')
 %                     
 %                     nans = NaN * ones(size(Tx2,1),1) ;
 %                     x = [ Vaj(:,1) , Tx2(:,1) , nans ] ;
 %                     y = [ Vaj(:,2) , Tx2(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m') ;
+%                     line(x', m-y', 'Color','m') ;
 %                     
 %             hold off;
         clear ai aj Ai Aj bi bj Ti Tj err ind_Vai ind_Vaj Vai Vaj;

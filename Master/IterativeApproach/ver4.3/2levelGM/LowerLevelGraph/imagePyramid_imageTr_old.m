@@ -10,50 +10,35 @@
 %
 % Output
 %
-function [I1, I2, M, view1] = imagePyramid_imageTr(view)
+function [I1, I2, M] = imagePyramid_imageTr(filePathName2, img2)
 
 setParameters;
 
 scalef = ipparam.scalef;
 nLevels = ipparam.nLevels;
 
+I1 = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
+I2 = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
+
 HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);                      
 
 M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
                   'GT', [], 'it', 0, 'affTrafo', []), nLevels,1);
-              
-I1 = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
-I2 = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
 
-img2 = view.img;
 for i = 1:nLevels
    fprintf('\nLevel %d: \n', i);
-
-   %    [edges, ~] = computeDenseSIFT(img2,fparam);        % Extract keypoitns
+   
+%    [edges, ~] = computeDenseSIFT(img2,fparam);        % Extract keypoitns
 %    [img1, features1, features2, GT] = transform_image(img2, edges); 
    
-   if i>1
-       setParams;
-       if ~exist('./tmp', 'dir')
-           mkdir('./tmp');
-       end
-       iparam.view(1).fileName = sprintf('%s_level%d.png',view.fileName, i);
-       iparam.view(1).filePathName = ['./tmp/', iparam.view(1).fileName];
-       imwrite(img2, iparam.view(1).filePathName);
-       iparam.nView = 1; iparam.bPair = 0;
-       iparam.bShow = 0;
-       
-       cdata = features_Cho( iparam, fparam, mparam );
-       view = cdata.view;
-       clear iparam fparam mparam;
-   end
-   features2.edges = view.feat(:,1:2)';
-   features2.descr = view.desc';  
+   [featInfo2] = features_Cho(filePathName2, img2);
+   features2.edges = featInfo2.feat(:,1:2)';
+   features2.descr = featInfo2.desc';
    
-   [img1, view1, GT] = transform_image_lite(img2, view); 
-   features1.edges = view1.feat(:,1:2)';
-   features1.descr = view1.desc';
+   [img1, featInfo1, GT] = transform_image_lite(img2, featInfo2); 
+   features1.edges = featInfo1.feat(:,1:2)';
+   features1.descr = featInfo1.desc';
    
    LLG1 = buildLLGraph(features1.edges, features1.descr, igparam);
    LLG2 = buildLLGraph(features2.edges, features2.descr, igparam);

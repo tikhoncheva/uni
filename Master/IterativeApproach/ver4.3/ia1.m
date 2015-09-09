@@ -262,7 +262,22 @@ if filename~=0
     setParameters;  
     
     % Image Pyramid
-    [IP1, IP2, M] = imagePyramid_imageTr(cdata.view);
+    [IP1, IP2, M, view1] = imagePyramid_imageTr(cdata.view);
+    
+    % save problem with ground truth
+% %     cdata.view(2) = cdata.view(1);  
+% %     cdata.view(1) = view1;
+% %     cdata.view(1).fileName = [filename(1:end-4), '_a5.png'];
+% %     cdata.view(2).fileName = [filename(1:end-4), '_b.png'];
+% %     cdata.GT = M.GT.LLpairs;
+% %     
+% %     info_filename = [pathname, 'fi_', cdata.view(1).fileName(1:end-4),'+', ...
+% %                                       cdata.view(2).fileName(1:end-4), '.mat'];
+% %     save(info_filename, 'cdata');
+% %     imwrite(IP1(1).img, [pathname, cdata.view(1).fileName]);
+% %     imwrite(IP2(1).img, [pathname, cdata.view(2).fileName]);
+    %%
+
     L = size(IP1,1);        % current level of the pyramid
 
     % Show img1 on the axis1
@@ -275,17 +290,17 @@ if filename~=0
 %     % Show img2 on the axis4
 %     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
 %                                            IP2(L).HLG, false, false);
-    axes(handles.axes3); plot_graph(IP1(L).img, IP1(L).LLG);
-    axes(handles.axes4); plot_graph(IP2(L).img, IP2(L).LLG);       
+    axes(handles.axes3);cla reset; plot_graph(IP1(L).img, IP1(L).LLG);
+    axes(handles.axes4);cla reset; plot_graph(IP2(L).img, IP2(L).LLG);       
     
     img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images    
     
-    axes(handles.axes5); imagesc(img3), axis off;
+    axes(handles.axes5);cla reset; imagesc(img3), axis off;
 %     plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
 %                     IP2(L).img, IP2(L).HLG, ...
 %                     M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
        
-    axes(handles.axes6);  imagesc(img3), axis off;
+    axes(handles.axes6);cla reset;  imagesc(img3), axis off;
     
     axes(handles.axes11);cla reset;
     axes(handles.axes12);cla reset;
@@ -337,9 +352,9 @@ end
 % select two images
 function pbSelect_2images_Callback(hObject, ~, handles)
 
-[filename1, pathname] = uigetfile( fullfile('../../data/','*a.jpg;*a.png'), 'Select first image');
+[filename1, pathname] = uigetfile( fullfile('../../data/','*a*.jpg;*a*.png'), 'Select first image');
 if filename1~=0  
-    [filename2, ~] = uigetfile(fullfile(pathname,'*b.jpg;*b.png'), 'Select second image');
+    [filename2, ~] = uigetfile(fullfile(pathname,'*b*.jpg;*b*.png'), 'Select second image');
     if filename2~=0      
         setParams; % params for feature extraction and matching
         % read ground truth if available
@@ -399,17 +414,17 @@ if filename1~=0
     %     % Show img2 on the axis4
     %     axes(handles.axes4); plot_2levelgraphs(IP2(L).img, IP2(L).LLG, ...
     %                                            IP2(L).HLG, false, false);
-        axes(handles.axes3); plot_graph(IP1(L).img, IP1(L).LLG);
-        axes(handles.axes4); plot_graph(IP2(L).img, IP2(L).LLG);       
+        axes(handles.axes3);cla reset; plot_graph(IP1(L).img, IP1(L).LLG);
+        axes(handles.axes4);cla reset; plot_graph(IP2(L).img, IP2(L).LLG);       
 
         img3 = combine2images(IP1(L).img, IP2(L).img); % combine two images    
 
-        axes(handles.axes5); imagesc(img3), axis off;
+        axes(handles.axes5);cla reset; imagesc(img3), axis off;
     %     plot_HLGmatches(IP1(L).img, IP1(L).HLG, ...
     %                     IP2(L).img, IP2(L).HLG, ...
     %                     M(L).HLGmatches.matched_pairs, M(L).HLGmatches.matched_pairs);
 
-        axes(handles.axes6);  imagesc(img3), axis off;
+        axes(handles.axes6); cla reset; imagesc(img3), axis off;
 
         axes(handles.axes11);cla reset;
         axes(handles.axes12);cla reset;
@@ -420,7 +435,10 @@ if filename1~=0
         handles.IP1 = IP1;
         handles.IP2 = IP2;
 
-        handles.M = M;                         
+        handles.M = M;      
+
+%         handles.Initialmatches = initial_correspondences(IP1(1).LLG, IP2(1).LLG);
+%         handles.extGT = extrapolateGT(cdata.view, handles.Initialmatches, M.GT.LLpairs, mparam.extrapolation_dist);
 
         handles.IPlevel = L;
         handles.SummaryT = 0.0;
@@ -768,14 +786,17 @@ end
 % if we know the Ground Truth fot the LL
 if ~isempty(handles.M(L).GT.LLpairs)
     nSubplots = 2;
-
-    GT = handles.M(L).GT.LLpairs;
-    y_ac = calculateAccuracy(LLGmatches, GT);
-    
+% 
+%     GT = handles.M(L).GT.LLpairs;
+%     y_ac = calculateAccuracy(LLGmatches, GT);
+%     
     subplot(1,2,2);
-    plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
-    xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
-    set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
+%     plot(x, y_ac), hold on; plot(x,y_ac, 'bo'), hold off;
+%     xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
+%     set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
+      plot(x, handles.Accuracy), hold on; plot(x,handles.Accuracy, 'bo'), hold off;
+      xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
+      set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
 end
 
 subplot(1,nSubplots,1);
@@ -892,7 +913,7 @@ affTrafo = M(L).affTrafo;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
-handles.Accuracy = calculateAccuracy(LLGmatches, handles.M(1).GT.LLpairs);
+handles.Accuracy = calculateAccuracy(LLG1, LLG2, LLGmatches, handles.M(1).GT.LLpairs);
 
 handles.SummaryT = time;
 
@@ -1078,7 +1099,7 @@ it = handles.M(L).it;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     twoLevelGM_nSteps(L, N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
 
-handles.Accuracy = calculateAccuracy(LLGmatches, handles.M(1).GT.LLpairs);
+handles.Accuracy = calculateAccuracy(LLG1, LLG2, LLGmatches, handles.M(1).GT.LLpairs);
 handles.SummaryT = time;
 
 handles.M(L).LLGmatches = LLGmatches;

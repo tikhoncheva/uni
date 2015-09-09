@@ -39,11 +39,11 @@ function [trI, featInfo_trI, GT] = transform_image_lite(I, featInfo_I)
     % new rotated image   
     [x(:,1), x(:,2)] = find(trI(:,:,1)==0);
     x = x - repmat([m/2, n/2] , m*n, 1);
-    x = x - repmat(t', m*n, 1);
+    x = x - repmat([t(2), t(1)], m*n, 1);
     y = x*M_inv;
     y = y/scale;
     y = round(y + repmat([m/2, n/2] , m*n, 1));
-    x = round(x + repmat([m/2, n/2] , m*n, 1));
+    x = round(x + repmat([t(2), t(1)], m*n, 1) + repmat([m/2, n/2] , m*n, 1));
     
     mask1 = y(:,1)>=1 & y(:,1)<=m;
     mask2 = y(:,2)>=1 & y(:,2)<=n;
@@ -60,7 +60,7 @@ function [trI, featInfo_trI, GT] = transform_image_lite(I, featInfo_I)
     % transform each type of features separately
     keypoints_trI = [];
     typeFeat = [];
-    nFeatOfExt = zeros(length(featInfo_I.nFeatOfExt),1);
+    nFeatOfExt = zeros(1, length(featInfo_I.nFeatOfExt));
     corresp = [];            % correspondcences between features of the two images
     for j=1:length(featInfo_I.nFeatOfExt)
         if featInfo_I.nFeatOfExt(j)>0
@@ -115,7 +115,7 @@ function [trI, featInfo_trI, GT] = transform_image_lite(I, featInfo_I)
     corresp(featInfo_trI.delIdx,:) = [];
     
     featInfo_trI = rmfield(featInfo_trI, 'delIdx');
-    
+    featInfo_trI.fileName = featInfo_I.fileName;
 
     % Ground Truth
     GT.LLpairs = corresp;

@@ -56,7 +56,12 @@ function [handles] = update_GUI_after_one_GM_iteration(L,handles) %, it, time, L
    
     axes(handles.axes13); plot_score(LLGmatches); % plot score and accuracy
     if ~isempty(GT.LLpairs)                       % if we know the Ground Truth fot the HL
-        axes(handles.axes14); plot_accuracy(LLGmatches, GT.LLpairs);
+        axes(handles.axes14); %plot_accuracy(LLG1, LLG2, LLGmatches, GT.LLpairs);
+        i = 1:1:it;
+        plot(i, handles.Accuracy), hold on; plot(i,handles.Accuracy, 'bo'), hold off;
+        xlabel('Iteration'); ylabel('Accurasy'); set(gca,'FontSize',6)
+        set(legend('Accurasy'), 'Location', 'best', 'FontSize', 6);
+
     end
     drawnow;          
 

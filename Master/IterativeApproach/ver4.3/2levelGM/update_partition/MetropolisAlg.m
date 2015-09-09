@@ -23,12 +23,15 @@ HLG2.F = ones(size(HLG2.V,1),1);
 
 % Step1: weigh nodes of the graphs LLG1, LLG2 on the current iteration
 
-[affTrafo, HLG1.U, HLG2.U] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
-                                                            HLMatches.matched_pairs, affTrafo);
+% [affTrafo, HLG1.U, HLG2.U] = weighNodes(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+%                                                             HLMatches.matched_pairs, affTrafo);
 
 % [affTrafo, HLG1.U, HLG2.U] = weighNodes_2(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
 %                                                             HLMatches.matched_pairs, affTrafo);
 
+[affTrafo, HLG1.U, HLG2.U] = weighNodes_3(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+                                                            HLMatches.matched_pairs, affTrafo);
+                                                        
 % Step2: expand subgraphs with small transformation errors and eliminate
 % subgraphs with less then three nodes
 % [HLG1, HLG2] = update_subgraphs_using_GCuts(LLG1, LLG2, HLG1, HLG2, ...
