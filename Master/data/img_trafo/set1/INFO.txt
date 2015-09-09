@@ -1,0 +1,8 @@
+
+image		transformation
+_____	n1	n2	rotation 	scale	translation
+a1	126	152	-pi/5		1.	[0,0]	
+a2	83	152	0		1.	[0; 50]
+a3	120	152	0		1.	[50; 0]
+a4	63	152	0		1.	[50; 50]
+a5	62	152	-pi/5		1.	[50,50]	
