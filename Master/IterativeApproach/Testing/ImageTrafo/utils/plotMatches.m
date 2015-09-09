@@ -8,7 +8,7 @@ function [fig] = plotMatches(method, problem, accuracy, score, X)
     LLG1 = problem.LLG1;
     LLG2 = problem.LLG2;
     [matches(:,1), matches(:,2)] = find(reshape(X, size(LLG1.V,1), size(LLG2.V,1)));
-    GT = problem.cdata.GT;
+    GT = problem.cdata.GT_EXT; %problem.cdata.GT;
     ind_TP = ismember(matches, GT, 'rows');
 
     n1 = size(img1,2);                      % width of the first image

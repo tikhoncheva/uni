@@ -63,6 +63,17 @@ GTmatrix = zeros(nV1, nV2);
 GTmatrix(sub2ind(size(GTmatrix), cdata.GT(:,1), cdata.GT(:,2))) = 1;
 cdata.GTbool = GTmatrix(:);
 
+%% Extrapolated GT
+cand_matchlist_init = [repmat((1:nV1)', nV2,1), ...
+                         kron((1:nV2)', ones(nV1,1))];
+GT_EXTbool = extrapolateGT( LLG1.V, LLG2.V, cand_matchlist_init, cdata.GT, mparam.extrapolation_dist);
+GT_EXT_mat = zeros(nV1,nV2);
+GT_EXT_mat(sub2ind(size(GT_EXT_mat), ...
+          cand_matchlist_init(logical(GT_EXTbool'),1),...
+          cand_matchlist_init(logical(GT_EXTbool'),2) )) = 1;
+[GT_EXT(:,1), GT_EXT(:,2)] = find(GT_EXT_mat); 
+
+
 %%
 problem.n1 = nV1;
 problem.n2 = nV2;
@@ -70,6 +81,9 @@ problem.n2 = nV2;
 problem.method = methods;
 problem.pparam = pparam;
 problem.cdata = cdata;
+problem.cdata.cand_matchlist_init = cand_matchlist_init;
+problem.cdata.GT_EXT = GT_EXT;
+problem.cdata.GT_EXTbool = GT_EXTbool;
 problem.extrapolation_dist = mparam.extrapolation_dist;
 
 problem.LLG1 = LLG1;

@@ -35,7 +35,7 @@ plotSet.font = '\fontname{Arial}'; % Font default
 % nImagePairs = size(fnamelist,1);
 
 %% house_seq
-filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/houseSmall/';
+filepath = '../../../data/houseSmall/';
 savepath = './Results/no_descr/using_ransac_afftrafo/house_seq/';
 
 listOfimages = dir([ filepath 'house.seq*.png' ]);
@@ -114,7 +114,7 @@ for cImg=1:1%nImagePairs
 end     
 
 %%
-handleCount = 0;
-yData = accuracy; yLabelText = 'accuracy'; plotResults;
-yData = score; yLabelText = 'objective score'; plotResults;
-yData = time; yLabelText = 'running time'; plotResults;
+% handleCount = 0;
+% yData = accuracy; yLabelText = 'accuracy'; plotResults;
+% yData = score; yLabelText = 'objective score'; plotResults;
+% yData = time; yLabelText = 'running time'; plotResults;
