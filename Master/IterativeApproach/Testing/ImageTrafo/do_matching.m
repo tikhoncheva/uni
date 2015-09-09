@@ -62,7 +62,7 @@ X = cell(nImagePairs, length(methods));
 perform_data = cell(nImagePairs, length(methods));
 
 %% main loop start
-for cImg=1:nImagePairs
+for cImg=1:1%nImagePairs
 %     cImg = 1;
     fname1 = fnamelist{cImg,1};
     fname2 = fnamelist{cImg,2};
@@ -89,7 +89,7 @@ for cImg=1:nImagePairs
     problem = makeProblem(iparam, initPathnFile);
     disp('----------------------------------------------------------------');
     %% Test Methods
-    for i = 1:length(methods)
+    for i = 1:1%length(methods)
         str = sprintf('run_algorithm(''%s'', problem);', func2str(methods(i).fhandle));
         [accuracy(cImg,i), score(cImg,i), time(cImg,i), ...
                        X{cImg,i}, perform_data{cImg,i}] = eval(str);
