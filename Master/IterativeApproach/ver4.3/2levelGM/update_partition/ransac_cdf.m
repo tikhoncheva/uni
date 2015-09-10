@@ -90,6 +90,7 @@ function[T, A, b] = ransac_cdf(P1, P2, s, t)
             pNoOutliers = max(eps, pNoOutliers);  % Avoid division by -Inf
             pNoOutliers = min(1-eps, pNoOutliers);% Avoid division by 0.
             N = log(1-p)/log(pNoOutliers);
+            init = maxInit;
         else
             init = init + 1;
         end
