@@ -26,43 +26,30 @@ plotSet.fontSize = 15; % Font Size
 plotSet.font = '\fontname{Arial}'; % Font default
 
 %% img_trafo
-% filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/img_trafo/set1/';
-% savepath = './Results/no_descr/using_ransac_afftrafo/img_trafo/';
-% listOfimages = dir([ filepath '*_a*.png' ]);
+filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/img_trafo/set1/';
+savepath = './Results/no_descr/using_ransac_afftrafo/img_trafo/';
+listOfimages = dir([ filepath '*_a*.png' ]);
 
-% fnamelist = names(1:end-1);
-% fnamelist(:,2) = repmat(names(end),5,1);
-% nImagePairs = size(fnamelist,1);
-
-%% house_seq
-filepath = '../../../data/houseSmall/';
-savepath = './Results/no_descr/using_ransac_afftrafo/house_seq/';
-
-listOfimages = dir([ filepath 'house.seq*.png' ]);
-
-% sort file names
-for i = 1:size(listOfimages,1);
-    names{i} = str2double(listOfimages(i).name(10:end-4));
-end
-[~, ind] =  sort(cell2mat(names));
 names = {listOfimages.name}';
-names = names(ind);
 
-fnamelist = names(2:end);
-fnamelist(:,2) = repmat(names(1), size(names,1) - 1,1);
-fnamelist = [fnamelist(:,2), fnamelist(:,1)];
+fnamelist = names(1:end-1);
+fnamelist(:,2) = repmat(names(end),5,1);
 nImagePairs = size(fnamelist,1);
 
 %% storage for matching results
 accuracy = zeros(nImagePairs, length(methods));
 score = zeros(nImagePairs, length(methods));
 time = zeros(nImagePairs, length(methods));
+
+time_init1 = zeros(nImagePairs);
+time_init2 = zeros(nImagePairs);
+
 X = cell(nImagePairs, length(methods));
 % Xraw = cell(nImagePairs, length(methods));
 perform_data = cell(nImagePairs, length(methods));
 
 %% main loop start
-for cImg=1:1%nImagePairs
+for cImg=1:nImagePairs
 %     cImg = 1;
     fname1 = fnamelist{cImg,1};
     fname2 = fnamelist{cImg,2};
@@ -86,10 +73,11 @@ for cImg=1:1%nImagePairs
     resultTag = [ iparam.view(1).fileName '+' iparam.view(2).fileName ];
     initPathnFile = [ filepath '/' 'fi_' resultTag '.mat' ];
     
-    problem = makeProblem(iparam, initPathnFile);
+    [problem, time_init1(cImg), time_init2(cImg)] = ...
+                                        makeProblem(iparam, initPathnFile);
     disp('----------------------------------------------------------------');
     %% Test Methods
-    for i = 1:1%length(methods)
+    for i = 1:length(methods)
         str = sprintf('run_algorithm(''%s'', problem);', func2str(methods(i).fhandle));
         [accuracy(cImg,i), score(cImg,i), time(cImg,i), ...
                        X{cImg,i}, perform_data{cImg,i}] = eval(str);
@@ -114,7 +102,7 @@ for cImg=1:1%nImagePairs
 end     
 
 %%
-% handleCount = 0;
-% yData = accuracy; yLabelText = 'accuracy'; plotResults;
-% yData = score; yLabelText = 'objective score'; plotResults;
-% yData = time; yLabelText = 'running time'; plotResults;
+handleCount = 0;
+yData = accuracy; yLabelText = 'accuracy'; plotResults;
+yData = score; yLabelText = 'objective score'; plotResults;
+yData = time; yLabelText = 'running time'; plotResults;

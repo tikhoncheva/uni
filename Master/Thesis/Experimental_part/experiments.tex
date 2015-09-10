@@ -21,6 +21,7 @@
 \usepackage{graphicx}
 \restylefloat{figure}
 \usepackage{caption}
+
 \usepackage{subcaption}
 %\usepackage{subfigure} 
 \usepackage{tikz}
@@ -467,8 +468,264 @@ Assume, that we have anchor correspondence $(a_k,a_p), a_k\in V^{Ia}, a_p\in V^{
 
 \subsection{Image Affine Transformation}
 
+\subsubsection{No descriptor}
+\begin{figure}[h] 
+	
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_1_ProgGM"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_1_2lGM"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_1_featM"} 
+	\end{subfigure} 	
+	\caption{Rotation}
+%\end{figure}
 
-\subsection{Real Images}
+%\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_2_ProgGM"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_2_2lGM"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_2_featM"} 
+	\end{subfigure} 	
+%	\caption{Translation}
+%\end{figure}
+
+%\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_3_ProgGM"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_3_2lGM"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_3_featM"} 
+	\end{subfigure} 	
+%	\caption{Translation}
+%\end{figure}
+
+%\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_4_ProgGM"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_4_2lGM"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_4_featM"} 
+	\end{subfigure} 	
+%	\caption{Translation}
+%\end{figure}
+
+%\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_5_ProgGM"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_5_2lGM"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.4]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/fi_5_featM"} 
+	\end{subfigure} 	
+	\caption{Rotation/Translation of an image with additional noise ($\sim\mathcal{N}(0,0.001)$)}
+\end{figure}
+
+\FloatBarrier
+
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/accuracy"}  
+		%		\caption{} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/score"}  
+		%		\caption{} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_cdf_afftrafo/time"}  
+		%		\caption{} 
+	\end{subfigure} 	
+	\caption{Synthetic image transformation (using \emph{CDF2}~\cite{Myronenko2009_CPD} for transformation estimation in \emph{twoLevelGM})}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_ransac_afftrafo/accuracy"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_ransac_afftrafo/score"}   
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/Img_trafo/no_descr/using_ransac_afftrafo/time"}  
+	\end{subfigure} 	
+	\caption{Synthetic image transformation (using affine transformation estimation in \emph{twoLevelGM})}
+\end{figure}
+\FloatBarrier
+
+\newpage
+\subsection{Real Images: House dataset}
+\vspace{-20pt}
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/performance/accuracy"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/performance/score"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/performance/time"}  
+	\end{subfigure} 	
+	\caption{CMU house sequence: extrapolated ground truth}
+\end{figure}
+\FloatBarrier
+\vspace{-20pt}
+\begin{figure}[h] 		
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_1_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_1_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_1_featureMatching"}  
+	\end{subfigure} 
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.1$}	
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h] 		
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_4_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_4_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_4_featureMatching"}  
+	\end{subfigure} 		
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.30$}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h!] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_11_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_11_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/solution/fi_11_featureMatching"}  
+	\end{subfigure} 
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.100$}
+\end{figure}
+\FloatBarrier
+
+
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/performance/accuracy"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/performance/score"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/performance/time"}  
+	\end{subfigure} 	
+	\caption{CMU house sequence: extrapolated ground truth ans solution}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h] 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_1_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_1_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_1_featureMatching"}  
+	\end{subfigure} 	
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.1$}
+\end{figure}	
+\vspace{-20pt}	
+\begin{figure}[h] 	
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_4_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_4_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_4_featureMatching"}  
+	\end{subfigure} 		
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.30$}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h]	
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_11_ProgGM"}  
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_11_TwoLevelGM"}  
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"fig_ver2608/RealImages/House_seq/no_descr/using_cdf_afftrafo/ext_solution/fi_11_featureMatching"}  
+	\end{subfigure} 
+	
+	\caption{CMU house sequence: $house.seq.0$ vs $house.seq.100$}
+\end{figure}
+\FloatBarrier
+
+
 % ------------------------------------------------------------------------------------------------------------
 % ---------------------------------------        Bibliography
 \bibliographystyle{abbrv}
