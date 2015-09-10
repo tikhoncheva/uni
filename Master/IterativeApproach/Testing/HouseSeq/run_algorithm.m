@@ -29,8 +29,8 @@ if strcmp(alg, 'wrapper_featureMatching')
 end        
 
 % Measure accuracy
-% X_EXT = X';
-X_EXT = extrapolateMatchIndicator(invar.LLG1.V, invar.LLG2.V, cand_matchlist_init, X, invar.extrapolation_dist ); % extrapolate the solutions                
+X_EXT = X';
+% X_EXT = extrapolateMatchIndicator(invar.LLG1.V, invar.LLG2.V, cand_matchlist_init, X, invar.extrapolation_dist ); % extrapolate the solutions                
 X = X_EXT';
 accuracy  = (X_EXT*X_GT')/nnz(X_GT)*100;
 
@@ -42,6 +42,5 @@ X_EXT_mat(sub2ind(size(X_EXT_mat), ...
 
 score = matching_score(invar.LLG1, invar.LLG2, matches);
 
-% accuracy = (X(:)'*invar.cdata.GTbool(:))/sum(invar.cdata.GTbool);
 
 end

@@ -25,18 +25,9 @@ plotSet.markerSize = 10; % Marker Size
 plotSet.fontSize = 15; % Font Size
 plotSet.font = '\fontname{Arial}'; % Font default
 
-%% img_trafo
-% filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/img_trafo/set1/';
-% savepath = './Results/no_descr/using_ransac_afftrafo/img_trafo/';
-% listOfimages = dir([ filepath '*_a*.png' ]);
-
-% fnamelist = names(1:end-1);
-% fnamelist(:,2) = repmat(names(end),5,1);
-% nImagePairs = size(fnamelist,1);
-
 %% house_seq
 filepath = '../../../data/houseSmall/';
-savepath = './Results/no_descr/using_ransac_afftrafo/house_seq/ext_solution/';
+savepath = './Results/descr/using_cpd_afftrafo/solution/';
 
 listOfimages = dir([ filepath 'house.seq*.png' ]);
 

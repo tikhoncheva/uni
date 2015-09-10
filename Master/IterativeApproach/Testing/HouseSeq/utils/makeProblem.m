@@ -46,6 +46,15 @@ cdata.affinityMatrix = dissim2affinity( cdata.distanceMatrix ); % make an affini
 cdata.affinityMatrix = cdata.affinityMatrix.*~(getConflictMatrix(cdata.group1, cdata.group2));
 cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = 0; % diagonal 0s
 
+%% add node similarity to the affine matrix
+d1 = cdata.view(1).desc';
+d2 = cdata.view(2).desc';
+nodesim = nodeSimilarity(d1, d2, 'cosine');
+ind = (cand_matchlist(:,2)-1)*size(d1,2) + cand_matchlist(:,1);
+nodesim = nodesim(ind);
+cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = nodesim;
+
+
 time1 = toc(t1) + time;
 % clear iparam fparam mparam;
 %% Create two initial graphs (for twoLevelGM)
