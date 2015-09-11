@@ -24,21 +24,27 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
         HLG2 = buildHLGraph_grid(L, LLG2, agparam_2lGM);
     end
     %
-    
-    while count<nConst && it<nMaxIt
+    diff = 0.1;
+%     while count<nConst && it<nMaxIt
+    while diff>0 && it<nMaxIt
         it = it + 1;
 
         start = tic;
         [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo] = ...
                 twoLevelGM_oneIteration(it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
         time = time + toc(start);   
-            
-        if it>=2 && abs(LLGmatches(it).objval-LLGmatches(it-1).objval)<10^(-5)
-            count = count + 1;
+
+        if it>=2 
+            diff = LLGmatches(it).objval-LLGmatches(it-1).objval;
         else
-            count = 0;
+            diff = 0.1;
         end
-        
+%         if it>=2 && abs(LLGmatches(it).objval-LLGmatches(it-1).objval)<10^(-5)
+%             count = count + 1;
+%         else
+%             count = 0;
+%         end      
     end
+    LLGmatches(it).objval = LLGmatches(it-1).objval;
     
 end

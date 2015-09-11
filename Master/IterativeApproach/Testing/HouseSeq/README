@@ -1,0 +1,6 @@
+
+ver1.
+uses IterativeGN/ver4.3 with changes fron 09.09
+
+ver2
+uses anchor descriptors for HLGM and parallel pool to perform LLGM

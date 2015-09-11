@@ -50,9 +50,9 @@ if (isempty(d1) || isempty(d2))
    D(1:(length(D)+1):end) = 0; 
 else
 %     node_eusimilarity = nodeSimilarity(d1, d2, 'euclidean');
-    D(1:(length(D)+1):end) = 0; 
-%     node_eusimilarity = nodeSimilarity(d1, d2, 'cosine');
-%     D(1:(length(D)+1):end) = node_eusimilarity;
+%     D(1:(length(D)+1):end) = 0; 
+    node_eusimilarity = nodeSimilarity(d1, d2, 'cosine');
+    D(1:(length(D)+1):end) = node_eusimilarity;
 end
 
 % D = D.*~full(conflictMatrix);     % it also will be done in the matching

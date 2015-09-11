@@ -27,7 +27,7 @@ plotSet.font = '\fontname{Arial}'; % Font default
 
 %% house_seq
 filepath = '../../../data/houseSmall/';
-savepath = './Results/descr/using_cpd_afftrafo/solution/';
+savepath = './Results/descr/using_cpd_afftrafo/ext_solution/';
 
 listOfimages = dir([ filepath 'house.seq*.png' ]);
 
