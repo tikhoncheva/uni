@@ -93,10 +93,6 @@ function [affTrafo, U1, U2] = weighNodes_2(LLG1, LLG2, U1, U2, ...
         ai = HLmatched_pairs(ind_new_subgraphPairs(k),1); % \in HLG1.V
         aj = HLmatched_pairs(ind_new_subgraphPairs(k),2); % \in HLG2.V
         
-        if ai == 3
-            display('');
-        end
-        
         ind_Vai = find(U1(:,ai));
         
         [~, ind_matched_nodes] = ismember(ind_Vai, LLmatched_pairs(:,1));

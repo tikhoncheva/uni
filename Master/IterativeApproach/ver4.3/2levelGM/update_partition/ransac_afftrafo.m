@@ -34,8 +34,8 @@ function[T, A, b] = ransac_cdf(P1, P2, s, t)
     if nargin < 4; t = 0.0; end; 
     if nargin < 3; s = 0.5; end; 
     
-    maxIt = 1000;    %  maximal number of iterations
-    maxInit = 100;   % maximal number of initializations
+    maxIt = 100;    %  maximal number of iterations
+    maxInit = 10;   % maximal number of initializations
       
     n1 = size(P1,1); % number of points in the first set              
     
