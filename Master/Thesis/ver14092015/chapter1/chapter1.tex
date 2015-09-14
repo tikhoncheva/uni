@@ -1,0 +1,35 @@
+
+\chapter{Graph Matching}
+
+In this chapter we review different forms and formulations of the graph matching problem (\textbf{GMP}) together with basic definitions and notations, used in this thesis. \ToDo{Due to large amount of literature in the field we used mainly the classification from~\cite{Conte2004}, but extended is with more recent works in the field.}
+
+\section{Basic definitions and notation}
+A \emph{undirected graph} $G=(V,E)$ is defined as a pair of disjoint sets $V$, $E$, where $E\subseteq\{\{u,v\}| u, v\in V\}$~\cite{Diestel2000}. The elements of the set $V$ are called \emph{vertices} or \emph{nodes}\footnote{We use terms vertex and node as synonyms} and the elements of $E$ are called \emph{edges}. Where it is necessary, we will write $V(G), E(G)$ to refer node and edge sets to graph $G$ respectively.
+
+The number of nodes in $V$ defines the \emph{size} of a graph $G$.
+Two nodes $v_{i},v_{i'}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i'}\}\in E$. A graph, whose each pair of nodes is connected by an edge is called \emph{complete}.
+
+Each graph can be represented by its \emph{adjacency matrix A=$(a_{ij})_{n\times n}$}, where 
+\begin{equation*}\centering
+a_{ij}=\begin{cases}
+ 1, & \text{if } \{v_{i},v_{i'}\}\in E, \\
+ 0, & \text{otherwise.} \\
+\end{cases}
+\end{equation*}
+The adjacency matrix of undirected graphs is symmetric.
+
+A graph $G'=(V',E')$ is called \emph{subgraph} of the graph $G$, if $V'\subseteq V$ and $E'\subseteq E$. We use the notation $G'\subseteq G$. We also define graph cut $G\cap G'=(V\cap V', E\cap E')$ and union $G\cup G'=(V\cap V', E\cap E')$.
+
+In case, when each node $v\in V$ of the graph $G$ has an associated attribute $d_i$, one speaks about attributed graph $G=(V,E,D)$.
+
+Consider two undirected attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J, D^J)$. We assume the situation, where $|V^I|=n_1$, $|V^J|=n_2$ and $n_1\le n_2$. A matching function between two graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E^J,D^J)$ is a total injective function $m:V^I\rightarrow V^J$.
+
+\emph{Graph matching problem} between $G^I$ and $G^J$ is a problem of finding a map $m:V^I\rightarrow V^J$, that maximizes the alignment score $F(G^I, G^J, m)$:
+\begin{equation} \label{gGMP}
+f = \argmax_{\hat{m}}F(G^I, G^J, \hat{m})
+\end{equation}
+ 
+\section{Exact graph matching}
+
+\section{Inexact graph matching}
+

@@ -1,0 +1,71 @@
+%% Template for Master thesis
+%% ===========================
+%%
+%% You need at least KomaScript v3.0.0,
+%% e.g. available in Texlive 2009
+\documentclass  [
+  paper    = a4,
+  BCOR     = 10mm,
+  twoside,
+  fontsize = 12pt,
+%  fleqn,
+  toc      = bibnumbered,
+  toc      = listofnumbered,
+  numbers  = noendperiod,
+  headings = normal,
+  listof   = leveldown,
+  version  = 1.0,
+  chapterprefix=true% like in standard class "report"
+]                                       {scrreprt}
+
+% used pagages
+\usepackage     [utf8]                  {inputenc}
+\usepackage     [T1]                    {fontenc}
+%\usepackage                             {color}
+\usepackage                             {xcolor} 
+\usepackage                             {amsmath}
+\usepackage                             {graphicx}
+\usepackage     [english]               {babel}
+\usepackage                             {natbib}
+\usepackage                             {hyperref}
+
+% links
+\definecolor{darkblue}{rgb}{0.0,0.0,0.4}
+\definecolor{darkgreen}{rgb}{0.0,0.4,0.0}
+\hypersetup{
+    colorlinks,
+    linkcolor=black,
+    citecolor=darkgreen,
+    urlcolor=darkblue
+}
+
+% Defintions
+\def\argmax{\mathop{\rm argmax}}						% argmax
+\def\argmin{\mathop{\rm argmin}}						% argmin
+\def\median{\mathop{\rm median}} 						% median
+\def\dist{\mathop{\rm dist}} 						    % dist
+
+\def\version{Version of 14.09.2015} 
+\newcommand\ToDo[1]{\textcolor{red}{#1}} 
+
+\begin{document}
+  %% title pages similar to providet template instead of maketitle
+%  \include{titlepages-eng} % or english title page
+  \include{abstracts}
+%
+%  \tableofcontents
+
+  \include{chapter1/chapter1}
+
+  \part{Appendix}
+  \begin{appendix}
+%    \chapter{Lists}
+%    \listoffigures
+%    \listoftables
+    \bibliography{references}{}
+%    \citestyle{egu}
+    \bibliographystyle{plainnat}
+%    \bibliographystyle{abbrv}
+    \include{deposition}
+  \end{appendix}
+\end{document}
