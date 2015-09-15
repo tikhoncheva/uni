@@ -21,12 +21,14 @@
 % used pagages
 \usepackage     [utf8]                  {inputenc}
 \usepackage     [T1]                    {fontenc}
+%\usepackage                             {microtype}
 %\usepackage                             {color}
 \usepackage                             {xcolor} 
 \usepackage                             {amsmath}
+\usepackage                             {amssymb}
 \usepackage                             {graphicx}
 \usepackage     [english]               {babel}
-\usepackage                             {natbib}
+%\usepackage                             {natbib}
 \usepackage                             {hyperref}
 
 % links
@@ -51,21 +53,20 @@
 \begin{document}
   %% title pages similar to providet template instead of maketitle
 %  \include{titlepages-eng} % or english title page
-  \include{abstracts}
+%  \include{abstract/abstracts}
 %
 %  \tableofcontents
 
   \include{chapter1/chapter1}
 
-  \part{Appendix}
+%  \part{Appendix}
   \begin{appendix}
 %    \chapter{Lists}
 %    \listoffigures
 %    \listoftables
-    \bibliography{references}{}
 %    \citestyle{egu}
-    \bibliographystyle{plainnat}
-%    \bibliographystyle{abbrv}
+    \bibliographystyle{ieee}
+    \bibliography{references}    
     \include{deposition}
   \end{appendix}
 \end{document}
