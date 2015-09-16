@@ -5,18 +5,21 @@
 	url = {http://la.wikisource.org/wiki/Lorem_ipsum},
 	year      = {2000}
 }
-
+--------------------------------------------------
 Graph Theory
+--------------------------------------------------
 @book{Diestel2000,
 	author    = {Diestel, Reinhard},
-	title     = {{Graph Theory, 4th Edition}},
+	title     = {{Graph Theory, Electronic Edition 2005}},
 	publisher = {Springer-Verlag New York},
 	volume    = {173},
 	Series    = {Graduate Texts in Mathematics},
-	year      = {2000}
+	year      = {2005}
 }
 
+--------------------------------------------------
 Complexity
+--------------------------------------------------
 @article{Sahni1974,
 	author = {Sahni, Sartaj},
 	title = {{Computationally Related Problems}},
@@ -27,22 +30,29 @@ Complexity
 }
 
 @book{Aho_Ullman,
-	author = {Aho, Alfred V. and Hopcroft, John E.},
-	title = {The  Design and Analysis of Computer Algorithms},
-	year = {1974},
-	edition = {1st},
-	publisher = {Addison-Wesley Longman Publishing Co., Inc.}
+	author = {A. V. Aho and J. E. Hopcroft and J. D. Ullman},
+	title = {The Design and Analysis of Computer Algorithms},
+	publisher = {Addison-Wesley Publishing Company},
+	year = 1974
 }
 
-@book{Garey,
-    author = {Garey, M. and Johnson, D.},
-    title   = {Computers and Intractability; A Guide to the Theory of NP-Completeness},
-    year    = {1979},
-    publisher = {W H Freeman {\&} Co},
+@book{Garey_NPComplet,
+	author = {Garey, Michael R. and Johnson, David S.},
+	title = {Computers and Intractability: A Guide to the Theory of NP-Completeness},
+	year = {1979},
+	publisher = {W. H. Freeman \& Co.}
 }
-   
 
+@book{Reingold,
+ author = {Reingold, Edward M. and Nievergelt, Jurg and Deo, Narsingh},
+ title = {Combinatorial Algorithms: Theory and Practice},
+ year = {1977},
+ publisher = {Prentice Hall College Div}
+}
+
+--------------------------------------------------
 Exact Graph Matching   
+--------------------------------------------------
 @article{Ullmann,
 	author = {Ullmann, J. R.},
 	title = {An Algorithm for Subgraph Isomorphism},
@@ -85,7 +95,7 @@ Exact Graph Matching
 }
 
 @inproceedings{Shearer1998,
-	authors = {Shearer, K. and Bunke, H. and Venkatesh, S. and Kieronska, D.},
+	author = {Shearer, K. and Bunke, H. and Venkatesh, S. and Kieronska, D.},
 	title = {{Efficient graph matching for video indexing}},
 	booktitle = {Graph based representations in pattern recognition},
 	series = {Computing supplementum},
@@ -95,7 +105,7 @@ Exact Graph Matching
 }   
 
 @article{Shearer2001,
-	authors = {Shearer, K. and Bunke, H. and Venkatesh, S},
+	author = {Shearer, K. and Bunke, H. and Venkatesh, S},
 	title = {{Video sequence matching via decision tree path following}},
 	journal = {Pattern recognition letters},
 	year = {2001},
@@ -111,12 +121,38 @@ Exact Graph Matching
 	url       = {http://arxiv.org/abs/1301.1493},
 	timestamp = {Fri, 01 Feb 2013 13:30:47 +0100},
 }
-   	
-Graph Matching
+
+--------------------------------------------------
+Inexact Graph Matching
+--------------------------------------------------
+
+--------------------------------------------------
+QAP
+--------------------------------------------------
+@incollection{Burkard98thequadratic,
+  author      = {Burkard, R.~E. and \c{C}ela, E. and Pardalos, P.~M. and Pitsoulis, L.},
+  title       = {The quadratic assignment problem},
+  editor      = {Pardalos, P.~M. and Du, D.-Z},
+  booktitle   = {Handbook of Combinatorial Optimization},
+  publisher   = {Kluwer Academic Publisher},
+  pages       = {241-338},
+  year        =  {1998}
+}
+
+@Misc{Vogelstein_BrainGraphs,
+	author = {Vogelstein, J.~T. and Conroy, J.~M. and Podrazik, L.~J. and Kratzer, S.~G and Harley, E.~T. and Fishkind, D.~E. and Vogelstein, R.~J. and Priebe, C.~E.},
+	title = {{Large (Brain) Graph Matching via Fast Approximate Quadratic Programming}},
+	jornal = {arXiv preprint arXiv:1112.5507},
+	url = {http://arxiv.org/abs/1112.5507},
+	year = {2011/14}
+}
+--------------------------------------------------
+Affinity Matrix
+--------------------------------------------------
 @article{Cho2014_Haystack,
 	author = {Cho, Minsu and Duchenne, Olivier},
 	title = {{Finding Matches in a Haystack : A Max-Pooling Strategy for Graph Matching in the Presence of Outliers}},
-	journal = {CVPR},
+	journal = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
 	year = {2014}
 }
 
@@ -124,7 +160,7 @@ Graph Matching
 @inproceedings{Cho2012_ProgressiveGM,
 	author = {Cho, Minsu and Lee, Kyoung Mu},
 	title = {{Progressive graph matching: Making a move of graphs via probabilistic voting}},
-	booktitle = {Proceedings of the 2012 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+	booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
 	series = {CVPR '12},
 	year = {2012},
 	publisher = {IEEE Computer Society}
@@ -135,6 +171,13 @@ Graph Matching
 	title = {{Reweighted Random Walks for Graph Matching}},
 	journal = {ECCV},
 	year = {2010}
+}
+
+@inproceedings{Cho2009_AgglClustering,
+	author = {Cho, Minsu and Lee, Jungmin and Lee, Kyoung Mu},
+	title = {{Feature Correspondence and Deformable Object Matching via Agglomerative Correspondence Clustering}},
+	booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
+	year = {2009}
 }
 
 @article{Chui2003,
@@ -159,7 +202,14 @@ Graph Matching
 @article{Suh_CVPR2015,
 	author = {Suh, Yumin and Adamczewski, Kamil and Lee, Kyoung Mu},
 	title = {{Subgraph Matching using Compactness Prior for Robust Feature Correspondence}},
-	journal = {CVPR},
+	journal = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+	year = {2015}
+}
+
+@inproceedings{CliqueGraph_CVPR2015,
+	author = {Nie, Wei-Zhi and Liu, An-An and Gao, Zan and Su, Yu-Ting},
+	title = {{Clique-graph Matching by Preserving Global \& Local Structure}},
+	booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
 	year = {2015}
 }
 
@@ -183,7 +233,10 @@ Graph Matching
 	year = {2004}
 }
 
+--------------------------------------------------
 Greedy mapping
+--------------------------------------------------
+
 @inproceedings{Leordeanu2005,
 	author = {Leordeanu, Marius and Hebert, Martial},
 	booktitle = {ICCV},
@@ -191,8 +244,10 @@ Greedy mapping
 	year = {2005}
 }
 
-
+--------------------------------------------------
 Graph Partition
+--------------------------------------------------
+
 @INPROCEEDINGS{Chevalier09_GP,
 	author = {C\'edric Chevalier and Ilya Safro},
 	title = {Comparison of coarsening schemes for multilevel graph partitioning},
@@ -230,9 +285,15 @@ Graph Partition
 	year = {1995}
 }
 
-bag of Features
 
+--------------------------------------------------
+bag of Features
+--------------------------------------------------
+
+--------------------------------------------------
 RANSAC
+--------------------------------------------------
+
 @article{RANSAC,
 	author = {Fischler,~M.~A. and Bolles,~R.~C.},
 	title = {{Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and Automated Cartography}},
@@ -242,8 +303,10 @@ RANSAC
 	year = {1981}
 }                                            
 
-
+--------------------------------------------------
 chi-squared test
+--------------------------------------------------
+
 @inproceedings{Weken2004_ChiSqTest,
 	author    = {Van der Weken, Dietrich  and Nachtegael, Mike  and Kerre, Etienne},
 	title     = {Some New Similarity Measures for Histograms},
@@ -253,7 +316,12 @@ chi-squared test
 	timestamp = {Wed, 28 Sep 2005 15:08:41 +0200},
 	bibsource = {dblp computer science bibliography, http://dblp.org}
 }                                                                                        
-Toolbox
+
+
+--------------------------------------------------
+Software
+--------------------------------------------------
+
 @misc{PMT,
 	author = {Piotr Doll\'ar},
 	title = {{P}iotr's {C}omputer {V}ision {M}atlab {T}oolbox ({PMT})},

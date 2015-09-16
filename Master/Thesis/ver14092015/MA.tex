@@ -24,12 +24,16 @@
 %\usepackage                             {microtype}
 %\usepackage                             {color}
 \usepackage                             {xcolor} 
+%\usepackage     [sc]                    {mathpazo} % Palatino for math modus
 \usepackage                             {amsmath}
 \usepackage                             {amssymb}
 \usepackage                             {graphicx}
 \usepackage     [english]               {babel}
 %\usepackage                             {natbib}
 \usepackage                             {hyperref}
+
+\usepackage{setspace} % Zeilenabstand
+	\onehalfspacing % 1,5 Zeilen
 
 % links
 \definecolor{darkblue}{rgb}{0.0,0.0,0.4}
@@ -42,6 +46,7 @@
 }
 
 % Defintions
+\def\tr{\mathop{\rm tr}}								% matrix trace
 \def\argmax{\mathop{\rm argmax}}						% argmax
 \def\argmin{\mathop{\rm argmin}}						% argmin
 \def\median{\mathop{\rm median}} 						% median
@@ -51,11 +56,16 @@
 \newcommand\ToDo[1]{\textcolor{red}{#1}} 
 
 \begin{document}
+%\belowdisplayskip=0pt
+
   %% title pages similar to providet template instead of maketitle
 %  \include{titlepages-eng} % or english title page
 %  \include{abstract/abstracts}
 %
 %  \tableofcontents
+
+%\setlength{\belowdisplayskip}{2pt} \setlength{\belowdisplayshortskip}{2pt}
+%\setlength{\abovedisplayskip}{2pt} \setlength{\abovedisplayshortskip}{2pt}
 
   \include{chapter1/chapter1}
 
