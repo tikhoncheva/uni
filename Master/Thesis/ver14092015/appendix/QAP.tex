@@ -1,0 +1,22 @@
+\chapter{Quadratic Assignment Problem}
+Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is to minimize the summary cost of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be a real matrices that define a distances ans flow between the locations, as well as opening costs. The problem define above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
+\begin{equation}\label{eq:QAP_classic}
+P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\sigma(i)\sigma(j)}+\sum_{i=1}^{n}b_{i\sigma(i)}
+\end{equation}
+where $\Sigma_n$ is a set of all possible permutations of the set $\{1,\dots,n\}$, and is called \emph{Koopmans-Beckmann} version of the quadratic assignment problem (further \emph{QAP}). 
+
+Here we want to show, who the formulation~\eqref{eq:QAP_classic} can be transformed into \eqref{eq:QAP1} and \eqref{eq:QAP2}. For that we omit first of all the opening costs $B$.
+
+To each permutation $\sigma$ we can assign a permutation matrix $P=(P_{ij})\in\{0,1\}^{n\times n}$, where $P_{i\sigma(i)}=1$ and $0$ elsewhere. The set of all feasible permutation matrices is defined as
+\begin{equation*}
+\Pi_n=\{P\in\{0,1\}^{n\times n}|\sum_{i=1,\dots,n}P_{ij}=\sum_{j=1,\dots,n}P_{ij}=1\quad\forall i,j=1,\dots,n\}
+\end{equation*}
+It is easy to see that, the formulation~\eqref{eq:QAP_classic} is equivalent to
+\begin{equation}\label{eq:QAP_classic2}
+P = \argmin_{\hat{P}\in\Pi_n}(F\cdot XD^TX^T)
+\end{equation}
+where $\cdot$ denotes the dot product.
+
+\begin{equation}\label{eq:QAP_classic3}
+P = \argmin_{\hat{P}\in\Pi_n}\tr(FXD^TX^T)
+\end{equation}

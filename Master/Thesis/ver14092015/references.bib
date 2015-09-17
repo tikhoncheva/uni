@@ -139,16 +139,37 @@ QAP
   year        =  {1998}
 }
 
-@Misc{Vogelstein_BrainGraphs,
+@techreport{Koopman_Backman,
+	author = {Koopmans, Tjalling and Beckmann, Martin J.},
+	title = {Assignment Problems and the Location of Economic Activities},
+	year = {1955},
+	institution = {Cowles Foundation for Research in Economics, Yale University},
+	type = {Cowles Foundation Discussion Papers},
+	number = {4}
+}
+
+@misc{Vogelstein_BrainGraphs,
 	author = {Vogelstein, J.~T. and Conroy, J.~M. and Podrazik, L.~J. and Kratzer, S.~G and Harley, E.~T. and Fishkind, D.~E. and Vogelstein, R.~J. and Priebe, C.~E.},
 	title = {{Large (Brain) Graph Matching via Fast Approximate Quadratic Programming}},
 	jornal = {arXiv preprint arXiv:1112.5507},
-	url = {http://arxiv.org/abs/1112.5507},
+	url = {http://arxiv.org/abs/1112.5507v5},
 	year = {2011/14}
 }
+
+@misc{FastPFP,
+	author = {Lu, Yao and Huang, Kaizhu and Liu, Cheng-Lin},
+	title = {A Fast Projected Fixed-Point Algorithm for Large Graph Matching},
+	journal = {arXiv preprint  	arXiv:1207.1114},
+	url = {http://arxiv.org/abs/1207.1114v3},
+	year = 2012
+}
+
+
+
 --------------------------------------------------
-Affinity Matrix
+Minsu Cho
 --------------------------------------------------
+
 @article{Cho2014_Haystack,
 	author = {Cho, Minsu and Duchenne, Olivier},
 	title = {{Finding Matches in a Haystack : A Max-Pooling Strategy for Graph Matching in the Presence of Outliers}},
@@ -180,6 +201,10 @@ Affinity Matrix
 	year = {2009}
 }
 
+--------------------------------------------------
+Rangarajan
+--------------------------------------------------
+
 @article{Chui2003,
 	author = {Chui, Haili and Rangarajan, Anand},
 	title = {{A new point matching algorithm for non-rigid registration}},
@@ -189,6 +214,78 @@ Affinity Matrix
 	year = {2003}
 }
 
+@inproceedings{Rangarajan1996_GAGM,
+	author = {Chui, Haili and Rangarajan, Anand},
+	title = {{A Graduated assignment algorithm for graph matching}},
+	booktitle = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+	pages = {377--388},
+	volume = {18},
+	year = {1996}
+}
+
+@inproceedings{Rangarajan96_LagRelax,
+	author = {Rangarajan, Anand and Mjolsness, Eric},
+	title = {A Lagrangian Relaxation Network for Graph Matching},
+	booktitle = {IEEE Trans. Neural Networks},
+	year = {1996},
+	pages = {4629--4634},
+	publisher = {IEEE Press}
+}
+
+--------------------------------------------------
+Hancock
+--------------------------------------------------
+@article{Hancock_GM_SpectralPart,
+	author    = {Qiu, Huaijun and Hancock, Edwin R.},
+	title     = {Graph matching and clustering using spectral partitions},
+	journal   = {Pattern Recognition},
+	volume    = {39},
+	number    = {1},
+	pages     = {22--34},
+	year      = {2006}
+}
+
+@article{Hancock_EnergyFunction,
+	author    = {Andrew M. Finch and Richard C. Wilson and 	Edwin R. Hancock},
+	title     = {An Energy Function and Continuous Edit Process for Graph Matching},
+	journal   = {Neural Computation},
+	volume    = {10},
+	number    = {7},
+	pages     = {1873--1894},
+	year      = {1998}
+}
+
+@article{Hancock_StrucMatch,
+	author    = {Richard C. Wilson and Andrew D. J. Cross and Edwin R. Hancock},
+	title     = {Structural Matching with Active Triangulations},
+	journal   = {Computer Vision and Image Understanding},
+	volume    = {72},
+	number    = {1},
+	pages     = {21--38},
+	year      = {1998},
+}
+
+@article{Hancock_EM_SVD,
+	author    = {Bin Luo and Edwin R. Hancock},
+	title     = {Structural Graph Matching Using the {EM} Algorithm and Singular Value Decomposition},
+	journal   = {{IEEE} Trans. Pattern Anal. Mach. Intell.},
+	volume    = {23},
+	number    = {10},
+	pages     = {1120--1136},
+	year      = {2001},
+}
+
+@article{Hancock_ModalClusters,
+	author    = {Marco Carcassoni and
+	Edwin R. Hancock},
+	title     = {Correspondence Matching with Modal Clusters},
+	journal   = {{IEEE} Trans. Pattern Anal. Mach. Intell.},
+	volume    = {25},
+	number    = {12},
+	pages     = {1609--1615},
+	year      = {2003}
+}
+--------------------------------------------------
 @article{Kuhn1955,
 	author = {Kuhn,~H.~W.},
 	title = {{The Hungarian Method for the Assignment Problem}},
@@ -236,7 +333,6 @@ Affinity Matrix
 --------------------------------------------------
 Greedy mapping
 --------------------------------------------------
-
 @inproceedings{Leordeanu2005,
 	author = {Leordeanu, Marius and Hebert, Martial},
 	booktitle = {ICCV},
@@ -285,6 +381,16 @@ Graph Partition
 	year = {1995}
 }
 
+--------------------------------------------------
+Thesis
+--------------------------------------------------
+@mastersthesis{Roth2001,
+	document_type = {Diploma Thesis},
+	author = {Roth, Stefan},
+	title = {{Analysis of a Deterministic Annealing Method for Graph Matching and Quadratic Assignment Problems in Computer Vision}},
+	school = {University of Mannheim},
+	year = {2001}
+}
 
 --------------------------------------------------
 bag of Features
@@ -293,7 +399,6 @@ bag of Features
 --------------------------------------------------
 RANSAC
 --------------------------------------------------
-
 @article{RANSAC,
 	author = {Fischler,~M.~A. and Bolles,~R.~C.},
 	title = {{Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and Automated Cartography}},
@@ -306,7 +411,6 @@ RANSAC
 --------------------------------------------------
 chi-squared test
 --------------------------------------------------
-
 @inproceedings{Weken2004_ChiSqTest,
 	author    = {Van der Weken, Dietrich  and Nachtegael, Mike  and Kerre, Etienne},
 	title     = {Some New Similarity Measures for Histograms},
@@ -321,7 +425,6 @@ chi-squared test
 --------------------------------------------------
 Software
 --------------------------------------------------
-
 @misc{PMT,
 	author = {Piotr Doll\'ar},
 	title = {{P}iotr's {C}omputer {V}ision {M}atlab {T}oolbox ({PMT})},

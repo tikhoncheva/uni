@@ -8,6 +8,7 @@
   BCOR     = 10mm,
   twoside,
   fontsize = 12pt,
+%  BCOR10mm,           % binding correction
 %  fleqn,
   toc      = bibnumbered,
   toc      = listofnumbered,
@@ -15,7 +16,7 @@
   headings = normal,
   listof   = leveldown,
   version  = 1.0,
-  chapterprefix=true% like in standard class "report"
+  chapterprefix=true  % like in standard class "report"
 ]                                       {scrreprt}
 
 % used pagages
@@ -31,9 +32,14 @@
 \usepackage     [english]               {babel}
 %\usepackage                             {natbib}
 \usepackage                             {hyperref}
+\usepackage     [onehalfspacing]        {setspace} % 1.5 line spacing
+%\usepackage							 {makeidx}  % Index-generation
+\usepackage                             {parskip}  % Removes paragraph indentation (not needed most of the time now)
 
-\usepackage{setspace} % Zeilenabstand
-	\onehalfspacing % 1,5 Zeilen
+\setlength{\parskip}{1ex} % space between paragraphs
+%\setlength{\parindent}{0pt} % no indent
+%\renewcommand{\baselinestretch}{1.33}
+
 
 % links
 \definecolor{darkblue}{rgb}{0.0,0.0,0.4}
@@ -71,6 +77,7 @@
 
 %  \part{Appendix}
   \begin{appendix}
+  	\include{appendix/QAP}
 %    \chapter{Lists}
 %    \listoffigures
 %    \listoftables
