@@ -39,7 +39,7 @@ Even weaker form is to allow many-to-one mapping, which means that the only one 
 On the Fig.~\ToDo{Fig} one can see examples of different exact graph matching problems.
 
 %\subsection{Compexity}
-All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Garey_NPComplet}. This can be shown through the reduction of the matching problem to the clique problem. \ToDo{The graph isomorphism is currently shown to be $NP-$hard}. For special types of graphs there exist polynomial time algorithms (e.g. for %planar graphs~\cite{Hopcroft_Wong} and 
+All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Garey_NPComplet}. This can be shown through the reduction of the matching problem to the clique problem. The graph isomorphism is currently shown to be $NP-$hard~\cite{Garey_NPComplet,Schoening_GI}. For special types of graphs there exist polynomial time algorithms (e.g. for %planar graphs~\cite{Hopcroft_Wong} and 
 trees~\cite{Aho_Ullman, Garey_NPComplet}).
 
 %\subsection{Methods}
@@ -86,7 +86,7 @@ P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2
 \end{equation}
 where $\|\cdot\|$ is the matrix Frobenius norm. After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, \ToDo{Appendix QAP?}):
 \begin{equation} \label{eq:QAP2}
-P = \argmin_{\hat{P}\in\Pi_n}vec(\hat{P})^T(-(A^J)^T\otimes(A^I)^T)vec(\hat{P})
+P = \argmin_{\hat{P}\in\Pi_n}vec(\hat{P})^T((A^J)^T\otimes(A^I)^T)vec(\hat{P})
 \end{equation}
 where $\otimes$ denotes the Kronecker product and $vec(\hat{P})$ is a column-wise vectorization of $\hat{P}\in\Pi_n$.
 
@@ -116,7 +116,7 @@ This formula can be also expressed in matrix form. We define an \emph{affinity} 
 \end{alignat}
 We notice, that in the case, where $n_1=n_2$, both conditions (\ref{eq:gQAP3}) and (\ref{eq:gQAP4}) will be fulfilled with equality.
 
-One can easily see, that the formulation \eqref{eq:QAP2} can be obtained from \eqref{eq:QAP1}-\eqref{eq:gQAP4} by setting $S=(A^J)^T\otimes(A^I)^T$.
+One can easily see, that the formulation \eqref{eq:QAP2} can be obtained from \eqref{eq:QAP1}-\eqref{eq:gQAP4} by setting $S=-(A^J)^T\otimes(A^I)^T$.
 %A Quadratic Optimization Problem is known to be \emph{NP}-hard \cite{Sahni1974}. This limits greatly the size of a graph, for which a exact solution can be calculated in reasonable time. Due to this there are a number of algorithms \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Chui2003, Suh_CVPR2015}, that solve graph matching problem inexact.
 
 Below we list a different ways to define a node and edge similarities between two attributed graphs we found in the literature.
