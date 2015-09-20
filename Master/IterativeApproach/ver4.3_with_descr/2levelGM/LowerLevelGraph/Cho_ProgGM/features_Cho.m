@@ -66,11 +66,11 @@ function cdata = features_Cho(iparam, fparam, mparam, bBB)
     end
 
     % Find initial matches 
-%     disp('== Performing initial matching of the feature regions');
-%     [ matchInfo ]= make_initialmatches_mcho( view, mparam, bShow );
+    disp('== Performing initial matching of the feature regions');
+    [ matchInfo ]= make_initialmatches_mcho( view, mparam, bShow );
 % %     drawnow;
-%     nInitialMatches = length(matchInfo);
-%     disp( [ 'num of initial matches: ' num2str(nInitialMatches) ] );
+    nInitialMatches = length(matchInfo);
+    disp( [ 'num of initial matches: ' num2str(nInitialMatches) ] );
 % %     % Find overlapping matches
 % %     disp('== Finding overlapping relations of the initial matches');
 % %     [ overlapMatrix ]= make_overlapMatrix2( view, cell2mat({ matchInfo.match }'), mparam );
@@ -81,9 +81,9 @@ function cdata = features_Cho(iparam, fparam, mparam, bBB)
     cdata.nView = iparam.nView;
     cdata.bReflective = mparam.bReflective;
 %%  cdata.baseOfInitialMatch = baseOfInitialMatch;
-%     cdata.nInitialMatches = nInitialMatches;
+    cdata.nInitialMatches = nInitialMatches;
     cdata.view = view;
-%     cdata.matchInfo = matchInfo;
+    cdata.matchInfo = matchInfo;
 % %     cdata.overlapMatrix = overlapMatrix;
 
     cdata.mparam = mparam;

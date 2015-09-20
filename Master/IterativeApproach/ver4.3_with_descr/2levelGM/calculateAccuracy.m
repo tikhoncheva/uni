@@ -3,6 +3,7 @@
 function Accuracy = calculateAccuracy(LLG1, LLG2, Gmatches, GT)
 Accuracy = [];
 extrapolation_dist = 15; 
+
 if ~isempty(GT)
     nIt = size(Gmatches,2);
 

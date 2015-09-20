@@ -21,7 +21,7 @@ GT.LLpairs = [];
 GT.HLpairs = [];
 
 M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
-                  'GT', GT, 'it', 0, 'affTrafo', []), nLevels,1);
+                  'GT', GT, 'InitialMatches', [], 'it', 0, 'affTrafo', []), nLevels,1);
 
 I = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
 

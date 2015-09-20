@@ -24,7 +24,7 @@ igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs
-% agparam.nA = 60;        % number of anchors
+agparam.nA = 6;        % number of anchors
 agparam.appSizeOfSubgraph = 30;  % approximate number of nodes in one subgraph
 agparam.grid_nr = 3;      % number of rows in a grid over a graph
 agparam.grid_nc = 2;      % number of columns -//- 

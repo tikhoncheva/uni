@@ -405,7 +405,8 @@ if filename1~=0
         [IP1, ~] = imagePyramid(cdata.view(1)); % filePathName1, img1);
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
-        M.GT.LLpairs = cdata.GT;
+        M(1).GT.LLpairs = cdata.GT;
+        M(1).InitialMatches = cell2mat({ cdata.matchInfo.match }');
         
         L = size(IP1,1);        % current level of the pyramid
 
@@ -856,6 +857,7 @@ for i = 1:size(IP1,1)
 %     IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
 
     M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
+               'InitialMatches', handles.M(i).InitialMatches, ... 
                'it',0, 'affTrafo', []);
 end
 
@@ -867,6 +869,8 @@ HLG2 = IP2(L).HLG;
 
 LLGmatches = M(L).LLGmatches;
 HLGmatches = M(L).HLGmatches;
+
+InitialMatches = handles.M(1).InitialMatches;
 
 affTrafo = M(L).affTrafo;
 
@@ -916,7 +920,7 @@ affTrafo = M(L).affTrafo;
 % -----------------------------------------------------------------------       
 % -----------------------------------------------------------------------    
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
-    twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+    twoLevelGM(L, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, InitialMatches, affTrafo);
 
 handles.Accuracy = calculateAccuracy(LLG1, LLG2, LLGmatches, handles.M(1).GT.LLpairs);
 
@@ -971,6 +975,7 @@ for i = 1:size(IP1,1)
 %     IP2(i).HLG.D_struct = cell(size(IP2(i).HLG.V,1),1);
 
     M(i,1) = struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, 'GT', handles.M(i).GT, ...
+               'InitialMatches', handles.M(i).InitialMatches, ... 
                'it',0, 'affTrafo', []);
 end
 
@@ -1064,6 +1069,8 @@ HLG2 = handles.IP2(L).HLG;
 LLGmatches = handles.M(L).LLGmatches;
 HLGmatches = handles.M(L).HLGmatches;
 
+InitialMatches = handles.M(1).InitialMatches;
+
 affTrafo = handles.M(L).affTrafo;
 
 % -----------------------------------------------------------------------       
@@ -1102,7 +1109,7 @@ affTrafo = handles.M(L).affTrafo;
 % -----------------------------------------------------------------------    
 it = handles.M(L).it;
 [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
-    twoLevelGM_nSteps(L, N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, affTrafo);
+    twoLevelGM_nSteps(L, N, it, LLG1, LLG2, HLG1, HLG2, LLGmatches, HLGmatches, InitialMatches, affTrafo);
 
 handles.Accuracy = calculateAccuracy(LLG1, LLG2, LLGmatches, handles.M(1).GT.LLpairs);
 handles.SummaryT = time;

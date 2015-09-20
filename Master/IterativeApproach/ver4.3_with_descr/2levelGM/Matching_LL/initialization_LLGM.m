@@ -113,11 +113,12 @@ try
 
         % correspondence matrix 
         corrmatrix{i} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
-        
+
         % compute initial affinity matrix
-        if (nVi==0 || nVj==0 || nVi==1 || nVj==1)
-            affmatrix{i} = [];
-        else
+%         if (nVi==0 || nVj==0 || nVi==1 || nVj==1)
+%             affmatrix{i} = [];
+%         else
+        if (nVi>1 && nVj>1)
             affmatrix{i} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{i});
         end
         
@@ -162,7 +163,6 @@ catch ME
 
     rethrow(ME);
 end
-
 
 % display(sprintf('Summary %f sec', toc));
 
