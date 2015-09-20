@@ -34,9 +34,30 @@ The group of exact graph matching algorithms represents a class of more strict m
 
 There are several forms of the exact graph matching. The most known one is \emph{graph isomorphism}: two graphs are called \emph{isomorph} ($G^I\simeq G^J$), if the edge preserving mapping between their nodes is bijective. This implies, that two graphs have the equal number of nodes. If it is not the case, and the isomorphism holds between the one graph and a node-induced subgraph of the other graphs, the problem is called \emph{subgraph isomorphism}. Its further extension is a isomorphism between subgraphs of the graphs. The last problem can obviously have several solutions, but one is normally interested in finding a common subgraph with maximum number of nodes or edges (\emph{maximum common subgraphs}).  
 
-The further simplification of the graph isomorphism is to require an injective edge-preserving mapping, instead of bijective. The correspondences here are still one-to-one, but the second graph may contain additional nodes and edges, comparing to the first graph.
-Even weaker form is to allow many-to-one mapping, which means that the only one restriction on the mapping $m$ is to be total.
-On the Fig.~\ToDo{Fig} one can see examples of different exact graph matching problems.
+The further simplification of the graph isomorphism is to require an injective edge-preserving mapping, instead of bijective. This problem is called \emph{graph monomorphism}. The correspondences here are still one-to-one, but the second graph may contain additional nodes and edges, comparing to the first graph.
+Even weaker form of graph matching problem is \emph{graph homomorphism}. It allows many-to-one mapping between nodes of two graphs, which means that the only one restriction on the mapping $m$ is to be total.
+On the Fig.~\ref{fig:Exact_GM} one can see examples of different exact graph matching problems.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{chapter1/fig/GI}
+        \caption{Graph isomorphism}
+        \label{fig:GI}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{chapter1/fig/monomorphism}
+        \caption{Graph monomorphism}
+        \label{fig:monomorphism}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{chapter1/fig/homomorphism}
+        \caption{Graph homomorphism}
+        \label{fig:homomorphism}
+    \end{subfigure}
+    \caption{Exact graph matching problems}\label{fig:Exact_GM}
+\end{figure}
 
 %\subsection{Compexity}
 All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Garey_NPComplet}. This can be shown through the reduction of the matching problem to the clique problem. The graph isomorphism is currently shown to be $NP-$hard~\cite{Garey_NPComplet,Schoening_GI}. For special types of graphs there exist polynomial time algorithms (e.g. for %planar graphs~\cite{Hopcroft_Wong} and 
@@ -50,6 +71,14 @@ The other techniques, that were successfully applied for the (sub)graph isomorph
 \section{Inexact graph matching}
 
 Sometimes it is difficult to apply the exact matching algorithms described in previous section to real world problems. There are two possible reasons for that. On the one hand, that are variations in the structure of graphs, that describe a same object. Those variations could be a consequence of natural deformations or noise influence, that can occur in some real word applications. On the other hand, solving the graph matching problem exactly can be time or memory consuming. As a consequence one can be interested in solving graph matching problem inexactly. In this case, no edge preserving mapping between the nodes of two graphs is required.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.5\textwidth]{chapter1/fig/inexactGM}
+    \caption{Inexact graph matching}
+    \label{fig:inexact_GM}
+\end{figure}
+    
 
 Let us recall the problem statement \eqref{gGMP}: 
 \begin{equation*}
@@ -84,7 +113,7 @@ Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $
 %P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2
 P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2
 \end{equation}
-where $\|\cdot\|$ is the matrix Frobenius norm. After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, \ToDo{Appendix QAP?}):
+where $\|\cdot\|$ is the matrix Frobenius norm. After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, Appendix~\ref{appendixA}):
 \begin{equation} \label{eq:QAP2}
 P = \argmin_{\hat{P}\in\Pi_n}vec(\hat{P})^T((A^J)^T\otimes(A^I)^T)vec(\hat{P})
 \end{equation}

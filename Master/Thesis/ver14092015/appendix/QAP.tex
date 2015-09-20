@@ -1,4 +1,4 @@
-\chapter{Quadratic Assignment Problem}
+\chapter{Quadratic Assignment Problem}\label{appendixA}
 Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is to minimize the summary cost of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be a real matrices that define a distances ans flow between the locations, as well as opening costs. The problem defined above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
 \begin{equation}\label{eq:QAP_classic}
 P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\hat{\sigma}(i)\hat{\sigma}(j)}+\sum_{i=1}^{n}b_{i\hat{\sigma}(i)},
