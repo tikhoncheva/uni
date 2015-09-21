@@ -99,7 +99,7 @@ addpath(genpath('./toyProblem'));
 % addpath(genpath('./LowerLevelGraph'));
 % addpath(genpath('./Matching_HL'));
 % addpath(genpath('./Matching_LL'));
-% addpath(genpath('./ransac'));
+addpath(genpath('./ransac'));
 % addpath(genpath('./RANSAC2'));
 % addpath(genpath('./GraphCoarsening'));
 % addpath(genpath('./rearrange_subgraphs'));
@@ -406,7 +406,17 @@ if filename1~=0
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
         M(1).GT.LLpairs = cdata.GT;
-        M(1).InitialMatches = cell2mat({ cdata.matchInfo.match }');
+        InitialMatches = cell2mat({ cdata.matchInfo.match }');
+        dist = cell2mat({cdata.matchInfo.dist}');
+        v1_unique = unique(InitialMatches(:,1));
+        InitialMatches_unique = zeros(numel(v1_unique),2);
+        for i = 1:numel(v1_unique)
+            ind = find(InitialMatches(:,1)==v1_unique(i));
+            [~,minpos] = min(dist(ind));
+            InitialMatches_unique(i,1:2) = InitialMatches(ind(minpos),1:2);
+        end
+%         M(1).InitialMatches = cell2mat({ cdata.matchInfo.match }');
+        M(1).InitialMatches = InitialMatches_unique;
         
         L = size(IP1,1);        % current level of the pyramid
 
