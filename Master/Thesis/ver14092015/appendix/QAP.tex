@@ -1,5 +1,5 @@
 \chapter{Quadratic Assignment Problem}\label{appendixA}
-Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is to minimize the summary cost of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be a real matrices that define a distances ans flow between the locations, as well as opening costs. The problem defined above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
+Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is to minimize the summary cost of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be a real matrices that define a distances and flow between the locations, as well as opening costs. The problem defined above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
 \begin{equation}\label{eq:QAP_classic}
 P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\hat{\sigma}(i)\hat{\sigma}(j)}+\sum_{i=1}^{n}b_{i\hat{\sigma}(i)},
 \end{equation}
@@ -45,16 +45,16 @@ The objective function of~\eqref{eq:QAP_classic3} can be further rewritten based
 									&=\vec(\hat{P})^T\vec(F\hat{P}D^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
                                     &=\vec(\hat{P})^T(D\otimes F)\vec{\hat{P}}+\vec(B)^T\vec(\hat{P}).
 \end{align}
-The derived formulation of the \emph{QAP} is obviously the same as in~\eqref{eq:QAP2}, where $F=(A^I)^T$, $D=(A^J)^T$ and the matrix $B$ is a constant matrix with same values, which than does not have any influence on the optimization problem. It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic2}.
+Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ the \emph{quadratic costs matrix}. If we assume the matrix $B$ be a constant matrix with the same values, that it does not have any influence on the optimization process. In this case setting matrix $F$ to $-(A^I)^T$ and matrix $D$ to $(A^J)^T$ lead us to the formulation~\eqref{eq:QAP2}. Similarly, denoting the Kronecker product $(-D\otimes F)$ as $S$ results in the formulation~\eqref{eq:sumQAP}.
 
-Indeed, consider the objective function in~\eqref{eq:QAP1}:
+It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3}. Indeed, consider the objective function in~\eqref{eq:QAP1}:
 \begin{align*}
 \|A^I-\hat{P}A^J\hat{P}^T\|^2 &= \tr((A^I-\hat{P}A^J\hat{P}^T)^T(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr(((A^I)^T-\hat{P}(A^J)^T\hat{P}^T)(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr((A^I)^TA^I-(A^I)^T\hat{P}A^J\hat{P}^T-\hat{P}(A^J)^T\hat{P}^TA^I+\hat{P}(A^J)\hat{P}^T\hat{P}A^JP^T) \notag\\
 							  &= \tr((A^I)^TA^I-2(A^I)^T\hat{P}A^J\hat{P}^T+A^J(A^J)^T).
 \end{align*}
-The first and the last term are obviously constant, and thus can be ignored in optimization. Finally, substitution of $F=(A^I)^T$, $D=(A^J)^T$ leads us to the formulation~\eqref{eq:QAP_classic2}. That is exactly, what we wanted to show.
+The first and the last term are obviously constant, and thus can be ignored in optimization. Finally, substitution of $F=-(A^I)^T$, $D=(A^J)^T$ leads us to the formulation~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
 
 
 
