@@ -64,7 +64,9 @@ All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Gare
 trees~\cite{Aho_Ullman, Garey_NPComplet}).
 
 %\subsection{Methods}
-The most widespread approach to solve exact graph matching problem is branch and bound~\cite{Reingold} algorithm. It starts from some empty solution and tries in each step to expend it's current known solution based on some rules. If it happens, that a current solution does not fulfill problem's constraints, the solution is cut and algorithm backtracks to the last feasible solution and tries to expand it in other way. The most famous algorithm, that uses this principle is the one by Ullman~\cite{Ullmann}. Later it was extended and improved mostly by the suggestion of a new pruning heuristic (see for example~\cite{Lee2013} for comparison of algorithms based on the same technique).
+The most widespread approach to solve exact graph matching problems is based on tree search with backtracking. The idea is to starts with an empty solution and try in each step to expend it based on some rules until the solution is found. If it happens, that on some step a current solution cannot be expend further due to problem's constraints, the current branch is cut and algorithm backtracks to the last feasible solution and tries to expand it in other way. Those algorithms are very slow, if they need to search through the whole tree, but can be speeded up by applying some heuristic to detect unpromising branches and exclude them from the search. The most known algorithm in this group, which uses depth-first-rule to traverse a tree, is the branch and bound~\cite{Reingold} algorithm.
+
+The one of the first algorithms, that uses described techniques, is the one by Ullman~\cite{Ullmann}. Later it was extended and improved mostly by the suggestion a new pruning heuristics (see for example~\cite{Lee2013} for comparison of algorithms based on the same technique). We also want to mention here another well known algorithm, which uses the tree search method and is closely related to maximal common subgraph problem, - algorithm by Bron and Kerbosch~\cite{BronKerbosch} for finding cliques in an undirected graphs.
 
 The other techniques, that were successfully applied for the (sub)graph isomorphism are decision trees~\cite{Messmer1999,Shearer1998,Shearer2001} and group theory\cite{McKay} for maximal subgraph matching. 
 
@@ -108,21 +110,25 @@ We denote with $\Pi_n$ the set of all feasible permutations:
 \begin{equation*}
 \Pi_n=\{P\in\{0,1\}^{n\times n}|\sum_{i=1,\dots,n}P_{ij}=\sum_{j=1,\dots,n}P_{ij}=1\quad\forall i,j=1,\dots,n\}
 \end{equation*}
-Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighed graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as~(compare with \cite{FastPFP,Roth2001,Vogelstein_BrainGraphs}\ToDo{cite}):
+Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighed graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as~(compare with \cite{FastPFP,Roth2001}\ToDo{cite}):
 \begin{equation} \label{eq:QAP1}
 %P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2
 P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\tr(D\hat{P}^T)
 \end{equation}
-where $\|\cdot\|$ is the matrix Frobenius norm and the matrix $D\in\mathbb{R}^{n\times n}$ represent the pairwise dissimilarity\footnote{We will discuss later, how to calculate the dissimilarity between node attributes.} between node attribute sets $D^I$ and $D^J$. After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, Appendix~\ref{appendixA}):
+where $\|\cdot\|$ is the matrix Frobenius norm and the matrix $D\in\mathbb{R}^{n\times n}$ represent the pairwise dissimilarity\footnote{We will discuss later, how to calculate the dissimilarity between node attributes.} between node attribute sets $D^I$ and $D^J$. Some authors~\cite{Vogelstein_BrainGraphs} use slightly different reformulation of it, namely:
 \begin{equation} \label{eq:QAP2}
+P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2,
+\end{equation}
+After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, Appendix~\ref{appendixA}):
+\begin{equation} \label{eq:QAP3}
 P = \argmin_{\hat{P}\in\Pi_n}vec(\hat{P})^T(-(A^J)^T\otimes(A^I)^T)vec(\hat{P})+\tr(D\hat{P}^T)
 \end{equation}
 where $\otimes$ denotes the Kronecker product and $vec(\hat{P})$ is a column-wise vectorization of $\hat{P}\in\Pi_n$.
 
-The objective function of \eqref{eq:QAP2} is a negation of the objective of the \emph{quadratic assignment problem}% with linear cost matrix set to zero
+The objective function of \eqref{eq:QAP3} is a negation of the objective of the \emph{quadratic assignment problem}% with linear cost matrix set to zero
 , which is know to be $NP-$hard~\cite{Burkard98thequadratic,Sahni1974}.
 
-The both formulations have their advantages and disadvantages. The main benefit of \eqref{eq:QAP1} is the low space complexity $\mathcal O(n^2)$, where the space requirement of \eqref{eq:QAP2} estimates with $\mathcal O(n^4)$. This makes the second formulation tractable only for relative small graphs. The drawback of both formulations is the strict penalization function of edge disagreements, namely the squared euclidean distance between matched edges. This follows straight forward from \eqref{eq:QAP1}. In this sense the last formulation can be easily generalized in the way, we represent below. 
+The both formulations have their advantages and disadvantages. The main benefit of \eqref{eq:QAP1} is the low space complexity $\mathcal O(n^2)$, where the space requirement of \eqref{eq:QAP3} estimates with $\mathcal O(n^4)$. This makes the second formulation tractable only for relative small graphs. The drawback of both formulations is the strict penalization function of edge disagreements, namely the squared euclidean distance between matched edges. This follows straight forward from \eqref{eq:QAP1}. In this sense the last formulation can be easily generalized in the way, we represent below. 
 
 We return back to the case where $n_1\not=n_2$. Let denote with a binary vector $x\in \{0,1\}^{n_1n_2}$ the column-wise vectorization of the assignment matrix $P$, which is not necessary a permutation matrix anymore. It is obviously, that $x_{(j-1)n_1+i}=1$, if a node $v_i\in V^I$ is matched to a node $u_j\in V^J$, and $x_{(j-1)n_1+i}=0$ otherwise. For simplicity we will write further $x_{ij}$ instead of complicated form $x_{(j-1)n_1+i}$.
  
@@ -148,7 +154,7 @@ This formula can be also expressed in matrix form. We define an \emph{affinity} 
 \end{alignat}
 We notice, that in the case, where $n_1=n_2$, both conditions (\ref{eq:gQAP3}) and (\ref{eq:gQAP4}) will be fulfilled with equality.
 
-One can easily see, that the formulation \eqref{eq:QAP2} can be obtained from \eqref{eq:QAP1}-\eqref{eq:gQAP4} by setting $S=-(A^J)^T\otimes(A^I)^T$.
+One can easily see, that the formulation \eqref{eq:QAP3} can be obtained from \eqref{eq:QAP1}-\eqref{eq:gQAP4} by setting $S=-(A^J)^T\otimes(A^I)^T$.
 %A Quadratic Optimization Problem is known to be \emph{NP}-hard \cite{Sahni1974}. This limits greatly the size of a graph, for which a exact solution can be calculated in reasonable time. Due to this there are a number of algorithms \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Chui2003, Suh_CVPR2015}, that solve graph matching problem inexact.
 
 Below we list a different ways to define a node and edge similarities between two attributed graphs we found in the literature.
@@ -211,30 +217,37 @@ c(e_{\text{subst}})=(A^I_{ii'}-A^J_{\sigma(i)\sigma(i')})^2\quad c(e_{\text{inse
 \section{Approaches for solving graph matching problem}
 In following we briefly describe a common approaches for solving inexact graph matching problem, used in field of Computer Vision and Pattern Recognition. We subdivided them into groups based on their main idea.
 
-\subsection{Tree search methods}
+\subsection{Discrete optimization}
+\subsubsection{Tree search methods}
+Similar to the exact graph matching problems the tree based methods with backtracking were successfully applied also to inexact matching problems. They were especially wild used for the error-correcting graph matching. The searching procedure often can be guided, so that the required time is shorter, than exponential time, which is needed by a blind searching. To traverse a tree effectively one uses score of the current achieved partial matching together with a heuristic estimate for the score of the remaining nodes. The most algorithms in this groups differ in a suggested heuristics to estimate future costs and in a rules, for tree traversing. The most used methods for the last are depth-first-search and $A^*$-Algorithm~\cite{AStar}.
+The first algorithm for inexact graph matching based on the three search was presented in~\cite{Fu1979}. It is an optimal inexact graph matching algorithm. For further examples of the three search methods for inexact graph matching we refer to \cite{Bunke1983_inexactGM,Shapiro1981,Wang1995}.
+\subsubsection{Simulated Annealing}
+Simulated annealing is a heuristic for searching the global optimum of a given energy function~\cite{Burkard98thequadratic}. It is an extension of the Metropolis Algorithm~\cite{Metropolis}, that was suggesting for finding an equilibrium of a physic system with many particles. Speaking in terms of a combinatorial optimization problem, feasible solutions of a problem define states of a system and corresponding objective scores it's energy. The idea is find the state with the lowest energy by performing some random changes in a system. A change, that pushes system into a state with lower energy, is always accepted. On the other side, a change, that increases energy function, is accepted with some probability. This probability and number of changes per iteration is controlled by the temperature parameter $T$. The bigger $T$ the viewer changes are allowed and the smaller the accepted probability is. 
 
-Similar to the exact graph matching problems the tree based methods with backtracking were successfully applied also to inexact matching problems. To determine the tree traverse direction and/or to bound unpromising branches one uses score of the current achieved partial matching together with a heuristic estimate of the score for the remaining nodes. Those methods % using $A^*-$Algorithms~\ToDo{cite} for tree searching 
-were especially wild used for the error-correcting graph matching.
-The first such algorithm, which guaranties to find the optimal solution, was presented in~\ToDo{cite}. For further examples of the three search methods we refer to \cite{Shapiro1981,Wang1995}.
+The application of the simulated annealing to the graph matching problems can be found in~\cite{Herault1990_SimulatedAnnealing}. It is also a common used heuristic used for quadratic assignment problem~\cite{Burkard98thequadratic}.
 
 \subsection{Continuous optimization}
+This group is one of the biggest and deep investigated. The main idea is to relax the integer constraints in the discrete optimization problems~\eqref{eq:QAP1},~\eqref{eq:gQAP1} and apply continuous optimization algorithms to solve them. The found solution must be converted afterwards back in the discrete domain. We list further some of the techniques applied for solving relaxed problems.
+
+The first subgroup of the algorithms, that use techniques of the continuous optimization, are those, who work directly with the objective function of~\eqref{eq:QAP1} or~\eqref{eq:gQAP1}.
+
+In 1996 Gold and Rangarajan~\cite{Rangarajan1996_GAGM} presented an iterative algorithm applied to the formulation~\eqref{eq:gQAP1} which uses \emph{deterministic annealing}\footnote{Deterministic annealing is similar to the simulated annealing, but uses determenistic techniques to find the closest local minimum by value of the temperature parameter~\cite{Rose1991_DA}.}. They use Taylor series approximation to relax the initial quadratic assignment problem to linear assignment problem, which they solve using \emph{soft-assign}. The basic idea of the soft-assigned is to a binary correspondence matrix to a doubly stochastic one. The determenistic annealing was also used in~\cite{Rangarajan96_LagRelax} to solver Lagrangian Relaxation of the problem~\eqref{eq:QAP1}.  Also in~\cite{Chui2003} the similar technique was applied to the point set matching. The solution, obtained by this method is however not necessary optimal and the behavior of the algorithms depends highly on the selected parameters, especially those, which control the annealing schema.
+
+Two Algorithms suggested in~\cite{Vogelstein_BrainGraphs} and~\cite{Leordeanu2009_IPFP} uses \emph{Frank-Wolfe algorithm}~\cite{Wolfe1956}, that solves originally a convex quadratic program. The both algorithms starts with some solution (continuous in~\cite{Vogelstein_BrainGraphs} and continuous or discrete in~\cite{Leordeanu2009_IPFP}) and iteratively improve this solution. The improvement step is an application of the \emph{Frank-Wolfe algorithm} to the graph matching problem. It processes in two steps: it finds first a search direction by solving an linear assignment problem, which arises by the minimizing the first-order Tailor series approximation to the objective function; then the second step maximizes the continuous relaxation of the original problem along found direction. A continuous solution can be mapped afterward back in the discrete domain. Although, both algorithms use the same technique, they are applied to different formulations of the graph matching problem. The authors in~\cite{Vogelstein_BrainGraphs} consider the formulation~\eqref{eq:QAP3}, whereby the work~\cite{Leordeanu2009_IPFP} uses more general case of the problem formulation~\eqref{eq:gQAP1}. Avoiding the usage of the similarity matrix $S$ gives the first algorithm a big advantage of the less complexity and space requirement, which make it possibly to work with graphs of a big size.
+
+
+
+
+
+\subsubsection{Spectral matching}
+
 
 \subsubsection{Probabilistic approaches}
 
-\subsection{Spectral matching}
 
 \subsection{Clustering matching}
 
 \subsection{Resent algorithms for big graphs}
-
-
-
-
-
-
-
-
-
 
 \section{Graph matching algorithms studied in this thesis}
 

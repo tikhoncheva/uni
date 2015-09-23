@@ -35,12 +35,17 @@
 %\usepackage                             {natbib}
 \usepackage                             {hyperref}
 \usepackage     [onehalfspacing]        {setspace} % 1.5 line spacing
-%\usepackage							 {makeidx}  % Index-generation
+%\usepackage							 {makeidx} % Index-generation
 \usepackage                             {parskip}  % Removes paragraph indentation (not needed most of the time now)
+\usepackage                             {titlesec} % Set distance between section titles and text
 
 \setlength{\parskip}{1ex} % space between paragraphs
 %\setlength{\parindent}{0pt} % no indent
 %\renewcommand{\baselinestretch}{1.33}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
 \allowdisplaybreaks     % allow page breaks in formulas
 % links

@@ -132,9 +132,30 @@ Exact Graph Matching
 	timestamp = {Fri, 01 Feb 2013 13:30:47 +0100},
 }
 
+@article{BronKerbosch,
+	author = {Bron, Coen and Kerbosch, Joep},
+	title = {{Algorithm 457: finding all cliques of an undirected graph}},
+	journal = {Communications of the ACM},
+	number = {9},
+	pages = {575--577},
+	volume = {16},
+	year = {1973}
+}
+
 --------------------------------------------------
 Inexact Graph Matching
 --------------------------------------------------
+
+@article{AStar,
+	author = {Hart, Peter E. and Nillson, Nils J. and Raphael, Bertram},
+	title = {{Formal Basis for the Heuristic Determination of Minimum Cost Path}},
+	journal = {IEEE Transactions of Systems Science and Cybernetics},
+	number = {2},
+	pages = {100--107},
+	volume = {4},
+	year = {1968}
+}
+
 
 --------------------------------------------------
 Graph Edit distance
@@ -213,6 +234,15 @@ Graph Edit distance
 	year = {2001}
 }
 
+@article{Fu1979,
+	author = {Tsai, Wen-Hsiang and Fu, King-Sun},
+	title = {{Error-Correcting Isomorphisms of Attributed Relational Graphs for Pattern Analysis}},
+	journal = {IEEE Transactions on Systems, Man, and Cybernetics},
+	number = {12},
+	pages = {757--768},
+	volume = {9},
+	year = {1979}
+}
 
 
 
@@ -236,14 +266,6 @@ QAP
 	institution = {Cowles Foundation for Research in Economics, Yale University},
 	type = {Cowles Foundation Discussion Papers},
 	number = {4}
-}
-
-@misc{Vogelstein_BrainGraphs,
-	author = {Vogelstein, J.~T. and Conroy, J.~M. and Podrazik, L.~J. and Kratzer, S.~G and Harley, E.~T. and Fishkind, D.~E. and Vogelstein, R.~J. and Priebe, C.~E.},
-	title = {{Large (Brain) Graph Matching via Fast Approximate Quadratic Programming}},
-	jornal = {arXiv preprint arXiv:1112.5507},
-	url = {http://arxiv.org/abs/1112.5507v5},
-	year = {2011/14}
 }
 
 @misc{FastPFP,
@@ -294,6 +316,9 @@ Minsu Cho
 --------------------------------------------------
 Rangarajan
 --------------------------------------------------
+
+Soft-assign
+
 
 @article{Chui2003,
 	author = {Chui, Haili and Rangarajan, Anand},
@@ -423,11 +448,37 @@ Hancock
 --------------------------------------------------
 Greedy mapping
 --------------------------------------------------
-@inproceedings{Leordeanu2005,
+@inproceedings{Leordeanu2005_SM,
 	author = {Leordeanu, Marius and Hebert, Martial},
 	booktitle = {ICCV},
 	title = {{A spectral technique for correspondence problems using pairwise constraints}},
 	year = {2005}
+}
+
+@inproceedings{Leordeanu2009_IPFP,
+	author = {Leordeanu, Marius and Hebert, Martial and Sukthankar, Rahul and Herbert, Martial},
+	booktitle = {NIPS},
+	title = {{An Integer Projected Fixed Point Method for Graph Matching and MAP Inference}},
+	year = {2009}
+}
+
+@article{Wolfe1956,
+	author = {Frank, Marguerite and Wolfe, Philip},
+	title = {An algorithm for quadratic programming},
+	journal = {Naval Research Logistics Quarterly},
+	volume = {3},
+	number = {1-2},
+	publisher = {Wiley Subscription Services, Inc., A Wiley Company},
+	pages = {95--110},
+	year = {1956}
+}
+
+@misc{Vogelstein_BrainGraphs,
+	author = {Vogelstein, J.~T. and Conroy, J.~M. and Podrazik, L.~J. and Kratzer, S.~G and Harley, E.~T. and Fishkind, D.~E. and Vogelstein, R.~J. and Priebe, C.~E.},
+	title = {{Large (Brain) Graph Matching via Fast Approximate Quadratic Programming}},
+	jornal = {arXiv preprint arXiv:1112.5507},
+	url = {http://arxiv.org/abs/1112.5507v5},
+	year = {2011/14}
 }
 
 --------------------------------------------------
@@ -490,9 +541,42 @@ Thesis
 	year = {2010}
 }
 
+
 --------------------------------------------------
 bag of Features
 --------------------------------------------------
+
+--------------------------------------------------
+Simulated Annealing
+--------------------------------------------------
+@inproceedings{Herault1990_SimulatedAnnealing,
+	author = {H'erault, L. and Horaud, R. and Veillon, F. and Niez, J.},
+	booktitle = {Procedings of the British Machine Vision Conference},
+	pages = {319--324},
+	title = {{Symbolic image matching by simulated annealing}},
+	year = {1990}
+}
+
+@article{Metropolis,
+	author = {Metropolis, Nicholas and Rosenbluth, Arianna W. and Rosenbluth, Marshall N. and Teller, Augusta H. and Teller, Edward},
+	title = {{Equation of State Calculations by Fast Computing Machines}},
+	journal = {Journal of Chenical Physics},
+	pages = {1087--1092},
+	volume = {21},
+	year = {1953}
+}   
+
+--------------------------------------------------
+Deterministic annealing
+--------------------------------------------------
+@phdtheis{Rose1991_DA,
+	document_type = {PhD Thesis},
+	author = {Rose, Kenneth},
+	title = {{Determenistic annealing, clustering and optimization}},
+	school = {California Institute of Technology},
+	url = {http://resolver.caltech.edu/CaltechETD:etd-07122007-085228},
+	year = {1991}
+}
 
 --------------------------------------------------
 RANSAC
@@ -500,7 +584,7 @@ RANSAC
 @article{RANSAC,
 	author = {Fischler,~M.~A. and Bolles,~R.~C.},
 	title = {{Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and Automated Cartography}},
-	journal = {Comm. of the ACM,},
+	journal = {Comm. of the ACM},
 	pages = {381--395},
 	volume = {24},
 	year = {1981}
