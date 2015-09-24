@@ -73,14 +73,12 @@ The other techniques, that were successfully applied for the (sub)graph isomorph
 \section{Inexact graph matching}
 
 Sometimes it is difficult to apply the exact matching algorithms described in previous section to real world problems. There are two possible reasons for that. On the one hand, that are variations in the structure of graphs, that describe a same object. Those variations could be a consequence of natural deformations or noise influence, that can occur in some real word applications. On the other hand, solving the graph matching problem exactly can be time or memory consuming. As a consequence one can be interested in solving graph matching problem inexactly. In this case, no edge preserving mapping between the nodes of two graphs is required.
-
-\begin{figure}[h!]
+\begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.5\textwidth]{chapter1/fig/inexactGM}
     \caption{Inexact graph matching}
     \label{fig:inexact_GM}
 \end{figure}
-    
 
 Let us recall the problem statement \eqref{gGMP}: 
 \begin{equation*}
@@ -113,11 +111,11 @@ We denote with $\Pi_n$ the set of all feasible permutations:
 Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighed graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as~(compare with \cite{FastPFP,Roth2001}\ToDo{cite}):
 \begin{equation} \label{eq:QAP1}
 %P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2
-P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\tr(D\hat{P}^T)
+P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2
 \end{equation}
-where $\|\cdot\|$ is the matrix Frobenius norm and the matrix $D\in\mathbb{R}^{n\times n}$ represent the pairwise dissimilarity\footnote{We will discuss later, how to calculate the dissimilarity between node attributes.} between node attribute sets $D^I$ and $D^J$. Some authors~\cite{Vogelstein_BrainGraphs} use slightly different reformulation of it, namely:
+where $\|\cdot\|$ is the matrix Frobenius norm. Some authors~\cite{Vogelstein_BrainGraphs} use slightly different, but equivalent reformulation of it, namely:
 \begin{equation} \label{eq:QAP2}
-P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2,
+P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2+\|D^I-\hat{P}D^J\|^2,
 \end{equation}
 After some transformations, the problem \eqref{eq:QAP1} can be reformulated as~(see~\cite{Burkard98thequadratic}, Appendix~\ref{appendixA}):
 \begin{equation} \label{eq:QAP3}
@@ -145,7 +143,7 @@ Using the introduced notation and definitions of the node and edge similarity fu
 \begin{equation}\label{eq:sumQAP}
 	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i'j'}=1}}s_E(e_{ij},e_{i'j'}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
 \end{equation}
-This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $A\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004}:
+This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $A\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Leordeanu2009_IPFP}:
 \begin{alignat}{2}
     &     && \argmax_x{x^TSx}                           \label{eq:gQAP1}\\ %\notag\\
     & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{eq:gQAP2}\\
@@ -180,7 +178,7 @@ Below we list a different ways to define a node and edge similarities between tw
 	This leads us to the question how to calculate edge dissimilarity. The most obvious way is to compare a weights of the edges, if such are provided. An other alternative could be to use length of the edges~\cite{Cho2014_Haystack, Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM}, if coordinates of the nodes in some system (usually, Cartesian coordinates) are known. It a significant assumptions, which holds however for almost all graphs arose in practical application.
 	
 	If the nodes of the graphs is described not only by their location, but also by some affine region around the nodes, one can use so-called geometric dissimilarity~\cite{Cho2009_AgglClustering,Cho2012_ProgressiveGM}:
-	\begin{alignat}{4}
+	\begin{alignat}{4}\label{eq:geomDiss}
 	& d(e_{ij},e_{i'j'}) && =\frac{1}{2}(d_{geo}(m_j|m_i) && +d_{geo}(m_i|m_j)) \\
 	& d_{geo}(m_j|m_i) && =\frac{1}{2}(\|x_{j'}-H_{i}x_j\| && + \|x_{j}-H^{-1}_ix_{j'}\|) \\
 	& d_{geo}(m_i|m_j) && =\frac{1}{2}(\|x_{i'}-H_{j}x_i\| && + \|x_{i}-H^{-1}_{j}x_{i'}\|) 
@@ -231,23 +229,38 @@ This group is one of the biggest and deep investigated. The main idea is to rela
 
 The first subgroup of the algorithms, that use techniques of the continuous optimization, are those, who work directly with the objective function of~\eqref{eq:QAP1} or~\eqref{eq:gQAP1}.
 
-In 1996 Gold and Rangarajan~\cite{Rangarajan1996_GAGM} presented an iterative algorithm applied to the formulation~\eqref{eq:gQAP1} which uses \emph{deterministic annealing}\footnote{Deterministic annealing is similar to the simulated annealing, but uses determenistic techniques to find the closest local minimum by value of the temperature parameter~\cite{Rose1991_DA}.}. They use Taylor series approximation to relax the initial quadratic assignment problem to linear assignment problem, which they solve using \emph{soft-assign}. The basic idea of the soft-assigned is to a binary correspondence matrix to a doubly stochastic one. The determenistic annealing was also used in~\cite{Rangarajan96_LagRelax} to solver Lagrangian Relaxation of the problem~\eqref{eq:QAP1}.  Also in~\cite{Chui2003} the similar technique was applied to the point set matching. The solution, obtained by this method is however not necessary optimal and the behavior of the algorithms depends highly on the selected parameters, especially those, which control the annealing schema.
+In 1996 Gold and Rangarajan presented a Graduated assignment algorithm for graph matching (GAGM)~\cite{Rangarajan1996_GAGM}. It is an iterative algorithm, which uses \emph{deterministic annealing}\footnote{Deterministic annealing is similar to the simulated annealing, but uses determenistic techniques to find the closest local minimum by value of the temperature parameter~\cite{Rose1991_DA}.}  to solve the graph matching problem formulated as~\eqref{eq:gQAP1}. They use Taylor series approximation to relax the initial quadratic assignment problem to linear assignment problem, which is then solved by using \emph{soft-assign}. The basic idea of the soft-assigned is to transform a binary correspondence matrix to a doubly stochastic one. The determenistic annealing was also used in~\cite{Rangarajan96_LagRelax} to solver Lagrangian Relaxation of the problem~\eqref{eq:QAP1} and in the robust point matching algorithm with thin-plane spline (RPM-TPS)~\cite{Chui2003}. The solution, obtained by this method is however not necessary optimal and the behavior of the algorithms depends highly on the selected parameters, especially those, which control the annealing schema.
 
-Two Algorithms suggested in~\cite{Vogelstein_BrainGraphs} and~\cite{Leordeanu2009_IPFP} uses \emph{Frank-Wolfe algorithm}~\cite{Wolfe1956}, that solves originally a convex quadratic program. The both algorithms starts with some solution (continuous in~\cite{Vogelstein_BrainGraphs} and continuous or discrete in~\cite{Leordeanu2009_IPFP}) and iteratively improve this solution. The improvement step is an application of the \emph{Frank-Wolfe algorithm} to the graph matching problem. It processes in two steps: it finds first a search direction by solving an linear assignment problem, which arises by the minimizing the first-order Tailor series approximation to the objective function; then the second step maximizes the continuous relaxation of the original problem along found direction. A continuous solution can be mapped afterward back in the discrete domain. Although, both algorithms use the same technique, they are applied to different formulations of the graph matching problem. The authors in~\cite{Vogelstein_BrainGraphs} consider the formulation~\eqref{eq:QAP3}, whereby the work~\cite{Leordeanu2009_IPFP} uses more general case of the problem formulation~\eqref{eq:gQAP1}. Avoiding the usage of the similarity matrix $S$ gives the first algorithm a big advantage of the less complexity and space requirement, which make it possibly to work with graphs of a big size.
+Another iterative algorithm was proposed in~\cite{Leordeanu2009_IPFP} and is called an integer projected fixed point method (IPFP). It consists of two steps, which we shortly describe below. In the first step, an initial solution has to be chosen. It can be, for example, a continuous or discrete solution obtained by some other algorithm. The second step iteratively improves this solution by applying \emph{Frank-Wolfe algorithm}~\cite{Wolfe1956} adapted to the graph matching problem. This algorithm finds first the best search direction by solving an linear assignment problem, which arises by the minimizing the first-order Tailor series approximation to the objective function. The minimization is performed in a discrete using the Hungarian algorithm~\cite{Kuhn1955}. Then the initial objective function is further maximized in a continuous domain along found direction. The authors show, that in the praxis IPFP tens to converge towards discrete solutions, that are close to the optimum.
 
+The Fast Approximative Quadratic Programming Algorithm (FAQ), presented in~\cite{Vogelstein_BrainGraphs}, also uses Frank-Wolfe algorithm to solve a continuous relaxation of the problem~\eqref{eq:QAP2}. However FAQ perform completely in a continuous domain and has the third step, which maps a found continuous solution back onto discrete domain. Avoiding the usage of the similarity matrix $S$ gives the FAQ a big advantage of the less space requirement, which make it possibly to apply the algorithm to graphs of a big size. 
 
+A similar approach is also used in the PATH-Algorithm~\cite{Zaslavskiy2010}. The algorithms finds first the global optimum of the Lagrangian relaxation of the problem~\eqref{eq:QAP2}. For this the Newton method~\cite{Book_ConvOpt} is used. Afterwards the found solution is projected back onto discrete domain by solving a sequence of convex and conclave problems. Those problems are solved again with Frank-Wolfe algorithm.
 
+Very close to~\cite{Leordeanu2009_IPFP} is also the fast projected fixed-point algorithm (FastPFP) proposed in~\cite{FastPFP}, that uses novel \emph{projected fix point method} to find a solution of a continuous relaxation of the problem~\eqref{eq:QAP1}. Compared to IPFP the new algorithm uses projections onto a continuous domain, instead of discrete. Furthermore, the authors proofed the linear convergence rate of their algorithm, whereby the convergence rate of IPFP is unknown. The FastPFP, similar to FAQ, do not have a memory issues because of the other problem formulation and is generally faster than tow last mentioned methods, because it does not need to solve linear assignment problem on each iteration.
 
+\subsubsection{Spectral methods}
+A big group of algorithm for solving graph matching problem is represented by those, which use a eigenvalue decomposition~\cite{Book_ConvOpt} of the adjacency matrices of the graph, that should be matched. The idea behind this is, that the eigenvalues and eigenvector of the adjacency matrices of two isomorphic graphs are equal.
 
-\subsubsection{Spectral matching}
+One of the first algorithms, which uses spectral techniques, is the one by Umeyama~\cite{Umeyam1988}. He considers the case, when a two graphs have the same number of nodes and matching between node of those graphs is bijective. This means, that a correspondence matrix must be a permutation matrix. He also assumes, that two graph are isomorphic or nearly isomorphic. The graph matching problem is then solved by defining an orthogonal matrix, which minimizes the objective score, based on the eigenvalue decomposition of the adjacency matrices of a given graphs. This algorithm is highly limited in it's application due to its requirements. We also want to mention, that it works only with graph geometry and does not consider attributes of nodes and edges.
 
+The more resent algorithm is this group of methods is called spectral matching (SM)~\cite{Leordeanu2005_SM}. The algorithm works with the general formulation~\eqref{eq:gQAP1} and considers the matrix $S$ as an adjacency matrix of a weighted graph, whose nodes are define by all possible correspondences between the nodes of the original graphs. The matching problem reduces to the problem of finding a subgraph of this graphs with the maximum weight\footnote{A weight of a graph is defined here as a sum of weights of it edges.}. This problem can be formulated as an integer optimization problem. However the authors relax both mapping and integer constrains and obtain the optimal solution of this relaxation by taken the principal eigenvector of the matrix $S$. An a discrete solution is obtained from the continuous by simple greedy heuristic. 
+
+A generalization of the SM algorithm is proposed in~\cite{Duchenne2011}. The authors suggest to consider similarities between tuples of nodes and not only pairs to improve graph matching quality. They formulate new problem using hyper-graphs and tensor notation. The solution strategy is afterwards the same, as in~\cite{Leordeanu2005_SM}: solution is approximated with the principal eigenvector of the matrix $S$. However, due to the increased complexity of the problem, the \emph{the power iteration method} used in SM cannot be applied straight forward. So, the authors describe an effective way, how to apply existing method to the new problem.
 
 \subsubsection{Probabilistic approaches}
 
+\subsubsection{Methods using clustering techniques}
+We want to emphasize independently the methods, that use clustering techniques to improve the graph matching score or performance.
 
-\subsection{Clustering matching}
+Minsu Cho in~\cite{Cho2009_AgglClustering} proposes to use \emph{agglomerative clustering} on a set of candidate matches to effectively cop with outliers. The problem is formulates as in~\eqref{eq:gQAP1}. The considered graphs are attributed, so that candidate matches are selected based on the distance between node attributes. The algorithm is controlled by the dissimilarity measure between two clusters, which is defined as the average of $k$ smallest pairwise dissimilarities between points in two clusters. This linkage model is called by the authors \emph{adaptive partial linkage model}. Notice, that the points in a clusters are pairwise correspondences between graph nodes. The dissimilarity between two nodes is defined as a linear combination of the node attribute dissimilarities and 
+geometric dissimilarities defined as~\eqref{eq:geomDiss}. At the end, the close correspondences build a bigger cluster and likely represent inliers. In contrast to that, the outliers are likely to stay in a small groups, so we can threshold them base on the cluster size.
 
-\subsection{Resent algorithms for big graphs}
+Another algorithm based on the hierarchical clustering is described in~\cite{Hancock_ModalClusters}. Its propose is to provide additional constraints, that can be used to improve the robustness of a graph matching algorithm against graph deformations. This was successfully achieved by using spectral methods to build the clusters. The $S$ eigenvectors associated with the first $S$ largest eigenvalues are selected as a cluster centers. After performing the clustering, spectral matching algorithm is applied to match first the clusters and then the nodes inside the clusters.
+
+Another benefit of using clustering method in graph matching is shown in~\cite{Lyzinski2015}. The aim of the authors is to parallelize a graph matching algorithm for matching very big graphs. However the considered problem is semi supervised, meaning that correct correspondences between some nodes are known. It is obvious, that in the perfect clustering, node that should be matched, must lie in the corresponding subgraphs. To ensure, that the clustering is sufficiently good, the authors spectrally embed and then jointly cluster nodes of two graphs. The algorithm was successfully applied to the graphs with $20000-30000$ nodes.
+
+\subsubsection{Resent algorithms for big graphs}
 
 \section{Graph matching algorithms studied in this thesis}
 
