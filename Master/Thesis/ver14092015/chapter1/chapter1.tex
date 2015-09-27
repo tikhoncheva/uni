@@ -141,7 +141,7 @@ To measure a similarity between graphs one consider two different kinds of simil
 
 Using the introduced notation and definitions of the node and edge similarity functions the function $S(G^I,G^J,m)$ in~\eqref{gGMP} can be now rewrite as follows:
 \begin{equation}\label{eq:sumQAP}
-	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i'j'}=1}}s_E(e_{ij},e_{i'j'}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
+	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i'j'}=1}}s_E(e_{ii'},e_{jj'}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
 \end{equation}
 This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $A\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Leordeanu2009_IPFP}:
 \begin{alignat}{2}
@@ -237,7 +237,9 @@ The Fast Approximative Quadratic Programming Algorithm (FAQ), presented in~\cite
 
 A similar approach is also used in the PATH-Algorithm~\cite{Zaslavskiy2010}. The algorithms finds first the global optimum of the Lagrangian relaxation of the problem~\eqref{eq:QAP2}. For this the Newton method~\cite{Book_ConvOpt} is used. Afterwards the found solution is projected back onto discrete domain by solving a sequence of convex and conclave problems. Those problems are solved again with Frank-Wolfe algorithm.
 
-Very close to~\cite{Leordeanu2009_IPFP} is also the fast projected fixed-point algorithm (FastPFP) proposed in~\cite{FastPFP}, that uses novel \emph{projected fix point method} to find a solution of a continuous relaxation of the problem~\eqref{eq:QAP1}. Compared to IPFP the new algorithm uses projections onto a continuous domain, instead of discrete. Furthermore, the authors proofed the linear convergence rate of their algorithm, whereby the convergence rate of IPFP is unknown. The FastPFP, similar to FAQ, do not have a memory issues because of the other problem formulation and is generally faster than tow last mentioned methods, because it does not need to solve linear assignment problem on each iteration.
+Very close to~\cite{Leordeanu2009_IPFP} is also the fast projected fixed-point algorithm (FastPFP) proposed in~\cite{FastPFP}, that uses novel \emph{projected fix point method} to find a solution of a continuous relaxation of the problem~\eqref{eq:QAP1}. Compared to IPFP the new algorithm uses projections onto a continuous domain, instead of discrete. Furthermore, the authors proofed the linear convergence rate of their algorithm, whereby the convergence rate of IPFP is unknown. The FastPFP, similar to FAQ, do not have a memory issues because of the other problem formulation and is generally faster than two last mentioned methods, because it does not need to solve linear assignment problem on each iteration.
+
+Besides the mentioned methods, we want wo mention a work by Schellewald and Schnoerr, who use \emph{a semidefinite programming} to solve graph matching problem. They formulate graph matching problem as a regularized bipartite matching problem with one continuous parameter. Then they relax this formulation to a convex semidefinite program. The obtained optimization problem is convex and can be solved with standard algorithms. The authors also suggest a novel probabilistic post-processing step to obtain a discrete solution from the continuous one. The suggested algorithm has only one tuning parameter, which makes it easy to apply. However the considered relaxation problem has a squared problem size comparing to initial problem~\cite{Cour2006}.
 
 \subsubsection{Spectral methods}
 A big group of algorithm for solving graph matching problem is represented by those, which use a eigenvalue decomposition~\cite{Book_ConvOpt} of the adjacency matrices of the graph, that should be matched. The idea behind this is, that the eigenvalues and eigenvector of the adjacency matrices of two isomorphic graphs are equal.
@@ -247,6 +249,18 @@ One of the first algorithms, which uses spectral techniques, is the one by Umeya
 The more resent algorithm is this group of methods is called spectral matching (SM)~\cite{Leordeanu2005_SM}. The algorithm works with the general formulation~\eqref{eq:gQAP1} and considers the matrix $S$ as an adjacency matrix of a weighted graph, whose nodes are define by all possible correspondences between the nodes of the original graphs. The matching problem reduces to the problem of finding a subgraph of this graphs with the maximum weight\footnote{A weight of a graph is defined here as a sum of weights of it edges.}. This problem can be formulated as an integer optimization problem. However the authors relax both mapping and integer constrains and obtain the optimal solution of this relaxation by taken the principal eigenvector of the matrix $S$. An a discrete solution is obtained from the continuous by simple greedy heuristic. 
 
 A generalization of the SM algorithm is proposed in~\cite{Duchenne2011}. The authors suggest to consider similarities between tuples of nodes and not only pairs to improve graph matching quality. They formulate new problem using hyper-graphs and tensor notation. The solution strategy is afterwards the same, as in~\cite{Leordeanu2005_SM}: solution is approximated with the principal eigenvector of the matrix $S$. However, due to the increased complexity of the problem, the \emph{the power iteration method} used in SM cannot be applied straight forward. So, the authors describe an effective way, how to apply existing method to the new problem.
+
+Before going to the next section we want shortly describe a max-pooling approach from~\cite{Cho2014_Haystack}, which uses ideas similar to both GAGM~\cite{Rangarajan1996_GAGM} and SM~\cite{Leordeanu2005_SM}, but replace one of the sum in a updating step with maximum-operation. The algorithm solves the graph matching problem formulation~\eqref{eq:gQAP1} by relaxing its integer constraints and omitting sum constraints. To approximate a solution of $\argmax_{x}x^TSx$ the max-pooling algorithm similar to GAGM uses first order Taylor expansion of the objective function. The maximization of the Taylor approximation can be done by the power method as it is done in SM.
+The resulting update formula of the correspondence $(v_i,v_j),v_i\in V^I,v_j\in V^J$ has the form~\cite{Cho2014_Haystack}:
+\begin{equation}
+(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i'\in N_i}\sum_{j'\in N_j}x_{i'j'}s_E(e_{ii'},e_{jj'}),
+\end{equation}
+where $N_i$ denotes a direct neighborhood of a nodes $v_i$, i.e. set of its adjacent nodes.
+The max-poling algorithm uses a maximum function instead of the second sum in the second term, which leads to
+\begin{equation}
+(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i'\in N_i}\max_{j'\in N_j}x_{i'j'}s_E(e_{ii'},e_{jj'}).
+\end{equation}
+This simple idea helps to suppress a noisy votes of the outlier matches, because the last have more likely low similarity values. The proposed algorithm shows very good results in presents of numerous outliers, although there is no theoretical justification of its convergence.
 
 \subsubsection{Probabilistic frameworks}
 Another group of algorithms applies \emph{relaxation labeling} to solve graph matching problem. The problem is formulated as an assignment a set of labels to a set of objects. The earlier works on this formulation are \cite{Fischler1973, Rosenfeld1976}. In term of the graph matching, object are the nodes of the first graph, and labels correspond to the nodes of the second graph. For each object there is a vector, which defines the initial probabilities of the labels to be assign to the objects. Those probabilities are computed based on some informations known about the objects (in graph matching problem those are node and edge attributes). The initial probabilities are then modified in iterative manner, until algorithm converges or riches the maximum number of iterations. 
@@ -274,6 +288,36 @@ The same idea of using graph clustering is followed by Lyzinski et al. in their 
 \subsubsection{Resent algorithms for big graphs}
 
 \section{Graph matching algorithms studied in this thesis}
-In this section we want for completeness described detailed graph matching algorithm used in our framework for graph matching.
+In this section we want for completeness described detailed graph matching algorithm used in our framework for graph matching. We use the notation introduced at the beginning of this chapter.
+
+\subsection{Reweighted random walks for graph matching}
+The algorithm is designed by Minsu Cho et al.~\cite{Cho2010_RRWM} and interprets the graph matching problem~\eqref{eq:gQAP1}:
+\begin{alignat*}{2}
+    &     && \argmax_x{x^TSx}                           \notag\\
+    & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \notag\\
+    &             &&  \sum_{i=1\dots n_1} x_{ij}\le 1   \notag\\
+    &             &&  \sum_{j=1\dots n_2} x_{ij}\le 1   \notag
+\end{alignat*}
+in a random walk view. For this one formulates an association graph $G^{rw}=(V^{rw},E^{rw},D^{rw})$ based on the affinity matrix $S$ between the graphs. The set of nodes $V^{rw}$ of the new graph is represented by all possible correspondences between nodes in $V^I$ and $V^J$. This means, that $|V^{rw}|=n_1n_2$, where $|V^I|=n_1$ and $|V^J|=n_2$. We refer to a node of the graph $G^{rw}$ as $v_{ij}$ if it represent a correspondence pair $(v_i,v_j)$, $v_i\in V^I,v_j\in V^J$. The entry $S_{ij,i'j'}$ of the matrix $S$ defines the weight of the edge $\{v_{ij},v_{i'j'}\}\in E^{rw}$. If it is equal to zero, respective edge in graph $G^{rw}$ is omitted. An example of the construction is illustrated on the~\ref{fig:RRWM}.
+\begin{figure}[h!]
+\label{fig:RRWM}
+	\centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{chapter1/fig/RRWM1}
+        \caption{Two graphs to match}
+        \label{fig:RRWM1}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{chapter1/fig/RRWM2}
+        \caption{Association graph}
+        \label{fig:RRWM2}
+    \end{subfigure}
+\caption{Association Graph of two given graphs for Reweighted Random Walk Method}
+\end{figure}
+
+It is obvious, that the graph matching problem between two graphs $G^I$ and $G^J$ is equivalent to finding a subset of nodes in the associated graph $G^{rw}$, that satisfy matching criteria of the initial problem.
+For finding a subset of nodes in $G^{rw}$ the authors adopt the page ranking algorithm based on the Markov random works~\cite{PageRank}. We will not describe here theoretical background of the proposed algorithm in details, but concentrate us on its main steps.
+
 
 \section{Discussion}
