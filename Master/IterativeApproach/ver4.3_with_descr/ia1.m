@@ -406,17 +406,30 @@ if filename1~=0
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
         M(1).GT.LLpairs = cdata.GT;
-        InitialMatches = cell2mat({ cdata.matchInfo.match }');
-        dist = cell2mat({cdata.matchInfo.dist}');
-        v1_unique = unique(InitialMatches(:,1));
-        InitialMatches_unique = zeros(numel(v1_unique),2);
-        for i = 1:numel(v1_unique)
-            ind = find(InitialMatches(:,1)==v1_unique(i));
-            [~,minpos] = min(dist(ind));
-            InitialMatches_unique(i,1:2) = InitialMatches(ind(minpos),1:2);
-        end
-%         M(1).InitialMatches = cell2mat({ cdata.matchInfo.match }');
-        M(1).InitialMatches = InitialMatches_unique;
+        InitMatches = cell2mat({ cdata.matchInfo.match }');
+        nInitMatches = size(InitMatches,1);  
+        
+        [distMatrix_geo, ~] = computeAffineTransferDistanceMEX( cdata.view, InitMatches, 0 );
+        
+        dist_app = cell2mat({cdata.matchInfo.dist}');
+        I = repmat((1:nInitMatches)', nInitMatches,1);
+        J = kron((1:nInitMatches)', ones(nInitMatches,1));
+        distMatrix_app = reshape( max(dist_app(I), dist_app(J)), nInitMatches, nInitMatches);
+        
+        dist = distMatrix_geo + 0.5*distMatrix_app;
+        
+        M(1).InitialMatches = InitMatches;
+        M(1).dist = dist; 
+%         dist = cell2mat({cdata.matchInfo.dist}');
+%         v1_unique = unique(InitialMatches(:,1));
+%         InitialMatches_unique = zeros(numel(v1_unique),2);
+%         for i = 1:numel(v1_unique)
+%             ind = find(InitialMatches(:,1)==v1_unique(i));
+%             [~,minpos] = min(dist(ind));
+%             InitialMatches_unique(i,1:2) = InitialMatches(ind(minpos),1:2);
+%         end
+%         M(1).InitialMatches = InitialMatches_unique;
+
         
         L = size(IP1,1);        % current level of the pyramid
 

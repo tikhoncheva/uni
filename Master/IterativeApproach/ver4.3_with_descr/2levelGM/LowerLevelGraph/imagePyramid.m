@@ -21,7 +21,7 @@ GT.LLpairs = [];
 GT.HLpairs = [];
 
 M = repmat(struct('HLGmatches', HLGmatches, 'LLGmatches', LLGmatches, ...
-                  'GT', GT, 'InitialMatches', [], 'it', 0, 'affTrafo', []), nLevels,1);
+                  'GT', GT, 'InitialMatches', [], 'Hdist', [], 'it', 0, 'affTrafo', []), nLevels,1);
 
 I = repmat(struct('img', [], 'LLG', [], 'HLG', []), nLevels,1);
 
@@ -61,6 +61,7 @@ for i = 1:nLevels
    end
     
    LLG = buildLLGraph(edges, descr, igparam);
+   LLG.affMatrix = view.affMatrix(ind_rand,:);
 %    HLG = buildHLGraph(ID, LLG, agparam);
 
 %     HLG = buildHLGraph(i, LLG, agparam);
