@@ -9,17 +9,17 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     poolobj = parpool(2);                           
 
     [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
-%     [HLG1, HLG2] = buildHLGraphs_use_InitMatches(LLG1, LLG2, InitialMatches, agparam);
+    [HLG1, HLG2] = buildHLGraphs_use_InitMatches(LLG1, LLG2, InitialMatches, agparam);
   
     if isempty(HLG1)
 %         HLG1 = buildHLGraph(L, LLG1, agparam);
 %         HLG1 = buildHLGraph_grid(L, LLG1, agparam);
-          HLG1 = buildHLGraph_aggClustering(L, LLG1, agparam);
+%           HLG1 = buildHLGraph_aggClustering(L, LLG1, agparam);
     end
     if isempty(HLG2)
 %         HLG2 = buildHLGraph(L, LLG2, agparam);
 %         HLG2 = buildHLGraph_grid(L, LLG2, agparam);
-          HLG2 = buildHLGraph_aggClustering(L, LLG2, agparam);
+%           HLG2 = buildHLGraph_aggClustering(L, LLG2, agparam);
     end
     
     for i = 1:N
