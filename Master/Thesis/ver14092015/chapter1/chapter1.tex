@@ -1,41 +1,45 @@
 
 \chapter{Graph Matching} \label{chapter:GM}
+In this chapter we introduce different forms and formulations of the graph matching problem together with some algorithms for solving them.
+The classification we use is based on the one introduced by Conte et al.~\cite{Conte2004}. Not all algorithms, we will present, were initially mentioned in~\cite{Conte2004}, but we also do not cover all of the resent ones due to their quantity. Our focus lies specially on those, that are important for further reading of the thesis.
 
-In this chapter we review basic definitions and notations from the graph theory used in this thesis and introduce different forms and formulations of the graph matching problem together with some algorithms for solving them. The classification we use is based on~\cite{Conte2004}, although we concentrated our attention mainly on one specific group of algorithms: those, which consider the graph matching problem as a quadratic optimization problem. Not all algorithms, we present thereby, were initially mentioned in~\cite{Conte2004}, but we also do not cover all of the resent ones due to their quantity. We focus our selfs specially on those, that are important for further reading of the thesis.
+%We concentrate our attention especially on one specific group of algorithms: those, which consider the graph matching problem as a quadratic optimization problem.  
+To begin with we refresh basic definitions and notations from the graph theory used in this thesis.
 
-\section{Basic definitions and notation}
-A \emph{undirected graph} $G=(V,E)$ is defined as a pair of disjoint sets $V$, $E$, where $E\subseteq\{\{u,v\}| u, v\in V\}$~\cite{Diestel2000}. The elements of the set $V$ are called \emph{vertices} or \emph{nodes}\footnote{We use terms vertex and node further in the text as synonyms} and the elements of $E$ are called \emph{edges}. Where it is necessary, we will write $V(G), E(G)$ to refer node and edge sets to the graph $G$.
+\section{Basic definitions and notations}
+An \emph{undirected graph} $G=(V,E)$ is defined as a pair of disjoint sets $V$, $E$, where $E\subseteq\{\{u,v\}| u, v\in V\}$~\cite{Diestel2000}. The elements of the set $V$ are called \emph{vertices} or \emph{nodes}\footnote{We use terms vertex and node further in the text as synonyms.} and the elements of $E$ are called \emph{edges}. Where it is necessary, we will write $V(G), E(G)$ to refer node and edge sets to the particular graph $G$.
 
 The number of nodes in $V$ defines the \emph{size} of a graph $G$.
 Two nodes $v_{i},v_{i'}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i'}\}\in E$. Each graph can be represented by its \emph{adjacency matrix A=$(a_{ij})_{n\times n}$}, where 
 \begin{equation*}\centering
 a_{ij}=\begin{cases}
  1, & \text{if } \{v_{i},v_{i'}\}\in E, \\
- 0, & \text{otherwise.} \\
+ 0, & \text{otherwise} \\
 \end{cases}
 \end{equation*}
 and $n$ is the number of nodes in the graph.
 
-A \emph{path} in a graph $G=(V,E)$ is a sequence of nodes $\{v_0,v_1,\dots,v_k\}$ connected by the edges $\{v_0v_1,v_1v_2,\dots,v_{k-1}v_k\}$, where $v_i\in V$ and $v_{i-1}v_i\in E$ for all $i=0,\dots,k$. A path with $v_0=v_k$ is a \emph{cycle}.
+A \emph{path} in a graph $G=(V,E)$ is a sequence of nodes $\{v_0,v_1,\dots,v_k\}$ connected by the edges $\{v_0v_1,v_1v_2,\dots,v_{k-1}v_k\}$, where $v_i\in V$ and $v_{i-1}v_i\in E$ for all $i=1,\dots,k$. A path with $v_0=v_k$ is a \emph{cycle}.
 
-A graph $G'=(V',E')$ is called a \emph{subgraph} of a graph $G=(V,E)$, if $V'\subseteq V$ and $E'\subseteq E$. We use the standard notation $G'\subseteq G$ for this. The subgraph $G'$ of $G$ is \emph{induced by the set $V'\subseteq V$}, if $E'=\{(v_i, v_{i'})|v_i,v_{i'}\in V'\}$. Analog, the set $E'\subseteq E$ induces the subgraph $G'$ of $G$, if $V'=\{v\in V|v\in e\text{ and }e\in E'\}$. For the induced subgraph we use the notation $G'=G[V']$ and $G'=G[E']$~\cite{Diestel2000}, depending if it is node- or vertex-induced. We also define graph cut $G\cap G'=(V\cap V', E\cap E')$ and union $G\cup G'=(V\cup V', E\cup E')$.
+A graph $G'=(V',E')$ is called a \emph{subgraph} of a graph $G=(V,E)$, if $V'\subseteq V$ and $E'\subseteq E$. We use the standard notation $G'\subseteq G$ for this. A subgraph $G'$ of $G$ is \emph{induced by a node subsset $V'\subseteq V$}, if $E'=\{(v_i, v_{i'})|v_i,v_{i'}\in V'\}$. Analog, a subset $E'\subseteq E$ induces a subgraph $G'$ of $G$, if $V'=\{v\in V|v\in e\text{ and }e\in E'\}$. For an induced subgraph we use the notation $G'=G[V']$ and $G'=G[E']$~\cite{Diestel2000}, if it is node- or vertex-induced respectively. We also introduce graph cut $G\cap G'=(V\cap V', E\cap E')$ and union $G\cup G'=(V\cup V', E\cup E')$.
 
 There are several special types of graphs. A graph, whose each pair of nodes is connected by an edge is called \emph{complete}. In case, when each node $v_i\in V$ of a graph $G$ has an associated attribute $d_i\in D$, one speaks about \emph{attributed graph} $G=(V,E,D)$. If in contract to this each edge of a graph has an associated weight, the graph is called \emph{weighted graph}. A connected, undirected graph without cycles is called a \emph{tree}. A $hypergraph$ is graph, whose edges connect several vertices at the same time (\emph{hyperedges}).
 
 Consider two undirected attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J,\newline D^J)$. We assume the situation, where $|V^I|=n_1$, $|V^J|=n_2$ and $n_1\le n_2$. A \emph{matching function} between $G^I$ and $G^J$ is a mapping $m:V^I\rightarrow V^J$ between the sets of nodes of two graphs.
-It is clear, that defined in this way the mapping $m$ is not unique. Assume, that we have some metric $S(G^I, G^J, m)$ to measure the quality of matching $m$. In this case, \emph{Graph matching problem} between $G^I$ and $G^J$ can be defined as a problem of finding such a map $m:V^I\rightarrow V^J$, that maximizes the similarity score $S(G^I, G^J, m)$ between the graphs and fulfills some additional constraints:
+It is clear, that defined in this way the mapping $m$ is not unique. Assume, that we have some function $S(G^I, G^J, m)$ to measure the quality of matching $m$. In this case, \emph{graph matching problem} between $G^I$ and $G^J$ can be defined as a problem of finding such a map $m:V^I\rightarrow V^J$, that maximizes the similarity score $S(G^I, G^J, m)$ between the graphs and fulfills some additional constraints:
 \begin{equation} \label{gGMP}
 m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{equation}
-Based on the required properties of the mapping $m$ the algorithms, that solve this problem, can be divided into two large groups~\cite{Conte2004}: \emph{exact} and \emph{inexact} graph matching methods. There are also variations inside of each group based on the definition of the similarity score between two graphs. In the following sections we will give an overview of the common exact and inexact graph matching algorithms.
+Based on the required properties of the mapping $m$ the algorithms, that solve this problem, can be divided into two large groups~\cite{Conte2004}: \emph{exact} and \emph{inexact} graph matching methods. There are also variations inside of each group based on the definition of the similarity function between two graphs. In the following sections we will give an overview of a common exact and inexact graph matching problems together with algorithms for solving them.
  
 \section{Exact graph matching}
-The group of exact graph matching algorithms represents a class of more strict methods, that require the mapping between nodes of two graphs to be \emph{edge preserving}. With other words: if $\{v_i,v_{i'}\}\in E^I$, then $\{m(v),m(v_{i'})\}\in E^J$ for all $v_i,v_{i'}\in V^I$. The graphs, considered in this case often do not have attributes.
+The group of exact graph matching algorithms represents a class of more strict methods, that require a mapping $m$ between nodes of two graphs to be \emph{edge preserving}. With other words: if $\{v_i,v_{i'}\}\in E^I$, then $\{m(v),m(v_{i'})\}\in E^J$ for all $v_i,v_{i'}\in V^I$. The graphs, considered in this case often do not have attributes.
 
-There are several forms of the exact graph matching. The most known one is \emph{graph isomorphism}: two graphs are called \emph{isomorph} ($G^I\simeq G^J$), if the edge preserving mapping between their nodes is bijective. This implies, that two graphs have the equal number of nodes. If it is not the case, and the isomorphism holds between the one graph and a node-induced subgraph of the other graphs, the problem is called \emph{subgraph isomorphism}. Its further extension is a isomorphism between subgraphs of the graphs. The last problem can obviously have several solutions, but one is normally interested in finding a common subgraph with maximum number of nodes or edges (\emph{maximum common subgraphs}).  
+There are several forms of the exact graph matching. The most known one is \emph{graph isomorphism}: two graphs are called \emph{isomorph} ($G^I\simeq G^J$), if a edge preserving mapping between their nodes is bijective. This implies automatically, that two graphs should have the equal number of nodes. If it is not the case, and the isomorphism holds between the one graph and a node-induced subgraph of the other graph, the problem is called \emph{subgraph isomorphism}. Its further extension is the isomorphism between subgraphs of a graphs. The last problem can obviously have several solutions, but one is normally interested in finding a common subgraph with maximum number of nodes or edges (\emph{maximum common subgraphs}).  
 
-The further simplification of the graph isomorphism is to require an injective edge-preserving mapping, instead of bijective. This problem is called \emph{graph monomorphism}. The correspondences here are still one-to-one, but the second graph may contain additional nodes and edges, comparing to the first graph.
-Even weaker form of graph matching problem is \emph{graph homomorphism}. It allows many-to-one mapping between nodes of two graphs, which means that the only one restriction on the mapping $m$ is to be total.
+The further simplification of the graph isomorphism is to require an injective edge-preserving mapping, instead of bijective. This problem is called \emph{graph monomorphism}. A correspondences between nodes of a graphs are still one-to-one, but the second graph may contain additional nodes and edges, comparing to the first graph. Note, that each subgraph isomorphism defines a monomorphism on the whole graphs, however the opposite statement is not correct.
+
+Even weaker form of a graph matching problem is \emph{graph homomorphism}. It allows many-to-one mapping between nodes of two graphs, meaning that one node can correspond to several nodes of the other graph. The only one restriction on a mapping $m$ in this case is to be total.
 On the Fig.~\ref{fig:Exact_GM} one can see examples of different exact graph matching problems.
 \begin{figure}[h!]
     \centering
@@ -60,13 +64,13 @@ On the Fig.~\ref{fig:Exact_GM} one can see examples of different exact graph mat
 \end{figure}
 
 %\subsection{Compexity}
-All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Garey_NPComplet}. This can be shown through the reduction of the matching problem to the clique problem. The graph isomorphism is currently shown to be $NP-$hard~\cite{Garey_NPComplet,Schoening_GI}. For special types of graphs there exist polynomial time algorithms (e.g. for %planar graphs~\cite{Hopcroft_Wong} and 
+All problems except graph isomorphism are proofed to be $NP-$complete~\cite{Garey_NPComplet}. This can be shown through a reduction of the respective matching problem to the clique problem. The graph isomorphism is currently shown to be $NP-$hard~\cite{Garey_NPComplet,Schoening_GI}. For some special types of graphs there exist however polynomial time algorithms (e.g. for %planar graphs~\cite{Hopcroft_Wong} and 
 trees~\cite{Aho_Ullman, Garey_NPComplet}).
 
-%\subsection{Methods}
-The most widespread approach to solve exact graph matching problems is based on tree search with backtracking. The idea is to starts with an empty solution and try in each step to expend it based on some rules until the solution is found. If it happens, that on some step a current solution cannot be expend further due to problem's constraints, the current branch is cut and algorithm backtracks to the last feasible solution and tries to expand it in other way. Those algorithms are very slow, if they need to search through the whole tree, but can be speeded up by applying some heuristic to detect unpromising branches and exclude them from the search. The most known algorithm in this group, which uses depth-first-rule to traverse a tree, is the branch and bound~\cite{Reingold} algorithm.
+\section{Methods for solving exact graph matching problems}
+The most widespread approach to solve an exact graph matching problem is based on a tree search with backtracking. This methods starts with an empty solution and tries to expend it in each step according to provided rules until the solution is found. Each solution represent a node of a tree. If it happens, that in some step a current solution cannot be expended further due to problem's constraints, the current branch in the tree is cut. The algorithm backtracks to the last feasible solution and tries to expand it in other way. Those algorithms are very slow, if they need to search through the whole tree, but can be speeded up by applying some heuristic to detect unpromising branches and exclude them from the search. The most known algorithm in this group, which uses depth-first-rule to traverse a tree, is the branch and bound~\cite{Reingold} algorithm.
 
-The one of the first algorithms, that uses described techniques, is the one by Ullman~\cite{Ullmann}. Later it was extended and improved mostly by the suggestion a new pruning heuristics (see for example~\cite{Lee2013} for comparison of algorithms based on the same technique). We also want to mention here another well known algorithm, which uses the tree search method and is closely related to maximal common subgraph problem, - algorithm by Bron and Kerbosch~\cite{BronKerbosch} for finding cliques in an undirected graphs.
+The one of the first algorithms, that uses described technique, is the one by Ullman~\cite{Ullmann}. Later it was extended and improved mostly by the suggestion of a new pruning heuristics (see for example~\cite{Lee2013} for comparison of algorithms based on the same technique). We also want to mention here another well known algorithm, which uses the tree search method and is closely related to maximal common subgraph problem, - algorithm by Bron and Kerbosch~\cite{BronKerbosch} for finding cliques in an undirected graphs.
 
 The other techniques, that were successfully applied for the (sub)graph isomorphism are decision trees~\cite{Messmer1999,Shearer1998,Shearer2001} and group theory\cite{McKay} for maximal subgraph matching. 
 
@@ -90,7 +94,7 @@ Depending if an algorithm for solving \eqref{gGMP} finds a global solution or no
 
 There are also different ways to define a similarity function $S(G^I,G^J,m)$, which leads to high number of different approaches inside the group of inexact graph matching algorithms. In the following section we summarized the most common form of objective function of the problem \eqref{gGMP}.
 
-\subsection{Graph Matching Objective Function}
+\subsection{Graph matching objective function}
 
 In some literature instead of defining the similarity function as in \eqref{gGMP} one speaks about dissimilarity between two graphs~\ToDo{cite} or matching score~\ToDo{cite}. The goal in this case is to minimize those values. Two versions of the problem formulation are however equivalent and one can easy transform one into other.
 
@@ -212,7 +216,7 @@ It is also easy to show, how to reformulate~\eqref{eq:editDist} into~\eqref{eq:Q
 c(e_{\text{subst}})=(A^I_{ii'}-A^J_{\sigma(i)\sigma(i')})^2\quad c(e_{\text{insert}})=(A^J_{\sigma(i)\sigma(i')})^2\quad c(e_{\text{del}})=(A^I_{ii'})^2
 \end{equation*}
 
-\section{Approaches for solving graph matching problem}
+\section{Methods for solving inexact graph matching problems}
 In following we briefly describe a common approaches for solving inexact graph matching problem, used in field of Computer Vision and Pattern Recognition. We subdivided them into groups based on their main idea.
 
 \subsection{Discrete optimization}
