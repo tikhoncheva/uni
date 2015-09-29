@@ -7,8 +7,13 @@ function [ LLG1, LLG2 ] = preprocessing(LLG1, LLG2, agparam)
 % Step 1 : codebook of node descriptors
 nV1 = size(LLG1.V,1); nV2 = size(LLG2.V,1);
 
-if ~isempty(LLG1.D) & ~isempty(LLG2.D)
+if ~isempty(LLG1.D) && ~isempty(LLG2.D)
     nWords = round(agparam.nWordsPerc * (nV1+nV2)/2); % number of word in the codebook
+   
+%     [centers, codebook_ind] = vl_kmeans(double([LLG1.D, LLG2.D]), nWords, 'Initialization', 'plusplus', ...
+%                                                                 'Algorithm', 'ANN');
+%     codebook_ind = double(codebook_ind');
+    
     codebook_ind = kmeans(double([LLG1.D, LLG2.D]'), nWords, 'MaxIter',1000);
 
     LLG1.nWords = nWords;

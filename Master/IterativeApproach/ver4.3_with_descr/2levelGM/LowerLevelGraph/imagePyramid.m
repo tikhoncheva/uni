@@ -54,11 +54,12 @@ for i = 1:nLevels
    descr = view.desc';
    
    nV = size(edges,2);
-   if nV>500
-       ind_rand = datasample(1:nV,500,'Replace',false);
-       edges = edges(:, ind_rand);
-       descr = descr(:, ind_rand);
-   end
+   ind_rand = (1:nV);
+%    if nV>500
+%        ind_rand = datasample(1:nV,500,'Replace',false);
+%        edges = edges(:, ind_rand);
+%        descr = descr(:, ind_rand);
+%    end
     
    LLG = buildLLGraph(edges, descr, igparam);
    LLG.affMatrix = view.affMatrix(ind_rand,:);

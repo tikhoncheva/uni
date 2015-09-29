@@ -42,5 +42,9 @@ X_EXT_mat(sub2ind(size(X_EXT_mat), ...
 
 score = matching_score(invar.LLG1, invar.LLG2, matches);
 
+%% detected correspondences from the provided GT
+%  TP = ismember(matches(:,1:2), invar.cdata.GT, 'rows');
+%  TP = sum(TP(:));
+%  accuracy = TP/ size(invar.cdata.GT,1)*100;                        % recall ???
 
 end

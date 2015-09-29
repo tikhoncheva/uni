@@ -11,10 +11,8 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     time = 0;
     it = 0; 
     count = 0;
-    
-%     poolobj = parpool(2);                           
-       
-    [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
+  
+%     [LLG1, LLG2] = preprocessing(LLG1, LLG2, agparam);
     [HLG1, HLG2] = buildHLGraphs_use_InitMatches(LLG1, LLG2, InitialMatches, agparam);
   
     if isempty(HLG1)
@@ -28,6 +26,7 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
 %           HLG2 = buildHLGraph_aggClustering(L, LLG2, agparam);
     end
     
+    poolobj = parpool(2);   
     while count<nConst && it<nMaxIt
         it = it + 1;
         start = tic;

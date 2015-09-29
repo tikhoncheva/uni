@@ -40,8 +40,14 @@ Cluster_centers = LLG.V(:,1:2);
 dist = pdist2(Cluster_centers, Cluster_centers);
 dist(1:nV+1:end) = Inf;
 
-% tree = kdtree_build(LLG.V);
+% affinity = dissim2affinity( dist );
+% [NcutDiscrete,~,~] = ncutW(affinity,nA);
+% HLG.U = logical(NcutDiscrete);
+% for a = 1:nA
+%    HLG.V(a,1:2) = mean(LLG.V(HLG.U(:,a),1:2)) ;
+% end
 
+% tree = kdtree_build(LLG.V);
 for it = 1:(nV-nA)
     % find clusters with smallest distance 
    [min_columns, minpos_j] = min(dist,[],2);
