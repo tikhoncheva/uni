@@ -271,32 +271,32 @@ The max-poling algorithm uses a maximum function instead of the second sum in th
 This simple idea helps to suppress a noisy entries of the outlier matches, because the last have more likely low similarity values. The proposed algorithm shows very good results in presents of numerous outliers, although there is no theoretical justification of its convergence.
 
 \subsubsection{Probabilistic frameworks}
-Another group of algorithms applies \emph{relaxation labeling} to solve graph matching problem. The problem is formulated as an assignment between set of labels and a set of objects. In term of the graph matching, objects are the nodes of the first graph, and labels correspond to the nodes of the second graph. For each object there is a vector, which defines the initial probabilities of the labels to be assign to the objects. Those probabilities are computed based on some informations known about the objects (in graph matching problem those are node and edge attributes). The initial probabilities are then modified in iterative manner, until algorithm converges or riches the maximum number of iterations. 
+Another group of algorithms applies \emph{relaxation labeling} to solve graph matching problem. The aim of the relaxation labeling is to find an optimal assignment between set of labels and set of objects. Each label has some initial probability to be assign to certain object. Those probabilities are set based on some informations known about the objects. In terms of graph matching problem, nodes of a one graph are considered as objects and nodes of another graph as labels. Initial probabilities of assignments between the nodes are calculated  based on the node and edge attributes. 
 
-\ToDo{
-The earlier works on this formulation are \cite{Fischler1973, Rosenfeld1976}. 
-The most advantage of this approach is polynomial complexity of the new problem formulation~\cite{Christmas1995}.}
+The earlier works on this formulation are the one by Fischer and Elschlager~\cite{Fischler1973} and Rosenfeld et al.~\cite{Rosenfeld1976}. In both cases, proposed algorithms start with some initial label probabilities and try to reduce a labeling ambiguities at each iteration based on labels of neighboring nodes. The process runs till convergence or some predefined number of iterations. The algorithms are heuristic, but reduce the complexity of the initial problem to polynomial~\cite{Christmas1995}.
 
-A first algorithm with theoretically proofed update rule is described in~\cite{Hancock_Kittler}. This algorithm however uses only node attributes and only to initialize probabilities, but not to update them. This two drawbacks were covered later by the Christmas at al.~\cite{Christmas1995}. The authors used an update rule based on the Maximum A Posteriori probability~(MAP) estimation. 
+A first algorithm with theoretically proofed update rule is suggested by Kittler and Handcock~\cite{Hancock_Kittler}. This was later improved by Christmas at al.~\cite{Christmas1995}, who suggested a method to included provided node attributes and edge weights into update rule of the labeling probabilities and not only in the initialization step.
 
-Also in~\cite{Hancock_StrucMatch} graph matching problem is formulated as MAP estimation. The matching process here is a process of node exclusion and insertion, so that MAP rate monotonically increases in each iteration. This technique is suggested to effectively cope with the possible outliers in the sets of graph nodes. A node is considered as an outlier, if its deletion improves the consistency in the structure of two graphs. The structural constrains hereby are defined by a dictionary of feasible mappings between local neighborhoods (super-cliques) of nodes of two graphs. The algorithm shows good results in case of big number of outliers, is however slow.
+Later algorithms formulate graph matching problem as Maximum A Posteriori probability~(MAP) estimation. For example the matching process in~\cite{Hancock_StrucMatch} is a process of node exclusion and insertion, so that MAP rate monotonically increases in each iteration. This technique is suggested to effectively cope with the possible outliers in the sets of graph nodes. A node is considered as an outlier, if its deletion improves the consistency in the structure of two graphs. The structural constrains hereby are defined by a dictionary of feasible mappings between local neighborhoods (super-cliques) of nodes of two graphs. The algorithm shows good results in case of big number of outliers, is however slow.
 
-Another interesting idea is presented in~\cite{Hancock_EM_SVD}. Given two graph, nodes of the first graph are considered as an observed data and the nodes of the other as a hidden random variables. In this formulation the graph matching problem is solved using~\emph{Expectation-Maximization algorithm} (EM)~\cite{EM_Dempster1977}. A similar algorithm is presented in the resent paper~\cite{Sanrom2012}. However, it works with the continuous correspondences between the graph nodes and projects them in the discrete domain using soft-assign technique described previously. It also includes structural information\footnote{Structural relations between nodes are given through adjacency matrix of a graph. Geometrical relations are represented as relative position of the nodes with respect to each other~\cite{Sanrom2012}.} into matching process, whereby the algorithm from~\cite{Hancock_EM_SVD} uses only geometrical information. Both algorithm are however not applicable to a big graphs due to unlimited increasing of the density function with the size of a graphs. A new scalable graph matching algorithm, which also uses EM to solve the problem formulated in a maximum likelihood estimation framework, is presented recently in~\cite{Armiti2014}. The scalability is achieved there by including information about already known correspondence into calculation of the density function.
+Another interesting idea is presented in~\cite{Hancock_EM_SVD}. Given two graphs, nodes of the first graph are considered as an observed data and the nodes of the other as hidden random variables. In this formulation the graph matching problem is solved using~\emph{Expectation-Maximization algorithm} (EM)~\cite{EM_Dempster1977}. A similar algorithm is presented in the resent paper~\cite{Sanrom2012}. However, it works with the continuous correspondences between the graph nodes and projects them in the discrete domain using soft-assign technique described previously. It also includes structural information\footnote{Structural relations between nodes are given through adjacency matrix of a graph. Geometrical relations are represented as relative position of the nodes with respect to each other~\cite{Sanrom2012}.} into matching process, whereby the algorithm from~\cite{Hancock_EM_SVD} uses only geometrical information. Both algorithm are however not applicable to a big graphs due to unlimited increasing of the formulated density function with the size of a graphs~\cite{Armiti2014}. A new scalable graph matching algorithm, which also uses EM to solve the problem formulated in a maximum likelihood estimation framework, is presented recently in~\cite{Armiti2014}. The scalability is achieved there by including information about already known correspondence into calculation of the density function.
 
 \subsubsection{Methods using clustering techniques}
 We want to emphasize independently the methods, that use clustering techniques to improve the graph matching score or performance.
 
 Minsu Cho in~\cite{Cho2009_AgglClustering} proposes to use \emph{agglomerative clustering} on a set of candidate matches to effectively cop with outliers. The problem is formulates as in~\eqref{eq:gQAP1}. The considered graphs are attributed, so that candidate matches are selected based on the distance between node attributes. The algorithm is controlled by the dissimilarity measure between two clusters, which is defined as the average of $k$ smallest pairwise dissimilarities between points in two clusters. This linkage model is called by the authors \emph{adaptive partial linkage model}. Notice, that the points in clusters are pairwise correspondences between graph nodes. The dissimilarity between two nodes is defined as a linear combination of the node attribute dissimilarities and 
-geometric dissimilarities defined as~\eqref{eq:geomDiss}. At the end, the close correspondences build bigger clusters and likely represent inliers. In contrast to that, the outliers are likely to stay in small groups, so we can threshold them base on the cluster size.
+geometric dissimilarities defined as~\eqref{eq:geomDiss}. Empirical results show, that correct correspondences tend to build bigger clusters. In contrast to that, the outliers are likely to stay in small groups, so it possible to threshold them base on the cluster size.
 
-Another algorithm based on the hierarchical clustering is described in~\cite{Hancock_ModalClusters}. Its propose is to provide additional constraints, that can be used to improve the robustness of a graph matching algorithm against graph deformations. This was successfully achieved by using spectral methods to build the clusters. The $S$ eigenvectors associated with the first $S$ largest eigenvalues are selected as a cluster centers. After performing the clustering, spectral matching algorithm is applied to match first the clusters and then the nodes inside the clusters.
+Another algorithm based on the hierarchical clustering is suggested by Carcassoni and Hancock~\cite{Hancock_ModalClusters}. Its propose is to provide additional constraints, that can be used to improve the robustness of a graph matching algorithm against graph deformations. This was successfully achieved by using spectral methods to build the clusters. The $S$ eigenvectors associated with the first $S$ largest eigenvalues are selected as a cluster centers. After performing the clustering, a probabilistic matching algorithm is applied to match first the clusters and then the nodes inside the clusters.
 
-Another benefit of using clustering methods in the potential complexity reduction. This is achieved by performing graph matching not on the whole graphs, but on a smaller subgraphs, where the existing algorithms can find faster an approximate solutions. A solution of the whole problem is then obtained by combining local solutions. The great benefit of such approach is the ability to parallelize the computation process, which can lead to the significant time reduction.
-Qiu and Handcock suggest a clustering strategy based on a spectral method~\cite{Hancock_GM_SpectralPart}. To build a partition of a graph into non-overlapping neighborhoods\footnote{A node neighborhood is defined here as a node with all its adjacent nodes.} they uses Fiedler vector (eigenvector associated with the second smallest eigenvalue of a graph Laplacian matrix, see~\cite{Fiedler1975}). Afterwards they show how to use estimated partition for graph matching (approach similar to one from ~\cite{Hancock_ModalClusters} described above). They also provide a study, which shows, that the matching, that use proposed partition technique, is stable under structural errors. Additionally, the proposed clustering algorithm can be used to create hierarchical simplification of an initial graph, where the cluster represent nodes of a simplified graph.
+Further benefit of using clustering methods in the potential complexity reduction. 
+The first idea to achieve this is based on a hierarchical graph matching and appears for example in the work by Qui and Handcock~\cite{Hancock_GM_SpectralPart}. They suggest to use graph partition to create a new simplified graph, whose nodes represent clusters of initial graph. After partitioning graphs are matched in a similar manner as it is suggested by Carcassoni and Hancock~\cite{Hancock_ModalClusters}, where the derived clusters tie matching constraints. The used partition method is based on a spectral method and creates a set of non-overlapping node neighborhoods\footnote{A node neighborhood is defined here as a node with all its adjacent nodes.}. To build those they use Fiedler vector (eigenvector associated with the second smallest eigenvalue of a graph Laplacian matrix, see~\cite{Fiedler1975}). The authors provide a study, which shows, that the matching with proposed partition technique is stable under structural errors. Additionally, they show, that the simplified graphs preserve structure of initial graphs. The last was shown by performing clustering of a group of different graphs before and after simplification.
 
-The same idea of using graph clustering is followed by Lyzinski et al. in their paper~\cite{Lyzinski2015}. The aim of the authors is to parallelize a graph matching algorithm for matching very big graphs. However the problem, they consider, is semi supervised, meaning that correct correspondences between some nodes are known. It is obvious, that in the perfect clustering, node that should be matched, must lie in the corresponding subgraphs. To ensure, that the clustering is sufficiently good, the authors spectrally embed and then jointly cluster nodes of two graphs. The algorithm was successfully applied to the graphs with $20000-30000$ nodes.
+The second idea to reduce complexity of the initial matching problem uses graph clustering to create a set of independent subproblems. The matching is then performed for each subproblem independently and due to reduced problem size faster. A solution of the whole problem is then obtained by combining local solutions. The great benefit of such approach is the ability to parallelize the computation process, which can lead to the significant time reduction.
 
-\subsubsection{Resent algorithms for big graphs}
+The described ides is followed by Lyzinski et al. in their resent paper~\cite{Lyzinski2015}. The aim of the authors is to parallelize a graph matching algorithm for matching very big graphs. However the problem, they consider, is semi supervised, meaning that correct correspondences between some nodes are known. It is obvious, that the matching results of the subdivided problem depends highly on the quality of the graph clusters and established correspondences between the clusters of two graphs. In a perfect clustering, node that should be matched, must lie in the corresponding subgraphs. To ensure that the clustering is sufficiently good, the authors propose a technique, that first spectrally embeds graphs and then jointly cluster them. The algorithm was successfully applied to the graphs with $20000-30000$ nodes.
+
+%\subsubsection{Resent algorithms for big graphs}
 
 \section{Graph matching algorithms studied in this thesis}
 In this section we want for completeness described detailed graph matching algorithm used in our framework for graph matching. However, we do not provide theoretical justification of the algorithm steps and refer a reader to the original paper for that. We use the notation introduced at the beginning of this chapter.
@@ -309,8 +309,10 @@ The presented here algorithm is designed by Minsu Cho et al.~\cite{Cho2010_RRWM}
     &             &&  \sum_{i=1\dots n_1} x_{ij}\le 1   \tag{\ref{eq:gQAP3}}\\
     &             &&  \sum_{j=1\dots n_2} x_{ij}\le 1   \tag{\ref{eq:gQAP4}}
 \end{alignat*}
-between two graphs $G^I=(V^I,E^I,D^I)$, $G^I=(V^I,E^I,D^I)$ in a random walk view. For this the authors define an association graph $G^{rw}=(V^{rw},E^{rw},D^{rw})$ based on the affinity matrix $S$. The set of nodes $V^{rw}$ of the new graph is represented by all possible correspondences between nodes in $V^I$ and $V^J$. This means, that $|V^{rw}|=n_1n_2$, where $|V^I|=n_1$ and $|V^J|=n_2$. We refer to a node of the graph $G^{rw}$ as $v_{ij}$ if it represent a correspondence pair $(v_i,v_j)$, $v_i\in V^I,v_j\in V^J$. The entry $S_{ij,i'j'}$ of the matrix $S$ defines the weight of the edge $\{v_{ij},v_{i'j'}\}\in E^{rw}$. We denote an weighted adjacency matrix of the graph $G^{rm}$ as $W$. An example of the construction is illustrated on the figure below. Note, that we omitted contradiction edges, whose weights are equal zero, such es $\{a1,b1\}$. \vspace{-30pt}
-\begin{figure}[h!] %\label{fig:RRWM} 
+between two graphs $G^I=(V^I,E^I,D^I)$, $G^I=(V^I,E^I,D^I)$ in a random walk view. For this the authors define an association graph $G^{rw}=(V^{rw},E^{rw},D^{rw})$ based on the affinity matrix $S$. The set of nodes $V^{rw}$ of the new graph is represented by all possible correspondences between nodes in $V^I$ and $V^J$. This means, that $|V^{rw}|=n_1n_2$, where $|V^I|=n_1$ and $|V^J|=n_2$. We refer to a node of the graph $G^{rw}$ as $v_{ij}$ if it represent a correspondence pair $(v_i,v_j)$, $v_i\in V^I,v_j\in V^J$. The entry $S_{ij,i'j'}$ of the matrix $S$ defines the weight of the edge $\{v_{ij},v_{i'j'}\}\in E^{rw}$. We denote the weighted adjacency matrix of the graph $G^{rm}$ as $W$. An example of the construction is illustrated on the figure below. Note, that we omitted contradiction edges, whose weights are equal zero, e.g. $\{a1,b1\}$.
+
+%\vspace{-30pt}
+\begin{figure}[h] %\label{fig:RRWM} 
 	\centering
     \begin{subfigure}[b]{0.33\textwidth}
         \includegraphics[width=\textwidth]{chapter1/fig/RRWM1}
@@ -325,9 +327,8 @@ between two graphs $G^I=(V^I,E^I,D^I)$, $G^I=(V^I,E^I,D^I)$ in a random walk vie
     \end{subfigure}   
 \caption{Association Graph of two given graphs for Reweighted Random Walk Method (compare to~\cite{Cho2010_RRWM})}
 \end{figure}
-
-\vspace{-10pt}
-It is obvious, that the graph matching problem between two graphs $G^I$ and $G^J$ is equivalent to finding a subset of nodes in the associated graph $G^{rw}$, so that the respective node correspondences satisfy matching criteria of the initial problem.
+%\vspace{-10pt}
+It is obvious, that the graph matching problem between two graphs $G^I$ and $G^J$ is equivalent to finding a subset of nodes in the associated graph $G^{rw}$, so that the respective node correspondences between $V^I$ and $V^J$ satisfy matching criteria of the initial problem.
 For finding such a subset the authors adopt the page ranking algorithm based on a random work, which is assumed to be a Markov chain~\cite{PageRank}. To describe a Markov chain one defines a transition matrix $P$. An usual approach to define a transaction matrix of a wighted graph $G^{rw}$ is to convert the weighted adjacency matrix $W$ of the graph into a stochastic matrix by the following normalization $P=D^{-1}W$, where $D$ is a diagonal matrix with entries $D_{kk}=\sum_{l}{W_{kl}}$. This method was, for example, used in PageRank algorithm~\cite{PageRank}. It is however not suitable for the graph matching proposes, as it treats false correspondences equal to all other correspondences. To avoid this problem Cho et al. introduce an additional absorbing node $v_{abs}$~(see Fig.~\ref{fig:RRWM2}) in the Graph $G^{rw}$, which represent a state, that can be reached from each node $v_k=v_{ij}\in V^{rw}$ with the probability $1-D_{kk}/D_{\text{max}}, D_{\text{max}}=max_{k}D_{kk}$, but can not be left any more. Using $D_\text{max}$ the matrix $W$ is converted into a stochastic matrix by its multiplication with the factor $1/D_{\text{max}}$.
 Summarizing, the transition matrix $P\in\mathbb{R}^{(n_1n_2+1)\times(n_1n_2+1)}$ is defined as 
 \begin{equation}P=
@@ -340,45 +341,47 @@ and update formula of the probability distribution of the Markov chain as
 \begin{equation}\label{eq:RRW_MC}
 \left(x^{(n+1)T},\ x_{\text{abs}}^{(n+1)}\right)=\alpha\left(x^{(n)T},\ x_{\text{abs}}^{(n)}\right)P+(1-\alpha)r^T,
 \end{equation}
-where $\mathbf{1}$ in~\eqref{eq:RRW_P} denotes a vector of size $\mathbb{R}^{n_1n_2\times 1}$ with all entries equal to $1$, $d=(D_{11},\dots,D_{n_1n_2})$ is the diagonal of the matrix $D$ and $r\in\mathbb{R}^{n_1n_2+1}$ is \emph{reweighted jump vector}.
+where $\mathbf{1}$ in~\eqref{eq:RRW_P} denotes a vector of size $\mathbb{R}^{n_1n_2\times 1}$ with all entries equal to $1$, $d=(D_{11},\dots,D_{n_1n_2})$ is the diagonal of the matrix $D$, $\alpha$ is a weighted factor and $r\in\mathbb{R}^{n_1n_2+1}$ is \emph{reweighted jump vector}.
 
 A Markov chain, defined by Eq.~\ref{eq:RRW_MC} without second term, is denoted as an \emph{affinity-preserving random walk}. The distribution $\mathbf{\bar{x}}$ of unabsorbed random walks at time $n$ is defined as follows:
 \begin{equation}\label{eq:RRWM_x}
 \mathbf{\bar{x}}^{(n)}_{ij}=P(X^{(n)}=v_{ij}|X^{(n)}\not=v_{\text{abs}})=\frac{x^{(n)}_{ij}}{1-x^{(n)}_{\text{abs}}}, 
 \end{equation}
-where $X^{(n)}$ is a current location of a random walker at time $n$. The authors call $\mathbf{\bar{x}}$ a \emph{quasi-stationary distribution} of the absorbed Markov chain.They proof, that the distribution $\mathbf{\bar{x}}$ is proportional to the left principal eigenvector of $W$ and can be efficiently computed with power iteration method~\cite{PowerIteration}.
+
+where $X^{(n)}$ is a current location of a random walker at time $n$. The authors call $\mathbf{\bar{x}}$ a \emph{quasi-stationary distribution} of the absorbed Markov chain. They proof, that the distribution $\mathbf{\bar{x}}$ is proportional to the left principal eigenvector of $W$ and can be efficiently computed with power iteration method~\cite{PowerIteration}.
 
 The second summand in the Eq.~\ref{eq:RRW_MC} represents the possibility of a random walker to make a jump with probability $(1-\alpha)$ into some constrained node, instead of following the edge. This term was proposed by the authors based on personalization approach for web pages ranking~\cite{Langville2003} as a way to include the matching constraints~\eqref{eq:gQAP3},~\eqref{eq:gQAP4} into random walk. The authors are pointing out, that without this term the matching constrains are incorporated only in the last discretization step of the algorithm, which leads to a weak local maximum. 
 
 A procedure of generation the jump vector $r$ from a current quasi-stationary distribution $\mathbf{\bar{x}}$ consists of two steps. In the first step (\emph{inflation}) unreliable correspondences (i.e. small values in the vector $\mathbf{\bar{x}}$) are damped and the good correspondences are at the same time boosted. The second step (\emph{bistochastic normalization}) forces the matching constraints by transforming the matrix form of $\mathbf{\bar{x}}$ into double stochastic matrix using the normalization scheme of Sinkhorn~\cite{Sinkhorn1964}. 
 
-The described steps are summarized in Algorithm~\ref{alg:RRWM} below:
-
-\begin{algorithm}[H] \label{alg:RRWM}
+\begin{algorithm}[h] 
 	\KwIn{ weight matrix $W$, the reweight factor $\alpha$, the inflation factor $\beta$}
 	\KwOut{distribution $\mathbf{x}$}
 	set $W_{ij,i'j'}$=0 for all conflicting match pairs, i.e. $(v_{ij},v_{ij'})$ and $(v_{ij},v_{i'j})$ \\
 	$D_{\text{max}}=\max_{ij}\sum_{i'j'}W_{ij,i'j'}$ \\
 	$P=W/D_{\text{max}}$, initialize starting probability $\mathbf{x}$ as uniform\\
-	 \Repeat{$\mathbf{x}$ converges}{ 
+	\Repeat{$\mathbf{x}$ converges}{ 
 		\tcc{Affinity preserving random walking by edges}
-		\nl $\mathbf{\bar{x}}=\mathbf{x}^TP$ \label{alg:Alg1_PowerInteration}\\ 
+		\nl $\mathbf{\bar{x}}=\mathbf{x}^TP$ %\label{alg:Alg1_PowerInteration}\\ 
 		\tcc{Reweighting with two-way constraints}
 		\tcc{step $1$ inflation:}
 		$\mathbf{y}^T=\exp(\beta\mathbf{\bar{x}}/\max\mathbf{\bar{x}})$\\
-		\label{alg:Alg1_BistochNorm}	\tcc{step $2$ bistochastic normalization :}
+		\tcc{step $2$ bistochastic normalization :} %\label{alg:Alg1_BistochNorm}	
 		\Repeat{$\mathbf{y}$ converges}
-		  { normalize across rows by $\mathbf{y}_{ij}=\mathbf{y}_{ij}/\sum_{j}\mathbf{y}_{ij}$ \\
-  		    normalize across columns by $\mathbf{y}_{ij}=\mathbf{y}_{ij}/\sum_{i}\mathbf{y}_{ij}$
-		  }
-	$\mathbf{y}=\mathbf{y}/\sum\mathbf{y}_{ij}$ \\
-	\tcc{Affinity-preserving random walking with reweighted jumps}
-	$\mathbf{x}^T=\alpha\mathbf{\bar{x}}^T+(1-\alpha)\mathbf{y}^T$ \\
-	$\mathbf{x}=\mathbf{x}/\sum\mathbf{x}_{ij}$
+		{ normalize across rows by $\mathbf{y}_{ij}=\mathbf{y}_{ij}/\sum_{j}\mathbf{y}_{ij}$ \\
+			normalize across columns by $\mathbf{y}_{ij}=\mathbf{y}_{ij}/\sum_{i}\mathbf{y}_{ij}$
+		}
+		$\mathbf{y}=\mathbf{y}/\sum\mathbf{y}_{ij}$ \\
+		\tcc{Affinity-preserving random walking with reweighted jumps}
+		$\mathbf{x}^T=\alpha\mathbf{\bar{x}}^T+(1-\alpha)\mathbf{y}^T$ \\
+		$\mathbf{x}=\mathbf{x}/\sum\mathbf{x}_{ij}$
 	}		
-	discretize $\mathbf{x}$ by the matching constraints \label{alg:Alg1_Discr} \\
+	discretize $\mathbf{x}$ by the matching constraints %\label{alg:Alg1_Discr} \\
 	\caption{Reweighted Random Walks Method, compare to~\cite{Cho2010_RRWM}}    
+	\label{alg:RRWM}
 \end{algorithm}
+
+The described steps are summarized in Algorithm~\ref{alg:RRWM} below:
 
 The discretization step in the line~\ToDo{16~\ref{alg:Alg1_Discr}} can be done by using any method, which solves the linear assignment problem, i.e. Hungarian algorithm~\cite{Kuhn1955} or greedy heuristic as in~\cite{Leordeanu2005_SM}.
 

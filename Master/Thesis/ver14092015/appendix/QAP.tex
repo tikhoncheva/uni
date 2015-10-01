@@ -3,7 +3,7 @@ Consider a problem of assignment of $n$ facilities to $n$ locations given the tr
 \begin{equation}\label{eq:QAP_classic}
 P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\hat{\sigma}(i)\hat{\sigma}(j)}+\sum_{i=1}^{n}b_{i\hat{\sigma}(i)},
 \end{equation}
-where $\Sigma_n$ is a set of all possible permutations of the set $\{1,\dots,n\}$, and is called \emph{Koopmans-Beckmann version of the quadratic assignment problem} (further \emph{QAP}). %We assume further, that the matrix $B$ is a constant matrix. The second term in the objective function of~\eqref{eq:QAP_classic} can be left without 
+where $\Sigma_n$ is a set of all possible permutations of the set $\{1,\dots,n\}$, and is called \emph{Koopmans-Beckmann version of the quadratic assignment problem}~\cite{Burkard98thequadratic} (further \emph{QAP}). %We assume further, that the matrix $B$ is a constant matrix. The second term in the objective function of~\eqref{eq:QAP_classic} can be left without 
 
 %Here we want to show, how the formulation~\eqref{eq:QAP_classic} can be transformed into \eqref{eq:QAP1} and \eqref{eq:QAP2}. 
 
@@ -45,16 +45,16 @@ The objective function of~\eqref{eq:QAP_classic3} can be further rewritten based
 									&=\vec(\hat{P})^T\vec(F\hat{P}D^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
                                     &=\vec(\hat{P})^T(D\otimes F)\vec{\hat{P}}+\vec(B)^T\vec(\hat{P}).
 \end{align}
-Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ the \emph{quadratic costs matrix}. If we assume the matrix $B$ be a constant matrix with the same values, that it does not have any influence on the optimization process. In this case setting matrix $F$ to $-(A^I)^T$ and matrix $D$ to $(A^J)^T$ lead us to the formulation~\eqref{eq:QAP2}. Similarly, denoting the Kronecker product $(-D\otimes F)$ as $S$ results in the formulation~\eqref{eq:sumQAP}.
+Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}. If we assume the matrix $B$ be a constant matrix with the same values, that it does not have any influence on the optimization process. In this case setting matrix $F$ to $-(A^I)^T$ and matrix $D$ to $(A^J)^T$ lead us to the formulation~\eqref{eq:QAP2}. Similarly, denoting the Kronecker product $(-D\otimes F)$ as $S$ results in the formulation~\eqref{eq:sumQAP}.
 
-It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3}. Indeed, consider the objective function in~\eqref{eq:QAP1}:
+It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3}. Indeed, consider the first term of the objective function in~\eqref{eq:QAP1}:
 \begin{align*}
 \|A^I-\hat{P}A^J\hat{P}^T\|^2 &= \tr((A^I-\hat{P}A^J\hat{P}^T)^T(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr(((A^I)^T-\hat{P}(A^J)^T\hat{P}^T)(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr((A^I)^TA^I-(A^I)^T\hat{P}A^J\hat{P}^T-\hat{P}(A^J)^T\hat{P}^TA^I+\hat{P}(A^J)\hat{P}^T\hat{P}A^JP^T) \notag\\
 							  &= \tr((A^I)^TA^I-2(A^I)^T\hat{P}A^J\hat{P}^T+A^J(A^J)^T).
 \end{align*}
-The first and the last term are obviously constant, and thus can be ignored in optimization. Finally, substitution of $F=-(A^I)^T$, $D=(A^J)^T$ leads us to the formulation~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
+The first and the last term are obviously constant, and thus can be ignored in optimization. Finally, substitution of $F=-(A^I)^T$, $D=(A^J)^T$ leads us to the formulation $\tr(F\hat{P}D^T\hat{P}^T)$. After performing the similar calculations on the second term of the objective in~\eqref{eq:QAP1} we obtain the problem~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
 
 
 
