@@ -1,27 +1,5 @@
 \chapter{Two level graph matching} \label{chapter:2levelGM}
 In this chapter we describe our novel approach for graph matching. In the 
-% ---------------------------------------        Problem Statement
-\section{Problem statement} \label{sec:prob_stat}
-Consider two undirected weighted graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J, D^J)$, where $V$, $E$, $D$ denote set of nodes,
-set of edges and set of node attributes respectively. We assume the situation, where $|V^I|=n_1$, $|V^J|=n_2$ and $n_1$ not necessary equal to $n_2$.
-
-The aim of graph matching is to find a subset of possible node correspondences, which maximizes the similarity value between two graphs. Such a subset can be represented by a binary vector $x\in \{0,1\}^{n_1n_2}$, where $x_{(j-1)n_1+i}=1$, if node $v_i\in V^I$ is matched to node $u_j\in V^J$, and $x_{(j-1)n_1+i}=0$ otherwise. For simplicity we will write further $x_{ij}$ instead of $x_{(j-1)n_1+i}$.
-
-To measure a similarity between graphs we define two similarity functions: \emph{nodes similarity function} (first-order similarity) $s_V(v_i, u_j),\ v_i\in V^I, u_j\in V^J$ and \emph{edge similarity function} (second-order similarity) $s_E(e_{ii\prime}, e_{jj\prime}),\ e_{ii\prime}\in E^I, e_{jj\prime}\in E^J$. Both functions can be combined in one \emph{similarity} or \emph{affinity matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$}, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$.
-
-
-Using this notation one can formulate a \emph{one-to-one Graph Matching Problem} \textbf{GMP} as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004}: 
-\begin{alignat}{2}
-    &     && \argmax_x{x^TSx}                           \notag\\
-    & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{QIP:2}\\
-    &             &&  \sum_{i=1\dots n_1} x_{ij} = 1    \label{QIP:3}\\
-    &             &&  \sum_{j=1\dots n_2} x_{ij} = 1    \label{QIP:4}
- \end{alignat}
- 
-The maximum number of possible matches is equal to $\min(n_1, n_2)$. That means, in case when $n_1\not = n_2$, only one of the conditions (\ref{QIP:3}) or (\ref{QIP:4}) will be fulfilled.
-
-A Quadratic Optimization Problem is known to be \emph{NP}-hard \cite{Sahni1974}. This limits greatly the size of a graph, for which a exact solution can be calculated in reasonable time. Due to this there are a number of algorithms \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Chui2003, Suh_CVPR2015}, that solve graph matching problem inexact.
-
 Unfortunately, most of the algorithms have the two following problems:
 \begin{enumerate}
 \item they are still limited in size of permissible graphs. Experiments in most of the papers consider graphs with up to $100$ nodes \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM}
@@ -29,11 +7,23 @@ Unfortunately, most of the algorithms have the two following problems:
 \end{enumerate}  
 
 Our main aim was to develop a framework, which would allow an existing graph matching algorithm to cope with both problems.
+% ---------------------------------------        Problem Statement
+\section{Problem statement} \label{sec:prob_stat}
+Consider two attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J, D^J)$, where $V$, $E$, $D$ denote set of nodes, set of edges and set of node attributes respectively. We assume the situation, where those graphs are undirected and do not have multiple edges between nodes. Let the size of the first graph be $n_1$ and the second $n_2$. Without loss of generality, we assume that $n_1\le n_2$. Attributes of the graphs are $k-$dimensional real vectors: $D^I,D^J\in\mathbb{R}^k$.
 
+We define a problem of matching two graphs $G^I$, $G^J$ as a quadratic assignment problem (same formulation as~\eqref{eq:gQAP1}-\eqref{eq:gQAP4}). 
+\begin{alignat}{2}
+    &     && \argmax_x{x^TSx}                           \label{eq:gQAP1_2}\\
+    & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{eq:gQAP2_2}\\
+    &             &&  \sum_{i=1\dots n_1} x_{ij}\le 1   \label{eq:gQAP3_2}\\
+    &             &&  \sum_{j=1\dots n_2} x_{ij}\le 1   \label{eq:gQAP4_2}
+\end{alignat}
+A vector $x$ is an indicator vector of a subset of a set of all possible correspondences between the nodes of two graphs. That means, that element $x_k$ of this vector is equal $1$ if and only if the corresponding node pair $(v_i,v_{j}),v_i\in V^I,v_{j}\in V^J$, is selected into subset. The constraints~\eqref{eq:gQAP3_2},~\eqref{eq:gQAP4_2} ensure, that each node of the graph $G^I$ can be matched to exactly one node of the second graph $G^J$.
+The information about similarity of two graphs is enclosed into matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$. Rows (columns) of this matrix correspond to all possible matches of nodes in $V^I$ and $V^J$.  The diagonal elements of this matrix contain similarities between matched nodes. On the other side, the non-diagonal elements of $S$ measure an agreement between two pairs of matched nodes to be present in an optimal matching. Our aim is to find a subset of $n_1n_2$ possible correspondences between the nodes of two graphs, which maximizes the similarity value between those graphs. 
 
 % ------------------------------------------------------------------------------------------------------------
 % ---------------------------------------        Approach
-\section{Approach}
+\section{Two level approach}
 
 The main idea of our approach is to create a flexible multi-scale matching framework, that could improve the speed of
 theoretically any matching algorithm for large graphs and additionally increase their accuracy. 

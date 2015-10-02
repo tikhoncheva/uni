@@ -10,9 +10,9 @@ To begin with we refresh basic definitions and notations from the graph theory u
 An \emph{undirected graph} $G=(V,E)$ is defined as a pair of disjoint sets $V$, $E$, where $E\subseteq\{\{u,v\}| u, v\in V\}$~\cite{Diestel2000}. The elements of the set $V$ are called \emph{vertices} or \emph{nodes}\footnote{We use terms vertex and node further in the text as synonyms.} and the elements of $E$ are called \emph{edges}. Where it is necessary, we will write $V(G), E(G)$ to refer node and edge sets to the particular graph $G$.
 
 The number of nodes in $V$ defines the \emph{size} of a graph $G$.
-Two nodes $v_{i},v_{i'}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i'}\}\in E$. Each graph can be represented by its \emph{adjacency matrix A=$(a_{ij})_{n\times n}$}, where 
+Two nodes $v_{i},v_{i'}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i'}\}\in E$. Each graph can be represented by its \emph{adjacency matrix A=$(a_{ii'})_{n\times n}$}, where 
 \begin{equation*}\centering
-a_{ij}=\begin{cases}
+a_{ii'}=\begin{cases}
  1, & \text{if } \{v_{i},v_{i'}\}\in E, \\
  0, & \text{otherwise} \\
 \end{cases}
@@ -148,7 +148,7 @@ Using the introduced notation and definitions of the node and edge similarity fu
 \begin{equation}\label{eq:sumQAP}
 	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i'j'}=1}}s_E(e_{ii'},e_{jj'}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
 \end{equation}
-This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $A\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}:
+This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}:
 \begin{alignat}{2}
     &     && \argmax_x{x^TSx}                           \label{eq:gQAP1}\\ %\notag\\
     & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{eq:gQAP2}\\
