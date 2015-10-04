@@ -1,13 +1,7 @@
 \chapter{Two level graph matching} \label{chapter:2levelGM}
-In this chapter we describe our novel approach for graph matching. In the 
-Unfortunately, most of the algorithms have the two following problems:
-\begin{enumerate}
-\item they are still limited in size of permissible graphs. Experiments in most of the papers consider graphs with up to $100$ nodes \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM}
-\item possible presence of outliers can reduce the accuracy of matching algorithm \cite{Suh_CVPR2015}.
-\end{enumerate}  
-
-Our main aim was to develop a framework, which would allow an existing graph matching algorithm to cope with both problems.
-% ---------------------------------------        Problem Statement
+In this chapter we describe our novel approach for graph matching. Its main idea is based on the  \emph{divide and conquer} technique~\cite{Cormen}, which is well known from its application to array sorting algorithms.
+% ---------------------------------       Problem Statement      -------------------------------------
+\newpage
 \section{Problem statement} \label{sec:prob_stat}
 Consider two attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J, D^J)$, where $V$, $E$, $D$ denote set of nodes, set of edges and set of node attributes respectively. We assume the situation, where those graphs are undirected and do not have multiple edges between nodes. Let the size of the first graph be $n_1$ and the second $n_2$. Without loss of generality, we assume that $n_1\le n_2$. Attributes of the graphs are $k-$dimensional real vectors: $D^I,D^J\in\mathbb{R}^k$.
 
@@ -18,17 +12,33 @@ We define a problem of matching two graphs $G^I$, $G^J$ as a quadratic assignmen
     &             &&  \sum_{i=1\dots n_1} x_{ij}\le 1   \label{eq:gQAP3_2}\\
     &             &&  \sum_{j=1\dots n_2} x_{ij}\le 1   \label{eq:gQAP4_2}
 \end{alignat}
-A vector $x$ is an indicator vector of a subset of a set of all possible correspondences between the nodes of two graphs. That means, that element $x_k$ of this vector is equal $1$ if and only if the corresponding node pair $(v_i,v_{j}),v_i\in V^I,v_{j}\in V^J$, is selected into subset. The constraints~\eqref{eq:gQAP3_2},~\eqref{eq:gQAP4_2} ensure, that each node of the graph $G^I$ can be matched to exactly one node of the second graph $G^J$.
-The information about similarity of two graphs is enclosed into matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$. Rows (columns) of this matrix correspond to all possible matches of nodes in $V^I$ and $V^J$.  The diagonal elements of this matrix contain similarities between matched nodes. On the other side, the non-diagonal elements of $S$ measure an agreement between two pairs of matched nodes to be present in an optimal matching. Our aim is to find a subset of $n_1n_2$ possible correspondences between the nodes of two graphs, which maximizes the similarity value between those graphs. 
+We denote a correspondence between the sets $V^I$ and $V^J$ as a pair of nodes $(v_i,v_j)$, where $v_i\in V^I$ and $v_j\in V^J$. Let $M$ be a set of all possible correspondences between the nodes of the graphs $G^I,G^J$. Obviously, $M$ contains of $n_1n_2$ node pairs.  Then the vector $x$ is an indicator vector of a subset $m=\{(v_i,v_j)_k\}$ of the $M$. That means, that element $x_k$ of this vector is equal $1$ if and only if the corresponding node pair $(v_i,v_j)_k$ is selected into subset $m$. The constraints~\eqref{eq:gQAP3_2},~\eqref{eq:gQAP4_2} ensure, that each node of the graph $G^I$ is matched to exactly one node of the second graph $G^J$.
 
-% ------------------------------------------------------------------------------------------------------------
-% ---------------------------------------        Approach
-\section{Two level approach}
+The matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$ in~\eqref{eq:gQAP1_2} encloses the precomputed information about similarity of two graphs. Rows (columns) of this matrix correspond to the elements in the set $M$ of all possible node correspondences. Its diagonal element $S_{kk}$ contains similarity measurement of the node pair $(v_i,v_j)_k\in M$. On the other side, the non-diagonal elements of $S_{kl}$ measure similarity of edges between two pairs of matched nodes. Our aim is to find a subset of $n_1$ correspondences between the nodes of the graphs $G^I,G^J$, which maximizes the similarity value between those graphs.
 
+As we saw in the previous chapter, the selected formulation of a graph matching problem is widely used as the most general one. However, the size of the affinity matrix $S$ can cause problems due to required memory demand. For example, a dense affinity matrix between two graphs with $200$ nodes each needs approximately 12Gb memory (double precision). There are several possible ways to reduce the memory complexity of the formulated graph matching problem. Here we mention tree possible approaches.
+
+The first one is to reduce a set of candidate correspondences by selecting a subset $M'\subset M$. This can be done, for example, by restricting a number of candidate matched for a node $v_i\in V^I$ to some number smaller than $n_2$. This method is often used, as it not only solves memory issue of the problem formulation~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP1_2}, but also reduces the algorithmic complexity of many algorithms, which highly depend on the number of possible matches~\ToDo{cite}.
+
+The second possibility, is to make the matrix $S$ sparser by excluding comparison of some nodes or edges from consideration. In case of a big graphs this can however lead to a high loss of initially provided information and results dramatically on the quality of a resulting matching. 
+
+The third possibility is to replace an initial problem of graph matching by a set of smaller subproblems by partitioning given graphs into subgraphs and matching those subgraphs. For the matrix $S$ it means, that it is divided into blocks, where each block represent a similarity matrix between two subgraphs. Thereby the similarities of edges, whose nodes belong after problem splitting to different subgraphs, will be ignored. On the one hand, this approach solves the memory problem by replacing the initial matrix $S$ with a set of smaller affinity matrices. On the other hand, it does not reduces the algorithmic complexity of the initial problem, because the subgraphs of two graphs should be matched in all possible combinations between each other. Otherwise, further information will be lost. Despite the mentioned drawbacks, single subgraph matching problems can be eventually parallelized, what still makes the approach attractive for application on big graphs.
+
+In the framework for graph matching, that we describe in the details below, we use the third of described techniques. We divide a given initial graphs into subgraphs and iteratively search first for correspondences between the subgraphs and then for node correspondences between matched subgraphs. For subgraph matching we use some existing matching algorithm. A graph partitioning is performed only at the initialization step, but after each iteration subgraphs have a change to exchange nodes on their border.
+
+To our best knowledge the described method was not published before. Especially, we haven not seen an iterative algorithm based on graph clustering so far, which would update initial partitions. At the same time there is a certain overlap in ideas between our and existing works. The algorithm proposed by Lyzinski et al.~\cite{Lyzinski2015} uses graph partitioning to parallelize a semi-supervised graph matching problem, where some correspondences between graphs nodes are provided. The graph matching problem is formulated as the minimization problem~\eqref{eq:QAP1}, that does not use an affinity matrix $S$. The given matches between graph nodes are used to cluster two graphs jointly and to find a correspondences between subgraphs. As a consequence, subgraphs of given graphs are similar enough to ensure the matching quality. However the proposed clustering method cannot be used for a unsupervised matching.
+
+The similar idea to our to use graph partition for graph matching in unsupervised case was used by Carcassoni and Hancock~\cite{Hancock_ModalClusters}, Qui and Handcock~\cite{Hancock_GM_SpectralPart} and Nie et al.~\cite{CliqueGraph_CVPR2015}. From them only the third algorithm consider the same maximization problem as we. The two other algorithms formulate graph matching problem in terms of relaxation labeling. Also the definition of the graph clusters differs between the algorithms. In the algorithms by Qui and Hancock~\cite{Hancock_GM_SpectralPart} and Nie et al.~\cite{CliqueGraph_CVPR2015} graph clusters are represented by a direct neighborhoods of nodes, which can have overlap as in the ~\cite{CliqueGraph_CVPR2015} or not~\cite{Hancock_GM_SpectralPart}. Our algorithm and the one in~\cite{Hancock_ModalClusters} consider more general case, where a graph partition is given by a disjoint set of graph subgraphs.
+Again with~\cite{Hancock_GM_SpectralPart} our approaches shares the idea of a new graph construction, whose nodes represent clusters of initial graphs.
+
+
+In the remainder of this paper we describe in details our graph matching approach.
 The main idea of our approach is to create a flexible multi-scale matching framework, that could improve the speed of
 theoretically any matching algorithm for large graphs and additionally increase their accuracy. 
 
-Given initial graphs $G^I$ and $G^J$ we create for each of them coarse representative graphs $A^I$, $A^J$. Each node of such a graph represents a subgraph of the initial graph. We refer further to nodes of the coarse graphs $A^I$, $A^J$ as \emph{anchor nodes} or just \emph{anchors} and to the graphs themself as \emph{anchor graphs}.
+% ---------------------------------------    Approach       ------------------------------------------
+\section{Two level approach}
+Given initial graphs $G^I$ and $G^J$ as defined above we create for each of them coarse representative graphs $A^I$, $A^J$. Each node of such a graph represents a subgraph of the initial graph. We refer further to nodes of the coarse graphs $A^I$, $A^J$ as \emph{anchor nodes} or just \emph{anchors} and to the graphs themself as \emph{anchor graphs}.
 
 Initial graphs with corresponding anchor graphs build a two level structure (see Fig. \ref{fig:2levels}): initial graphs (or \emph{fine graphs}) represent a lower level and anchor graphs represent a higher level.  
 

@@ -389,3 +389,11 @@ There are some similarities between RRWM and some algorithms, described in the c
 In the chapter \ToDo{ref} we discuss experimental results of the RRWM for graph matching.
 
 \section{Discussion}
+
+Unfortunately, most of the algorithms have the two following problems:
+\begin{enumerate}
+\item they are still limited in size of permissible graphs. Experiments in most of the papers consider graphs with up to $100$ nodes \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM}
+\item possible presence of outliers can reduce the accuracy of matching algorithm \cite{Suh_CVPR2015}.
+\end{enumerate}  
+
+Our main aim was to develop a framework, which would allow an existing graph matching algorithm to cope with both problems.
