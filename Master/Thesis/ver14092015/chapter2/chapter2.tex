@@ -38,61 +38,41 @@ In the remainder of this paper we describe in details our graph matching approac
 
 % ---------------------------------------    Approach       ------------------------------------------
 \section{Two level approach}
-Given initial graphs $G^I$ and $G^J$ as defined above we create for each of them coarse representative graphs $A^I=(V^{Ia},E^{Ia}, U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ respectively. Each node of such a graph represents a subgraph of the initial graph. We refer further to nodes of the coarse graphs $A^I$, $A^J$ as \emph{anchor nodes} or just \emph{anchors} and to the graphs themself as \emph{anchor graphs}.
+We consider at the beginning only one graph $G^I=(V^I,E^I,D^I)$ of the size $n_1$. Assume, that we know a partition of the node set $V^I$ of this graph into $m_1$ non-overlapping clusters based on some rule: $V^I=\cup_{k=1}^{m_1}V^I_k$, where $V^I_{k_1}\cap V^I_{k_2}=\emptyset$ for $k_1\not=k_2$. Based on this partition the initial graph $G^I$ is subdivided into a set of node induced subgraphs $\{G[V^k]\}_{k=1}^{m_1}$. Note, that it holds $G[V^1]\cup\dots\cup G[V^{m_1}]\subset G^I$, because edges between different subgraphs are note presented in the left union. We represent each subgraph $G[V^I_k]$ with a one node $a^I_k$. Let denote with $V^{Ia}$ the set of the new nodes: $V^{Ia}=\{a^I_k\}_{k=1}^{m_1}$. Assignment between new nodes and subgraphs extend themself to nodes of the subgraphs. 
 
-Initial graphs with corresponding anchor graphs build a two level structure (see Fig. \ref{fig:2levels}): initial graphs (or \emph{fine graphs}) represent a lower level and anchor graphs represent a higher level.  
+, we determine co and say that all nodes inside this cluster belong to $a^I_k$. 
+To memorize, which node of the original graph, belongs to what node in $V^{Ia}$ we define a new correspondence matrix $U^{Ia}\in\{0,1\}^{n_1\times m_1}$ with elements 
+\begin{equation*}
+U^{Ia}_{ik} = \begin{cases} 1, & \mbox{if node } v_i\in V^I_k,    \\
+0, & \mbox{otherwise}.\end{cases}
+\end{equation*}
+A pair of new nodes $a^I_{k_1},a^I_{k_2}\in V^{Ia}$ is connected with an edge, if there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its nodes and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ a \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graphs $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
 
-In case of large $G^I$ and $G^J$ graphs, where existing inexact solution techniques are difficult to apply due to time and storage complexity, their anchor graphs can be constructed small enough to not have these problems. That makes it possible, to find a solution of GMP on the higher level fast. 
-
-Ones the matching problem is solved on the higher level, we get the correspondences between the subgraphs of the initial graphs, which are also much smaller compared to the complete graphs. Solving after that GMP for pairs of subgraphs lead us to the desirable correspondences between nodes of fine graphs.
-
-Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the matching quality of the anchor graphs. To make the approach more robust we integrate the result of matching on the lower level into a graph partition algorithm and repeat the whole scheme several times till convergence.
-
-In our work we concentrate ourself on the task of finding feature correspondences between two images. In the next sections we describe in detail the construction of initial graphs from given images and corresponding anchor graphs together with the matching algorithm on both levels and propagation of the matching results between the levels.
-
-\begin{figure}
+\begin{figure} [h!]
 	\centering
-	\includegraphics[scale=0.35]{chapter2/fig/twolevels.pdf}
+	\includegraphics[scale=0.35]{chapter2/fig/twolevels2.pdf}
 	\caption{Two level framework for graph matching} \label{fig:2levels}
 \end{figure}
 
+We return now back to the case of two graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E^J,D^J)$, which we want to match. 
+For each of them we build an anchor graph $A^I=(V^{Ia},E^{Ia})$ and $A^J=(V^{Ja},E^{Ja})$ respectively.
+Now instead of matching graphs $G^I$ and $G^J$ directly on the lower level, we may want to match first the corresponding anchor graphs. Matches between anchor nodes give us correspondences between underlying subgraphs. After that, we can perform graph matching for each pair of subgraphs completely independently. A union of local solutions from single subgraph matching problems gives us a solution of initial problem. 
+
+Why this approach can be better than direct one? As we seen from the previous section the complexity of the considering graph matching problem depends highly on the size if initial graphs. Constructed anchor graphs are however several time smaller than initial graphs, which means, the matching algorithm on the anchor level can be performed much faster then on the lower level. The same holds for matching between the subgraphs.
+%If $C(n)$ is complexity of a graph matching algorithm with $n$ possible correspondences.
+Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the matching quality of the anchor graphs. To make the described two level approach more robust again graph partitioning we suggest to perform described steps iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. On each iteration we want to use an obtained matching between two graphs to correct graph partitioning. 
+
+In the following we describe in details the single steps of our approach: initial graph construction, graph partitioning, graph matching algorithm on both levels, as well as an update rules of graph partitioning from a previous level.
 \FloatBarrier
-
-% ------------------------------------------------------------------------------------------------------------
-% ---------------------------------------        LLG Construction
-\subsection{Lower Level Graph Construction}
-
-In this section we describe the structure of lower level graphs built for given images $I$ and $J$.
-
-Features, that were collected densely on the edges \cite{PMT}, represent the sets of nodes $V^I$, $V^J$ of the graphs $G^I$, $G^J$ respectively. This results in hundreds or thousand of nodes. As node attributes $D^I$, $D^J$ we used \emph{SIFT descriptors}~\cite{Lowe2004} with fixed orientation and scale. 
-
-The nodes of the graphs are connected vie edges with their $k$ nearest neighbors.
-
-To calculate the affinity matrix $S$ between two lower level graphs  $G^I$, $G^J$ or their subgraphs we need to define similarity functions between nodes and edges. Similarity of two nodes $v_i\in V^I, u_j\in V^J$ is equal to \emph{cosine similarity} of their descriptors.
-For the pairwise edge similarity we used the same formula as in \cite{Cho2014_Haystack, Suh_CVPR2015}, i.e.\ 
-\begin{equation}
-s_E(e_{ii\prime}, e_{jj\prime}) = exp(-\frac{(l_{ii\prime} - l_{jj\prime})^2}{\sigma^2_{s}})
-\label{eq:s_e}
-\end{equation}
-where $l_{ii\prime}$, $l_{jj\prime} $ are the lengths of edges $e_{ii\prime}\in E^I$ and $e_{jj\prime}\in E^J$ respectively.
-
-
-
-
 % ------------------------------------------------------------------------------------------------------------
 % ---------------------------------------        HLG Construction
-\subsection{Higher Level Graph Construction}
+\subsection{Anchor Graph Construction}
 
-%We define an anchor graph of a given fine graph $G = (V,E,D)$ as a $5-$tuple $A = (V^A,E^A,D_1^A,D_2^A,U^A)$, where $V^A$ is set of anchors, $E^{A}$ is set of edges between the anchors, $D_1^A$ and $D_2^A$ are two sets of anchor descriptors % based respectively on appearance  and structure of corresponding subgraphs
-%and $U^{A}$ is correspondence matrix between anchors and nodes of $G$.
-
-We define an anchor graph of a given fine graph $G = (V,E,D)$ as $A = (V^A,E^A, U^A)$, where $V^A$ is s set of anchors, $E^{A}$ is a set of edges between the anchors and $U^{A}$ is a correspondence matrix between anchors and nodes of $G$.
-
-Each anchor $a_k\in V^A$ represent a subgraph $G_k = (V_k,E_k, D_k)$ of G. In case of $m$ anchors and $n$ nodes in $V$  matrix $U^{A}$ is a $n\times m$ binary matrix with 
-$$U^{A}_{ik} = \begin{cases} 1, & \mbox{if node } v_i\in V_k    \\
-	                         0, & \mbox{otherwise} \end{cases} $$	 
+A problem of anchor graph construction given an initial graph $G^I=(V^I,E^I,D^I)$ turns straight forward into problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
+\subsubsection{Using grid}	
+The first algorithm we describe is the most simple one. It uses a grid with fixed number of rows $r$, columns $c$ and a cell width $w$. The grid is placed over the graph $G$. Nodes, that are captured by a same grid cell belong to one cluster. Obviously, the number of clusters is equal to $r\times c$. Clusters, whose cells have a common edge are connected by an edge.
 	                                                 
-\subsubsection{Construction of anchor graph}	                         
+\subsubsection{Algorithms based on node merge}	                         
 To construct an anchor graph $A$ with fixed number $m$ of anchors from a given fine graph $G$ we adopted coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP, Safro2012_GC, Karypis95_GP, Hendrickson1995}.
 Such algorithms have three phases: 
 \begin{enumerate}
@@ -111,7 +91,7 @@ It is clear, that one iteration of HEM or LEM reduces the number of nodes in $G$
 
 Obtained at the end coarse graph is the desired anchor graph $A$ of $G$. 
 
-\subsubsection{Similarity matrix}
+\subsection{Anchor graph matching}
 
 Assume, that for each of two given lower level graphs $G^I = (V^I, E^I, D^I)$ and $G^J=(V^J, E^J, D^J)$ we built the corresponding anchor graphs  $A^I=(V^{Ia},E^{Ia}, U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$. 
 
@@ -144,6 +124,20 @@ In our framework we use a combination of both anchor similarity functions:
 s^A(a_k, a_p) = s_1(a_k, a_p)+s_2(a_k, a_p) 
 \end{equation}
 
+% ------------------------------------------------------------------------------------------------------------
+% ---------------------------------------        LLG Construction
+\subsection{Subgraph matching}
+Given two corresponding subgraphs $G^I_{k_1}=(V^I_{k_1},E^I_{k_1},D^I_{k_1})$ and $G^J_{k_2}=(V^J_{k_2},E^J_{k_2},D^J_{k_2})$
+%In our work we concentrate ourself on the task of finding feature correspondences between two images. Features are collected using such popular feature detectors as SIFT~\cite{Lowe2004}, MSER~\cite{MSER}. Extracted features from two images define the sets of nodes $V^I$, $V^J$ of the graphs $G^I$, $G^J$ respectively. As node attributes $D^I$, $D^J$ we used SIFT descriptors~\cite{Lowe2004} with fixed orientation and scale. 
+%The nodes of the graphs are connected vie edges with their $k$ nearest neighbors.
+
+To calculate the affinity matrix $S$ between two lower level graphs  $G^I$, $G^J$ or their subgraphs we need to define similarity functions between nodes and edges. Similarity of two nodes $v_i\in V^I, u_j\in V^J$ is equal to \emph{cosine similarity} of their descriptors.
+For the pairwise edge similarity we used the same formula as in \cite{Cho2014_Haystack, Suh_CVPR2015}, i.e.\ 
+\begin{equation}
+s_E(e_{ii\prime}, e_{jj\prime}) = exp(-\frac{(l_{ii\prime} - l_{jj\prime})^2}{\sigma^2_{s}})
+\label{eq:s_e}
+\end{equation}
+where $l_{ii\prime}$, $l_{jj\prime} $ are the lengths of edges $e_{ii\prime}\in E^I$ and $e_{jj\prime}\in E^J$ respectively.
 
 % ------------------------------------------------------------------------------------------------------------
 % ---------------------------------------        Matcing algorithm
