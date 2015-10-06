@@ -21,7 +21,7 @@ The matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$ in~\eqref{eq:gQAP1_2} encloses
 
 As we saw in the previous chapter, the selected formulation of a graph matching problem is widely used as the most general one. However, the size of the affinity matrix $S$ can cause problems due to required memory demand. For example, a dense affinity matrix between two graphs with $200$ nodes each needs approximately 12Gb memory (double precision). There are several possible ways to reduce the memory complexity of the formulated graph matching problem. Here we mention tree possible approaches.
 
-The first one is to reduce a set of candidate correspondences by selecting a subset $M'\subset M$. This can be done, for example, by restricting a number of candidate matches for a node $v_i\in V^I$ to some number smaller than $n_2$. This method is often used, as it not only solves memory issue of the problem formulation~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}, but also reduces the algorithmic complexity of many algorithms, which highly depend on the number of possible matches~(e.g.~\cite{Cho2014_Haystack,Cho2010_RRWM,Cho2012_ProgressiveGM, Leordeanu2005_SM}).
+The first one is to reduce a set of candidate correspondences by selecting a subset $M^\prime\subset M$. This can be done, for example, by restricting a number of candidate matches for a node $v_i\in V^I$ to some number smaller than $n_2$. This method is often used, as it not only solves memory issue of the problem formulation~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}, but also reduces the algorithmic complexity of many algorithms, which highly depend on the number of possible matches~(e.g.~\cite{Cho2014_Haystack,Cho2010_RRWM,Cho2012_ProgressiveGM, Leordeanu2005_SM}).
 
 The second possibility, is to make the matrix $S$ sparser by excluding comparison of some nodes or edges from consideration. In case of a big graphs this can however lead to a high loss of initially provided information and results dramatically on the quality of a resulting matching. 
 
@@ -37,14 +37,14 @@ Finally, similar to our approach Qui and Handcock~\cite{Hancock_GM_SpectralPart}
 In the remainder of this paper we describe in details our graph matching approach.
 
 % ---------------------------------------    Approach       ------------------------------------------
-\section{Two level approach}
+\section{Algorithm}
 We consider at the beginning only one graph $G^I=(V^I,E^I,D^I)$ of the size $n_1$. Assume, that we know a partition of the node set $V^I$ of this graph into $m_1$ non-overlapping clusters based on some rule: $V^I=\cup_{k=1}^{m_1}V^I_k$, where $V^I_{k_1}\cap V^I_{k_2}=\emptyset$ for $k_1\not=k_2$. Based on this partition the initial graph $G^I$ is subdivided into a set of node induced subgraphs $\{G[V^k]\}_{k=1}^{m_1}$. Note, that it holds $G[V^1]\cup\dots\cup G[V^{m_1}]\subset G^I$, because edges between different subgraphs are note presented in the left union.
-Further, we define a mapping $U$ between the set of graph nodes $V^I$ and another set $V^{Ia}=\{a^I_k\}_{k=1}^{m_1}$, which represent each subgraph  $G[V^I_k]$ with a single node $a^I_k$. This mapping can be expressed as an matrix $U^{Ia}\in\{0,1\}^{n_1\times m_1}$ with elements 
+Further, we define a mapping $U$ between the set of graph nodes $V^I$ and another set of nodes $V^{Ia}=\{a^I_k\}_{k=1}^{m_1}$, which represent each subgraph  $G[V^I_k]$ with a single node $a^I_k$. This mapping can be expressed as an matrix $U^{Ia}\in\{0,1\}^{n_1\times m_1}$ with elements 
 \begin{equation*}
 U^{Ia}_{ik} = \begin{cases} 1, & \mbox{if node } v_i\in V^I_k,    \\
 0, & \mbox{otherwise}.\end{cases}
 \end{equation*}
-The new set $V^{Ia}$ defines a node set of a new graph built on top of the other. A pair of new nodes $a^I_{k_1},a^I_{k_2}\in V^{Ia}$ is connected with an edge, if there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its nodes and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ a \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graphs $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
+The new set $V^{Ia}$ defines a node set of a new graph built on top of the other. A pair of new nodes $a^I_{k_1},a^I_{k_2}\in V^{Ia}$ is connected with an edge, if there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its elements and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ an \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graphs $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
 
 \begin{figure} [h!]
 	\centering
@@ -58,95 +58,119 @@ Now instead of matching graphs $G^I$ and $G^J$ directly on the lower level, we m
 
 Why this approach can be better than direct one? As we seen from the previous section the complexity of the considering graph matching problem depends highly on the size if initial graphs. Constructed anchor graphs are however several time smaller than initial graphs, which means, the matching algorithm on the anchor level can be performed much faster then on the lower level. The same holds for matching between the subgraphs.
 %If $C(n)$ is complexity of a graph matching algorithm with $n$ possible correspondences.
-Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the matching quality of the anchor graphs. To make the described two level approach more robust again graph partitioning we suggest to perform described steps iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. On each iteration we want to use an obtained matching between two graphs to correct graph partitioning. 
+Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the matching quality of the anchor graphs. To make the described two level approach more robust again graph partitioning we suggest to perform described steps iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. On each iteration we want to use an obtained matching between two graphs to correct graph partitioning. The algorithm is summarized below in Alg.\ref{alg:2levelGM}.
 
-In the following we describe in details the single steps of our approach: initial graph construction, graph partitioning, graph matching algorithm on both levels, as well as an update rules of graph partitioning from a previous level.
+\begin{algorithm}[h]
+	\KwIn{ initial graphs $G^I$, $G^J$\\
+		   \hspace{45pt}maximal number of iterations $N$\\
+		   \hspace{45pt}convergence parameters $R$ and $\epsilon$}
+	\KwOut{set $m$ of correspondences between the nodes $V(G^I)$ and $V(G^J)$}
+	construct anchor graph $A^I$ of the graph $G^I$ \label{alg:2levelGM_clustering1}\\
+	construct anchor graph $A^J$ of the graph $G^J$ \label{alg:2levelGM_clustering2}\\
+	i=0, $score_i$=0\\
+	\While{$r<R$  \textbf{AND} $i\le N$}
+	{ $i=i+1$ \\
+	  \If{$i\ge 2$}
+	  {update subgraphs $G[V^I_k],G[V^J_p],k=1\dots,m_1,\ p=1\dots,m_2$ \label{alg:2levelGM_update}}
+	  match anchor graphs $A^I$,$A^J$ \label{alg:2levelGM_GM1} \\
+	  $m_i=\emptyset$\\
+	  \ForEach{pair of matched anchors $(a_k,a_p),a_k\in V(A^I), a_p\in V(A^J)$}
+	  {match subgraphs $G[V^I_k]$,$G[V^J_p]$ \label{alg:2levelGM_GM2}\\
+	   $m_i=m_i\cup\{m^k_i\}$\hspace{55pt}\tcc{$m^k_i$ set of local correspondences}
+	  }
+	  $score_i=x^TSx$ \hspace{5pt}\tcc{$x$ the indicator vector of the subset $m\subseteq M$}
+	  \If{$|score_i-score_{i-1}|<\epsilon$}
+	  {$r=r+1$}
+	  \Else{$r=0$}
+	}
+	\Return $m_i$
+	\caption{twoLevelGM($G^I$, $G^J$, $N$, $R$, $\epsilon$)} \label{alg:2levelGM}
+\end{algorithm}
+
+In the following we describe in details the single steps of our approach: %initial graph construction,
+graph partitioning~(lines~\ref{alg:2levelGM_clustering1},\ref{alg:2levelGM_clustering2}), graph matching algorithm on both levels~(lines~\ref{alg:2levelGM_GM1},\ref{alg:2levelGM_GM2}), as well as update rules of graph partitions from a previous level~(line~\ref{alg:2levelGM_update}).
 \FloatBarrier
-% ------------------------------------------------------------------------------------------------------------
 % ---------------------------------------        HLG Construction
 \subsection{Anchor Graph Construction}
-
 A problem of anchor graph construction given an initial graph $G^I=(V^I,E^I,D^I)$ turns straight forward into problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
+
+Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefor can define the length of an edge as a $l_2-$distance between its endpoints.
 \subsubsection{Using grid}	
-The first algorithm we describe is the most simple one. It uses a grid with fixed number of rows $r$, columns $c$ and a cell width $w$. The grid is placed over the graph $G$. Nodes, that are captured by a same grid cell belong to one cluster. Obviously, the number of clusters is equal to $r\times c$. Clusters, whose cells have a common edge are connected by an edge.
-	                                                 
-\subsubsection{Algorithms based on node merge}	                         
-To construct an anchor graph $A$ with fixed number $m$ of anchors from a given fine graph $G$ we adopted coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP, Safro2012_GC, Karypis95_GP, Hendrickson1995}.
-Such algorithms have three phases: 
+The first algorithm we describe is the most simple one. It uses a grid with fixed number of rows $r$, columns $c$ and a cell width $w$. The grid is placed over the graph $G^I$. Nodes, that are captured by a same grid cell belong to one cluster. Obviously, the number of clusters is equal to $r\times c$. We place anchor nodes in the middle of the grid cells. Two anchors are connected by an edge, if the cells they belong to have a common edge.
+\subsubsection{Algorithms based on node merge}
+The next considered approach creates an anchor graph $A^I$ with a predefined number $m_1$ of anchors. For that we adopted a coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP, Safro2012_GC, Karypis95_GP, Hendrickson1995}.
+Such algorithms have generally three phases: 
 \begin{enumerate}
 	\item graph coarsening phase, where one creates a hierarchy of graphs by successive merging of nodes in graph on previous stage starting with initial graph;
 	\item graph partition stage, where the partition problem is solved exact on the coarsest level;
 	\item refinement phase, where solution of the coarsest level is interpolated through all levels of the hierarchy until the initial graph.
 \end{enumerate}
-There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (\textbf{SAG}) \cite{Chevalier09_GP}, which groups nodes of $G$ in \emph{disjoint} subsets based on the strength of the edges between them. 
+There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (SAG)~\cite{Chevalier09_GP}, which groups nodes of $G^I$ in disjoint subsets based on the strength of the edges between them. We implemented two SAG based algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)~\cite{Chevalier09_GP}. Both algorithms visit nodes of the graph $G^I$ in random order and construct an independent set of edges $M$ of the graph. The edge selection is based on the edge weights. The HEM picks and adds into $M$ the strongest edge adjacent to a current node $v$, that does not belong to the set of end nodes of edges in $M$.~(see Alg.~\ref{alg:HEM}). As opposed to this, the LEM selects the weakest edge adjacent to a current node. The edges in $M$ will be contracted, i.e. their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
 
-We implemented two SAG based algorithms: Heavy Edge Matching (\textbf{HEM}) and Light Edge Matching (\textbf{LEM})~\cite{Chevalier09_GP}. Both algorithms visit nodes of the $G$ in random order and construct a \emph{matching} $M$ of the graph. A selected node $v_i\in V(G)\setminus V(M)$ is matched to a node $v\prime\in V(G)\setminus V(M)$ in $M$, if $s_{vv\prime} = \max_{u\in N(v)} s_{vu}$ in case of HEM and
-$s_{vv\prime} = \min_{u\in N(v)} s_{vu}$ in case of LEM. Here, $N(v)$ denotes the neighborhood of $v$, $V(M)$ the set of matched nodes and $s$ the strength of an edge. In case of LEM $s_{ii\prime} = l_{ii\prime}$ and in case of HEM $s_{ii\prime} = exp(-\frac{l_{ij}}{\sigma^2_{s}})$.
+{\LinesNumberedHidden
+\begin{algorithm}[h]
+	i = 0, $M=\emptyset$ \\
+	\While{$|V(G^I)|>m_1$  \textbf{AND} $i\le N$}
+	{ select a random node $v\in V(G^I)\setminus V(M)$ \\
+	  \If{$\exists v^\prime=\argmax_{u\in V(G^I)\setminus V(M)} w(v,u)$}
+	  {$M=M\cup{e_{vv^\prime}}$}
+	  \Else{$i=i+1$}
+	}
+	\Return $G^I$
+	\caption{HEM($G^I$, $m_1$, $N$)} \label{alg:HEM}
+\end{algorithm} }
 
-The edges in $M$ will be contracted, i.e.\ their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
+In out case, graph $G^I$ is not initially weighted. To use the described coarsening methods we need to define a strength of graph edges. In case of LEM-Algotihm we set the length of an edge as its strength: $w_{vv^\prime}=\|v-v^\prime\|_{2}$. If we use HEM-Algorithm the strength of an edge is equal to $w_{ii^\prime} = exp(-\frac{\|v-v^\prime\|_{2}}{\sigma^2_{s}})$ with a constant $\sigma^2_{s}$.
 
-It is clear, that one iteration of HEM or LEM reduces the number of nodes in $G$ at most by $\lfloor\frac{n}{2} \rfloor$ nodes. To get an coarse graph with $m$ nodes the coarsening algorithm should be repeated several times.
-
-Obtained at the end coarse graph is the desired anchor graph $A$ of $G$. 
+It is clear, that one iteration of HEM or LEM reduces the number of nodes in $G$ at most by $\lfloor\frac{n}{2} \rfloor$ nodes. To get an coarse graph with $m_1$ nodes the coarsening algorithm should be repeated several times.
 
 \subsection{Anchor graph matching}
+In the previous section we have described, how to construct anchor graphs $A^I=(V^{Ia},E^{Ia}, U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ of given graphs $G^I = (V^I, E^I, D^I)$ and $G^J=(V^J, E^J, D^J)$ respectively. Now, we focus our attention on the problem of matching two anchor graphs with. For that, according to our problem formulation~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}, we need to define a similarity matrix $S^A\in\mathbb{R}^{m_1m_2\times m_1m_2}$ between the graphs $A^I$ and $A^J$, where $m_1=|V^{Ia}|$ and $m_2=|V^{Ja}|$. This matrix contains two types of similarities: edge similarities (non-diagonal elements) and nodes similarities (diagonal elements).
 
-Assume, that for each of two given lower level graphs $G^I = (V^I, E^I, D^I)$ and $G^J=(V^J, E^J, D^J)$ we built the corresponding anchor graphs  $A^I=(V^{Ia},E^{Ia}, U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$. 
-
-We define the length of edges between two anchors $a_k$, $a_k\prime$ as a mean of distances between nodes in the corresponding subgraphs $G_k$ and $G_{k\prime}$. With other words:
-\begin{equation} L_{kk\prime} = \median_{v_i\in G_k, v_{i\prime}\in G_{k\prime}} l_{ii\prime} \end{equation}
-Based on this definition we use the same formula for \emph{edge similarity} between anchors as we set it for the lower level graphs (see Eq.\ref{eq:s_e}):
-\begin{equation} 
-s^A_E(e_{kk\prime}, e_{pp\prime}) = exp(-\frac{(L_{kk\prime} - L_{pp\prime})^2}{\sigma^2_{s}})
+Consider two edges a pair of anchors  $a_k$, $a_k^\prime\in V^{Ia}$. We define the length of the edge $e_{kk^{\prime}}$ between those anchors as a mean of distances between nodes in the corresponding subgraphs $G[V^I_k]$ and $G[V^I_{k^\prime}]$. With other words:
+\begin{equation} L_{kk^\prime} = \median_{\substack{v_i\in G[V^I_k]\\ v_{i^\prime}\in G[V^I_{k^\prime}]} }\|v_i-v_{i^\prime}\|_{2}, \end{equation}
+where $\|v_i-v_{i^\prime}\|_{2}$ is the euclidean distance between the nodes $v_i\in G[V^I_k]$ and $v_{i^\prime}\in G[V^I_{k^\prime}]$.
+Using this definition we calculate the similarity $s^A_E(e_{kk^\prime}, e_{pp^\prime})$ between edges $e_{kk^\prime}\in E^{Ia}$ and $e_{pp^\prime}\in E^{Ja}$ based on their length as it was done in the Eq.~\eqref{eq:edge_sim1}:
+\begin{equation*}
+s^A_E(e_{kk^\prime}, e_{pp^\prime}) = exp(-\frac{(L_{kk^\prime} - L_{pp^\prime})^2}{\sigma^2_{s}}).
 \label{eq:s_e_A}
-\end{equation}
-where $L_{kk\prime}$, $L_{pp\prime} $ are the lengths of edges $e_{kk\prime}\in E^{Ia}$ and $e_{pp\prime}\in E^{Ja}$ respectively.
+\end{equation*}
 
-To measure \emph{similarity between the anchors} we  define two different descriptors of an anchor $a$.
+As we already discussed in the previous chapter, the comparison of graph nodes for determining node similarity is often based on the comparison of node attributes. However, our anchor graphs $A^{Ia}$, $A^{Ja}$ do not have direct attributes in contrast to the initial graphs $G^I$, $G^J$. Further we describe two ideas, which we suggest to calculate anchor similarities.
 
-The first descriptor $d_1(a)$ should measure the similarity of node descriptors in corresponding subgraphs. For this purpose we adopted \emph{Bag Of Feature Model} \ToDo{ref}: we built a common dictionary based on the descriptors in $D^I$ and $D^J$ and define $d_1(a)$ as a histogram of "codewords" in corresponding subgraphs.
+The first idea would be to assign some attributes to the anchors and proceed further in the same way, as for initial graphs. Definition of those attributes in the same way, as for nodes of original graphs, meaning taking into account only the anchor graphs and not considering underlying initial graphs, will probably not give us good results. The reason for this is, that two anchors with complete different subgraphs can get similar attributes and therefor are likely to be selected by a matching algorithm. If it happens, than the matching of the underlying subgraphs will have very low quality. This will have in turn an impact on the quality of the total matching of initial graphs. Consequently anchor attributes should incorporate the information about underlying subgraphs of original graphs.
+Consider an anchor $a_k\in V^{Ia}$ and its underlying subgraph $G[V^I_k]=(V^I_k,E^I_k,D^I_k)$. We suggest two classes of attributes of the anchor $a_k$. 
+\begin{itemize}
+\item The first one uses a node attributes $D^I_k$ of the underlying subgraph $G[V^I_k]$. For this purpose we adopted \emph{bag of features model}~\cite{BoF_Leung2001}. We build once a common dictionary of all provided attributes in the both fine graphs by performing \emph{k-means clustering} of $D^I\cup D^J$ into $C$ clusters. Center of the clusters represent "codewords". Each attribute of a node in $V^I_k$ is afterwards mapped into the closest codeword. In this way, the anchor attribute $d_1(a_k)\in\mathbb{R}^C$ is defined as normalized histogram of "codewords" in corresponding subgraphs.
 
-The second descriptor $d_2(a)$ should describe the structure similarity of subgraphs. We define $d_2(a)$ as a set of histograms $\{d_2(a,v)\}$ of the nodes $v$ in the underlying subgraph of the anchor $a$. The histograms of nodes have the fix number of bins $b$ and represent a distribution of the length of the subgraph edges inside a small circle region around each node. 
-
-The similarity value between two anchors can be calculated now based on the first or second type of anchor descriptors by calculation of a distance between histograms based on $\chi^2$ statistic test \cite{Weken2004_ChiSqTest}:
+\item The second class of descriptors should capture the geometrical structure of underlying subgraph. We define $d_2(a_k)\in\mathbb{R}^{|V^I_k|\times b}$ as a set of $|V^I_k|$ histograms $\{d_2(a_k,v)\}$ with $b$ bins. Each histogram $d_2(a_k,v)$ represents a distribution of the length of the subgraph edges inside a small circle region around a node $v\in V^I_k$. 
+\end{itemize}
+The similarity value between two anchors can now be determined based on the first or second type of anchor descriptors. To calculate a distance between histograms we use $\chi^2$ statistic test \cite{Weken2004_ChiSqTest}:
 \begin{equation}
-s^A_1(a_k, a_p) = \sum_{b_i\in B}\frac{(d_1(a_k)-d_1(a_p))^2}{(d_1(a_k)+d_1(a_p))}
+s^A_1(a_k, a_p) = \sum_{b_i\in B}\frac{(d_1(a_k,b_i)-d_1(a_p,b_i))^2}{(d_1(a_k,b_i)+d_1(a_p,b_i)},
 \end{equation}
-
 \begin{equation}
-s^A_2(a_k, a_p) = \frac{1}{|V(G_k)|}\frac{1}{V(G_p)|}\sum_{v\in V(G_k)}\sum_{u\in V(G_p)} \big(\sum_{b_i\in B}\frac{(d_2(a_k,v)-d_2(a_p,u))^2}{(d_2(a_k,v)+d_2(a_p,u))}\big)
+s^A_2(a_k, a_p) = \frac{1}{|V^I_k|}\frac{1}{|V^J_p|}\sum_{v\in V^I_k}\sum_{u\in V^J_p} \big(\sum_{b_i\in B}\frac{(d_2(a_k,v,b_i)-d_2(a_p,u,b_i))^2}{(d_2(a_k,v,b_i)+d_2(a_p,u,b_i))}\big),
 \end{equation}
+where $a_k\in A^I, a_p\in A^J$ and notation $d_1(a_k,b_i)$ and $d_2(a_k,v,b_i)$ denote a value in the $b_i$-th bin of the corresponding histogram. 
+Both similarities based on the anchor descriptors can be used separately or set together as a linear combination into one similarity function.
 
-In our framework we use a combination of both anchor similarity functions:
-\begin{equation}
-s^A(a_k, a_p) = s_1(a_k, a_p)+s_2(a_k, a_p) 
-\end{equation}
-
-% ------------------------------------------------------------------------------------------------------------
-% ---------------------------------------        LLG Construction
+The second idea to determine similarity $s^A(a_k, a_p)$ between two anchors could be to perform graph matching of the underlying subgraphs $G[V^I_k]$, $G[V^J_p]$ and take its score as a similarity measure. This idea has a great drawback of high computational complexity, because we need to perform in summary $m_1m_2$ local matches. However, in this case the objective function of the global matching problem and the one on the anchor level are closer related. Among other, the both should have the same trend during the optimization process.~\ToDo{Check}
+% --------------------------        LLG Construction          ---------------------------------------
 \subsection{Subgraph matching}
-Given two corresponding subgraphs $G^I_{k_1}=(V^I_{k_1},E^I_{k_1},D^I_{k_1})$ and $G^J_{k_2}=(V^J_{k_2},E^J_{k_2},D^J_{k_2})$
+Given two corresponding subgraphs $G^I_{k}=(V^I_{k},E^I_{k},D^I_{k})$ and $G^J_{p}=(V^J_{p},E^J_{p},D^J_{p})$. We use cosine similarity of the node attributes to calculate node similarity between $V^I_{k}$ and $V^J_{p}$. For the pairwise edge similarity we used the same formula as in case of anchor matching (see Eq.\eqref{eq:edge_sim1}), i.e.\ 
+\begin{equation*}
+s_E(e_{ii^\prime}, e_{jj^\prime}) = exp(-\frac{(l_{ii^\prime} - l_{jj^\prime})^2}{\sigma^2_{s}})
+\end{equation*}
+where $l_{ii^\prime}$, $l_{jj^\prime} $ are the lengths of edges $e_{ii^\prime}\in E^I$ and $e_{jj^\prime}\in E^J$ respectively.
 %In our work we concentrate ourself on the task of finding feature correspondences between two images. Features are collected using such popular feature detectors as SIFT~\cite{Lowe2004}, MSER~\cite{MSER}. Extracted features from two images define the sets of nodes $V^I$, $V^J$ of the graphs $G^I$, $G^J$ respectively. As node attributes $D^I$, $D^J$ we used SIFT descriptors~\cite{Lowe2004} with fixed orientation and scale. 
 %The nodes of the graphs are connected vie edges with their $k$ nearest neighbors.
 
-To calculate the affinity matrix $S$ between two lower level graphs  $G^I$, $G^J$ or their subgraphs we need to define similarity functions between nodes and edges. Similarity of two nodes $v_i\in V^I, u_j\in V^J$ is equal to \emph{cosine similarity} of their descriptors.
-For the pairwise edge similarity we used the same formula as in \cite{Cho2014_Haystack, Suh_CVPR2015}, i.e.\ 
-\begin{equation}
-s_E(e_{ii\prime}, e_{jj\prime}) = exp(-\frac{(l_{ii\prime} - l_{jj\prime})^2}{\sigma^2_{s}})
-\label{eq:s_e}
-\end{equation}
-where $l_{ii\prime}$, $l_{jj\prime} $ are the lengths of edges $e_{ii\prime}\in E^I$ and $e_{jj\prime}\in E^J$ respectively.
+% -------------------------        Matching algorithm              -------------------------
+\subsection{Graph matching algorithm}
+Generally, we are not restricted to use one specific algorithm for subgraph and anchor graph. We selected \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy, according to result in the original paper, and is fast. It also showed good results in finding common subgraphs of two graphs in presence of outliers. At the end of this chapter we give for completeness an overview of the method.
 
-% ------------------------------------------------------------------------------------------------------------
-% ---------------------------------------        Matcing algorithm
-\subsection{Matching Algorithm}
-
-Generally, it is possible to use in our approach arbitrary graph matching algorithm for finding correspondences between anchors (higher level) and nodes (lower level). However we selected \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy ($64.01\%$ in average) and is fast. Additionally, it	 suits well for finding common subgraph of two graphs in presence of outliers.
-
-Important is, that the algorithm solves relaxed version of the initial problem (see section \ref{sec:prob_stat}), where constraints (\ref{QIP:3}),(\ref{QIP:4}) are dropped and the integrality constrain (\ref{QIP:2}) is replaced with $x\in \{0,1\}^{n_1n_2}$. We used \emph{greedy mapping} analog to \cite{Leordeanu2005}, instead of Hungarian algorithm used by the authors for discretization of continues solutions.
-
-% ------------------------------------------------------------------------------------------------------------
-% ---------------------------------------        Level connection
+% -------------------------        Level connection              -------------------------
 \subsection{Connection between two levels}
 Assume, we solved the GMP on the higher level. That means, we know pairs of correspondences between the anchor nodes: $m^a = \{(a_k, a_p)\}, a_i\in V^{Ia}, a_p\in V^{Ja}$. Since each anchor represents a subgraph of the initial graph, $m^a$ defines at the same time the correspondences between the subgraphs of the initial graphs $G^I$ and $G^J$. Solution of the $GMP$ for each pair of the subgraphs gives us the desirable correspondences between the nodes of the original graphs ($m = \{(v_i, v_j)\}, v_i\in V^{I}, v_j\in V^{J}$).
 

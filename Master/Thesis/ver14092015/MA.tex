@@ -92,19 +92,34 @@
 \def\version{Version of 14.09.2015} 
 \newcommand\ToDo[1]{\textcolor{red}{#1}} 
 \newcommand\currentname{\@currentlabelname}
+
+% list uquation with number
+\newcommand{\listequationnumber}{\refstepcounter{equation}(\theequation)}
+\newcommand{\listequation}[1]{\hfill$\displaystyle #1$\hfill\listequationnumber}
+
+\newcommand{\itemEq}[1]{%
+        \begingroup%
+        \setlength{\abovedisplayskip}{0pt}%
+        \setlength{\belowdisplayskip}{0pt}%
+        \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
+        \endgroup}
 \begin{document}
 	
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
 
 \raggedbottom % do not try to fill whole page
+
   %% title pages similar to providet template instead of maketitle
 %  \include{titlepages-eng} % or english title page
+
+  \pagestyle{plain}
 %  \include{abstract/abstracts}
-%
+
+  \pagestyle{headings} 
   \tableofcontents
-  
-  \pagestyle{headings}
+
+%  \pagenumbering{arabic}
 %  \pagestyle{fancy}
 %  \fancyhead[RO]{\leftmark}
 %  \fancyhead[LE]{\rightmark}
@@ -112,6 +127,7 @@
   
   \include{chapter1/chapter1}
   \include{chapter2/chapter2}
+  
 
 %  \part{Appendix}
   \begin{appendix}

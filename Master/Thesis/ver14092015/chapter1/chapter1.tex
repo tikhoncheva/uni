@@ -10,10 +10,10 @@ To begin with we refresh basic definitions and notations from the graph theory u
 An \emph{undirected graph} $G=(V,E)$ is defined as a pair of disjoint sets $V$, $E$, where $E\subseteq\{\{u,v\}| u, v\in V\}$~\cite{Diestel2000}. The elements of the set $V$ are called \emph{vertices} or \emph{nodes}\footnote{We use terms vertex and node further in the text as synonyms.} and the elements of $E$ are called \emph{edges}. Where it is necessary, we will write $V(G), E(G)$ to refer node and edge sets to the particular graph $G$.
 
 The number of nodes in $V$ defines the \emph{size} of a graph $G$.
-Two nodes $v_{i},v_{i'}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i'}\}\in E$. Each graph can be represented by its \emph{adjacency matrix A=$(a_{ii'})_{n\times n}$}, where 
+Two nodes $v_{i},v_{i^\prime}\in V$ are called \emph{adjacent}, if there is an edge $e=\{v_{i},v_{i^\prime}\}\in E$. Each graph can be represented by its \emph{adjacency matrix A=$(a_{ii^\prime})_{n\times n}$}, where 
 \begin{equation*}\centering
-a_{ii'}=\begin{cases}
- 1, & \text{if } \{v_{i},v_{i'}\}\in E, \\
+a_{ii^\prime}=\begin{cases}
+ 1, & \text{if } \{v_{i},v_{i^\prime}\}\in E, \\
  0, & \text{otherwise} \\
 \end{cases}
 \end{equation*}
@@ -21,7 +21,7 @@ and $n$ is the number of nodes in the graph.
 
 A \emph{path} in a graph $G=(V,E)$ is a sequence of nodes $\{v_0,v_1,\dots,v_k\}$ connected by the edges $\{v_0v_1,v_1v_2,\dots,v_{k-1}v_k\}$, where $v_i\in V$ and $v_{i-1}v_i\in E$ for all $i=1,\dots,k$. A path with $v_0=v_k$ is a \emph{cycle}.
 
-A graph $G'=(V',E')$ is called a \emph{subgraph} of a graph $G=(V,E)$, if $V'\subseteq V$ and $E'\subseteq E$. We use the standard notation $G'\subseteq G$ for this. A subgraph $G'$ of $G$ is \emph{induced by a node subsset $V'\subseteq V$}, if $E'=\{(v_i, v_{i'})|v_i,v_{i'}\in V'\}$. Analog, a subset $E'\subseteq E$ induces a subgraph $G'$ of $G$, if $V'=\{v\in V|v\in e\text{ and }e\in E'\}$. For an induced subgraph we use the notation $G'=G[V']$ and $G'=G[E']$~\cite{Diestel2000}, if it is node- or vertex-induced respectively. We also introduce graph cut $G\cap G'=(V\cap V', E\cap E')$ and union $G\cup G'=(V\cup V', E\cup E')$.
+A graph $G^\prime=(V^\prime,E^\prime)$ is called a \emph{subgraph} of a graph $G=(V,E)$, if $V^\prime\subseteq V$ and $E^\prime\subseteq E$. We use the standard notation $G^\prime\subseteq G$ for this. A subgraph $G^\prime$ of $G$ is \emph{induced by a node subsset $V^\prime\subseteq V$}, if $E^\prime=\{(v_i, v_{i^\prime})|v_i,v_{i^\prime}\in V^\prime\}$. Analog, a subset $E^\prime\subseteq E$ induces a subgraph $G^\prime$ of $G$, if $V^\prime=\{v\in V|v\in e\text{ and }e\in E^\prime\}$. For an induced subgraph we use the notation $G^\prime=G[V^\prime]$ and $G^\prime=G[E^\prime]$~\cite{Diestel2000}, if it is node- or vertex-induced respectively. We also introduce graph cut $G\cap G^\prime=(V\cap V^\prime, E\cap E^\prime)$ and union $G\cup G^\prime=(V\cup V^\prime, E\cup E^\prime)$.
 
 There are several special types of graphs. A graph, whose each pair of nodes is connected by an edge is called \emph{complete}. In case, when each node $v_i\in V$ of a graph $G$ has an associated attribute $d_i\in D$, one speaks about \emph{attributed graph} $G=(V,E,D)$. If in contract to this each edge of a graph has an associated weight, the graph is called \emph{weighted graph}. A connected, undirected graph without cycles is called a \emph{tree}. A $hypergraph$ is graph, whose edges connect several vertices at the same time (\emph{hyperedges}).
 
@@ -33,7 +33,7 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 Based on the required properties of the mapping $m$ the algorithms, that solve this problem, can be divided into two large groups~\cite{Conte2004}: \emph{exact} and \emph{inexact} graph matching methods. There are also variations inside of each group based on the definition of the similarity function between two graphs. In the following sections we will give an overview of a common exact and inexact graph matching problems together with algorithms for solving them.
  % ---------------------------------------------------------------------------------------------------------------------------------
 \section{Exact graph matching}
-The group of exact graph matching algorithms represents a class of more strict methods, that require a mapping $m$ between nodes of two graphs to be \emph{edge preserving}. With other words: if $\{v_i,v_{i'}\}\in E^I$, then $\{m(v),m(v_{i'})\}\in E^J$ for all $v_i,v_{i'}\in V^I$. The graphs, considered in this case often do not have attributes.
+The group of exact graph matching algorithms represents a class of more strict methods, that require a mapping $m$ between nodes of two graphs to be \emph{edge preserving}. With other words: if $\{v_i,v_{i^\prime}\}\in E^I$, then $\{m(v),m(v_{i^\prime})\}\in E^J$ for all $v_i,v_{i^\prime}\in V^I$. The graphs, considered in this case often do not have attributes.
 
 There are several forms of the exact graph matching. The most known one is \emph{graph isomorphism}: two graphs are called \emph{isomorph} ($G^I\simeq G^J$), if a edge preserving mapping between their nodes is bijective. This implies automatically, that two graphs should have the equal number of nodes. If it is not the case, and the isomorphism holds between the one graph and a node-induced subgraph of the other graph, the problem is called \emph{subgraph isomorphism}. Its further extension is the isomorphism between subgraphs of a graphs. The last problem can obviously have several solutions, but one is normally interested in finding a common subgraph with maximum number of nodes or edges (\emph{maximum common subgraphs}).  
 
@@ -146,7 +146,7 @@ To measure a similarity between graphs one considers two different kinds of simi
 
 Using the introduced notation and definitions of the node and edge similarity functions the function $S(G^I,G^J,m)$ in~\eqref{gGMP} can be now rewrite as follows:
 \begin{equation}\label{eq:sumQAP}
-	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i'j'}=1}}s_E(e_{ii'},e_{jj'}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
+	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i^\prime j^\prime}=1}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
 \end{equation}
 This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we become the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}:
 \begin{alignat}{2}
@@ -167,8 +167,8 @@ Below we list a different ways to define a node and edge similarities between tw
 
 One possible approach to calculate an edge similarity is to calculate \emph{edge dissimilarity} $d_E:E^I\times E^J\rightarrow\mathbb{R}$ first and then transform it into similarity by using, for example, one of the following functions~\cite{Cho2014_Haystack, Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM}:
 \begin{itemize}
-	\item $s_E(e_{ii\prime}, e_{jj\prime})= exp(-\frac{d_E(e_{ii\prime}, e_{jj\prime})^2}{\sigma^2_{s}})$
-	\item $s_E(e_{ii\prime}, e_{jj\prime})= \max(\beta - d_E(e_{ii\prime}, e_{jj\prime})/\sigma^2_{s},0)$
+	\item \itemEq{s_E(e_{ii\prime}, e_{jj\prime})= exp(-\frac{d_E(e_{ii\prime}, e_{jj\prime})^2}{\sigma^2_{s}}) \label{eq:edge_sim1}}
+	\item \itemEq{s_E(e_{ii\prime}, e_{jj\prime})= \max(\beta - d_E(e_{ii\prime}, e_{jj\prime})/\sigma^2_{s},0)  \label{eq:edge_sim2}}
 \end{itemize}
 where $e_{ii\prime}\in E^I$ and $e_{jj\prime}\in E^J$. The parameters $\sigma_s$ and $\beta$ define a sensibility of a graph matching algorithm to the dissimilarities between the graphs.
 
@@ -176,11 +176,11 @@ This leads us to the question how to calculate edge dissimilarity. The most obvi
 
 Sometime a node attributes can be used to calculate edge dissimilarities. For example, if graph nodes are described by an ellipse with known center coordinates and orientation one can calculate so-called geometric dissimilarity of the edges~\cite{Cho2009_AgglClustering,Cho2012_ProgressiveGM}:
 \begin{alignat}{4}\label{eq:geomDiss}
-& d(e_{ij},e_{i'j'}) && =\frac{1}{2}(d_{geo}(m_j|m_i) && +d_{geo}(m_i|m_j)) \\
-& d_{geo}(m_j|m_i) && =\frac{1}{2}(\|x_{j'}-H_{i}x_j\| && + \|x_{j}-H^{-1}_ix_{j'}\|) \\
-& d_{geo}(m_i|m_j) && =\frac{1}{2}(\|x_{i'}-H_{j}x_i\| && + \|x_{i}-H^{-1}_{j}x_{i'}\|) 
+& d(e_{ij},e_{i^\prime j^\prime}) && =\frac{1}{2}(d_{geo}(m_j|m_i) && +d_{geo}(m_i|m_j)) \\
+& d_{geo}(m_j|m_i) && =\frac{1}{2}(\|x_{j^\prime}-H_{i}x_j\| && + \|x_{j}-H^{-1}_ix_{j^\prime}\|) \\
+& d_{geo}(m_i|m_j) && =\frac{1}{2}(\|x_{i^\prime}-H_{j}x_i\| && + \|x_{i}-H^{-1}_{j}x_{i^\prime}\|) 
 \end{alignat}
-where $m_i$ is a correspondence between nodes $v_i$ and $v_{i'}$ and $H_i$ is an affine homography from $v_i$ to $v_{i'}$ estimated based on elliptic regions around each node.
+where $m_i$ is a correspondence between nodes $v_i$ and $v_{i^\prime}$ and $H_i$ is an affine homography from $v_i$ to $v_{i^\prime}$ estimated based on elliptic regions around each node.
 
 An another way to calculate edge similarities could be to use directly some similarity measure, such as cosine similarity.
 
@@ -198,7 +198,7 @@ Consider two attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$
 	\item nodes in $V^I\backslash\bar{V}^I$ are \emph{deleted}
 	\item nodes in $V^J\backslash\bar{V}^J$ are \emph{inserted}.
 \end{itemize}
-An edit operation of an edge is defined based on a transformations applied to it's end nodes. For example, insertion of a node $v_j\in V^J$ implies that all edges, connected to this node, are also inserted. Alternatively, if a node $v_i\in V^I$ is deleted, then all edges incident to this node are also deleted. We say, that an edge $\{v_i,v_{i'}\}\in E^I$ was substituted by an edge $\{v_j,v_{j'}\}\in E^J$, if the nodes $v_i,v_{i'}$ were mapped in $v_j,v_{j'}$.
+An edit operation of an edge is defined based on a transformations applied to its end nodes. For example, insertion of a node $v_j\in V^J$ implies that all edges, connected to this node, are also inserted. Alternatively, if a node $v_i\in V^I$ is deleted, then all edges incident to this node are also deleted. We say, that an edge $\{v_i,v_{i^\prime}\}\in E^I$ was substituted by an edge $\{v_j,v_{j^\prime}\}\in E^J$, if the nodes $v_i,v_{i^\prime}$ were mapped in $v_j,v_{j^\prime}$.
 
 We assume, that all operations can be performed simultaneously. Let $S=\{s_1,s_2,\dots,\newline s_k\}$ denote a set of operations needed to transform the graph $G^I$ into the graph $G^J$. 
 Each edit operation $s_i, 1\le i\le k,$ has an assigned nonnegative cost $c(s_i)$. The cost of the whole sequence $S$ is defined then as $\sum_{i=1}^{k}c(s_i)$. Using this we define a \emph{edit distance} between the graphs $G^I$ and $G^J$ as follows~\cite{Bunke1983_inexactGM, Wang1995}:
@@ -209,9 +209,9 @@ The task of the error-corrected graph matching is to find such a mapping $m$ bet
 
 The cost functions of each operation are often defined as a functions of edge weights and node attributes. Their exact definitions depend however on a specific application. Sometimes, it can be helpful, when the distance measure~\eqref{eq:editDist} defines a metric, which is not automatically the case. Bunke and Allermann~\cite{Bunke1983_inexactGM} have shown that, the graph edit distance can fulfill the properties of a metric under a specific conditions on the cost functions of the individual edit operations. For example, one if this conditions is, that a single operation is always preferred to a sequence of two operations with the same result (triangular inequality of the operation cost functions). Later, Bunke and Shearer~\cite{Bunke1998_graphDist} suggest a new graph edit distance, that is not depending on the cost of the edit operations, and is a metric.
 
-An interesting question is, how does the error corrected graph matching problem correspond to the other matching problems defined previously. It was shown in~\cite{Bunke1999_UnderlyingCosts}, that graph isomorphism, subgraph isomorphism and maximum common subgraph problems can be considered as a special cases of the error correcting graph matching. The same holds for the inexact graph matching problem formulated as in~\eqref{eq:QAP1}. This is easy to see, if one rewrite the objective function of ~\eqref{eq:QAP1} as $\sum_{i=1}^n\sum_{j=1}^{n}(A^I_{ii'}-A^J_{\sigma(i)\sigma(i')})^2$. Comparison of this expression with the definition of $c(S)$ in~\eqref{eq:editDist} leads us direct to the idea, how to set the edge insertion/deletion/substitution cost functions, to make the problem formulations equivalent: 
+An interesting question is, how does the error corrected graph matching problem correspond to the other matching problems defined previously. It was shown in~\cite{Bunke1999_UnderlyingCosts}, that graph isomorphism, subgraph isomorphism and maximum common subgraph problems can be considered as a special cases of the error correcting graph matching. The same holds for the inexact graph matching problem formulated as in~\eqref{eq:QAP1}. This is easy to see, if one rewrite the objective function of ~\eqref{eq:QAP1} as $\sum_{i=1}^n\sum_{j=1}^{n}(A^I_{ii^\prime}-A^J_{\sigma(i)\sigma(i^\prime)})^2$. Comparison of this expression with the definition of $c(S)$ in~\eqref{eq:editDist} leads us direct to the idea, how to set the edge insertion/deletion/substitution cost functions, to make the problem formulations equivalent: 
 \begin{equation*}
-c(e_{\text{subst}})=(A^I_{ii'}-A^J_{\sigma(i)\sigma(i')})^2\quad c(e_{\text{insert}})=(A^J_{\sigma(i)\sigma(i')})^2\quad c(e_{\text{del}})=(A^I_{ii'})^2
+c(e_{\text{subst}})=(A^I_{ii^\prime}-A^J_{\sigma(i)\sigma(i^\prime)})^2\quad c(e_{\text{insert}})=(A^J_{\sigma(i)\sigma(i^\prime)})^2\quad c(e_{\text{del}})=(A^I_{ii^\prime})^2
 \end{equation*}
 % ---------------------------------------------------------------------------------------------------------------------------------
 \section{Methods for solving inexact graph matching problems}
@@ -223,7 +223,7 @@ Similar to the exact graph matching problems a tree based methods with backtrack
 
 One of the first algorithms for inexact graph matching based on the three search was presented by Tsai and Fu in~\cite{Fu1979}. It is an optimal inexact graph matching algorithm. For further examples of the three search methods for inexact graph matching we refer to \cite{Bunke1983_inexactGM,Shapiro1981,Wang1995}.
 \subsubsection{Simulated Annealing}
-Simulated annealing is a heuristic for searching the global optimum of a given energy function~\cite{Burkard98thequadratic}. It is an extension of the Metropolis Algorithm~\cite{Metropolis}, that was suggested for finding an equilibrium of a physical system consisting of individual particles by heating it first and then cooling it slowly down. Speaking in terms of a graph matching problem, its solutions define states of a system and corresponding objective scores it's energy. The idea is to find a state with the lowest energy by performing some random changes in a system. This can be a random exchange of correspondences between two pairs of matched nodes. A change, that increases the total dissimilarity of graphs, is always accepted. On the other side, a change, that increases energy function, is accepted with some probability. This probability and number of changes per iteration is controlled by the temperature parameter $T$. The bigger $T$ the viewer changes are allowed and the smaller the accepted probability is. 
+Simulated annealing is a heuristic for searching the global optimum of a given energy function~\cite{Burkard98thequadratic}. It is an extension of the Metropolis Algorithm~\cite{Metropolis}, that was suggested for finding an equilibrium of a physical system consisting of individual particles by heating it first and then cooling it slowly down. Speaking in terms of a graph matching problem, its solutions define states of a system and corresponding objective scores its energy. The idea is to find a state with the lowest energy by performing some random changes in a system. This can be a random exchange of correspondences between two pairs of matched nodes. A change, that increases the total dissimilarity of graphs, is always accepted. On the other side, a change, that increases energy function, is accepted with some probability. This probability and number of changes per iteration is controlled by the temperature parameter $T$. The bigger $T$ the viewer changes are allowed and the smaller the accepted probability is. 
 
 The application of the simulated annealing to the graph matching problems can be found in~\cite{Herault1990_SimulatedAnnealing}. This heuristic can also be used to solve a quadratic assignment problem~\cite{Burkard98thequadratic}.
 % ---------------------------------------------------------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ A big group of algorithms for solving graph matching problems is built by those,
 
 One of the first algorithms, which uses spectral techniques, is the one by Umeyama\newline~\cite{Umeyam1988}. He considers the case, when two graphs have the same number of nodes and matching between them is bijective. This means, that a desired correspondence matrix must be a permutation matrix. The author proofs, that an orthogonal matrix, which minimizes the objective function of~\eqref{eq:QAP1}, can be formulated based on the eigenvalue decomposition of the adjacency matrices of given graphs. The terms of this formulation are used to define a linear assignment problem, whose solution is a solution of the initial problem. In case, when given graphs are sufficiently close, those solution is optimal or nearly optimal.
 
-We notice, that this algorithm is highly limited in it's application due to its requirements. We also want to mention, that it works only with graph geometry and does not consider attributes of nodes and edges.
+We notice, that this algorithm is highly limited in its application due to its requirements. We also want to mention, that it works only with graph geometry and does not consider attributes of nodes and edges.
 
 The more resent algorithm is this group of methods is called spectral matching (SM)~\cite{Leordeanu2005_SM}. The algorithm works with the general formulation~\eqref{eq:gQAP1}. It relaxes both two-way and integer constrains~\eqref{eq:gQAP2}-\eqref{eq:gQAP4} and obtain the optimal solution of this relaxation by taken the principal eigenvector of the matrix $S$. This is done by using \emph{the power iteration method}~\cite{PowerIteration}. The found continuous solution is binarized by applying a simple greedy heuristic, that enforces previously relaxed matching constrains.
 
@@ -258,12 +258,12 @@ A generalization of the SM algorithm is proposed in~\cite{Duchenne2011}. The aut
 Before going to the next section we want shortly describe a max-pooling approach by Cho and Duchenne~\cite{Cho2014_Haystack}, which uses ideas similar to both GAGM~\cite{Rangarajan1996_GAGM} and SM~\cite{Leordeanu2005_SM}, but replaces one of the sum in a updating step with maximum-operation. The algorithm solves the graph matching problem formulation~\eqref{eq:gQAP1} by relaxing its integer constraints and omitting sum constraints. To approximate a solution of $\argmax_{x}x^TSx$ the max-pooling algorithm similar to GAGM uses first order Taylor expansion of the objective function. The maximization of the Taylor approximation can be done by the power method as it is done in SM.
 The resulting update formula of the correspondence $(v_i,v_j),v_i\in V^I,v_j\in V^J$ has the form:
 \begin{equation}
-(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i'\in N_i}\sum_{j'\in N_j}x_{i'j'}s_E(e_{ii'},e_{jj'}),
+(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i^\prime\in N_i}\sum_{j^\prime\in N_j}x_{i^\prime j^\prime}s_E(e_{ii^\prime},e_{jj^\prime}),
 \end{equation}
 where $N_i$ denotes a direct neighborhood of a node $v_i$, i.e. set of its adjacent nodes.
 The max-poling algorithm uses a maximum function instead of the second sum in the second term, which leads to
 \begin{equation}
-(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i'\in N_i}\max_{j'\in N_j}x_{i'j'}s_E(e_{ii'},e_{jj'}).
+(Ax)_{ij}=x_{ij}s_V(v_i,v_{j})+\sum_{i^\prime\in N_i}\max_{j^\prime\in N_j}x_{i^\prime j^\prime}s_E(e_{ii^\prime},e_{jj^\prime}).
 \end{equation}
 This simple idea helps to suppress a noisy entries of the outlier matches, because the last have more likely low similarity values. The proposed algorithm shows very good results in presents of numerous outliers, although there is no theoretical justification of its convergence.
 % ---------------------------------------------------------------------------------------------------------------------------------
@@ -306,7 +306,7 @@ The presented here algorithm is designed by Minsu Cho et al.~\cite{Cho2010_RRWM}
     &             &&  \sum_{i=1\dots n_1} x_{ij}\le 1   \tag{\ref{eq:gQAP3}}\\
     &             &&  \sum_{j=1\dots n_2} x_{ij}\le 1   \tag{\ref{eq:gQAP4}}
 \end{alignat*}
-between two graphs $G^I=(V^I,E^I,D^I)$, $G^I=(V^I,E^I,D^I)$ in a random walk view. For this the authors define an association graph $G^{rw}=(V^{rw},E^{rw},D^{rw})$ based on the affinity matrix $S$. The set of nodes $V^{rw}$ of the new graph is represented by all possible correspondences between nodes in $V^I$ and $V^J$. This means, that $|V^{rw}|=n_1n_2$, where $|V^I|=n_1$ and $|V^J|=n_2$. We refer to a node of the graph $G^{rw}$ as $v_{ij}$ if it represent a correspondence pair $(v_i,v_j)$, $v_i\in V^I,v_j\in V^J$. The entry $S_{ij,i'j'}$ of the matrix $S$ defines the weight of the edge $\{v_{ij},v_{i'j'}\}\in E^{rw}$. We denote the weighted adjacency matrix of the graph $G^{rm}$ as $W$. An example of the construction is illustrated on the figure below. Note, that we omitted contradiction edges, whose weights are equal zero, e.g. $\{a1,b1\}$.
+between two graphs $G^I=(V^I,E^I,D^I)$, $G^I=(V^I,E^I,D^I)$ in a random walk view. For this the authors define an association graph $G^{rw}=(V^{rw},E^{rw},D^{rw})$ based on the affinity matrix $S$. The set of nodes $V^{rw}$ of the new graph is represented by all possible correspondences between nodes in $V^I$ and $V^J$. This means, that $|V^{rw}|=n_1n_2$, where $|V^I|=n_1$ and $|V^J|=n_2$. We refer to a node of the graph $G^{rw}$ as $v_{ij}$ if it represent a correspondence pair $(v_i,v_j)$, $v_i\in V^I,v_j\in V^J$. The entry $S_{ij,i^\prime j^\prime}$ of the matrix $S$ defines the weight of the edge $\{v_{ij},v_{i^\prime j^\prime}\}\in E^{rw}$. We denote the weighted adjacency matrix of the graph $G^{rm}$ as $W$. An example of the construction is illustrated on the figure below. Note, that we omitted contradiction edges, whose weights are equal zero, e.g. $\{a1,b1\}$.
 
 %\vspace{-30pt}
 \begin{figure}[h] %\label{fig:RRWM} 
@@ -354,8 +354,8 @@ A procedure of generation the jump vector $r$ from a current quasi-stationary di
 \begin{algorithm}[h] 
 	\KwIn{ weight matrix $W$, the reweight factor $\alpha$, the inflation factor $\beta$}
 	\KwOut{distribution $\mathbf{x}$}
-	set $W_{ij,i'j'}$=0 for all conflicting match pairs, i.e. $(v_{ij},v_{ij'})$ and $(v_{ij},v_{i'j})$ \\
-	$D_{\text{max}}=\max_{ij}\sum_{i'j'}W_{ij,i'j'}$ \\
+	set $W_{ij,i^\prime j^\prime}$=0 for all conflicting match pairs, i.e. $(v_{ij},v_{ij^\prime})$ and $(v_{ij},v_{i^\prime j})$ \\
+	$D_{\text{max}}=\max_{ij}\sum_{i^\prime j^\prime}W_{ij,i^\prime j^\prime}$ \\
 	$P=W/D_{\text{max}}$, initialize starting probability $\mathbf{x}$ as uniform\\
 	\Repeat{$\mathbf{x}$ converges}{ 
 		\tcc{Affinity preserving random walking by edges}
