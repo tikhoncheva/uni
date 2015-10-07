@@ -98,10 +98,10 @@ Depending on the case, if an algorithm for solving problem~\eqref{gGMP} finds a 
 There are also different ways to define a similarity function $S(G^I,G^J,m)$, which leads to high number of different approaches inside the group of inexact graph matching algorithms. In the following section we summarized the most common forms of the objective function of the problem~\eqref{gGMP}.
 % ---------------------------------------------------------------------------------------------------------------------------------
 \subsection{Graph matching objective function}
-In some literature instead of defining a similarity function as in \eqref{gGMP} one speaks about dissimilarity between two graphs~\cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}. The goal in this case is to minimize it. Two formulations of the problem are however equivalent and one can easy transform one into other.
+In some literature (e.g.~\cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}) instead of defining a similarity function as it is done by Eq.~\eqref{gGMP} one speaks about dissimilarity between two graphs. The goal in this case is to minimize it. Two both formulations of the problem are however equivalent and one can easy transform one into other.
 % ---------------------------------------------------------------------------------------------------------------------------------
 \subsubsection{Quadratic Optimization Problem}
-Let consider two attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$. We want to find a mapping $m$ between the nodes of this graphs. Let the size of the graphs be $n_1$ and $n_2$ respectively. Generally, $n_1$ and $n_2$ can be different, but then we assume without losing generality $n_1\le n_2$. Here and further, we require a mapping $m$ in \eqref{gGMP} to be total and injective, which guarantees, that each node of the first graph will be matched to exactly one node of the second graph (one-to-one matching). 
+Let us consider two attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$. We want to find a mapping $m$ between the nodes of this graphs. Let the size of the graphs be $n_1$ and $n_2$ respectively. Generally, $n_1$ and $n_2$ can be different, but then we assume without losing generality $n_1\le n_2$. Here and further, we require a mapping $m$ in \eqref{gGMP} to be total and injective, which guarantees, that each node of the first graph will be matched to exactly one node of the second graph (one-to-one matching). 
 
 We start first with a even stricter assumption, that $n_1=n_2=n$ and the matching is bijective. In this case a mapping between nodes of two graphs defines a permutation $\sigma$ of the set $\{1,\dots,n\}$. Each permutation $\sigma$ can be represented by the permutation matrix $P=\{P_{ij}\}$, where
 \begin{equation*}
@@ -117,9 +117,9 @@ We denote with $\Pi_n$ the set of all feasible permutations:
 Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighed graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as~(compare with \cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Umeyam1988,Zazlavskiy2008_PATH}):
 \begin{equation} \label{eq:QAP1}
 %P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2
-P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2
+P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2_2
 \end{equation}
-where $\|\cdot\|$ is the matrix Frobenius norm. Some authors (e.g. Vogelstein et al. in~\cite{Vogelstein_BrainGraphs}) use slightly different, but equivalent reformulation of it, namely:
+where $\|\cdot\|$ is the matrix Frobenius norm and $\|\cdot\|_2$ is Euclidean norm ($L^2$ norm). Some authors (e.g. Vogelstein et al. in~\cite{Vogelstein_BrainGraphs}) use slightly different, but equivalent reformulation of it, namely:
 \begin{equation} \label{eq:QAP2}
 P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2+\|D^I-\hat{P}D^J\|^2,
 \end{equation}
