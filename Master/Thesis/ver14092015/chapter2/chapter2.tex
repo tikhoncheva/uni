@@ -40,15 +40,15 @@ In the remainder of this paper we describe in details our graph matching approac
 \section{Algorithm}
 We consider at the beginning only one graph $G^I=(V^I,E^I,D^I)$ of the size $n_1$. Assume, that we know a partition of the node set $V^I$ of this graph into $m_1$ non-overlapping clusters based on some rule: $V^I=\cup_{k=1}^{m_1}V^I_k$, where $V^I_{k_1}\cap V^I_{k_2}=\emptyset$ for $k_1\not=k_2$. Based on this partition the initial graph $G^I$ is subdivided into a set of node induced subgraphs $\{G[V^k]\}_{k=1}^{m_1}$. Note, that it holds $G[V^1]\cup\dots\cup G[V^{m_1}]\subset G^I$, because edges between different subgraphs are note presented in the left union.
 Further, we define a mapping $U$ between the set of graph nodes $V^I$ and another set of nodes $V^{Ia}=\{a^I_k\}_{k=1}^{m_1}$, which represent each subgraph  $G[V^I_k]$ with a single node $a^I_k$. This mapping can be expressed as an matrix $U^{Ia}\in\{0,1\}^{n_1\times m_1}$ with elements 
-\begin{equation*}
+\begin{equation}\label{eq:matrixU}
 U^{Ia}_{ik} = \begin{cases} 1, & \mbox{if node } v_i\in V^I_k,    \\
 0, & \mbox{otherwise}.\end{cases}
-\end{equation*}
+\end{equation}
 The new set $V^{Ia}$ defines a node set of a new graph built on top of the other. A pair of new nodes $a^I_{k_1},a^I_{k_2}\in V^{Ia}$ is connected with an edge, if there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its elements and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ an \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graphs $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[scale=0.35]{chapter2/fig/twolevels2.pdf}
+	\includegraphics[scale=0.35]{chapter2/fig/twolevels3.pdf}
 	\caption{Two level framework for graph matching} \label{fig:2levels}
 \end{figure}
 
@@ -107,7 +107,9 @@ Such algorithms have generally three phases:
 \end{enumerate}
 There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (SAG)~\cite{Chevalier09_GP}, which groups nodes of $G^I$ in disjoint subsets based on the strength of the edges between them. We implemented two SAG based algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)~\cite{Chevalier09_GP}. Both algorithms visit nodes of the graph $G^I$ in random order and construct an independent set of edges $M$ of the graph. The edge selection is based on the edge weights. The HEM picks and adds into $M$ the strongest edge adjacent to a current node $v$, that does not belong to the set of end nodes of edges in $M$.~(see Alg.~\ref{alg:HEM}). As opposed to this, the LEM selects the weakest edge adjacent to a current node. The edges in $M$ will be contracted, i.e. their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
 
-{\LinesNumberedHidden
+%{\LinesNumberedHidden
+%\LinesNumberedHidden
+%\LinesNotNumbered
 \begin{algorithm}[h]
 	i = 0, $M=\emptyset$ \\
 	\While{$|V(G^I)|>m_1$  \textbf{AND} $i\le N$}
@@ -118,7 +120,7 @@ There are several types of graph coarsening algorithms. In our work we used so-c
 	}
 	\Return $G^I$
 	\caption{HEM($G^I$, $m_1$, $N$)} \label{alg:HEM}
-\end{algorithm} }
+\end{algorithm}
 
 In out case, graph $G^I$ is not initially weighted. To use the described coarsening methods we need to define a strength of graph edges. In case of LEM-Algotihm we set the length of an edge as its strength: $w_{vv^\prime}=\|v-v^\prime\|_{2}$. If we use HEM-Algorithm the strength of an edge is equal to $w_{ii^\prime} = exp(-\frac{\|v-v^\prime\|_{2}}{\sigma^2_{s}})$ with a constant $\sigma^2_{s}$.
 
@@ -171,82 +173,77 @@ where $l_{ii^\prime}$, $l_{jj^\prime} $ are the lengths of edges $e_{ii^\prime}\
 Generally, we are not restricted to use one specific algorithm for subgraph and anchor graph. We selected \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy, according to result in the original paper, and is fast. It also showed good results in finding common subgraphs of two graphs in presence of outliers. At the end of this chapter we give for completeness an overview of the method.
 
 % -------------------------        Level connection              -------------------------
-\subsection{Connection between two levels}
-Assume, we solved the GMP on the higher level. That means, we know pairs of correspondences between the anchor nodes: $m^a = \{(a_k, a_p)\}, a_i\in V^{Ia}, a_p\in V^{Ja}$. Since each anchor represents a subgraph of the initial graph, $m^a$ defines at the same time the correspondences between the subgraphs of the initial graphs $G^I$ and $G^J$. Solution of the $GMP$ for each pair of the subgraphs gives us the desirable correspondences between the nodes of the original graphs ($m = \{(v_i, v_j)\}, v_i\in V^{I}, v_j\in V^{J}$).
+\subsection{Graph partition update}
+Assume, we solved the graph matching problem on the higher and on the lower levels. That means, we know pairs of correspondences between the anchor nodes $m^a = \{(a_k, a_p)|a_k\in V^{Ia}, a_p\in V^{Ja}\}$ and between the nodes of the original graphs $m = \{(v_i, v_j)|v_i\in V^{I}, v_j\in V^{J}\}$. The last set is the union of the local solutions of the graph matching problem between pairs of subgraphs, as it is defined by $m^a$.
+The quality of the resulting solution $m$ depends, as we already mentioned, in our framework not only on the quality of the graph matching algorithm, but also on the graph partitioning algorithm.
+The Fig.~\ref{fig:badpartition} shows an example of partition of two graphs into two classes, so that the matching result of subgraphs will be very pure for all possible combinations of anchors matches.
 
-As we already mentioned above, the quality of the resulting solution $m$ depends in our framework not only on the quality of the graph matching algorithm, but also on the graph partitioning algorithm. The Fig.~\ref{fig:badpartition} shows, that by the fixed partition the matching results will be very pure for all possible matches of the anchors.
-
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.35]{chapter2/fig/badpartition.pdf}
 	\caption{Example of bad partition of two equal graphs into two subgraphs} \label{fig:badpartition}
 \end{figure}
 
+To cope with this problem, we formulated our method as an iterative process. After each iteration the subgraphs of initial graphs have a chance to exchange nodes with their neighbors based on the obtained solution $m$ and improve matching quality of the next iteration. The proposed updating process consists of two major steps. In the first step we estimate an affine transformation between matched subgraphs based on the provided local correspondences. The next step is the actual update step, where updating process uses the estimated transformations.
+We explain our approach on a pair of matched subgraphs $G[V^I_k]=(V^I_k, E^I_k, D^I_k)$ and $G[V^J_p]=(V^J_p, E^J_p, D^J_p)$  with obtained local correspondence set $m^{kp}=\{(v_i,v_j)|v_i\in V^I_k, v_j\in V^J_p\}$. 
 
-To cope with this problem, we present an \emph{iterative approach}, where the subgraphs of the initial graphs are allowed to exchange nodes based on the solution $m$ after each iteration of two-level graph matching algorithm. Exchanging rules are based on the affine transformations assigned to each matched pair of the subgraphs.
+In the first step we want to estimate two affine transformations $T_{kp}:V^I_k\rightarrow V^J_p$ and $T_{pk}:V^J_p\rightarrow V^I_k$ from the node set of one subgraph into another and vice versa. For that we use the  the state-of-the-art Coherent Point Drift~(CPD) algorithm by Myronenko and Song~\cite{Myronenko2009_CPD}. This is an probabilistic algorithm for points set registration problem, which finds a correspondences between two set of points and a transformation, that describes the mapping between sets. We choose it, as it shows a remarkable robustness against outliers and often outperforms the other popular algorithm TPS-RPM by Chui and Rangarajan~\cite{Chui2003}, that we mentioned in the previous chapter. After obtaining the affine transformations $T_{kp}$ and $T_{pk}$ we measure a transformation error of each matched node $v_i\in V^I_k (v_j\in V^J_k)$ as a distance between its projection into other subgraph $T_{kp}(v_i) (T_{pk}(v_j))$ and its matched pair $m(v_i) = v_j\in V^J_p\ (m(v_j) = v_i\in V^I_k)$:
+\begin{align}\begin{split} \label{eq:err_v}
+err(v_i) &= \|T_{kp}(v_i) - m(v_i)\|_{2}\\
+err(v_j) &= \|T_{pk}(v_j) - m(v_j)\|_{2}
+\end{split}\end{align}
+Based on the errors of single nodes we assign an error to the estimated transformations as a measure of their quality:
+\begin{equation}\begin{split} \label{eq:err_T}
+err(T_{kp}) & = \median_{v_i\in V^I_k}err(v_i) \\
+err(T_{pk}) & = \median_{v_j\in V^J_p}err(v_j)
+\end{split}\end{equation}
+From both transformations we select the one with smallest error and replace the second with the inverse transformation of the selected one. For simplicity we preserve the notation $T_{kp}$ and $T_{pk}$ for the transformations related to the subgraph match $(a_k, a_p)$. In this way we associate with each subgraph pair with more than $3$ node correspondences \footnote{we need at least $3$ pair of correspondences to be able to estimate an affine transformation} two affine transformations between their nodes.
 
-We consider two matched subgraphs $G^I_k=(V^I_k, E^I_k, D^I_k)$ and  $G^J_p=(V^J_p, E^J_p, D^J_p)$. Based on the matching between the nodes of this pair we apply \emph{RANSAC}~\cite{RANSAC} to estimate two \emph{affine transformations} $T_{kp}:V^I_k\rightarrow V^J_p$ and $T_{pk}:V^J_p\rightarrow V^I_k$. From this two transformations we select the one with smaller transformation error. The transformation error is defined as follows. For each node $v_i\in V^I_k$ we calculate the error between its matched node $m(v_i) = v_j\in V^J_p$ and its projection $T_{kp}(v_i)$: 
-\begin{equation} \label{eq:err_v}
-err(v_i) = \|T_kp(v_i) - m(v_i)\|_{l_2}
+In the next step, we apply estimated transformations to each subgraph of both graphs to project them into the node space of the opposite graph (see Fig.~\ref{fig:update}). For the subgraph $G[V^J_p]$ that means, that the transformation $T_{pk}$ associated with the anchor pair $(a_k,a_p)$ is now casted as a mapping $T_{pk}:V^J_p\rightarrow V^I$. For the projected points $T_{pk}(v_j),v_j\in V^J_p,$ we find their nearest neighbors $\bar{v}_i=NN(T_{pk}(v_j))$ in $V^I$. On the Fig.~\ref{fig:update} the projected points $T_{pk}(v_j),v_j\in V^J_p,$ are marked with bright red color. We define a new matrix $\bar{U}^{Ia}\in\mathbb{R}^{|V^I|\times m_1}$ and assign to its element $\bar{U}^{Ia}_{\bar{v}_i,a_k}=\|T_{pk}(v_j)-\bar{v}_i\|_2$ the distance between projection $T_{pk}(v_j)$ of $v_j\in V^J_p$ and its nearest neighbor $NN(T_{pk}(v_j))$ in $V^I$.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.35]{chapter2/fig/update.pdf}
+	\caption{Example of an update of one (dark red) cluster} \label{fig:update}
+\end{figure}
+
+After performing the same procedure for all transformations $T_{pk}$ we set all not-assigned elements of $\bar{U}^{Ia}$ to infinity. If there are some lines in $\bar{U}^{Ia}$ with all elements equal infinity, meaning that corresponding nodes in $V^I$ were not selected as a nearest neighbor of some nodes in $V^J$,
+that we replace those lines with the corresponding lines in the current matrix $U^{Ia}$ (see definition~\eqref{eq:matrixU}).
+
+Our update rule for the partition of the graph $G^I$ defined by matrix $U^{Ia}$ is:
+\begin{equation}
+U^{Ia}_{ik}=1 \iff a_k=\argmin_{l=1,\dots,m_1}^{}{\bar{U}^{Ia}_{v_i,a_l}}
 \end{equation}
-The error of the estimated affine transformation $T_{kp}$ (analog for  $err(T_{pk})$) is then defined as
-\begin{equation} \label{eq:err_T}
-err(T_{kp}) = \median_{v_i\in V^I_k}err(v_i)
-\end{equation}
+With the other words, the node $v_i\in V^I$ is assigned to the anchor $a_k$, if $\bar{U}_{v_i,a_k}$ is the smallest distance between $v_i$ and projections of the nodes in the subgraphs $G[V^J_p]$ matched to the subgraph $G[V^I_k]$. Note, that unassigned nodes in $V^I$ stay in the same cluster they were before.
 
-For the transformation with the smallest error we calculate its inverse transformation and associate both of them with the subgraph match $(a_k, a_p)$. For simplicity we preserve the notation $T_{kp}$ and $T_{pk}$ for the transformations related to the subgraph match $(a_k, a_p)$.
+The partition of the second graph is updated in the same way, as it is described above for the graph $G^I$. The approach is summarized in Algorithm~\ref{alg:update_subgraphs4.3.2}.
 
-In this way we can associate to each subgraph pair with more than $3$ node correspondences \footnote{we need at least $3$ pair of correspondences to be able to estimate an affine transformation} the estimated affine transformation of their nodes.
-
-\textit{Rule $1$}
-
-If the transformation describes well the matching between the subgraphs nodes (i.e.\ the transformation error~\ref{eq:err_T} is small), then we include nodes near $T_{kp}(V^I)$, $T_{pk}(V^J)$ in corresponding subgraph with the confidence value equal to $e^{-\min(err(T_{kp}), err(T_{pk}))}$. If one node was selected by several subgraphs, it will be included in the subgraph with the biggest associated confidence value.
-
-\textit{Rule $2$}
-
-If there are subgraph with less then $3$ nodes, we shift this nodes to the subgraphs of their nearest neighbors. For this nodes $err(v)=M$ (see Eq.~\ref{eq:err_v}), where $M$ is some big constant. 
-
-The described approach for subgraph reorganization is summarized in Algorithm~\ref{alg:update_subgraphs}.
-
-\vspace{20pt}
-\begin{algorithm}[H]
-	\KwIn{ correspondence matrices between nodes of the initial\\
-		   \hspace{45pt}graphs and anchors: $U^{Ia}$, $U^{Ja}$\\
-		   \hspace{45pt}list of matches between the subgraphs: $m^a = \{(a_k, a_p)\}$;\\
-   		   \hspace{45pt}list of estimated affine transformations for each matched \\
-   		   \hspace{45pt}pair: $\{(T_{kp}, T_{pk})\}$ }
-	\KwOut{new correspondence matrices $\hat{U}^{Ia}$, $\hat{U}^{Ja}$}
-	\nl define subgraphs of the initial graphs based on the correspondence \\
-	matrices $U^{Ia}$, $U^{Ja}$: $\{G^I_k\}$ and  $\{G^J_p\}$ \\
-	\nl $\hat{U}^{Ia} = \frac{1}{2}U^{Ia}$, $\hat{U}^{Ja} = \frac{1}{2}U^{Ja}$ \\
-	\nl \ForEach{matched subgraph pair $(a_k, a_p)$}
-			{\eIf{$\left|V^I_k\right|\ge 3$ \textbf{AND} $\left|V^J_p\right|\ge 3$}
-				{ 
-			      $err = \min(err(T_{kp}), err(T_{pk}))$ \tcp*{ see equations \ref{eq:err_v}, \ref{eq:err_T}}
- 			      \If{
- 			      	 $\left| err\right| < \epsilon $}   %\tcp*{ matching is reliable}
-			         {
-%			          \tcc{ confidence of the included node to belong to considering subgraphs equals $\exp(-err)$ }
-			          $\hat{U}^{Ja}(v, a_p) = \exp(-err)$ for $v\in T_{kp}(V^{I}_k)$ \\
-   		 	          $\hat{U}^{Ia}(v, a_k) = \exp(-err)$ for $v\in T_{pk}(V^{J}_p)$ \\
-   		 	         }
-   		 	    }
-    		 	{shift nodes of too small subgraphs into subgraphs, their nearest neighbors belong to} 
-		    }			
-	\nl  set in each row of  $\hat{U}^{Ia}$($\hat{U}^{Ja}$) the maximum element to $1$ and all other to $0$\\
-	\Return $\hat{U}^{Ia}$, $\hat{U}^{Ja}$
+\begin{algorithm}[h]
+	\KwIn{  $m^a = \{(a_k, a_p)|a_k\in V^{Ia}, a_p\in V^{Ja}\}$\\
+		\hspace{45pt}$m = \{(v_i, v_j)|v_i\in V^{I}, v_j\in V^{J}\}$}
+	\KwOut{updated $U^{Ia}$, $U^{Ja}$}
+	\tcc{Step $1$: assign affine transformations to each pair $(a_k, a_p)$ } 
+	\ForEach{matched subgraph pair $(a_k, a_p)$}
+	{
+		calculate $T_{kp}:V^I_k\rightarrow V^J_p$ and $T_{pk}:V^J_p\rightarrow V^I_k$ using CPD algorithm
+	}
+	\tcc{Step $2$: calculate new matrices $\bar{U}^{Ia}\in\mathbb{R}^{|V^I|\times m_1}$, $\bar{U}^{Ja}\in\mathbb{R}^{|V^J|\times m_2}$ }
+	\ForEach{matched subgraph pair $(a_k, a_p)$}
+	{
+		$\forall v_j\in V^J_p:\quad$ $\bar{U}^{Ia}_{\bar{v}_i,a_k}=\|T_{pk}(v_j)-\bar{v}_i\|_2$, where $\bar{v}_i=NN(T_{pk}(v_j))\in V^I$\\
+		$\forall v_i\in V^I_k:\quad$ $\bar{U}^{Ja}_{\bar{v}_j,a_p}=\|T_{kp}(v_i)-\bar{v}_j\|_2$, where $\bar{v}_j=NN(T_{kp}(v_i))\in V^J$
+	}
+	\tcc{Step $3$: update partitions}
+	$U^{Ia}_{ik}=1 \iff a_k=\argmin_{l=1,\dots,m_1}^{}{\bar{U}^{Ia}_{v_i,a_l}}$\\
+	$U^{Ja}_{jp}=1 \iff a_p=\argmin_{q=1,\dots,m_2}^{}{\bar{U}^{Ja}_{v_j,a_q}}$\\
+	\Return $U^{Ia}$, $U^{Ja}$
 	
-	\caption{UpdateSubgraphs}    \label{alg:update_subgraphs}
+	\caption{UpdateSubgraphs}    \label{alg:update_subgraphs4.3.2}
 \end{algorithm}
 
+The usage of the proposed graph partition strategy is illustrated on the Fig.~\ref{fig:update}. The most yellow node is likely to be included in the red partition, where in the fact is should belong to.
+
 \FloatBarrier
-
-\subsubsection{Simulated Annealing \textbf{SM}}
-
-After some experiments we found out, that the iterative aproach based on the two-level graph matching and the Algorithm~\ref{alg:update_subgraphs} can stay trapped in local optima.
-To cope with this we use additionally ideas of the \emph{Simulated Annealing}.
-
-We consider each of the two graphs separately. In each iteration \emph{after application of the Algorithm~\ref{alg:update_subgraphs}} we randomly try to shift a node to one of its three nearest anchors. The energy state of the system is defined as $E = \sum_{v\in V}err(v)$ (see Eq.~\ref{eq:err_v}). After one node was shifted, the new energy state $E^{new}$ is calculated. Wenn $E^{new}<E$ the shifted node stays in its new subgraph. Otherwise, the move is accepted with the probability $exp(-\frac{E^{new}-E}{T})$, where $T = 1/{it}$ is the current temperature of the system and depends on the iteration number $it$. 
-
-\emph{Afterwards} we apply again the Algorithm~\ref{alg:update_subgraphs}. 
+% -------------------------  Discussion ----------------------------------------------------------------------
+\section{Discussion}
 

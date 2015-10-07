@@ -25,7 +25,7 @@
 % 
 
 
-function[T, A, b] = ransac_cdf(P1, P2, s, t)
+function[T, A, b] = ransac_cdf(P1, P2, s, 	)
 
 
     % Test number of parameters
