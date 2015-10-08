@@ -26,26 +26,30 @@ C=A\otimes B =
 \begin{pmatrix} a_{11}B & \dots & a_{n1}B \\ \vdots & \ddots & \vdots \\ a_{1n}B & \dots & a_{nn}B  \end{pmatrix}.
 \end{equation}
 
-From the definition of the matrix trace follows~\ToDo{cite}:
+From the definition of the matrix trace follows:
 \begin{equation}\label{eq:Property1}
-A\cdot B=\sum_{i=1}^{n}\sum_{j=1}^{n}A_{ij}B_{ij}=\sum_{i=1}^{n}(AB^T)_{ii}=\tr(AB^T)=\vec(A)^T\vec(B),
+A\cdot B=\sum_{i=1}^{n}\sum_{j=1}^{n}A_{ij}B_{ij}=\sum_{i=1}^{n}(AB^T)_{ii}=\tr(AB^T).
 \end{equation}
-where $\vec(A)$ denotes the column-wise vectorization of a matrix $A$. Additionally, it holds~\ToDo{cite}:
+We also can write
+\begin{equation}\label{eq:Property1.1}
+A\cdot B=\sum_{i=1}^{n}\sum_{j=1}^{n}A_{ij}B_{ij}=\vec(A)^T\vec(B),
+\end{equation}
+where $\vec(A)$ denotes the column-wise vectorization of a matrix $A$. Additionally, it holds~\cite{Jain1989}:
 \begin{equation}\label{eq:Property2}
 \vec(APB)=(B^T\otimes A)\vec(P).
 \end{equation}
 
-We can now apply the equality $2$ and $3$ in~\eqref{eq:Property1} to the formulation~\eqref{eq:QAP_classic2} and get the~\emph{trace formulation of QAP}~\cite{Burkard98thequadratic}:
+We can now apply the property~\eqref{eq:Property1} to the formulation~\eqref{eq:QAP_classic2} and get the~\emph{trace formulation of QAP}~\cite{Burkard98thequadratic}:
 \begin{equation}\label{eq:QAP_classic3}
 P = \argmin_{\hat{P}\in\Pi_n}\tr(F\hat{P}D^T\hat{P}^T+B\hat{P}^T).
 \end{equation}
-The objective function of~\eqref{eq:QAP_classic3} can be further rewritten based on the last equality in~\eqref{eq:Property1} and property~\eqref{eq:Property2} as follows:
+The objective function of~\eqref{eq:QAP_classic3} can be further rewritten based on the properties~\eqref{eq:Property1.1} and \eqref{eq:Property2} as follows:
  \begin{align}\label{eq:QAP_classic4}
 \tr(F\hat{P}D^T\hat{P}^T+B\hat{P}^T)&=\tr(\hat{P}(F\hat{P}D^T)^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
 									&=\vec(\hat{P})^T\vec(F\hat{P}D^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
                                     &=\vec(\hat{P})^T(D\otimes F)\vec{\hat{P}}+\vec(B)^T\vec(\hat{P}).
 \end{align}
-Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}. If we assume the matrix $B$ be a constant matrix with the same values, that it does not have any influence on the optimization process. In this case setting matrix $F$ to $-(A^I)^T$ and matrix $D$ to $(A^J)^T$ lead us to the formulation~\eqref{eq:QAP2}. Similarly, denoting the Kronecker product $(-D\otimes F)$ as $S$ results in the formulation~\eqref{eq:sumQAP}.
+Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}. If we replace \ToDo{the} matrix $F$ with $-(A^I)^T$, \ToDo{the} matrix $D$ with $(A^J)^T$ and \ToDo{the} matrix $B$ with $D^I(D^J)^T$, we obtain the formulation~\eqref{eq:QAP2} from the first chapter. Analog, if we define a matrix $S=(-D\otimes F)$ with the vector $\vec(B)$ on the diagonal, we come to the formulation~\eqref{eq:sumQAP}.
 
 It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3}. Indeed, consider the first term of the objective function in~\eqref{eq:QAP1}:
 \begin{align*}
@@ -54,7 +58,21 @@ It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3
 							  &= \tr((A^I)^TA^I-(A^I)^T\hat{P}A^J\hat{P}^T-\hat{P}(A^J)^T\hat{P}^TA^I+\hat{P}(A^J)\hat{P}^T\hat{P}A^JP^T) \notag\\
 							  &= \tr((A^I)^TA^I-2(A^I)^T\hat{P}A^J\hat{P}^T+A^J(A^J)^T).
 \end{align*}
-The first and the last term are obviously constant, and thus can be ignored in optimization. Finally, substitution of $F=-(A^I)^T$, $D=(A^J)^T$ leads us to the formulation $\tr(F\hat{P}D^T\hat{P}^T)$. After performing the similar calculations on the second term of the objective in~\eqref{eq:QAP1} we obtain the problem~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
+The first and the last terms are obviously constant, and thus can be ignored during optimization. Consequently, ot holds:
+\begin{equation}\label{eq:trace_1}
+\argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2 = \argmin_{\hat{P}\in\Pi_n}-\tr((A^I)^T\hat{P}A^J\hat{P}^T).
+\end{equation}
+We perform the same transformations with the second term:
+\begin{align*}
+\|D^I-\hat{P}D^J\|^2 &= \tr((D^I-\hat{P}D^J)^T(D^I-\hat{P}D^J)) \notag\\
+					 &= \tr((D^I)^TD^I)-2(D^I)^T\hat{P}D^J+(D^J)^TD^J) \notag\\
+					 &= \tr((D^I)^TD^I)-2D^I(D^J)^T\hat{P}+(D^J)^TD^J) 
+\end{align*} 
+Also here the first and the last terms can be ignored during optimization, so that we can write:
+\begin{equation}\label{eq:trace_2}
+\argmin_{\hat{P}\in\Pi_n}\|D^I-\hat{P}D^J\|^2=\argmin_{\hat{P}\in\Pi_n}-\tr(D^I(D^J)^T\hat{P}).
+\end{equation}
+The combination of the results~\eqref{eq:trace_1} and~\eqref{eq:trace_1} with the substitution $F=-(A^I)^T$, $D=(A^J)^T$ and $B=-D^I(D^J)^T$ proof the equivalence of the problems~\eqref{eq:QAP1} and~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
 
 
 
