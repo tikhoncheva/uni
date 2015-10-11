@@ -53,23 +53,50 @@ function [img1, img2, G1, G2, GT] = make2SyntheticPointSets()
     
     %% 2nd Order Matrix
     E1 = ones(n1); E1(1:size(E1,1)+1:end) = 0;
-    [L1(:,1), L1(:,2)] = find(E1);
-    L1 = unique(sort(L1,2), 'rows');  % delete same edges
+%     [L1(:,1), L1(:,2)] = find(E1);
+%     L1 = unique(sort(L1,2), 'rows');  % delete same edges
     
     % omit (1-edgeDen)% of edges
-    nOmit1 = round(n1*(n1-1)*(1-edge_den)/2); 
-    ind_omit1 = datasample(1:size(L1,1), nOmit1, 'Replace',false)';
-    L1(ind_omit1,:) = [];
+    nMaxEdges1 = n1*(n1-1)/2;
+    nEdges_to_del1 = round((1-edge_dens)*nMaxEdges1);
+
+    subs_matrix1 = find(tril(E1));
+
+    subs_edges1 = false(nMaxEdges1,1); subs_edges1(1:nEdges_to_del1) = true;
+    subs_edges1 = subs_edges1(randperm(numel(subs_edges1)));
+
+    ind_edges_to_del1 = subs_matrix1(subs_edges1);
+    E1(ind_edges_to_del1) = 0;
+    E1 = tril(E1)+tril(E1)';
+    
+    [L1(:,1), L1(:,2)] = find(E1);
+    L1 = unique(sort(L1,2), 'rows');  % delete same edges
+
+%     nOmit1 = round(n1*(n1-1)*(1-edge_den)/2); 
+%     ind_omit1 = datasample(1:size(L1,1), nOmit1, 'Replace',false)';
+%     L1(ind_omit1,:) = [];
 
     
     E2 = ones(n2); E2(1:size(E2,1)+1:end) = 0;
-    [L2(:,1), L2(:,2)] = find(E2);
-    L2 = unique(sort(L2,2), 'rows');  % delete same edges
     
     % omit (1-edgeDen)% of edges
-    nOmit2 = round( n2*(n2-1)*(1-edge_den)/2); 
-    ind_omit2 = datasample(1:size(L2,1), nOmit2, 'Replace',false)';
-    L2(ind_omit2,:) = [];
+    nMaxEdges2 = n2*(n2-1)/2;
+    nEdges_to_del2 = round((1-edge_dens)*nMaxEdges2);
+
+    subs_matrix2 = find(tril(E2));
+
+    subs_edges2 = false(nMaxEdges2,1); subs_edges2(1:nEdges_to_del2) = true;
+    subs_edges2 = subs_edges2(randperm(numel(subs_edges2)));
+
+    ind_edges_to_del2 = subs_matrix2(subs_edges2);
+    E2(ind_edges_to_del2) = 0;
+    E2 = tril(E2)+tril(E2)';
+    
+    [L2(:,1), L2(:,2)] = find(E2);
+    L2 = unique(sort(L2,2), 'rows');  % delete same edges   
+%     nOmit2 = round( n2*(n2-1)*(1-edge_den)/2); 
+%     ind_omit2 = datasample(1:size(L2,1), nOmit2, 'Replace',false)';
+%     L2(ind_omit2,:) = [];
     
     
     % create first graphs

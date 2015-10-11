@@ -1,8 +1,8 @@
 %% Parameters of the graphs
 
-nIn  = 500;                       % number of inliers
-nOut = 50;                        % number of outliers
-edge_den = 1.0;                   % density of edge connections
+nIn  = 150;                       % number of inliers
+nOut = 0;                        % number of outliers
+edge_dens = 0.5;                   % density of edge connections
 
 % Parameters of affine transformation
 aff_transfo_scale = 1;          % scale factor
