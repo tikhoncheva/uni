@@ -40,11 +40,16 @@ if igparam.DelaunayTriang % Delaunay triangulation
     E = [E; DT(:,3), DT(:,1)];
 end
 
+if igparam.Complete % complete graph
+    Emat = ones(nV); Emat(1:nV+1:end) = 0;
+    [E(:,1), E(:,2)] = find(Emat);
+end
 E = unique(sort(E,2), 'rows');  % delete same edges
 
 LLG.V = V;
 LLG.D = D;
 LLG.E = E;
+LLG.candM = cell(nV,1);
 % % LLG.W = ones(nV,1)*Inf;
 % LLG.W = ones(nV,1)*NaN;
 fprintf('   finished in %f sec\n', toc(t1));

@@ -9,10 +9,10 @@
 % igparam           parameters of the initial graph construction
 function [I,M] = imagePyramid(view)
 
-setParameters;
+setParameters_2levelGM;
 
-scalef = ipparam.scalef;
-nLevels = ipparam.nLevels;
+scalef = ipparam_2lGM.scalef;
+nLevels = ipparam_2lGM.nLevels;
 
 HLGmatches = struct('objval', 0, 'matched_pairs', []);
 LLGmatches = struct('objval', 0., 'matchScores', [], 'matched_pairs', [], 'lobjval', []);
@@ -40,12 +40,12 @@ for i = 1:nLevels
            mkdir('./tmp');
        end
        iparam.view(1).fileName = sprintf('%s_level%d.png',view.fileName, i);
-       iparam.view(1).filePathName = ['./tmp/', iparam.view(1).fileName];
+       iparam.view(1).filePathName = ['./tmp/', iparam_2levelGM.view(1).fileName];
        imwrite(img, iparam.view(1).filePathName);
        iparam.nView = 1; iparam.bPair = 0;
        iparam.bShow = 0;
        
-       cdata = features_Cho( iparam, fparam, mparam );
+       cdata = features_Cho( iparam, fparam_2lGM, mparam_2lGM );
        view = cdata.view;
 %        featInfo = features_Cho(filePathName, img);
        clear iparam fparam mparam;
@@ -61,7 +61,7 @@ for i = 1:nLevels
 %        descr = descr(:, ind_rand);
 %    end
     
-   LLG = buildLLGraph(edges, descr, igparam);
+   LLG = buildLLGraph(edges, descr, igparam_2lGM);
    LLG.affMatrix = view.affMatrix(ind_rand,:);
 %    HLG = buildHLGraph(ID, LLG, agparam);
 

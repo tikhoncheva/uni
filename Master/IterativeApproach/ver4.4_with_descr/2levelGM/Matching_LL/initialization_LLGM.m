@@ -46,6 +46,8 @@ try
     D1 = cell(nPairs,1);
     D2 = cell(nPairs,1);
     
+    candM = cell(nPairs,1);
+    
     corrmatrix = cell(nPairs,1);     
     affmatrix = cell(nPairs,1);
     
@@ -56,32 +58,47 @@ try
         % indices of nodes, that belong to the anchor ai
         ai = HLG_matched_pairs(ind_new_subgraphPairs(i),1);
         
-        ai_x = U1(:,ai);
-        V1{i} = LLG1.V(ai_x,1:2)';
+        ind_Vi = U1(:,ai);
+        V1{i} = LLG1.V(ind_Vi,1:2)';
         if (~isempty(LLG1.D))
-            D1{i} = LLG1.D(:, ai_x);
+            D1{i} = LLG1.D(:, ind_Vi);
         else 
             D1{i} = [];
         end
-        adjM1cut = adjM1(ai_x, ai_x');
+        adjM1cut = adjM1(ind_Vi, ind_Vi');
 
         % indices of nodes, that belong to the anchor aj
         aj = HLG_matched_pairs(ind_new_subgraphPairs(i),2);
         
-        aj_x = U2(:, aj);
-        V2{i} = LLG2.V(aj_x,1:2)';
+        ind_Vj = U2(:, aj);
+        V2{i} = LLG2.V(ind_Vj,1:2)';
         if (~isempty(LLG2.D))
-            D2{i} = LLG2.D(:, aj_x);
+            D2{i} = LLG2.D(:, ind_Vj);
         else 
             D2{i} = [];
         end
-        adjM2cut = adjM2(aj_x, aj_x');
+        adjM2cut = adjM2(ind_Vj, ind_Vj');
 
         indOfSubgraphsNodes(i,1) = ind_new_subgraphPairs(i);
-        indOfSubgraphsNodes(i,2:end) = [ai_x' aj_x'];
+        indOfSubgraphsNodes(i,2:end) = [ind_Vi' ind_Vj'];
         localAdjMatrices1{i} = adjM1cut;
         localAdjMatrices2{i} = adjM2cut;
-
+        
+        ind_Vj = find(ind_Vj);
+        candM_ViVj_cell = LLG1.candM(ind_Vi,1);
+        candM_ViVj_pairs = [];
+        for vi = 1:nnz(ind_Vi)
+            cand_vj = candM_ViVj_cell{vi};
+            ind_present = find(ismember(ind_Vj, cand_vj));
+            
+            cand_vivj = [repmat(vi, numel(ind_present),1), ind_present];
+            candM_ViVj_pairs = [candM_ViVj_pairs; cand_vivj];
+        end
+        candM{i} = candM_ViVj_pairs;
+       
+        clear ind_Vi ind_Vj Vi Vj ai aj;
+        clear adjM1cut adjM2cut;
+        clear candM_ViVj_cell candM_ViVj_pairs
 %         display(sprintf(' %d x %d', size(V1{i},2), size(V2{i},2)));
     end
 
@@ -99,7 +116,8 @@ try
 %     display(sprintf('Number of workers: %d', poolsize));
 
     % in each step we consider subgraphs of the LLgraphs, which correspond to the anchor match ai<->aj
-    parfor i = 1:nPairs
+%     parfor i = 1:nPairs
+    for i = 1:nPairs
         
         v1 = V1{i};
         d1 = D1{i};
@@ -112,7 +130,12 @@ try
         adjM2cut = localAdjMatrices2{i};
 
         % correspondence matrix 
-        corrmatrix{i} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
+%         corrmatrix{i} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
+        corrM = zeros(nVi,nVj);                                            % use candidate matches
+        candM_pairs = candM{i};
+        corrM(sub2ind([nVi, nVj], candM_pairs(:,1), candM_pairs(:,2))) = 1;
+        corrmatrix{i} = corrM;
+        
 
         % compute initial affinity matrix
 %         if (nVi==0 || nVj==0 || nVi==1 || nVj==1)
@@ -146,12 +169,9 @@ try
         % 
         
 %         display(sprintf('matrix %d x %d ... finished', nVi, nVj));
+
+        clear v1 v2 d1 d2 adjM1cut adjM2cut corrM candM_pairs;
     end
-    
-%     delete(poolobj); 
-%     display(sprintf('Delete parallel pool %d', poolsize));
-    
-    % ----------------------------------------------------------------
 
 catch ME
     msg = 'Error occurred in Lower Level Graph Matching in parallel pool';
@@ -164,7 +184,6 @@ catch ME
     rethrow(ME);
 end
 
-% display(sprintf('Summary %f sec', toc));
 
 
 end

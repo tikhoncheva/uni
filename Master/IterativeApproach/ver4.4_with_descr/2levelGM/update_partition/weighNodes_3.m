@@ -113,7 +113,8 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
             err_vect1 = sqrt((Vaj_m(:,1)-PVai_m(:,1)).^2+(Vaj_m(:,2)-PVai_m(:,2)).^2);
                 
             H = [[Ai, bi];[0 0 1]]; 
-            err1 = quantile(err_vect1, 0.25); %median(err_vect1);
+%             err1 = quantile(err_vect1, 0.25); 
+            err1 = median(err_vect1);
             
             
             % from right to left
@@ -125,7 +126,8 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
             err_vect2 = sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2);  
             
             inverseH = [[Aj, bj];[0 0 1]];    
-            err2 = quantile(err_vect2, 0.25); %median(err_vect2);
+%             err2 = quantile(err_vect2, 0.25); %median(err_vect2);
+            err2 = median(err_vect2);
             
             %% calculate summary error of the estimated transformation
             [err, better_estimated_T] = min([err1, err2]);

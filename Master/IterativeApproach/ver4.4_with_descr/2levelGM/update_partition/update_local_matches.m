@@ -1,7 +1,7 @@
 %% update local matches using voting algorithm from ProgGM (Minsu Cho, 2012)
 % code is a modified part of wrapper_ProgGM.m, Minsu Cho, 2012
 
-function [matchlist_new] = update_local_matches(LLG1, LLG2, matchScore_GM, matchList_GM)
+function [matchList_GM_new] = update_local_matches(LLG1, LLG2, matchScore_GM, matchList_GM)
     nV1 = size(LLG1.V,1);
     nV2 = size(LLG2.V,1);
     
@@ -40,7 +40,7 @@ function [matchlist_new] = update_local_matches(LLG1, LLG2, matchScore_GM, match
 
         % forward voting
         ptAnchor1 = LLG1.V(matchAnchor(1),1:2);
-        [ voting, nAddedVote ]= voteCandidate( kdtreeNS1, kdtreeNS2, LLG1.V, LLG2.V, ...
+        [ voting, nAddedVote ]= voteCandidate( kdtreeNS1, kdtreeNS2, LLG1.V(:,1:2), LLG2.V(:,1:2), ...
             matchList_GM, scoreAnchor, ptAnchor1, Ti21, k_neighbor1, k_neighbor2);
         
         voting_space = voting_space + voting;
@@ -48,7 +48,7 @@ function [matchlist_new] = update_local_matches(LLG1, LLG2, matchScore_GM, match
         
         % backward voting
         ptAnchor2 = LLG2.V(matchAnchor(2),1:2);
-        [ voting, nAddedVote ]= voteCandidate( kdtreeNS2, kdtreeNS1, LLG1.V, LLG2.V,...
+        [ voting, nAddedVote ]= voteCandidate( kdtreeNS2, kdtreeNS1, LLG2.V(:,1:2), LLG1.V(:,1:2),...
             matchList_GM(:,[2 1]), scoreAnchor, ptAnchor2, Ti12, k_neighbor1, k_neighbor2);
         voting_space = voting_space + voting';
         nVote = nVote + nAddedVote;
@@ -56,8 +56,11 @@ function [matchlist_new] = update_local_matches(LLG1, LLG2, matchScore_GM, match
     kdtree_delete(kdtreeNS1);
     kdtree_delete(kdtreeNS2);
     
-    [~, maxpos] = max(voting_space, [], 2);
-    matchlist_new = [(1:nV1)', maxpos];
+    X = greedyMapping(voting_space(:), group1, group2);
+    [matchList_GM_new(:,1), matchList_GM_new(:,2)] = find(reshape(X, nV1, nV2)); 
+    
+%     [~, maxpos] = max(voting_space, [], 2);
+%     matchList_GM_new = [(1:nV1)', maxpos];
     
 %     % make sure that the current GM matches are included
 %     for iter_i = 1:length(matchIdx_GM) % for each match        
