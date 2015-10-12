@@ -9,7 +9,7 @@
 %      sim: vector of pairwise similarity between two sets of vectors
 %
 
-function [sim] = edgeSimilarity(E1, E2)
+function [sim] = edgeSimilarity_exp(E1, E2)
 
     assert( size(E1, 1) == size(E2, 1), ... 
         'Error in nodeSimilarity-function: two sets of descriptors have different size' );

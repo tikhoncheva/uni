@@ -27,7 +27,7 @@ plotSet.font = '\fontname{Arial}'; % Font default
 
 %% img_trafo
 filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/img_trafo/set1/';
-savepath = './Results/ImageTrafo//parallelized/no_descr/using_cpd_afftrafo/';
+savepath = './Results/ImageTrafo/no_descr/using_cpd_afftrafo/';
 listOfimages = dir([ filepath '*_a*.png' ]);
 
 names = {listOfimages.name}';
@@ -47,6 +47,9 @@ time_init2 = zeros(nImagePairs);
 X = cell(nImagePairs, length(methods));
 % Xraw = cell(nImagePairs, length(methods));
 perform_data = cell(nImagePairs, length(methods));
+
+%% start parallel pool
+poolobj = parpool(3);       
 
 %% main loop start
 for cImg=1:nImagePairs
@@ -100,8 +103,9 @@ for cImg=1:nImagePairs
     clear iparam problem mname;
     disp('================================================================');disp(' ');
 end     
+
 %% close parallel pool
-delete(poolobj);
+delete(poolobj);  
 %%
 handleCount = 0;
 yData = accuracy; yLabelText = 'accuracy'; plotResults;

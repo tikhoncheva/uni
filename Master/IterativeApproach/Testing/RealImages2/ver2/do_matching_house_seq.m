@@ -27,9 +27,16 @@ plotSet.font = '\fontname{Arial}'; % Font default
 
 %% house_seq
 filepath = '../../../../data/houseSmall/';
-savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/solution/';
+% savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/solution/';
 % savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/ext_solution/';
-% savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/init_GT/';
+savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/init_GT/';
+
+if ~exist(savepath, 'dir')
+   mkdir(savepath);
+end
+if ~exist([savepath, 'performance/'], 'dir')
+   mkdir([savepath, 'performance/']);
+end
 
 listOfimages = dir([ filepath 'house.seq*.png' ]);
 
@@ -102,8 +109,8 @@ for cImg=1:nImagePairs
         
         f1 = plotMatches(mname, problem, ...
                      accuracy(cImg,i), score(cImg,i), X{cImg,i});                 
-        print(f1, [savepath, 'fi_', num2str(cImg), '_', mname(9:end)],'-dpng');            
-        close all;
+%         print(f1, [savepath, 'fi_', num2str(cImg), '_', mname(9:end)],'-dpng');            
+%         close all;
     end
 
     %% Plot changes in Precision, Recall
@@ -117,6 +124,8 @@ end
 %% close parallel pool
 delete(poolobj);  
 %%
+names = {'accuracy', 'score', 'time', 'time_summary'};
+
 handleCount = 0;
 yData = accuracy; yLabelText = 'accuracy'; plotResults;
 yData = score; yLabelText = 'objective score'; plotResults;
@@ -125,3 +134,10 @@ yData = time; yLabelText = 'running time'; plotResults;
 %% Time with initialization
 time_summary = time + [time_init1, time_init2, zeros(nImagePairs,1)];
 yData = time_summary; yLabelText = 'running time + initialization'; plotResults;
+
+%% Save mat files
+save([savepath, 'performance/' 'accuracy.mat'], 'accuracy');
+save([savepath, 'performance/' 'score.mat'], 'score');
+save([savepath, 'performance/' 'time.mat'], 'time');
+save([savepath, 'performance/' 'time_summary.mat'], 'time_summary');
+save([savepath, 'performance/' 'perform_data.mat'], 'perform_data');

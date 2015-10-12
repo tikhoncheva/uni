@@ -37,4 +37,12 @@ for k = length(methods):-1:1
 end
 hold off;
 
+% save plots
+
+set(h(handleCount), 'color', 'w');
+
+F = getframe(h(handleCount));
+img = F.cdata;
+imwrite(img, [savepath,'performance/',names{handleCount}, '.png']);
+
 clear Xmin Xmax Ymin Ymax yData yLabelText hLegend k

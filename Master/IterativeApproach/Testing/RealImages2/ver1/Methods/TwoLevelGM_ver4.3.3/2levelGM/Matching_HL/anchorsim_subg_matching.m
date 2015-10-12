@@ -10,9 +10,42 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 
     nV1 = size(LLG1.V,1); nV2 = size(LLG2.V,1);
     nA1 = size(HLG1.V,1); nA2 = size(HLG2.V,1);
-    
+   
+%     sim = zeros(nA1*nA2, 1);    
 %     [I,J] = find(corrmatrix);
 %     cand_matches = [I,J];
+
+    %------------------------------------------------------------------
+    % Feature matching
+    %------------------------------------------------------------------
+
+%     thr = 1.1;
+% 
+%     for k = 1:size(cand_matches,1)
+% 
+%        ai = cand_matches(k,1);
+%        aj = cand_matches(k,2);
+%        
+%        ind_Vai = HLG1.U(:,ai);
+%        Vai = LLG1.V(ind_Vai,1:2)'; nVai = size(Vai,2); % 2 x nVai
+%        Dai = LLG1.D(:, ind_Vai);
+% 
+%        ind_Vaj = HLG2.U(:, aj);
+%        Vaj = LLG2.V(ind_Vaj,1:2)'; nVaj = size(Vaj,2);  % 2 x  nVaj
+%        Daj = LLG2.D(:, ind_Vaj);
+%        
+%        [matches, dist] = vl_ubcmatch(Dai, Daj, thr);
+%        
+%        score = exp(-mean(dist)^2);
+%        
+%        sim((aj-1)*nA1 + ai) = score;
+% 
+%     end 
+    
+    
+    %------------------------------------------------------------------
+    % Graph Matching (RRWM)
+    %------------------------------------------------------------------
 
     % adjacency matrix of the first dependency graph
     adjM1 = zeros(nV1, nV1);
@@ -27,50 +60,7 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
     E2 = [E2; [E2(:,2) E2(:,1)]];
     ind = sub2ind(size(adjM2), E2(:,1), E2(:,2));
     adjM2(ind) = 1;  
-
-%     sim = zeros(nA1*nA2, 1);
-%     for k = 1:size(cand_matches,1)
-% 
-%        ai = cand_matches(k,1);
-%        aj = cand_matches(k,2);
-%        ind_Vai = HLG1.U(:,ai);
-%        
-%        Vai = LLG1.V(ind_Vai,1:2)'; nVai = size(Vai,2); % 2 x nVai
-%        if (~isempty(LLG1.D))
-%            Dai = LLG1.D(:, ind_Vai);
-%        else 
-%            Dai = [];
-%        end
-%        adjM1cut = adjM1(ind_Vai, ind_Vai');
-% 
-% 
-%        ind_Vaj = HLG2.U(:, aj);
-%        Vaj = LLG2.V(ind_Vaj,1:2)'; nVaj = size(Vaj,2);  % 2 x  nVaj
-%        if (~isempty(LLG2.D))
-%            Daj = LLG2.D(:, ind_Vaj);
-%        else 
-%            Daj = [];
-%        end
-%        adjM2cut = adjM2(ind_Vaj, ind_Vaj');
-% 
-%        % correspondence matrix 
-%        corrmatrix = ones(nVai,nVaj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
-% 
-%        % compute initial affinity matrix
-%        if (size(Vai,2)<=1 || size(Vaj,2)<=1)
-%            continue;
-%        else
-%            affmatrix = initialAffinityMatrix2(Vai, Vaj, Dai, Daj, adjM1cut, adjM2cut, corrmatrix);
-%        end    
-% 
-%        [score, X] = GraphMatching(corrmatrix, affmatrix);
-%        % subgraph weights
-%        Ai = 1/sum(X(:)); %/nV1;
-%        Aj = 1; %/nV2;
-%        sim((aj-1)*nA1 + ai) = Ai*Aj*score;
-% 
-%     end
-
+    
     sim = zeros(nA1*nA2, 1);
     ind_sim = zeros(nA1*nA2, 1);
 
@@ -137,6 +127,10 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
     end
     
     sim = sim(ind_sim);
+    
+       %------------------------------------------------------------------
+       % CDF by Myronenko
+       %------------------------------------------------------------------
 %     for k = 1:size(cand_matches,1)
 % 
 %        ai = cand_matches(k,1);
@@ -145,10 +139,9 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 %        ind_Vai = HLG1.U(:,ai);
 %        Vai = LLG1.V(ind_Vai,1:2)'; nVai = size(Vai,2); % 2 x nVai
 % 
-% 
 %        ind_Vaj = HLG2.U(:, aj);
 %        Vaj = LLG2.V(ind_Vaj,1:2)'; nVaj = size(Vaj,2);  % 2 x  nVaj
-%        
+%       
 %        Vai = Vai';
 %        Vaj = Vaj';
 %        
@@ -181,5 +174,5 @@ function [sim] = anchorsim_subg_matching (LLG1, LLG2, HLG1, HLG2, cand_matches)
 %        
 %        sim((aj-1)*nA1 + ai) = exp(-err);
 %     end 
-    
+       
 end

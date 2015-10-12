@@ -29,20 +29,23 @@ if strcmp(alg, 'wrapper_featureMatching')
     time = toc(start);
 end      
 
-
-
-% Measure accuracy
+% solution
 X_EXT = X';
+
+% ext_solution
 % X_EXT = extrapolateMatchIndicator(invar.LLG1.V, invar.LLG2.V, cand_matchlist_init, X, invar.extrapolation_dist ); % extrapolate the solutions                
 % X = X_EXT';
-accuracy  = (X_EXT*X_GT')/nnz(X_GT)*100;
 
+% Measure accuracy
+% accuracy  = (X_EXT*X_GT')/nnz(X_GT)*100;
+
+% Measure score
 matches = cand_matchlist_init(logical(X_EXT'),1:2);
 score = matching_score(invar.LLG1, invar.LLG2, matches);
 
 %% detected correspondences from the provided GT
-%  TP = ismember(matches(:,1:2), invar.cdata.GT, 'rows');
-%  TP = sum(TP(:));
-%  accuracy = TP/ size(invar.cdata.GT,1)*100;                        % recall ???
+ TP = ismember(matches(:,1:2), invar.cdata.GT, 'rows');
+ TP = sum(TP(:));
+ accuracy = TP/ size(invar.cdata.GT,1)*100;                        % recall ???
 
 end

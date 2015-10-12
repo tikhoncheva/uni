@@ -8,8 +8,6 @@
 
 function [affmatrix, HLG1, HLG2] = initialAffinityMatrix(LLG1, LLG2, HLG1, HLG2, corrmatrix)
 
-% t1 = tic;
-
 nA1 = size(HLG1.V,1);
 nA2 = size(HLG2.V,1);
 
@@ -27,7 +25,7 @@ nodesim = anchorsim_subg_matching(LLG1, LLG2, HLG1, HLG2, cand_matches);
 % else
 %     nodesim2 = zeros(nA1*nA2,1); 
 % end
-% nodesim2 = zeros(nA1*nA2,1); 
+
 
 % nodesim = nodesim1;
 % nodesim = nodesim2;
@@ -132,8 +130,5 @@ D(1:size(D,1)+1:end) = 0;
 affmatrix = diag(nodesim) + D;
 
 affmatrix = affmatrix(ind_cand_matches ,ind_cand_matches);
-
-
-% fprintf('   calculation of affinity matrix (HL) took %.03f sec', toc(t1));
 
 end

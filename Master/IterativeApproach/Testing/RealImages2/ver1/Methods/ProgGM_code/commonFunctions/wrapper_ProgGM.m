@@ -177,6 +177,13 @@ for iterGM = 1:maxIterGM
     cdata.affinityMatrix = cdata.affinityMatrix.*~full(getConflictMatrix(cdata.group1, cdata.group2));
     cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = 0; % diagonal 0s
     
+    d1 = cdata.view(1).desc';
+    d2 = cdata.view(2).desc';
+    nodesim = nodeSimilarity(d1, d2, 'cosine');
+    ind = (cand_matchlist_new(:,2)-1)*size(d1,2) + cand_matchlist_new(:,1);
+    nodesim = nodesim(ind);
+    cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = nodesim;
+    
 end
 perform_data = perform_data(1:iterGM,:);
 

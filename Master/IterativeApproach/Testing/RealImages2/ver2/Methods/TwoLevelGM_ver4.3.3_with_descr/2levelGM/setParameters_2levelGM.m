@@ -18,8 +18,9 @@ ipparam_2lGM.scalef = 2;	% scale factor
 %% Parameters for initial graph construction
 
 igparam_2lGM.NNconnectivity = 0; 	% connecte each node with its minDeg- nearest neighbors
-igparam_2lGM.minDeg		   = 6; 	% minimal degree of a graph
-igparam_2lGM.DelaunayTriang = 1; 	% Delaunay Triangulation
+igparam_2lGM.minDeg  = 6; 		% minimal degree of a graph
+igparam_2lGM.DelaunayTriang = 0; 	% Delaunay Triangulation
+igparam_2lGM.Complete       = 1; 	% Delaunay Triangulation
 
 %% Parameters for 2 Level Graph Matching algorithm
 

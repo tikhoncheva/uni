@@ -1,5 +1,5 @@
 %% Make Problem
-function [ problem, time1, time2 ] = makeProblem_ProgGM(iparam, initPathnFile)
+function [ problem, time1, time2, time3 ] = makeProblem(iparam, initPathnFile)
 
 t = tic;
 %setMethods_ProgGM;
@@ -47,12 +47,12 @@ cdata.affinityMatrix = cdata.affinityMatrix.*~(getConflictMatrix(cdata.group1, c
 cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = 0; % diagonal 0s
 
 %% add node similarity to the affine matrix
-% d1 = cdata.view(1).desc';
-% d2 = cdata.view(2).desc';
-% nodesim = nodeSimilarity(d1, d2, 'cosine');
-% ind = (cand_matchlist(:,2)-1)*size(d1,2) + cand_matchlist(:,1);
-% nodesim = nodesim(ind);
-% cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = nodesim;
+d1 = cdata.view(1).desc';
+d2 = cdata.view(2).desc';
+nodesim = nodeSimilarity(d1, d2, 'cosine');
+ind = (cand_matchlist(:,2)-1)*size(d1,2) + cand_matchlist(:,1);
+nodesim = nodesim(ind);
+cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = nodesim;
 
 
 time1 = toc(t1) + time;
@@ -72,6 +72,7 @@ LLG2 = buildLLGraph(edges2, descr2, igparam_2lGM);
 time2 = toc(t2) + time;
 clear edges1 descr1 edges2 descr2;
 clear ipparam_2lGM igparam_2lGM agparam_2lGM algparam_2lGM;
+
 %% Ground Truth (boolean vector)
 nV1 = size(LLG1.V,1);
 nV2 = size(LLG2.V,1);

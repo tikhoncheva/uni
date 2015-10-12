@@ -24,26 +24,28 @@ D = descr;          % descriptors of the vertices
 nV = size(V,1);
 
 
-% if igparam.NNconnectivity % nearest neighbor relations between nodes
-%     minDeg = igparam.minDeg; %6; % minimal degree of the graph
-% 
-%     [nodes_kNN, ~] = knnsearch(V(:, 1:2), V(:, 1:2), 'k', minDeg + 1);    % nV x (minDeg+1) matrix                   
-%     nodes_kNN = nodes_kNN(:,2:end); % delete loops in each vertex (first column of the matrix)
-%     minDeg = min(size(nodes_kNN,2),minDeg);
-%     nodes_kNN = reshape(nodes_kNN, nV*minDeg, 1);
-%     E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
-% end
+if igparam.NNconnectivity % nearest neighbor relations between nodes
+    minDeg = igparam.minDeg; %6; % minimal degree of the graph
 
-% if igparam.DelaunayTriang % Delaunay triangulation
-%     DT = delaunayTriangulation(V);
-%     E = [DT(:,1), DT(:,2)];
-%     E = [E; DT(:,2), DT(:,3)];
-%     E = [E; DT(:,3), DT(:,1)];
-% end
+    [nodes_kNN, ~] = knnsearch(V(:, 1:2), V(:, 1:2), 'k', minDeg + 1);    % nV x (minDeg+1) matrix                   
+    nodes_kNN = nodes_kNN(:,2:end); % delete loops in each vertex (first column of the matrix)
+    minDeg = min(size(nodes_kNN,2),minDeg);
+    nodes_kNN = reshape(nodes_kNN, nV*minDeg, 1);
+    E = [repmat([1:nV]', minDeg, 1) nodes_kNN];
+end
 
-% complete graph
-Emat = ones(nV); Emat(1:nV+1:end) = 0;
-[E(:,1), E(:,2)] = find(Emat);
+if igparam.DelaunayTriang % Delaunay triangulation
+    DT = delaunayTriangulation(V);
+    E = [DT(:,1), DT(:,2)];
+    E = [E; DT(:,2), DT(:,3)];
+    E = [E; DT(:,3), DT(:,1)];
+end
+
+if igparam.Complete % complete graph
+    Emat = ones(nV); Emat(1:nV+1:end) = 0;
+    [E(:,1), E(:,2)] = find(Emat);
+end
+
 E = unique(sort(E,2), 'rows');  % delete same edges
 
 LLG.V = V;

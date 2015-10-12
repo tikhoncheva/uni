@@ -24,7 +24,7 @@ for i = 1:nA1
         j = ai_pairs(k);
         hist_aj = HLG2.D_appear(j, :);
 
-        C = ((hist_ai-hist_aj).^2)./(hist_ai+hist_aj); %* 0.5;
+        C = ((hist_ai-hist_aj).^2)./(hist_ai+hist_aj+eps); %* 0.5;
         C(isnan(C)) =0;
         C = sum(C(:));
                 

@@ -5,7 +5,7 @@ fparam.featureScale = 1.0;         % scaling factor for descriptor
 fparam.patchSize = 31;             % patch size for descriptor
 fparam.validMargin = 15;           % ignore the features in this margin area of image
 
-fparam.featExt = { 'mser', 'haraff', 'hesaff', 'sift', 'GT' }; % feature types possible
+fparam.featExt = { 'mser', 'haraff', 'hesaff', 'sift' 'GT'}; % feature types possible
 fparam.bFeatExtUse = [ 1 0 0 0 1]; % feature types used for *** feature detection! ***
 %fparam.bEstimateOrientation = 0; % estimate dominant orientations or not
 

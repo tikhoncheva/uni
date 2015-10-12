@@ -106,7 +106,6 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
               
             % from left to rigth
             [~, Ai, bi] = ransac_cpd(Vai_m, Vaj_m, 0.8, 0.5);
-%             [~, Ai, bi] = ransac_afftrafo(Vai_m, Vaj_m, 0.8, 0.5);
             PVai_m = Ai * Vai_m' + repmat(bi,1,size(Vai_m,1)); % proejction of Vai_m nodes
             PVai_m = PVai_m';
             err_vect1 = sqrt((Vaj_m(:,1)-PVai_m(:,1)).^2+(Vaj_m(:,2)-PVai_m(:,2)).^2);
@@ -117,7 +116,6 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
             
             % from right to left
             [~, Aj, bj] = ransac_cpd(Vaj_m, Vai_m, 0.6, 0.5);
-%             [~, Aj, bj] = ransac_afftrafo(Vaj_m, Vai_m, 0.8, 0.5);
             PVaj_m = Aj * Vaj_m' + repmat(bj,1,size(Vaj_m,1)); % projection of Vaj_m nodes
             PVaj_m = PVaj_m'; 
             err_vect2 = sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2);  

@@ -26,10 +26,17 @@ plotSet.fontSize = 15; % Font Size
 plotSet.font = '\fontname{Arial}'; % Font default
 
 %% house_seq
-filepath = '../../../../data/houseSmall2/';
-% savepath = './Results/HouseSeq/parallelized/no_descr/using_cpd_afftrafo/solution/';
-% savepath = './Results/HouseSeq/parallelized/no_descr/using_cpd_afftrafo/ext_solution/';
-savepath = './Results/HouseSeq/parallelized/no_descr/using_cpd_afftrafo/init_GT/';
+filepath = '../../../../data/houseSmall/';
+savepath = './Results/HouseSeq/no_descr/using_cpd_afftrafo/solution/';
+% savepath = './Results/HouseSeq/no_descr/using_cpd_afftrafo/ext_solution/';
+% savepath = './Results/HouseSeq/no_descr/using_cpd_afftrafo/init_GT/';
+
+if ~exist(savepath, 'dir')
+   mkdir(savepath);
+end
+if ~exist([savepath, 'performance/'], 'dir')
+   mkdir([savepath, 'performance/']);
+end
 
 listOfimages = dir([ filepath 'house.seq*.png' ]);
 
@@ -49,10 +56,11 @@ nImagePairs = size(fnamelist,1);
 %% storage for matching results
 accuracy = zeros(nImagePairs, length(methods));
 score = zeros(nImagePairs, length(methods));
+score2 = zeros(nImagePairs, length(methods));
 time = zeros(nImagePairs, length(methods));
 
-time_init1 = zeros(nImagePairs);
-time_init2 = zeros(nImagePairs);
+time_init1 = zeros(nImagePairs,1);
+time_init2 = zeros(nImagePairs,1);
 
 X = cell(nImagePairs, length(methods));
 % Xraw = cell(nImagePairs, length(methods));
@@ -83,7 +91,7 @@ for cImg=1:nImagePairs
 
     % file with the saved GT
     resultTag = [ iparam.view(1).fileName '+' iparam.view(2).fileName ];
-    initPathnFile = [ filepath '/' 'fi_' resultTag '.mat' ];
+    initPathnFile = [ filepath 'GT/' 'fi_' resultTag '.mat' ];
     
     [problem, time_init1(cImg), time_init2(cImg)] = ...
                                         makeProblem(iparam, initPathnFile);
@@ -91,7 +99,7 @@ for cImg=1:nImagePairs
     %% Test Methods
     for i = 1:length(methods)
         str = sprintf('run_algorithm_house_seq(''%s'', problem);', func2str(methods(i).fhandle));
-        [accuracy(cImg,i), score(cImg,i), time(cImg,i), ...
+        [accuracy(cImg,i), score(cImg,i), score2(cImg,i), time(cImg,i), ...
                        X{cImg,i}, perform_data{cImg,i}] = eval(str);
 
         fprintf('Algorithm:%s   Accuracy: %.3f Score: %.3f Time: %.3f\n',...
@@ -116,7 +124,20 @@ end
 %% close parallel pool
 delete(poolobj);  
 %%
+names = {'accuracy', 'score', 'time', 'time_summary'};
+
 handleCount = 0;
 yData = accuracy; yLabelText = 'accuracy'; plotResults;
 yData = score; yLabelText = 'objective score'; plotResults;
 yData = time; yLabelText = 'running time'; plotResults;
+
+%% Time with initialization
+time_summary = time + [time_init1, time_init2, zeros(nImagePairs,1)];
+yData = time_summary; yLabelText = 'running time + initialization'; plotResults;
+
+%% Save mat files
+save([savepath, 'performance/' 'accuracy.mat'], 'accuracy');
+save([savepath, 'performance/' 'score.mat'], 'score');
+save([savepath, 'performance/' 'time.mat'], 'time');
+save([savepath, 'performance/' 'time_summary.mat'], 'time_summary');
+save([savepath, 'performance/' 'perform_data.mat'], 'perform_data');
