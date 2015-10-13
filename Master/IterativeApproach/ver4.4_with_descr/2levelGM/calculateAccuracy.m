@@ -22,7 +22,7 @@ if ~isempty(GT)
 %         X(sub2ind(size(X), Gmatches(i).matched_pairs(:,1), Gmatches(i).matched_pairs(:,2))) = 1;
 %         X = X(:);
 %         X_EXT = extrapolateMatchIndicator( LLG1.V, LLG2.V, Initialmatches, X, extrapolation_dist ); % extrapolate the solutions                            
-%         Accuracy1(i)  = (X_EXT*X_GT')/nnz(X_GT) * 100;    
+%         Accuracy(i)  = (X_EXT*X_GT')/nnz(X_GT) * 100;    
     end
 end
 

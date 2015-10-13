@@ -60,7 +60,7 @@ function [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
       [~,ia] = unique(tmp(ind,1));
       tmp = tmp(ind(ia),:);
 
-      new_U2(uint8(tmp(:,1)), aj) = tmp(:,2);   
+      new_U2(tmp(:,1), aj) = tmp(:,2);   
       
       % Project Vaj into LLG1.V
       PVaj = Aj * Vaj' + repmat(bj,1,size(Vaj,1)); % projection of Vaj_nm nodes
@@ -78,11 +78,11 @@ function [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
       [~,ia] = unique(tmp(ind,1));
       tmp = tmp(ind(ia),:);
 
-      new_U1(uint8(tmp(:,1)), ai) = tmp(:,2);
+      new_U1(tmp(:,1), ai) = tmp(:,2);
       
 %       figure; subplot(1,2,1);
 %                     
-%                     m = 250;
+%                     m = 450;
 %                     plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
 % 
 %                     V2 = LLG2.V; V2(:,1) = m + V2(:,1);

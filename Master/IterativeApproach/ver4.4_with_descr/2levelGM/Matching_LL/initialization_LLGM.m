@@ -132,9 +132,11 @@ try
         % correspondence matrix 
 %         corrmatrix{i} = ones(nVi,nVj);                                   % !!!!!!!!!!!!!!!!!!!!!! now: all-to-all
         corrM = zeros(nVi,nVj);                                            % use candidate matches
-        candM_pairs = candM{i};
-        corrM(sub2ind([nVi, nVj], candM_pairs(:,1), candM_pairs(:,2))) = 1;
-        corrmatrix{i} = corrM;
+        if ~isempty(candM{i})
+            candM_pairs = candM{i};
+            corrM(sub2ind([nVi, nVj], candM_pairs(:,1), candM_pairs(:,2))) = 1;
+            corrmatrix{i} = corrM;
+        end
         
 
         % compute initial affinity matrix
@@ -142,7 +144,7 @@ try
 %             affmatrix{i} = [];
 %         else
         if (nVi>1 && nVj>1)
-            affmatrix{i} = initialAffinityMatrix2(v1, v2, d1, d2, adjM1cut, adjM2cut, corrmatrix{i});
+            affmatrix{i} = initialAffinityMatrix2(v1', v2', d1, d2, adjM1cut, adjM2cut, corrmatrix{i});
         end
         
         ind_origin_vertices{i} = [nVi, nVj, (1:nVi*nVj)];

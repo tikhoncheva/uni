@@ -59,14 +59,15 @@ if (nIterations>0)
     %     end
 
         % in each step we match points corresponding to the anchor match ai<->aj
-        parfor it = 1:nIterations
+%         parfor it = 1:nIterations
+        for it = 1:nIterations
 
             % nodes, that belong to the anchor ai
-            ai_x = logical(indOfSubgraphNodes(it, 2:1+nV1));
+            ind_Vi = logical(indOfSubgraphNodes(it, 2:1+nV1));
             nVi = size(corrmatrices{it},1);
 
             % nodes, that belong to the anchor aj
-            aj_x = logical(indOfSubgraphNodes(it, nV1+2:end));        
+            ind_Vj = logical(indOfSubgraphNodes(it, nV1+2:end));        
             nVj = size(corrmatrices{it},2);
 
             fprintf('\n     matrix size %d x %d ', nVi, nVj);
@@ -81,23 +82,32 @@ if (nIterations>0)
                 local_objval(it,1) = 0.;
                 continue; 
             end
+            
+            [objval, X_prime, Xraw_prime] = GraphMatching(corrmatrix, affmatrix);
+            
+%             ind_same = ind_origin_vertices{it}; 
+%             nVi = ind_same(1,1); nVj = ind_same(1,2);
+%             ind_same = ind_same(3:end)';
+            
+%             X = X(ind_same);
+%             objval = X' * affmatrix(ind_same, ind_same) * X;
 
-            [objval, X, Xraw] = GraphMatching(corrmatrix, affmatrix);
+            [corr_matches{it}(:,1), corr_matches{it}(:,2)] = find(corrmatrix);
+            all_matches = [repmat((1:nVi)', nVj,1), kron((1:nVj)', ones(nVi,1))];
+            ind_same = ismember(all_matches, corr_matches{it}, 'rows');
             
-            ind_same = ind_origin_vertices{it}; 
-            nVi = ind_same(1,1); nVj = ind_same(1,2);
-            ind_same = ind_same(3:end)';
-            
-            X = X(ind_same);
-            objval = X' * affmatrix(ind_same, ind_same) * X;
+            X = zeros(size(all_matches,1), 1);     X(ind_same) = X_prime;
+            Xraw = zeros(size(all_matches,1), 1);  Xraw(ind_same) = Xraw_prime;
             
             W_local = reshape(Xraw.*X, [nVi, nVj]);
             W = zeros(nV1, nV2);
-            W(ai_x, aj_x') = W_local;
+            W(ind_Vi, ind_Vj') = W_local;
 
             local_weights(it,:) = reshape(W, [1 nV]);
             local_objval(it,1) = objval;
 
+            clear ai_x aj_x;
+            clear X Xraw X_prime Xraw_prime corr_matches;
         end
 
     %     delete(poolobj); 
