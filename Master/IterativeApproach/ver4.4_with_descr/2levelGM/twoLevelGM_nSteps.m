@@ -11,12 +11,12 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
 %     [HLG1, HLG2] = buildHLGraphs_use_InitMatches2(LLG1, LLG2, InitialMatches, agparam);
 
     if isempty(HLG1)
-%         HLG1 = buildHLGraph(L, LLG1, agparam);
+%         HLG1 = buildHLGraph(L, LLG1, agparam_2lGM);
         HLG1 = buildHLGraph_grid(L, LLG1, agparam_2lGM);
 %           HLG1 = buildHLGraph_aggClustering(L, LLG1, agparam);
     end
     if isempty(HLG2)
-%         HLG2 = buildHLGraph(L, LLG2, agparam);
+%         HLG2 = buildHLGraph(L, LLG2, agparam_2lGM);
         HLG2 = buildHLGraph_grid(L, LLG2, agparam_2lGM);
 %           HLG2 = buildHLGraph_aggClustering(L, LLG2, agparam);
     end

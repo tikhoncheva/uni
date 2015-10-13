@@ -26,7 +26,7 @@ plotSet.fontSize = 15; % Font Size
 plotSet.font = '\fontname{Arial}'; % Font default
 
 %% img_trafo
-filepath = '/export/home/etikhonc/Documents/UniGit/uni/Master/data/img_trafo/set1/';
+filepath = '/export/home/etikhonc/Documents/GIT/uni/Master/data/img_trafo/set1/';
 savepath = './Results/ImageTrafo/descr/using_cpd_afftrafo/';
 listOfimages = dir([ filepath '*_a*.png' ]);
 

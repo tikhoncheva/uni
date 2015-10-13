@@ -27,7 +27,7 @@ igparam_2lGM.Complete = 1; 	% Complete Graph
 % anchor graphs
 agparam_2lGM.nA = 6;        % number of anchors
 agparam_2lGM.appSizeOfSubgraph = 30;  % approximate number of nodes in one subgraph
-agparam_2lGM.grid_nr = 3;      % number of rows in a grid over a graph
+agparam_2lGM.grid_nr = 2;      % number of rows in a grid over a graph
 agparam_2lGM.grid_nc = 2;      % number of columns -//- 
                           % #subgraphs = grid_nr x grid_nc
 agparam_2lGM.ncand = 3;        % number of candidate matches of each anchor
@@ -42,8 +42,8 @@ agparam_2lGM.R = 30;                % radius of the local neighborhood around a 
 agparam_2lGM.nbins = 50;            % number of bins in the structural descriptor of the
 
 % algorithm
-algparam.nMaxIt = 15;           % maximal number of iteration for each level of the image pyramid
-algparam.nConst = 3;            % abort, if the matching score didn't change in last nConst iterationss
+algparam_2lGM.nMaxIt = 15;           % maximal number of iteration for each level of the image pyramid
+algparam_2lGM.nConst = 3;            % abort, if the matching score didn't change in last nConst iterationss
 
 
  

@@ -142,16 +142,16 @@ function [affTrafo, U1, U2] = weighNodes(LLG1, LLG2, U1, U2, ...
             err2 = median(sqrt((Vai_m(:,1)-PVaj_m(:,1)).^2+(Vai_m(:,2)-PVaj_m(:,2)).^2));           
             
             [err, better_estimated_T] = min([err1, err2]);
-%             switch better_estimated_T    
-%                 case 1
-%                     Aj = pinv(Ai);
-%                     bj = - Aj*bi;    
-%                     inverseH = [[Aj, bj]; [0 0 1]];             
-%                 case 2
-%                     Ai = pinv(Aj);
-%                     bi = - Ai*bj;   
-%                     H = [[Ai, bi]; [0 0 1]];                
-%             end
+            switch better_estimated_T    
+                case 1
+                    Aj = pinv(Ai);
+                    bj = - Aj*bi;    
+                    inverseH = [[Aj, bj]; [0 0 1]];             
+                case 2
+                    Ai = pinv(Aj);
+                    bi = - Ai*bj;   
+                    H = [[Ai, bi]; [0 0 1]];                
+            end
             
             PVai_m1 = Ai * Vai_m' + repmat(bi,1,size(Vai_m,1)); % proejction of Vai_m nodes
             PVai_m1 = PVai_m1';
@@ -164,74 +164,74 @@ function [affTrafo, U1, U2] = weighNodes(LLG1, LLG2, U1, U2, ...
             T(ind_new_subgraphPairs(k), 4:9) = [H(1,1) H(1,2) H(2,1) H(2,2) H(1,3) H(2,3)];
             T(ind_new_subgraphPairs(k), 10:15) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
             
-%       figure; subplot(1,2,1);
-%             
-%                     plot(LLG1.V(:,1), 8-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-% 
-%                     V2 = LLG2.V; V2(:,1) = 8 + V2(:,1);
-%                     plot(V2(:,1), 8-V2(:,2), 'ro', 'MarkerFaceColor','r');
-% 
-% 
-%                     plot(Vai_m(:,1), 8-Vai_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     Vaj_m(:,1) = 8 + Vaj_m(:,1);
-%                     plot(Vaj_m(:,1), 8-Vaj_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     
-%                     
-%                     Tx1 = PVai_m;
-%                     Tx1(:,1) = 8 + Tx1(:,1);
-%                     plot(Tx1(:,1), 8-Tx1(:,2), 'm*')
-% 
-% 
-%                     nans = NaN * ones(size(Tx1,1),1) ;
-%                     x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
-%                     y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m', 'LineStyle', '-') ;
-%                     
-%                     Tx1 = PVai_m1; Tx1(:,1) = 8 + Tx1(:,1);
-%                     nans = NaN * ones(size(Tx1,1),1) ;
-%                     x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
-%                     y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','c','LineStyle', '-') ;
-%                     
-%                     
-%                     matches = matched_nodes';
-%                     nans = NaN * ones(size(matches,2),1) ;
-%                     x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-%                     y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m', 'LineStyle', '--') ;
-%                     
-%                     title(sprintf('Error=%0.3f', err1));                   
-%                     % ---------------------------------------------------- %
-%               subplot(1,2,2);
-% 
-%                     plot(LLG1.V(:,1), 8-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
-%                     plot(V2(:,1), 8-V2(:,2), 'ro', 'MarkerFaceColor','r');
-%                     
-%                     plot(Vai_m(:,1), 8-Vai_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     plot(Vaj_m(:,1), 8-Vaj_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
-%                     
-%                     Tx2 = PVaj_m;
-%                     plot(Tx2(:,1), 8-Tx2(:,2), 'm*')
-%                     
-%                     nans = NaN * ones(size(Tx2,1),1) ;
-%                     x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
-%                     y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m', 'LineStyle', '-') ;
-% 
-%                     Tx2 = PVaj_m1;
-%                     nans = NaN * ones(size(Tx2,1),1) ;
-%                     x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
-%                     y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
-%                     line(x', 8-y', 'Color','c', 'LineStyle', '-') ;                    
-%                     
-%                     nans = NaN * ones(size(matches,2),1) ;
-%                     x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
-%                     y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
-%                     line(x', 8-y', 'Color','m', 'LineStyle', '--') ;    
-%                     
-%                     title(sprintf('Error=%0.3f', err2));
-%                     
-%             hold off;           
+      figure; subplot(1,2,1);
+                    m = 250;
+                    plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+
+                    V2 = LLG2.V; V2(:,1) = m + V2(:,1);
+                    plot(V2(:,1), m-V2(:,2), 'ro', 'MarkerFaceColor','r');
+
+
+                    plot(Vai_m(:,1), m-Vai_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    Vaj_m(:,1) = m + Vaj_m(:,1);
+                    plot(Vaj_m(:,1), m-Vaj_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    
+                    
+                    Tx1 = PVai_m;
+                    Tx1(:,1) = m + Tx1(:,1);
+                    plot(Tx1(:,1), m-Tx1(:,2), 'm*')
+
+
+                    nans = NaN * ones(size(Tx1,1),1) ;
+                    x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
+                    y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
+                    line(x', m-y', 'Color','m', 'LineStyle', '-') ;
+                    
+                    Tx1 = PVai_m1; Tx1(:,1) = m + Tx1(:,1);
+                    nans = NaN * ones(size(Tx1,1),1) ;
+                    x = [ Vai_m(:,1) , Tx1(:,1) , nans ] ;
+                    y = [ Vai_m(:,2) , Tx1(:,2) , nans ] ; 
+                    line(x', m-y', 'Color','c','LineStyle', '-') ;
+                    
+                    
+                    matches = matched_nodes';
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', m-y', 'Color','m', 'LineStyle', '--') ;
+                    
+                    title(sprintf('Error=%0.3f', err1));                   
+                    % ---------------------------------------------------- %
+              subplot(1,2,2);
+
+                    plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
+                    plot(V2(:,1), m-V2(:,2), 'ro', 'MarkerFaceColor','r');
+                    
+                    plot(Vai_m(:,1), m-Vai_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    plot(Vaj_m(:,1), m-Vaj_m(:,2), 'bo', 'MarkerFaceColor','b'), hold on;
+                    
+                    Tx2 = PVaj_m;
+                    plot(Tx2(:,1), m-Tx2(:,2), 'm*')
+                    
+                    nans = NaN * ones(size(Tx2,1),1) ;
+                    x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
+                    y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
+                    line(x', m-y', 'Color','m', 'LineStyle', '-') ;
+
+                    Tx2 = PVaj_m1;
+                    nans = NaN * ones(size(Tx2,1),1) ;
+                    x = [ Vaj_m(:,1) , Tx2(:,1) , nans ] ;
+                    y = [ Vaj_m(:,2) , Tx2(:,2) , nans ] ; 
+                    line(x', m-y', 'Color','c', 'LineStyle', '-') ;                    
+                    
+                    nans = NaN * ones(size(matches,2),1) ;
+                    x = [ LLG1.V(matches(1,:),1) , V2(matches(2,:),1) , nans ] ;
+                    y = [ LLG1.V(matches(1,:),2) , V2(matches(2,:),2) , nans ] ; 
+                    line(x', m-y', 'Color','m', 'LineStyle', '--') ;    
+                    
+                    title(sprintf('Error=%0.3f', err2));
+                    
+            hold off;           
         else % if (size(matched_nodes, 1)<3) it is impossible to estimate affine transformation
             T(ind_new_subgraphPairs(k), 1:2) = [ai, aj];
             T(ind_new_subgraphPairs(k), 3) = M;

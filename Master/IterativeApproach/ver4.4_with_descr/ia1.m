@@ -371,10 +371,11 @@ if filename1~=0
         iparam.bShow = 0;
         
         disp ([ 'loading features from' pathname ' and make new matches.']);
-        info_filename = [pathname, 'GT/fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat'];
+        info_filename1 = [pathname, 'GT/fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat'];
+        info_filename2 = [pathname, 'fi_', filename1(1:end-4),'+', filename2(1:end-4), '.mat'];
        
-        if exist(info_filename, 'file')
-            load(info_filename);  
+        if exist(info_filename1, 'file')
+            load(info_filename1);  
 %             F1 = cdata.view(1).feat;
 %             F2 = cdata.view(2).feat;
 %             GT = cdata.GT;
@@ -385,12 +386,15 @@ if filename1~=0
 %             
 %             cdata.GT(cdata.GT(:,1)>500,:) = [];
 %             cdata.GT(cdata.GT(:,2)>500,:) = [];
+        elseif exist(info_filename2, 'file')
+            load(info_filename2);  
         else
             cdata = features_Cho( iparam, fparam, mparam );
             cdata.GT = [];
         end
 
         setParameters_2levelGM;
+    
 
 %         img1 = imread([pathname filesep filename1]);
 %         if size(img1,3)==1
@@ -408,20 +412,30 @@ if filename1~=0
         [IP1, ~] = imagePyramid(cdata.view(1)); % filePathName1, img1);
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
-        
-        % select candidates for each node in the link graph
+       %% save GT
         M(1).GT.LLpairs = cdata.GT;
-        InitMatches = cell2mat({ cdata.matchInfo.match }');
         
-        candMatches = cell(size(IP1.LLG.V,1),1);
-        for i = 1:size(IP1.LLG.V,1)
-           candmatches_i =  InitMatches(:,1) == i;
-           candMatches{i} = InitMatches(candmatches_i,2);
-        end
+        %% select candidates for each node in the link graph (Minsu Cho)
+        disp('== Performing initial matching of the feature regions');
+        [ matchInfo ]= make_initialmatches_mcho( cdata.view, cdata.mparam, false );
+   
+        nInitialMatches = length(matchInfo);
+        disp( [ 'num of initial matches: ' num2str(nInitialMatches) ] );
+
+        cdata.bPair = iparam.bPair;
+        cdata.nInitialMatches = nInitialMatches;
+        cdata.matchInfo = matchInfo;       
+        
+%         InitMatches = cell2mat({ cdata.matchInfo.match }');
+%         candMatches = cell(size(IP1.LLG.V,1),1);
+%         for i = 1:size(IP1.LLG.V,1)
+%            candmatches_i =  InitMatches(:,1) == i;
+%            candMatches{i} = InitMatches(candmatches_i,2);
+%         end
 
         % all possible correspondences between two sets
-        % candMatches = {(1:size(IP2.LLG.V,1))};
-        % candMatches = repmat(candMatches, size(IP1.LLG.V,1), 1);
+        candMatches = {(1:size(IP2.LLG.V,1))};
+        candMatches = repmat(candMatches, size(IP1.LLG.V,1), 1);
         
         IP1.LLG.candM = candMatches;
         
@@ -862,7 +876,7 @@ IP1 = handles.initIP1;
 IP2 = handles.initIP2;
 
 HLGmatches = struct('objval', 0, 'matched_pairs', []);
-LLGmatches = struct('objval', 0., 'matched_pairs', [], 'lobjval', []);  
+LLGmatches = struct('objval', 0., 'matchScores', [], 'matched_pairs', [], 'lobjval', []);  
 
 for i = 1:size(IP1,1)
     IP1(i).HLG = [];

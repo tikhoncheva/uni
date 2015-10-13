@@ -27,9 +27,9 @@ plotSet.font = '\fontname{Arial}'; % Font default
 
 %% house_seq
 filepath = '../../../../data/houseSmall/';
-% savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/solution/';
+savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/solution/';
 % savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/ext_solution/';
-savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/init_GT/';
+% savepath = './Results/HouseSeq/descr/using_cpd_afftrafo/init_GT/';
 
 if ~exist(savepath, 'dir')
    mkdir(savepath);

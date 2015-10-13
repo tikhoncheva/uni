@@ -118,7 +118,7 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
             
             
             % from right to left
-            [~, Aj, bj] = ransac_cdf(Vaj_m, Vai_m, 0.8, 0.5);
+            [~, Aj, bj] = ransac_cdf(Vaj_m, Vai_m, 0.6, 0.5);
 %             [~, Aj, bj] = ransac_afftrafo(Vaj_m, Vai_m, 0.8, 0.5);
             
             PVaj_m = Aj * Vaj_m' + repmat(bj,1,size(Vaj_m,1)); % projection of Vaj_m nodes
@@ -154,7 +154,7 @@ function [affTrafo, U1, U2] = weighNodes_3(LLG1, LLG2, U1, U2, ...
             T(ind_new_subgraphPairs(k), 10:15) = [inverseH(1,1) inverseH(1,2) inverseH(2,1) inverseH(2,2) inverseH(1,3) inverseH(2,3)];
             
 %       figure; subplot(1,2,1);
-%                     m = 250;
+%                     m = 450;
 %                     plot(LLG1.V(:,1), m-LLG1.V(:,2), 'ro', 'MarkerFaceColor','r'), hold on;
 % 
 %                     V2 = LLG2.V; V2(:,1) = m + V2(:,1);
