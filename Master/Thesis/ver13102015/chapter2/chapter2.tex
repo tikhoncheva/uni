@@ -26,13 +26,13 @@ The first one is to reduce a set of candidate correspondences by selecting a sub
 
 The second possibility, is to make the matrix $S$ sparser by excluding comparison of some nodes or edges from consideration. In case of a big graphs this can however lead to a high loss of initially provided information and results dramatically on the quality of a resulting matching. 
 
-The third possibility is to replace an initial problem of graph matching by a set of smaller subproblems, that arise by partitioning given graphs into subgraphs and matching those subgraphs. For the matrix $S$ it means, that it is divided into blocks, where each block represent a similarity matrix between two subgraphs. Thereby the similarities of edges, whose nodes belong after problem splitting to different subgraphs, will be ignored. On the one hand, this approach solves the memory problem by replacing the initial matrix $S$ with a set of smaller affinity matrices. On the other hand, it does not necessary reduce the \ToDo{algorithmic time complexity} of the initial problem, because selection of correspondences between subgraphs means in the worst case their pairwise matching in all possible combinations. Otherwise, further information will be lost. Despite the mentioned drawbacks, single subgraph matching problems can be eventually parallelized, \ToDo{that} what still makes the approach attractive for application on big graphs.
+The third possibility is to replace an initial problem of graph matching by a set of smaller subproblems, that arise by partitioning given graphs into subgraphs and matching those subgraphs. For the matrix $S$ it means, that it is divided into blocks, where each block represent a similarity matrix between two subgraphs. Thereby the similarities of edges, whose nodes belong after problem splitting to different subgraphs, will be ignored. \ToDo{On the one hand, this approach solves the memory problem by replacing the initial matrix $S$ with a set of smaller affinity matrices}. On the other hand, it does not necessary reduce the \ToDo{algorithmic time complexity} of the initial problem, because selection of correspondences between subgraphs means in the worst case their pairwise matching in all possible combinations. Otherwise, further information will be lost. Despite the mentioned drawbacks, single subgraph matching problems can be eventually parallelized, \ToDo{that} what still makes the approach attractive for application on big graphs.
 
 In the framework for graph matching, that we describe in the details below, we use the third of described techniques. We divide given initial graphs into subgraphs and iteratively search first for correspondences between the subgraphs and then for node correspondences between matched subgraphs. For subgraph matching we use some existing matching algorithm. A graph partitioning is performed only at the initialization step, but after each iteration subgraphs have a change to exchange nodes on their borders.
 
 To our best knowledge the described method was not published before. Especially, we haven not seen an iterative graph matching algorithm based on graph clustering so far, which would update initial partitions. At the same time there is a certain overlap in ideas between our and existing works. The algorithm proposed by Lyzinski et al.~\cite{Lyzinski2015} uses graph partitioning to parallelize a semi-supervised graph matching problem, where some correspondences between graphs nodes are provided. The graph matching problem is formulated as the minimization problem~\eqref{eq:QAP1}, that does not use an affinity matrix $S$. The given matches between graph nodes are used to cluster two graphs jointly and to find a correspondences between subgraphs. As a consequence, subgraphs of given graphs are similar enough to ensure the matching quality. However the proposed clustering method cannot be used for a unsupervised matching.
 
-\ToDo{An idea, that is similar to our,} A similar idea to our to use graph partition for graph matching in unsupervised case was used by Carcassoni and Hancock~\cite{Hancock_ModalClusters}, Qui and Handcock~\cite{Hancock_GM_SpectralPart} and recently by Nie et al.~\cite{CliqueGraph_CVPR2015}. From them only the third algorithm considers the same maximization problem as we. The two other algorithms formulate graph matching problem in terms of relaxation labeling. Also the definition of the graph clusters differs between the algorithms. Qui and Hancock, as well as Nie et al., consider clusters, that are built by a direct neighborhoods of nodes. The resulting partition can be overlapping~\cite{CliqueGraph_CVPR2015} or not~\cite{Hancock_GM_SpectralPart}. Our algorithm and the one in paper~\cite{Hancock_ModalClusters} consider more general case, where a graph partition is given by a disjoint set of graph subgraphs.
+\ToDo{An idea, that is similar to our,} An idea similar to our to use graph partition for graph matching in unsupervised case was used by Carcassoni and Hancock~\cite{Hancock_ModalClusters}, Qui and Handcock~\cite{Hancock_GM_SpectralPart} and recently by Nie et al.~\cite{CliqueGraph_CVPR2015}. From them only the third algorithm considers the same maximization problem as we. The two other algorithms formulate graph matching problem in terms of relaxation labeling. Also the definition of the graph clusters differs between the algorithms. Qui and Hancock, as well as Nie et al., consider clusters, that are built by a direct neighborhoods of nodes. The resulting partition can be overlapping~\cite{CliqueGraph_CVPR2015} or not~\cite{Hancock_GM_SpectralPart}. Our algorithm and the one in paper~\cite{Hancock_ModalClusters} consider more general case, where a graph partition is given by a disjoint set of graph subgraphs.
 Finally, similar to our approach Qui and Handcock~\cite{Hancock_GM_SpectralPart} use the extracted graph partitioning to create a new graph, whose nodes represent clusters of initial graphs. They call this process graph simplification. However their approach quite differs from ours, because of special definition of clusters, another problem formulation and different approach for solving single matching problems, as we mentioned in the previous chapter.
 
 In the remainder of this chapter we describe in details our graph matching framework.
@@ -45,7 +45,7 @@ Further, we define a mapping $U$ between the set of graph nodes $V^I$ and anothe
 U^{Ia}_{ik} = \begin{cases} 1, & \mbox{if node } v_i\in V^I_k,    \\
 0, & \mbox{otherwise}.\end{cases}
 \end{equation}
-The new set $V^{Ia}$ defines a node set of a new graph built on top of the other. A pair of new nodes $a_{k_1},a_{k_2}\in V^{Ia}$ is connected with an edge if \ToDo{and only if} there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its elements and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ an \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graph $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
+The new set $V^{Ia}$ defines a node set of a new graph built on top of the other. A pair of new nodes $a_{k_1},a_{k_2}\in V^{Ia}$ is connected with an edge if and only if there is at least one edge in the initial graph $G^I$ between the corresponding clusters $V^I_{k_1}$ and $V^I_{k_2}$. The set $V^{Ia}$ together with the set of edges between its elements and correspondence matrix $U^{Ia}$ build a new graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$. We will call the graph $A^I$ an \emph{anchor graph} of the graph $G^I$ and its nodes \emph{anchor nodes} or just \emph{anchors}. The graph $G^I$ together with its anchor graph $A^I$ build a two level system: the graph $G^I$ is located on the lower (finer) level and the graph $A^I$ on the higher (coarser) level (see Fig. \ref{fig:2levels}).
 
 \begin{figure} [h!]
 	\centering
@@ -55,11 +55,11 @@ The new set $V^{Ia}$ defines a node set of a new graph built on top of the other
 
 We return now back to the case of two graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E^J,D^J)$, which we want to match. 
 For each of them we build an anchor graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ respectively.
-Now instead of matching graphs $G^I$ and $G^J$ directly on the lower level, we may want to match first the corresponding anchor graphs. Matches between anchor nodes give us correspondences between underlying subgraphs. After that, we can perform graph matching for each pair of subgraphs \ToDo{completely} independently. A union of local solutions from single subgraph matching problems gives us a solution of initial problem. 
+Now instead of matching graphs $G^I$ and $G^J$ directly on the lower level, we may want to match first the corresponding anchor graphs. Matches between anchor nodes give us correspondences between underlying subgraphs. After that, we can perform graph matching for each pair of subgraphs independently. A union of local solutions from single subgraph matching problems gives us a solution of initial problem. 
 
 Why can this approach be better than direct one? As we seen from the previous section the time and space complexity of the considering graph matching problem depends highly on the size of initial graphs. Constructed anchor graphs are however several time smaller than initial graphs, which means, the matching algorithm on the anchor level can be performed much faster and without high memory demand than on the lower level. The same holds for matching between the subgraphs.
 %If $C(n)$ is complexity of a graph matching algorithm with $n$ possible correspondences.
-Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the quality of a graph matching algorithm on both higher and lower levels. \ToDo{From this two critical moments} we concentrate ourself on the first one and use some existing algorithm for graph matching. To make the described two level approach more robust against graph partitioning we suggest to use an obtained matching between two graphs to correct their partitions. The all procedure (matching on the higher level, matching on the lower level and partition updating) is then repeated iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. The algorithm is summarized below in~\ToDo{as} Alg.\ref{alg:2levelGM}.
+Obviously, the accuracy of such two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the quality of a graph matching algorithm on both higher and lower levels. \ToDo{From this two critical moments we concentrate ourself on the first one}We concentrate ourself on the first of this two ctitical moments and use some existing algorithm for graph matching. To make the described two level approach more robust against graph partitioning we suggest to use an obtained matching between two graphs to correct their partitions. The \ToDo{all}whole procedure (matching on the higher level, matching on the lower level and partition updating) is then repeated iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. The algorithm is summarized below in Alg.\ref{alg:2levelGM}.
 
 \begin{algorithm}[h]
 	\KwIn{ initial graphs $G^I$, $G^J$\\
@@ -93,17 +93,17 @@ graph partitioning~(lines~\ref{alg:2levelGM_clustering1},\ref{alg:2levelGM_clust
 %\FloatBarrier
 % ---------------------------------------        HLG Construction
 \subsection{Anchor Graph Construction}
-A problem of anchor graph construction given \ToDo{for initially given graphs} an initial graph $G^I=(V^I,E^I,D^I)$ turns straight forward into problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
+A problem of anchor graph construction for initially given graph $G^I=(V^I,E^I,D^I)$ turns straight forward into problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
 
-Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefor can define the length of an edge as a $L^2-$distance between its endpoints. \ToDo{The reason for this assumption is given by practical applications which lie in the field of plane image recognition.}
+Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefor can define the length of an edge as a $L^2-$distance between its endpoints. \ToDo{The reason for this assumption is given by practical applications such as image or object recognition.}
 \subsubsection{Using grid}	
 The first algorithm we describe is the most simple one. It uses a grid with fixed number of rows $r$, columns $c$ and a cell width $w$. The grid is placed over the graph $G^I$. Nodes, that are captured by a same grid cell belong to one cluster. Obviously, the number of clusters is equal to $r\times c$. We place anchor nodes in the middle of the grid cells. Two anchors are connected by an edge, if the cells they belong to have a common edge.
-\subsubsection{Algorithms based on node merge} \ToDo{stage phrase}
+\subsubsection{Algorithms based on node merge}
 The next considered approach creates an anchor graph $A^I$ with a predefined number $m_1$ of anchors. For that we adopted a coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP, Safro2012_GC, Karypis95_GP, Hendrickson1995}.
 Such algorithms have generally three phases: 
 \begin{enumerate}
 	\item graph coarsening phase, where one creates a hierarchy of graphs by successive merging of nodes in graph on previous stage starting with initial graph;
-	\item graph partition stage, where the partition problem is solved exact on the coarsest level;
+	\item graph partition phase, where the partition problem is solved exact on the coarsest level;
 	\item refinement phase, where solution of the coarsest level is interpolated through all levels of the hierarchy until the initial graph.
 \end{enumerate}
 There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (SAG)~\cite{Chevalier09_GP}, which groups nodes of $G^I$ in disjoint subsets based on the strength of the edges between them. We implemented two SAG based algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)~\cite{Chevalier09_GP}. Both algorithms visit nodes of the graph $G^I$ in random order and construct an independent set of edges $E^\prime$ of the graph. The edge selection is based on the edge weights. The HEM picks and adds into $E^\prime$ the strongest edge adjacent to a current node $v$, that does not belong to the set of end nodes of edges in $E^\prime$.~(see Alg.~\ref{alg:HEM}). As opposed to this, the LEM selects the weakest edge adjacent to a current node. The edges in $E^\prime$ will be contracted, i.e. their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
@@ -142,13 +142,13 @@ s^A_E(e_{kk^\prime}, e_{pp^\prime}) = exp(-\frac{(L_{kk^\prime} - L_{pp^\prime})
 As we already discussed in the previous chapter, a natural way to define node similarities is to compare their attributes. However, our anchor graphs $A^{Ia}$, $A^{Ja}$ do not have direct attributes in contrast to the initial graphs $G^I$, $G^J$. Further we describe two ideas, how to go around this problem. %which we suggest to calculate anchor similarities.
 
 The first idea would be to assign some attributes to the anchors and proceed further in the same way, as for initial graphs. Definition of those attributes in the same way, as for nodes of original graphs, meaning taking into account only the anchor graphs and not considering underlying initial graphs, will probably not give us good results. The reason for this is, that two anchors of different subgraphs can get similar attributes and therefor are likely to be selected by a matching algorithm. If it happens then the matching of the underlying subgraphs will have very low quality. This will have in turn an impact on the quality of the total matching of initial graphs. Consequently anchor attributes should incorporate the information about underlying subgraphs of original graphs.
-Consider an anchor $a_k\in V^{Ia}$ and its underlying subgraph $G[V^I_k]=(V^I_k,E^I_k,D^I_k)$. We suggest two classes of attributes of the anchor $a_k$\ToDo{, which we will call further descriptors}. 
+Consider an anchor $a_k\in V^{Ia}$ and its underlying subgraph $G[V^I_k]=(V^I_k,E^I_k,D^I_k)$. We suggest two classes of attributes of the anchor $a_k$. 
 \begin{itemize}
 \item The first one uses a node attributes $D^I_k$ of the underlying subgraph $G[V^I_k]$. For this purpose we adopted \emph{bag of features model}~\cite{BoF_Leung2001}. We build once a common dictionary of all provided attributes in the both fine graphs by performing \emph{k-means clustering} of $D^I\cup D^J$ into $C$ clusters. Center of the clusters represent "codewords". Each attribute of a node in $V^I_k$ is afterwards mapped onto the closest codeword. In this way, the anchor attribute $d_1(a_k)\in\mathbb{R}^C$ is defined as normalized histogram of "codewords" in corresponding subgraphs.
 
-\item The second class of descriptors should capture the geometrical structure of underlying subgraph. We define $d_2(a_k)\in\mathbb{R}^{|V^I_k|\times b}$ as a set of $|V^I_k|$ histograms $\{d_2(a_k,v)\}$ with $b$ bins. Each histogram $d_2(a_k,v)$ represents a distribution of the length of the subgraph edges inside a small circle region around a node $v\in V^I_k$. 
+\item The second class of attributes should capture the geometrical structure of underlying subgraph. We define $d_2(a_k)\in\mathbb{R}^{|V^I_k|\times b}$ as a set of $|V^I_k|$ histograms $\{d_2(a_k,v)\}$ with $b$ bins. Each histogram $d_2(a_k,v)$ represents a distribution of the length of the subgraph edges inside a small circle region around a node $v\in V^I_k$. 
 \end{itemize}
-The similarity value between two anchors can now be determined based on the first or second type of anchor descriptors. To calculate a distance between histograms we use $\chi^2$ statistic test \cite{Weken2004_ChiSqTest}:
+The similarity value between two anchors can now be determined based on the first or second type of anchor attributes. To calculate a distance between histograms we use $\chi^2$ statistic test \cite{Weken2004_ChiSqTest}:
 \begin{equation}
 s^A_1(a_k, a_p) = \sum_{b_i\in B}\frac{(d_1(a_k,b_i)-d_1(a_p,b_i))^2}{(d_1(a_k,b_i)+d_1(a_p,b_i)},
 \end{equation}
@@ -158,8 +158,8 @@ s^A_2(a_k, a_p) = \frac{1}{|V^I_k|}\frac{1}{|V^J_p|}\sum_{v\in V^I_k}\sum_{u\in 
 where $a_k\in A^I, a_p\in A^J$ and notation $d_1(a_k,b_i)$ and $d_2(a_k,v,b_i)$ denote a value in the $b_i$-th bin of the corresponding histogram. 
 Both defined similarities can be used separately or set together as a linear combination into one similarity function.
 
-The second idea to determine similarity $s^A(a_k, a_p)$ between two anchors could be to perform graph matching of the underlying subgraphs $G[V^I_k]$, $G[V^J_p]$ and take its score as a similarity measure. This idea has a great drawback of high computational complexity, because we need to perform in total $m_1m_2$ local matches. However, in this case the objective function of the global matching problem and the one on the anchor level are closer related. For example, in case when we do not consider edge similarities between anchors and work only with anchor similarities, the objective score on the higher level represent the lower bound of the global objective function~\eqref{eq:gQAP1_2}.  %Among other, the both should have the same trend during the optimization process.
-~\ToDo{Check}
+The second idea to determine similarity $s^A(a_k, a_p)$ between two anchors could be to perform graph matching of the underlying subgraphs $G[V^I_k]$, $G[V^J_p]$ and take its score as a similarity measure. This idea has a great drawback of high computational complexity, because we need to perform in total $m_1m_2$ local matches. However, in this case the objective function of the matching problem on the lower level and the one on the anchor level are closer related. For example, in case when we do not consider edge similarities between anchors and work only with anchor similarities, the objective score on the higher level represent the lower bound of the objective function on the lower level.  %Among other, the both should have the same trend during the optimization process.
+~\ToDo{Indeeded, this is true, because the objective function on the lower level in this case sonsist of two parts: the objective function on the higher level and additional summands, which sorrespond to the similarities of edges between clusters.}
 % --------------------------        LLG Construction          ---------------------------------------
 \subsection{Subgraph matching}
 Given two corresponding subgraphs $G^I_{k}=(V^I_{k},E^I_{k},D^I_{k})$ and $G^J_{p}=(V^J_{p},E^J_{p},D^J_{p})$, we use cosine similarity of the node attributes to calculate node similarity between $V^I_{k}$ and $V^J_{p}$. For the pairwise edge similarity we used the same formula as in case of anchor matching (see Eq.\eqref{eq:edge_sim1}), i.e.\ 
@@ -173,7 +173,7 @@ where $l_{ii^\prime}$, $l_{jj^\prime} $ are the lengths of edges $e_{ii^\prime}\
 % -------------------------        Matching algorithm              -------------------------
 \subsection{Graph matching algorithm}
 %Generally, we are not restricted to use one specific algorithm for subgraph and anchor graph matching. In this thesis we used \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy according to result in the original paper and is fast. It also showed good results in finding common subgraphs of two graphs in presence of outliers. At the end of this chapter we give for completeness an overview of this algorithm.
-Generally, we are not restricted to use one specific algorithm for subgraph and anchor graph matching. In this thesis we used \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy according to result in the original paper and is fast. It also shows good results in finding common subgraphs of two graphs in presence of outliers. At the appendix~\ref{appendixB} we give an overview of this algorithm \ToDo{for completeness}.
+Generally, we are not restricted to use one specific algorithm for subgraph and anchor graph matching. In this thesis we used \emph{Reweighted Random Walks Method} (\textbf{RRWM})~\cite{Cho2010_RRWM}, as it shows high matching accuracy according to result in the original paper and is fast. It also shows good results in finding common subgraphs of two graphs in presence of outliers. At the appendix~\ref{appendixB} we give an overview of this algorithm.
 
 % -------------------------        Level connection              -------------------------
 \subsection{Graph partition update}
@@ -217,7 +217,7 @@ Our update rule for the partition of the graph $G^I$ defined by the matrix $U^{I
 \begin{equation}
 U^{Ia}_{ik}=1 \iff a_k=\argmin_{l=1,\dots,m_1}^{}{\bar{U}^{Ia}_{v_i,a_l}}
 \end{equation}
-With the other words, the node $v_i\in V^I$ is assigned to the anchor $a_k$ if $\bar{U}_{v_i,a_k}$ is the smallest distance between $v_i$ and projections of the nodes in the subgraphs $G[V^J_p]$ matched to the subgraph $G[V^I_k]$. Note, that unassigned nodes in $V^I$ stay in the same cluster they were before.
+With the other words, the node $v_i\in V^I$ is assigned to the anchor $a_k$ if $\bar{U}_{v_i,a_k}$ is the smallest distance between $v_i$ and projections of the nodes in the subgraphs $G[V^J_p]$ matched to the subgraph $G[V^I_k]$. Note, that unassigned nodes in $V^I$ stay in the same cluster they were before. \ToDo{It also can happen, that one note on different iterations will be assigned to different clusters. This can be often the case on the border between two good estimated clusters. To prevent unnecessary jumps, we introduce a local memory of each node, where it saves information about clusters it belonged to and associated value of the matrix $\bar{U}^{Ia}$. We assign a node to a new cluster only when a new assignment is better than the previous ones.}
 
 The partition of the second graph is updated in the same way, as it is described above for the graph $G^I$. The approach is summarized in Algorithm~\ref{alg:update_subgraphs4.3.2}.
 
@@ -248,22 +248,21 @@ The usage of the proposed graph partition strategy is illustrated in Fig.~\ref{f
 \FloatBarrier
 % ---------------------------------------        Complexity
 \subsection{Complexity}
-We would like to investigate the \ToDo{ algorithmic asymptotic} complexity of our two level graph matching approach. For simplicity, we assume, that the complexity of a selected graph matching algorithm is $\mathcal{O}(f_{GM}(n_1,n_2))$, where $n_1$ and $n_2$ are the size of graphs we want to match.
+We would like to investigate the \ToDo{asymptotic computational} complexity of our two level graph matching approach. For simplicity, we assume, that the complexity of a selected graph matching algorithm is $\mathcal{O}(f_{GM}(n_1,n_2))$, where $n_1$ and $n_2$ are the size of graphs we want to match.
 
 The preprocessing step of our approach consists of two stages: initial graph partitioning and creation of the codebook of the node attributes. Note that the presence of the second stage depends on the selected strategy of the anchor graph matching. The complexity of the graph partitioning is in the worst case equal to $\mathcal{O}(n_2^2)$\footnote{We assumed $n_1\le n_2$}. Indeed, for one graph with $n$ nodes and $m$ anchors it is equal to $\mathcal{O}(nm)$ (using grid approach) or $\mathcal{O}((n-m)\Delta(G))$\footnote{We denote with $\Delta(G)$ the maximal degree of nodes in $V$, where degree of a node is equal to the number of its incident edges~\cite{Diestel2000}.} (HEM or LEM algorithm). The complexity of the codebook creation is determined by the complexity of clustering algorithm, which in case of Lloyd's k-means algorithm~\cite{kmeans_LLoyd} comes to $\mathcal{O}((n_1+n_2)rC)$ per iteration, where $r$ is dimension of the node attribute vectors and $C$ number of clusters. After joining those two results we obtain that the complexity of the preprocessing step is
 \begin{equation}\label{eq:complexity1}
 \mathcal{O}(n_2^2+(n_1+n_2)rCi),
 \end{equation}where $i$ is the maximum number of iterations of the k-means clustering.
 
-The main loop of our two level graph matching approach consists of three steps. The first one is the anchor graph matching, whose complexity is $\mathcal{O}_{GM}(m_1,m_2)$ plus complexity for initialization of the similarity matrix. In case, when we assign descriptors to the anchors to calculate node similarity between two graphs, the complexity of the initialization can be approximated by $\mathcal{O}(m_1^2m_2^2)$. The complexity of the subgraph matching step afterwards results in $\sum_{(a_k,a_p)\in m^a}\mathcal{O}_{GM}(|V^I_k|,|V^J_p|)$. The complexity of two first steps in this case is equal to
+The main loop of our two level graph matching approach consists of three steps. The first one is the anchor graph matching, whose complexity is $\mathcal{O}(f_{GM}(m_1,m_2))$ plus complexity for initialization of the similarity matrix. In case, when we assign attributes to the anchors to calculate node similarity between two graphs, the complexity of the initialization can be approximated by $\mathcal{O}(m_1^2m_2^2)$. The complexity of the subgraph matching step afterwards results in $\sum_{(a_k,a_p)\in m^a}\mathcal{O}(f_{GM}(|V^I_k|,|V^J_p|))$. The complexity of two first steps in this case is equal to
 \begin{equation}\label{eq:complexity2}
-\mathcal{O}(m_1^2m_2^2)+\mathcal{O}_{GM}(m_1,m_2)+\sum_{(a_k,a_p)\in m^a}\mathcal{O}_{GM}(|V^I_k|,|V^J_p|).
+\mathcal{O}(m_1^2m_2^2)+\mathcal{O}(f_{GM}(m_1,m_2))+\sum_{(a_k,a_p)\in m^a}\mathcal{O}(f_{GM}(|V^I_k|,|V^J_p|)).
 \end{equation}
-
 
 In the case, when we use graph matching to determine the similarity between anchors, the complexity of both anchor and subgraph matching is equal to 
 \begin{equation}
-\sum_{(a_k,a_p)\in M^a}\mathcal{O}_{GM}(|V^I_k|,|V^J_p|),\quad M^a=\{(a_k,a_p)|a_k\in V^{Ia},a_p\in V^{Ja}\},
+\sum_{(a_k,a_p)\in M^a}\mathcal{O}(f_{GM}(|V^I_k|,|V^J_p|)),\quad M^a=\{(a_k,a_p)|a_k\in V^{Ia},a_p\in V^{Ja}\},
 \end{equation}because subgraph matching is already included in the anchor matching step.
 
 At the end we only need to determine the complexity of our update rule. The CPD algorithm has linear complexity, which means we can estimate transformations between all matched subgraph with demand $\sum_{(a_k,a_p)\in M^a}\mathcal{O}(\max(|V^I_k|,|V^J_p|))$. The actual update step afterwards has the complexity $\mathcal{O}(n_1m_1+n_2m_2)$.
@@ -271,30 +270,30 @@ At the end we only need to determine the complexity of our update rule. The CPD 
 If we know assume, that we can completely parallelize the computation of the sum in Eq.~\eqref{eq:complexity2}, that the total complexity of the one iteration of our two level graph matching approach is equal to
 \begin{equation}\label{eq:complexity3}
 \begin{split}
-\mathcal{O}(m_1^2m_2^2)&+\mathcal{O}_{GM}(m_1,m_2)+\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)\\
-                       &+\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)+\mathcal{O}(n_1m_1+n_2m_2)
+\mathcal{O}(m_1^2m_2^2)&+\mathcal{O}(f_{GM}(m_1,m_2))+\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))\\
+                       &+\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))+\mathcal{O}(n_1m_1+n_2m_2)
 \end{split}
 \end{equation}
 or to
 \begin{equation}\label{eq:complexity4}
 \begin{split}
-\mathcal{O}(m_1^2m_2^2)&+\mathcal{O}_{GM}(m_1,m_2)+\mathbf{m_2}\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)\\
-&+\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)+\mathcal{O}(n_1m_1+n_2m_2)
+\mathcal{O}(m_1^2m_2^2)&+\mathcal{O}(f_{GM}(m_1,m_2))+\mathbf{m_2}\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))\\
+&+\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))+\mathcal{O}(n_1m_1+n_2m_2)
 \end{split}
 \end{equation}
-depending on the selected strategy for computing similarity between anchor graphs. \ToDo{Let us notice that }Notice the constant $m_2$ in the Eq.~\eqref{eq:complexity4}\ToDo{, which} increases the complexity of the whole algorithm, when we use subgraph matching to calculate similarity between anchors.
+depending on the selected strategy for computing similarity between anchor graphs. Let us notice that the constant $m_2$ in the Eq.~\eqref{eq:complexity4} increases the complexity of the whole algorithm, when we use subgraph matching to calculate similarity between anchors.
 
-However, because of the complexity of the graph matching is the most expensive (in case of RRWM $\mathcal{O}_{GM}(n_1,n_2)=\mathcal{O}(n_1^2n_2^2)$), it will fully beat the complexity of other steps and we can approximate both Eqs.~\eqref{eq:complexity3} and~\eqref{eq:complexity4} with
+However, because of the complexity of the graph matching is the most expensive (in case of RRWM $\mathcal{O}(f_{GM}(n_1,n_2))=\mathcal{O}(n_1^2n_2^2)$), it will fully beat the complexity of other steps and we can approximate both Eqs.~\eqref{eq:complexity3} and~\eqref{eq:complexity4} with
 \begin{equation}\label{eq:complexity3.1}
-\mathcal{O}_{GM}(m_1,m_2)+\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)
+\mathcal{O}(f_{GM}(m_1,m_2))+\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))
 \end{equation} 
 and 
 \begin{equation}\label{eq:complexity4.1}
-\mathcal{O}_{GM}(m_1,m_2)+\mathbf{m_2}\mathcal{O}_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|)
+\mathcal{O}(f_{GM}(m_1,m_2))+\mathbf{m_2}\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))
 \end{equation}
 respectively.
 
-It is obvious, that the resulting complexity of our graph matching framework depends highly on the number of made iterations and on the size of anchor and subgraphs.
+It is obvious, that the resulting complexity of our graph matching framework depends highly on the number of made iterations and on the size of anchor graphs and subgraphs.
 
 
 % -------------------------  Discussion ----------------------------------------------------------------------
