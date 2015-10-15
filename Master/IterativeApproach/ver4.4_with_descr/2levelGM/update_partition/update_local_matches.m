@@ -10,6 +10,9 @@ function [matchList_GM_new] = update_local_matches(LLG1, LLG2, matchScore_GM, ma
     k_neighbor1 = 25;
     k_neighbor2 = 5;
     
+    threshold_dissim = 1.0; % SIFT distance threshold for candidates
+    max_candidates = 3000;  % num of cand matches in use
+    
 %     matchScore_GM = Xraw(matchIdx_GM);
     matchScore_GM = matchScore_GM./sum(matchScore_GM);
     
@@ -56,22 +59,22 @@ function [matchList_GM_new] = update_local_matches(LLG1, LLG2, matchScore_GM, ma
     kdtree_delete(kdtreeNS1);
     kdtree_delete(kdtreeNS2);
     
-    X = greedyMapping(voting_space(:), group1, group2);
-    [matchList_GM_new(:,1), matchList_GM_new(:,2)] = find(reshape(X, nV1, nV2)); 
+%     X = greedyMapping(voting_space(:), group1, group2);
+%     [matchList_GM_new(:,1), matchList_GM_new(:,2)] = find(reshape(X, nV1, nV2)); 
     
 %     [~, maxpos] = max(voting_space, [], 2);
 %     matchList_GM_new = [(1:nV1)', maxpos];
     
-%     % make sure that the current GM matches are included
-%     for iter_i = 1:length(matchIdx_GM) % for each match        
-%         matchAnchor = matchList_GM(iter_i,:);
-%         voting_space(matchAnchor(1),matchAnchor(2)) = Inf;
-%     end
+    % make sure that the current GM matches are included
+    for iter_i = 1:nM % for each match        
+        matchAnchor = matchList_GM(iter_i,:);
+        voting_space(matchAnchor(1),matchAnchor(2)) = Inf;
+    end
     
     % collect new candidate matches from the voting space
-%     matchlist_new = selectCandidateMatch( voting_space, ...
-%                     cdata.view(1).feat, cdata.view(1).desc,...
-%                     cdata.view(2).feat, cdata.view(2).desc,...
-%                     max_candidates, threshold_dissim, cdata.mparam );
+    matchList_GM_new = selectCandidateMatch( voting_space, ...
+                                             LLG1.V(:,1:2), LLG1.D,...
+                                             LLG2.V(:,1:2), LLG2.D,...
+                                             max_candidates, threshold_dissim);
 
 end

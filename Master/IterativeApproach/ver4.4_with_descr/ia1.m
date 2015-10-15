@@ -426,16 +426,15 @@ if filename1~=0
         cdata.nInitialMatches = nInitialMatches;
         cdata.matchInfo = matchInfo;       
         
-%         InitMatches = cell2mat({ cdata.matchInfo.match }');
-%         candMatches = cell(size(IP1.LLG.V,1),1);
-%         for i = 1:size(IP1.LLG.V,1)
-%            candmatches_i =  InitMatches(:,1) == i;
-%            candMatches{i} = InitMatches(candmatches_i,2);
-%         end
-
+        InitMatches = cell2mat({ cdata.matchInfo.match }');
+        candMatches = cell(size(IP1.LLG.V,1),1);
+        for i = 1:size(IP1.LLG.V,1)
+           candmatches_i =  InitMatches(:,1) == i;
+           candMatches{i} = InitMatches(candmatches_i,2);
+        end
         % all possible correspondences between two sets
-        candMatches = {(1:size(IP2.LLG.V,1))};
-        candMatches = repmat(candMatches, size(IP1.LLG.V,1), 1);
+%         candMatches = {(1:size(IP2.LLG.V,1))};
+%         candMatches = repmat(candMatches, size(IP1.LLG.V,1), 1);
         
         IP1.LLG.candM = candMatches;
         

@@ -1,6 +1,6 @@
 
 % use idea of simulated annealing to rearrange nodes in subgraphs 
-function [HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2, ...
+function [LLG1, LLG2, HLG1, HLG2, affTrafo] = MetropolisAlg(it, LLG1, LLG2, HLG1, HLG2, ...
                                                LLMatches, HLMatches, affTrafo)                                           
 fprintf('\n---- Metropolis Algorithm');
 
@@ -14,11 +14,6 @@ nV2 = size(LLG2.V,1);
 
 HLG1.F = ones(size(HLG1.V,1),1); 
 HLG2.F = ones(size(HLG2.V,1),1);
-
-
-% matched_pairs_new = update_local_matches(LLG1, LLG2, LLMatches.matchScores, ...
-%                                                            LLMatches.matched_pairs);
-% LLMatches.matched_pairs = matched_pairs_new;
 
 
 % [LLmatches_matched_pairs] = simulated_annealing_in_subgraphs(LLG1, LLG2, HLG1, HLG2, ...
@@ -35,9 +30,13 @@ HLG2.F = ones(size(HLG2.V,1),1);
 % [affTrafo, HLG1.U, HLG2.U] = weighNodes_2(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
 %                                                             HLMatches.matched_pairs, affTrafo);
 
-[affTrafo, HLG1.U, HLG2.U] = weighNodes_3(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+% [affTrafo, HLG1.U, HLG2.U] = weighNodes_3(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
+%                                                             HLMatches.matched_pairs, affTrafo);
+
+[affTrafo, HLG1.U, HLG2.U] = weighNodes_nonrigid(LLG1, LLG2, HLG1.U, HLG2.U, LLMatches.matched_pairs, ...
                                                             HLMatches.matched_pairs, affTrafo);
-                                                        
+
+
 % Step2: expand subgraphs with small transformation errors and eliminate
 % subgraphs with less then three nodes
 % [HLG1, HLG2] = update_subgraphs_using_GCuts(LLG1, LLG2, HLG1, HLG2, ...
@@ -50,12 +49,26 @@ HLG2.F = ones(size(HLG2.V,1),1);
 % [HLG1, HLG2] = update_subgraphs_2(LLG1, LLG2, HLG1, HLG2, ...
 %                                 LLMatches, HLMatches, affTrafo{it});
 
-[HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
+% [HLG1, HLG2] = update_subgraphs_3(LLG1, LLG2, HLG1, HLG2, ...
+%                                 LLMatches, HLMatches, affTrafo{it});                        
+
+[HLG1, HLG2] = update_subgraphs_3nonrigid(LLG1, LLG2, HLG1, HLG2, ...
                                 LLMatches, HLMatches, affTrafo{it});                        
+
 
 % [HLG1, HLG2] = grid_coclustering(LLG1, LLG2, HLG1, HLG2, ...
 %                                 LLMatches, HLMatches, affTrafo{it});
 
+% matched_pairs_new = update_local_matches(LLG1, LLG2, LLMatches.matchScores, ...
+%                                                      LLMatches.matched_pairs);
+
+candMatches = cell(size(LLG1.V,1),1);
+for i = 1:size(LLG1.V,1)
+   candmatches_i =  matched_pairs_new(:,1) == i;
+   candMatches{i} = matched_pairs_new(candmatches_i,2);
+end
+
+LLG1.candM = candMatches;
 
                             
 % [LLmatches_matched_pairs, HLG1, HLG2] = simulated_annealing_in_graphs(LLG1, LLG2, HLG1, HLG2, ...

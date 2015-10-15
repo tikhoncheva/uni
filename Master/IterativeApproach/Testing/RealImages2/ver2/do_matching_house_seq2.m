@@ -80,7 +80,7 @@ for k = 1:numel(gap)
     gap_k = gap(k);
     fprintf('Test: %d of %d, current gap %d \n', k, numel(gap), gap_k);
         
-    for test_i =1:min(nImg-gap, nTests)
+    for test_i =1:min(nImg-gap_k, nTests)
         
         nimg1 = test_i;
         nimg2 = nimg1+gap_k;   
