@@ -56,6 +56,7 @@ problem.group1 = group1;
 problem.group2 = group2;
 
 problem.GTbool = GT.bool;
+problem.GTseq = seq;
 
 %%
 T_summary = toc(t1);
