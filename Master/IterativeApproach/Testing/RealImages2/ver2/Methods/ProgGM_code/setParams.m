@@ -22,7 +22,7 @@ fparam.HESAFF_hesThres = 500;                    % Hessian-Affine
 mparam.kNN = 10;                            % max num of NN matches for EACH feature
 mparam.distThres = 1.0;                % threshold value of SIFT distance, when not using, set 0  
 mparam.distRatio = 0.0;                % use Lowe's unambiguous NN; when not using, set 0
-mparam.extrapolation_dist = 15.0;
+mparam.extrapolation_dist = 10.0;
 
 mparam.bFeatExtUse = fparam.bFeatExtUse;   % feature types used for *** matching! ***
 mparam.nMaxMatch = 3000;                   % max num of initial matches

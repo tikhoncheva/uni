@@ -1,4 +1,4 @@
-function [ score_GM runningTime X_sol Xraw cand_matchlist affinityMatrix_final ] = wrapper_ProgGM_lite( pparam, method, cdata )
+function [ score_GM, X_sol, Xraw, cand_matchlist, affinityMatrix_final ] = wrapper_ProgGM_lite( pparam, method, cdata )
 % function to perform progressive graph matching
 %
 % Minsu Cho and Kyoung Mu Lee. 
@@ -31,8 +31,8 @@ nCandMatch = size(cand_matchlist_new,1);
 nDim = min( length(cdata.view(1).nFeatOfExt), length(cdata.view(1).nFeatOfExt));
 nMaxG1 = sum( cdata.mparam.bFeatExtUse(1:nDim) .* cdata.view(1).nFeatOfExt(1:nDim));
 nMaxG2 = sum( cdata.mparam.bFeatExtUse(1:nDim) .* cdata.view(2).nFeatOfExt(1:nDim));
-fprintf('\n- maximal case: %d by %d \n',nMaxG1,nMaxG2);
-fprintf('- initial candidates: %d \n\n',nCandMatch);
+% fprintf('\n- maximal case: %d by %d \n',nMaxG1,nMaxG2);
+% fprintf('- initial candidates: %d \n\n',nCandMatch);
 
 if bShow, hFig1 = figure;    clf; end
 if cdata.bPair, imgInput = appendimages( rgb2gray(cdata.view(1).img), rgb2gray(cdata.view(2).img) );
@@ -51,9 +51,9 @@ bStop = 0; score_GM = 0;
 for iterGM = 1:maxIterGM
     
     %% ------------------ Perform graph matching
-    tic;
+%     tic;
     Xraw_new = eval(str);
-    runningTime = toc;
+%     runningTime = toc;
     X_sol_new = greedyMapping(Xraw_new, cdata.group1, cdata.group2);
     score_GM_new = X_sol_new'*cdata.affinityMatrix*X_sol_new;
     if score_GM_new <= score_GM %&& iterGM > 2
@@ -87,7 +87,7 @@ for iterGM = 1:maxIterGM
     nVote = 0;
     for iter_i = 1:length(matchIdx_GM) % for each match
         
-        if mod(iter_i,100)==0, fprintf('%3d.',iter_i);   end;
+%         if mod(iter_i,100)==0, fprintf('%3d.',iter_i);   end;
         scoreAnchor = matchScore_GM(iter_i);
         matchAnchor = matchList_GM(iter_i,:);
         
@@ -97,7 +97,7 @@ for iterGM = 1:maxIterGM
         inv_Ti1 = inv(Ti1);    inv_Ti2 = inv(Ti2);
         % Ti21: transform from R1 to R2,   Ti12: transform from R2 to R1
         Ti21 = Ti2*inv_Ti1;        Ti12 = Ti1*inv_Ti2; 
-        
+
         % forward voting
         ptAnchor1 = cdata.view(1).feat(matchAnchor(1),1:2);
         [ voting, nAddedVote ]= voteCandidate( kdtreeNS1, kdtreeNS2, all_feat1(:,1:2), all_feat2(:,1:2), ...
@@ -117,9 +117,9 @@ for iterGM = 1:maxIterGM
     end
     kdtree_delete(kdtreeNS1);
     kdtree_delete(kdtreeNS2);
-    fprintf('\n');
-    fprintf('Match-growing iter #%d: anchor %d , voting %d',iterGM, length(matchIdx_GM), nVote );
-    %spy(voting_space)
+%     fprintf('\n');
+%     fprintf('Match-growing iter #%d: anchor %d , voting %d',iterGM, length(matchIdx_GM), nVote );
+%     spy(voting_space)
     
     % make sure that the current GM matches are included
     for iter_i = 1:length(matchIdx_GM) % for each match        
@@ -133,18 +133,26 @@ for iterGM = 1:maxIterGM
         max_candidates, threshold_dissim, cdata.mparam );
     
     nCandMatch = size(cand_matchlist_new,1);
-    fprintf('-> new candidates %d\n',nCandMatch  );
+%     fprintf('-> new candidates %d\n',nCandMatch  );
     % caculate affinity matrix of initial matches by reprojection error
-    [ cdata.distanceMatrix cdata.flipMatrix ] = computeAffineTransferDistanceMEX( ...
+%     [ cdata.distanceMatrix cdata.flipMatrix ] = computeAffineTransferDistanceMEX( ...
+    [ cdata.distanceMatrix, cdata.flipMatrix ] = computeEuclidDistance( ...
             cdata.view, cand_matchlist_new(:,1:2), 0 );
     
     %% Make the overlapping groups of initial matches
-    [ cdata.group1 cdata.group2 ] = make_group12(cand_matchlist_new(:,1:2));
+    [ cdata.group1, cdata.group2 ] = make_group12(cand_matchlist_new(:,1:2));
     cdata.affinityMatrix = dissim2affinity(cdata.distanceMatrix);
     
     % eliminate conflicting elements to prevent conflicting walks
     cdata.affinityMatrix = cdata.affinityMatrix.*~full(getConflictMatrix(cdata.group1, cdata.group2));
     cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = 0; % diagonal 0s
+    
+    d1 = cdata.view(1).desc';
+    d2 = cdata.view(2).desc';
+    nodesim = nodeSimilarity(d1, d2, 'cosine');
+    ind = (cand_matchlist_new(:,2)-1)*size(d1,2) + cand_matchlist_new(:,1);
+    nodesim = nodesim(ind);
+    cdata.affinityMatrix(1:(size(cdata.affinityMatrix,1)+1):end) = nodesim;
     
 end
 
