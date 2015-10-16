@@ -141,7 +141,7 @@ end
 %% close parallel pool
 delete(poolobj);  
 %%
-names = {'accuracy', 'score', 'time', 'time_summary'};
+names = {'accuracy', 'score', 'time', 'time_summary', 'accuracy', 'score', 'time', 'time_summary'};
 handleCount = 0;
 xData = [1, (10:10:100)];
 E = zeros(size(accuracy1));
@@ -150,6 +150,7 @@ time_summary = time + [time_init1, time_init2, zeros(nImagePairs,1)];
 
 %%
 savepath = savepath1;
+handleCount = 0;
 yData = accuracy1; yLabelText = 'accuracy'; plotResults;
 yData = score1; yLabelText = 'objective score'; plotResults;
 yData = time; yLabelText = 'running time'; plotResults;
