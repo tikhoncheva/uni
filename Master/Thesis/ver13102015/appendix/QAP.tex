@@ -1,5 +1,5 @@
 \chapter{Quadratic Assignment Problem}\label{appendixA}
-Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is to minimize the summary cost of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be a real matrices that define a distances and flow between the locations, as well as opening costs. The problem defined above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
+Consider a problem of assignment of $n$ facilities to $n$ locations given the transportation costs between the locations depending on the flow between them and opening costs of facilities in certain locations. The aim is the cost minimization of the assignment. Let $D=(d_{kl}),F=(f_{kl}), B=(b_{ik})\in\mathbb{R}^{n\times n}$ be real matrices that define a distances and flow between the locations, as well as the opening costs. The problem defined above can then be formulated as an integer quadratic program~\cite{Burkard98thequadratic,Koopman_Backman}:
 \begin{equation}\label{eq:QAP_classic}
 P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\hat{\sigma}(i)\hat{\sigma}(j)}+\sum_{i=1}^{n}b_{i\hat{\sigma}(i)},
 \end{equation}
@@ -11,7 +11,7 @@ We can assign a permutation matrix $P=(P_{ij})\in\{0,1\}^{n\times n}$ to each pe
 \begin{equation*}
 \Pi_n=\{P\in\{0,1\}^{n\times n}|\sum_{i=1}^{n}P_{ij}=\sum_{j=1}^{n}P_{ij}=1\quad\forall i,j=1,\dots,n\}.
 \end{equation*}
-It is easy to see that, the formulation~\eqref{eq:QAP_classic} %with zero-matrix $B$
+It is easy to see that, the formulation in Eq.~\eqref{eq:QAP_classic} %with zero-matrix $B$
 is equivalent to
 \begin{equation}\label{eq:QAP_classic2}
 P = \argmin_{\hat{P}\in\Pi_n}(F\cdot \hat{P}D\hat{P}^T)+B\cdot\hat{P},
@@ -39,26 +39,26 @@ where $\vec(A)$ denotes the column-wise vectorization of a matrix $A$. Additiona
 \vec(APB)=(B^T\otimes A)\vec(P).
 \end{equation}
 
-We can now apply the property~\eqref{eq:Property1} to the formulation~\eqref{eq:QAP_classic2} and get the~\emph{trace formulation of QAP}~\cite{Burkard98thequadratic}:
+We can now use Eq.~\eqref{eq:Property1} in Eq.~\eqref{eq:QAP_classic2} to obtain the~\emph{trace formulation of QAP}~\cite{Burkard98thequadratic}:
 \begin{equation}\label{eq:QAP_classic3}
 P = \argmin_{\hat{P}\in\Pi_n}\tr(F\hat{P}D^T\hat{P}^T+B\hat{P}^T).
 \end{equation}
-The objective function of~\eqref{eq:QAP_classic3} can be further rewritten based on the properties~\eqref{eq:Property1.1} and \eqref{eq:Property2} as follows:
+The objective function of the trace formulation of QAP can be further rewritten based on the properties in Eqs.~\eqref{eq:Property1.1} and \eqref{eq:Property2} as follows:
  \begin{align}\label{eq:QAP_classic4}
 \tr(F\hat{P}D^T\hat{P}^T+B\hat{P}^T)&=\tr(\hat{P}(F\hat{P}D^T)^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
 									&=\vec(\hat{P})^T\vec(F\hat{P}D^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
                                     &=\vec(\hat{P})^T(D\otimes F)\vec{\hat{P}}+\vec(B)^T\vec(\hat{P}).
 \end{align}
-Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}. If we replace \ToDo{the} matrix $F$ with $-(A^I)^T$, \ToDo{the} matrix $D$ with $(A^J)^T$ and \ToDo{the} matrix $B$ with $D^I(D^J)^T$, we obtain the formulation~\eqref{eq:QAP2} from the first chapter. Analog, if we define a matrix $S=(-D\otimes F)$ with the vector $\vec(B)$ on the diagonal, we come to the formulation~\eqref{eq:sumQAP}.
+Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}~\cite{Burkard98thequadratic,Roth2001}. If we replace the matrix $F$ with $-(A^I)^T$, the matrix $D$ with $(A^J)^T$ and the matrix $B$ with $D^I(D^J)^T$, we obtain the formulation in Eq.~\eqref{eq:QAP3} from chapter~\ref{chapter:GM}. Analog, if we define a matrix $S=(-D\otimes F)$ with the vector $\vec(B)$ on the diagonal, we come to the formulation in Eq.~\eqref{eq:gQAP1}.
 
-It remains to show, that \eqref{eq:QAP1} is equivalent to \eqref{eq:QAP_classic3}. Indeed, consider the first term of the objective function in~\eqref{eq:QAP1}:
+It remains to show, that the problem in Eq.~\eqref{eq:QAP1} is equivalent to the trace formulation of QAP~\eqref{eq:QAP_classic3}. Indeed, consider the first term of the objective function in Eq.~\eqref{eq:QAP1}:
 \begin{align*}
 \|A^I-\hat{P}A^J\hat{P}^T\|^2 &= \tr((A^I-\hat{P}A^J\hat{P}^T)^T(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr(((A^I)^T-\hat{P}(A^J)^T\hat{P}^T)(A^I-\hat{P}A^J\hat{P}^T)) \notag\\
 							  &= \tr((A^I)^TA^I-(A^I)^T\hat{P}A^J\hat{P}^T-\hat{P}(A^J)^T\hat{P}^TA^I+\hat{P}(A^J)\hat{P}^T\hat{P}A^JP^T) \notag\\
 							  &= \tr((A^I)^TA^I-2(A^I)^T\hat{P}A^J\hat{P}^T+A^J(A^J)^T).
 \end{align*}
-The first and the last terms are obviously constant, and thus can be ignored during optimization. Consequently, ot holds:
+The first and the last terms are obviously constant and thus can be ignored during optimization. Consequently, it holds:
 \begin{equation}\label{eq:trace_1}
 \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2 = \argmin_{\hat{P}\in\Pi_n}-\tr((A^I)^T\hat{P}A^J\hat{P}^T).
 \end{equation}
@@ -72,7 +72,7 @@ Also here the first and the last terms can be ignored during optimization, so th
 \begin{equation}\label{eq:trace_2}
 \argmin_{\hat{P}\in\Pi_n}\|D^I-\hat{P}D^J\|^2=\argmin_{\hat{P}\in\Pi_n}-\tr(D^I(D^J)^T\hat{P}).
 \end{equation}
-The combination of the results~\eqref{eq:trace_1} and~\eqref{eq:trace_1} with the substitution $F=-(A^I)^T$, $D=(A^J)^T$ and $B=-D^I(D^J)^T$ proof the equivalence of the problems~\eqref{eq:QAP1} and~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
+The combination of the results in Eqs.~\eqref{eq:trace_1} and~\eqref{eq:trace_2} with the substitution $F=-(A^I)^T$, $D=(A^J)^T$ and $B=-D^I(D^J)^T$ proof the equivalence of the problems~\eqref{eq:QAP1} and~\eqref{eq:QAP_classic3}. That is exactly, what we wanted to show.
 
 
 
