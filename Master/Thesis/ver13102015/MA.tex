@@ -13,13 +13,13 @@
 %  headings = normal,
   listof   = leveldown,
   chapterprefix=true  % like in standard class "report"
-]                                       {scrreprt} %{scrbook}
+]                                       {scrreprt} %{scrreprt} %{scrbook}
 % used pagages
 \usepackage     [utf8]                  {inputenc}
 \usepackage     [T1]                    {fontenc}
-%\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
+\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
 %\usepackage                             {exscale} 
-%\usepackage                             {microtype}
+\usepackage                             {microtype}
 %\usepackage                             {color}
 \usepackage                             {xcolor} 
 \usepackage                             {amsmath}
@@ -89,7 +89,7 @@
 \def\median{\mathop{\rm median}} 						% median
 \def\dist{\mathop{\rm dist}} 						    % dist
 
-\def\version{Version of 14.09.2015} 
+\def\version{Version of 13.10.2015} 
 \newcommand\ToDo[1]{\textcolor{red}{#1}} 
 \newcommand\currentname{\@currentlabelname}
 
@@ -104,22 +104,27 @@
         \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
         \endgroup}
 \begin{document}
-	
+
+%% title pages similar to providet template instead of maketitle
+  \include{titlepages-eng} % or english title page
+
+%  \frontmatter
+%  \pagestyle{plain}
+%  \include{abstract/abstracts}
+
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
 
 \raggedbottom % do not try to fill whole page
 
-  %% title pages similar to providet template instead of maketitle
-%  \include{titlepages-eng} % or english title page
 
-  \pagestyle{plain}
-%  \include{abstract/abstracts}
 
-  \pagestyle{headings} 
+  \pagestyle{headings}
+  
+%  \pagenumbering{roman}
   \tableofcontents
 
-%  \pagenumbering{arabic}
+%  \mainmatter
 %  \pagestyle{fancy}
 %  \fancyhead[RO]{\leftmark}
 %  \fancyhead[LE]{\rightmark}
@@ -137,7 +142,6 @@
     \chapter{Lists}
     \listoffigures
 %    \listoftables
-%    \citestyle{egu}
     \bibliographystyle{ieee}
     \bibliography{references}    
     \include{deposition}

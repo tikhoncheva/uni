@@ -132,7 +132,8 @@ In our case, the graph $G^I$ is not initially weighted. To use the described coa
 It is clear, that one iteration of HEM or LEM reduces the number of nodes in $G$ at most by $\lfloor\frac{n}{2} \rfloor$ nodes. To get an coarse graph with $m_1$ nodes the coarsening algorithm should be repeated several times.
 
 \subsection{Anchor graph matching}
-In the previous section we described how to construct anchor graphs $A^I=(V^{Ia},E^{Ia},\newline U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ of given graphs $G^I = (V^I, E^I, D^I)$ and $G^J=(V^J, E^J, D^J)$ respectively. Now, we focus our attention on the problem of matching two anchor graphs. For that, according to our problem formulation (see Eqs.~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}), we need to define a similarity matrix $S^A\in\mathbb{R}^{m_1m_2\times m_1m_2}$ between the graphs $A^I$ and $A^J$, where $m_1=|V^{Ia}|$ and $m_2=|V^{Ja}|$. This matrix contains two types of similarities: edge similarities (non-diagonal elements) and node similarities (diagonal elements).
+\label{anchorGraphMatching}
+In the previous section we described how to construct anchor graphs $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ of given graphs $G^I = (V^I, E^I, D^I)$ and $G^J=(V^J, E^J, D^J)$ respectively. Now, we focus our attention on the problem of matching two anchor graphs. For that, according to our problem formulation (see Eqs.~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}), we need to define a similarity matrix $S^A\in\mathbb{R}^{m_1m_2\times m_1m_2}$ between the graphs $A^I$ and $A^J$, where $m_1=|V^{Ia}|$ and $m_2=|V^{Ja}|$. This matrix contains two types of similarities: edge similarities (non-diagonal elements) and node similarities (diagonal elements).
 
 Let us consider a pair of anchors  $a_k$, $a_k^\prime\in V^{Ia}$. We define the length of the edge $e_{kk^{\prime}}$ between those anchors as a median of distances between nodes in the corresponding subgraphs $G[V^I_k]$ and $G[V^I_{k^\prime}]$. With other words:
 \begin{equation} L_{kk^\prime} = \median_{\substack{v_i\in G[V^I_k]\\ v_{i^\prime}\in G[V^I_{k^\prime}]} }\|v_i-v_{i^\prime}\|_{2}. \end{equation}
@@ -167,9 +168,9 @@ Indeed, this is true, because the objective function~\eqref{eq:sumQAP_2} consist
 % --------------------------        LLG Construction          ---------------------------------------
 \subsection{Subgraph matching}
 Given are two corresponding subgraphs $G^I_{k}=(V^I_{k},E^I_{k},D^I_{k})$ and $G^J_{p}=(V^J_{p},E^J_{p},D^J_{p})$, we use cosine similarity of the node attributes to calculate node similarity between $V^I_{k}$ and $V^J_{p}$. For the pairwise edge similarity we used the same formula as we used for the anchor matching (see Eq.\eqref{eq:edge_sim1}), i.e.\ 
-\begin{equation*}
+\begin{equation}\label{eq:edge_sim1_2}
 s_E(e_{ii^\prime}, e_{jj^\prime}) = exp(-\frac{(l_{ii^\prime} - l_{jj^\prime})^2}{\sigma^2_{s}})
-\end{equation*}
+\end{equation}
 where $l_{ii^\prime}$, $l_{jj^\prime} $ are the lengths of edges $e_{ii^\prime}\in E^I$ and $e_{jj^\prime}\in E^J$ respectively.
 %In our work we concentrate ourself on the task of finding feature correspondences between two images. Features are collected using such popular feature detectors as SIFT~\cite{Lowe2004}, MSER~\cite{MSER}. Extracted features from two images define the sets of nodes $V^I$, $V^J$ of the graphs $G^I$, $G^J$ respectively. As node attributes $D^I$, $D^J$ we used SIFT descriptors~\cite{Lowe2004} with fixed orientation and scale. 
 %The nodes of the graphs are connected vie edges with their $k$ nearest neighbors.
