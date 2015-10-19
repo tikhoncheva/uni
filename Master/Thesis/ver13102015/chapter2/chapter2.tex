@@ -96,7 +96,7 @@ In the following we describe in detail the single steps of our approach: %initia
 graph partitioning~(lines~\ref{alg:2levelGM_clustering1},\ref{alg:2levelGM_clustering2}), graph matching algorithm on both levels~(lines~\ref{alg:2levelGM_GM1},\ref{alg:2levelGM_GM2}), as well as the update rule for current graph partitions~(line~\ref{alg:2levelGM_update}).
 %\FloatBarrier
 % ---------------------------------------        HLG Construction
-\subsection{Anchor Graph Construction}
+\subsection{Anchor Graph Construction} \label{subgraphInit}
 The problem of anchor graph construction for initially given graph $G^I=(V^I,E^I,D^I)$ turns straight forward into a problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
 
 Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefore can define the length of an edge as a $L^2-$distance between its endpoints. The reason for this assumption is given by practical applications such as image or object recognition.
@@ -182,7 +182,7 @@ Generally, we are not restricted to use one specific algorithm for subgraph and 
 For reasons of completeness we give an overview of this algorithm in appendix~\ref{appendixB}. However, we do not provide theoretical justification of the algorithm steps and refer a reader to the original paper for that. 
 
 % -------------------------        Level connection              -------------------------
-\subsection{Graph partition update}
+\subsection{Graph partition update} \label{updateRule}
 Assume, we solved the graph matching problem on the higher and on the lower levels. That means we know pairs of correspondences between the anchor nodes $m^a = \{(a_k, a_p)|a_k\in V^{Ia}, a_p\in V^{Ja}\}$ and between the nodes of the original graphs $m = \{(v_i, v_j)|v_i\in V^{I}, v_j\in V^{J}\}$. The last set is the union of the local solutions of the graph matching problem between pairs of subgraphs, as it is defined by $m^a$.
 The quality of the resulting solution $m$ depends, as we already mentioned, in our framework not only on the quality of the graph matching algorithm, but also on the graph partitioning algorithm.	
 The Fig.~\ref{fig:badpartition} shows an example of a partition of two equal graphs, so that the matching result of subgraphs will be very pure for all possible combinations of anchors matches.

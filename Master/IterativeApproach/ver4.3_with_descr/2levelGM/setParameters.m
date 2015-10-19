@@ -19,8 +19,8 @@ ipparam.scalef = 2;	% scale factor
 
 igparam.NNconnectivity = 0; 	% connecte each node with its minDeg- nearest neighbors
 igparam.minDeg		   = 6; 	% minimal degree of a graph
-igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
-
+igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
+igparam.Complete       = 1; 	% Complete Graph
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs

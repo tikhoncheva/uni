@@ -408,53 +408,53 @@ if filename1~=0
         [IP1, ~] = imagePyramid(cdata.view(1)); % filePathName1, img1);
         [IP2, M] = imagePyramid(cdata.view(2)); % filePathName2, img2);
         
-        M(1).GT.LLpairs = cdata.GT;
-        InitMatches = cell2mat({ cdata.matchInfo.match }');
-        nInitMatches = size(InitMatches,1);  
-        
-        dist_app = cell2mat({cdata.matchInfo.dist}');
-        
-        v1_unique = unique(InitMatches(:,1));
-        InitialMatches_unique = zeros(numel(v1_unique),2);
-        dist_app_unique = zeros(numel(v1_unique),2);
-        for i = 1:numel(v1_unique)
-            ind = find(InitMatches(:,1)==v1_unique(i));
-            [minval, minpos] = min(dist_app(ind));
-            
-            InitialMatches_unique(i,1:2) = InitMatches(ind(minpos),1:2);
-            dist_app_unique(i) = minval; 
-        end
-        InitMatches = InitialMatches_unique;
-        dist_app = dist_app_unique;
-        
-        
-        v2_unique = unique(InitMatches(:,2));
-        InitialMatches_unique = zeros(numel(v2_unique),2);
-        dist_app_unique = zeros(numel(v2_unique),2);
-        for i = 1:numel(v2_unique)
-            ind = find(InitMatches(:,2)==v2_unique(i));
-            [minval, minpos] = min(dist_app(ind));
-            
-            InitialMatches_unique(i,1:2) = InitMatches(ind(minpos),1:2);
-            dist_app_unique(i) = minval; 
-        end
-        InitMatches = InitialMatches_unique;       
-        dist_app = dist_app_unique;
-        
-        nInitMatches = size(InitMatches,1); 
-        
-        
-        [distMatrix_geo, ~] = computeAffineTransferDistanceMEX( cdata.view, InitMatches, 0 );
-        
-        I = repmat((1:nInitMatches)', nInitMatches,1);
-        J = kron((1:nInitMatches)', ones(nInitMatches,1));
-        distMatrix_app = reshape( max(dist_app(I), dist_app(J)), nInitMatches, nInitMatches);
-        
-        dist_app = distMatrix_geo + 0.5*distMatrix_app;
-        
-        M(1).InitialMatches.list = InitMatches;
-%         M(1).InitialMatches.dist = dist_app; 
-        M(1).InitialMatches.affM = dissim2affinity(dist_app);
+         M(1).GT.LLpairs = cdata.GT;
+%         InitMatches = cell2mat({ cdata.matchInfo.match }');
+%         nInitMatches = size(InitMatches,1);  
+%         
+%         dist_app = cell2mat({cdata.matchInfo.dist}');
+%         
+%         v1_unique = unique(InitMatches(:,1));
+%         InitialMatches_unique = zeros(numel(v1_unique),2);
+%         dist_app_unique = zeros(numel(v1_unique),2);
+%         for i = 1:numel(v1_unique)
+%             ind = find(InitMatches(:,1)==v1_unique(i));
+%             [minval, minpos] = min(dist_app(ind));
+%             
+%             InitialMatches_unique(i,1:2) = InitMatches(ind(minpos),1:2);
+%             dist_app_unique(i) = minval; 
+%         end
+%         InitMatches = InitialMatches_unique;
+%         dist_app = dist_app_unique;
+%         
+%         
+%         v2_unique = unique(InitMatches(:,2));
+%         InitialMatches_unique = zeros(numel(v2_unique),2);
+%         dist_app_unique = zeros(numel(v2_unique),2);
+%         for i = 1:numel(v2_unique)
+%             ind = find(InitMatches(:,2)==v2_unique(i));
+%             [minval, minpos] = min(dist_app(ind));
+%             
+%             InitialMatches_unique(i,1:2) = InitMatches(ind(minpos),1:2);
+%             dist_app_unique(i) = minval; 
+%         end
+%         InitMatches = InitialMatches_unique;       
+%         dist_app = dist_app_unique;
+%         
+%         nInitMatches = size(InitMatches,1); 
+%         
+%         
+%         [distMatrix_geo, ~] = computeAffineTransferDistanceMEX( cdata.view, InitMatches, 0 );
+%         
+%         I = repmat((1:nInitMatches)', nInitMatches,1);
+%         J = kron((1:nInitMatches)', ones(nInitMatches,1));
+%         distMatrix_app = reshape( max(dist_app(I), dist_app(J)), nInitMatches, nInitMatches);
+%         
+%         dist_app = distMatrix_geo + 0.5*distMatrix_app;
+%         
+%         M(1).InitialMatches.list = InitMatches;
+% %         M(1).InitialMatches.dist = dist_app; 
+%         M(1).InitialMatches.affM = dissim2affinity(dist_app);
 
 
         

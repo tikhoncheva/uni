@@ -20,7 +20,7 @@ ind_cand_matches = [(J-1)*nA1 + I];
 
 % nodesim = anchorsim_subg_matching(LLG1, LLG2, HLG1, HLG2, cand_matches);
 
-% [nodesim1, HLG1, HLG2] = structural_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix); % using structur of the anchor subgraphs
+[nodesim1, HLG1, HLG2] = structural_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix); % using structur of the anchor subgraphs
  
 if ~isempty(LLG1.D) && ~isempty(LLG2.D)
     [nodesim2, HLG1, HLG2] = BoF_node_similarity(LLG1, LLG2, HLG1, HLG2, corrmatrix); % using Back Of Features Representation
@@ -30,8 +30,8 @@ end
 
 
 % nodesim = nodesim1;
-nodesim = nodesim2;
-% nodesim = nodesim1 + nodesim2;
+% nodesim = nodesim2;
+nodesim = nodesim1 + nodesim2;
 
 
 % non-diagonal elements of the affinity matrix
