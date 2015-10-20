@@ -19,13 +19,13 @@ ipparam.scalef = 2;	% scale factor
 
 igparam.NNconnectivity = 0; 	% connecte each node with its minDeg- nearest neighbors
 igparam.minDeg		   = 6; 	% minimal degree of a graph
-igparam.DelaunayTriang = 0; 	% Delaunay Triangulation
-igparam.Complete       = 1; 	% Complete Graph
+igparam.DelaunayTriang = 1; 	% Delaunay Triangulation
+igparam.Complete       = 0; 	% Complete Graph
 %% Parameters for 2 Level Graph Matching algorithm
 
 % anchor graphs
-agparam.nA = 6;        % number of anchors
-agparam.appSizeOfSubgraph = 30;  % approximate number of nodes in one subgraph
+agparam.nA = 3;        % number of anchors
+agparam.appSizeOfSubgraph = 20;  % approximate number of nodes in one subgraph
 agparam.grid_nr = 3;      % number of rows in a grid over a graph
 agparam.grid_nc = 2;      % number of columns -//- 
                           % #subgraphs = grid_nr x grid_nc

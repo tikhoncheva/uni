@@ -54,7 +54,13 @@ function[T, A, b] = ransac_cdf(P1, P2, s, t)
     n = round(n1*s);  % number of sample data points
     
     % parameters of the cdf-algorithm
-    opt.method='rigid'; opt.viz=0; opt.scale=0; 
+    opt.method='rigid'; 
+    opt.outliers=0.5;   % use 0.6 noise weight to add robustness 
+    opt.scale=0; 
+    opt.rot=0; 
+    opt.tol=1e-8;       % tolerance
+
+    opt.viz=0; 
     
     while N > it || init <  maxInit
         

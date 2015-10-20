@@ -6,7 +6,7 @@
 
 function [cG] = HEM_coarsen_2(G, nA)
 
-rng(1);
+rng('default');
 
 nV = size(G.V,1);
 G.V = G.V(:,1:2);

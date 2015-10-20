@@ -82,10 +82,10 @@ end
 %                                ground truth
 
 if(~isempty(GT))
-    nans = NaN * ones(size(GT,1),1) ;
-    x = [ G1.V(GT(:,1),1) , G2.V(GT(:,2),1) , nans ] ;
-    y = [ G1.V(GT(:,1),2) , G2.V(GT(:,2),2) , nans ] ; 
-    line(x', y', 'Color','b', 'LineStyle', '--') ;
+%     nans = NaN * ones(size(GT,1),1) ;
+%     x = [ G1.V(GT(:,1),1) , G2.V(GT(:,2),1) , nans ] ;
+%     y = [ G1.V(GT(:,1),2) , G2.V(GT(:,2),2) , nans ] ; 
+%     line(x', y', 'Color','b', 'LineStyle', '--') ;
 end
 
 

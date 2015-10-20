@@ -21,7 +21,7 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
 %           HLG2 = buildHLGraph_aggClustering(L, LLG2, agparam);
     end
     
-    poolobj = parpool(2);   
+%     poolobj = parpool(2);   
     for i = 1:N
         it = it + 1;
 
@@ -33,5 +33,5 @@ function [HLG1, HLG2, LLGmatches, HLGmatches, affTrafo, time, it] = ...
     end
     
     % close parallel pool
-    delete(poolobj); 
+%     delete(poolobj); 
 end

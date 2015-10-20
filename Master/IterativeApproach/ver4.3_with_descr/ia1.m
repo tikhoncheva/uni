@@ -676,13 +676,13 @@ guidata(hObject,handles);
 
 % --- Executes on button press in pbSaveImg_axes12.
 function pbSaveImg_axes12_Callback(~, ~, handles)
-[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+[filename, pathname] = uiputfile({'*.png'}, 'Save file name');
 if  filename~=0
     img1 = getframe(handles.axes1);
     img2 = getframe(handles.axes2);
     
     img12 = combine2images(img1.cdata, img2.cdata);
-    imwrite(img12, [pathname, filesep, filename], 'Quality', 100);  
+    imwrite(img12, [pathname, filesep, filename]);%, 'Quality', 100);  
 end
 
 %-------------------------------------------------------------------------
@@ -750,13 +750,13 @@ end
 % --- Executes on button press in pbSaveImg_axes34.
 function pbSaveImg_axes34_Callback(~, ~, handles)
 
-[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+[filename, pathname] = uiputfile({'*.png'}, 'Save file name');
 if  filename~=0
     img3 = getframe(handles.axes3);
     img4 = getframe(handles.axes4);
 
     img34 = combine2images(img3.cdata, img4.cdata);
-    imwrite(img34, [pathname, filesep, filename], 'Quality', 100);  
+    imwrite(img34, [pathname, filesep, filename]);%, 'Quality', 100);  
 end
 
 
@@ -812,7 +812,7 @@ set(legend('Score'), 'Location', 'best', 'FontSize', 6);
 % --- Executes on button press in pbSaveImg_HL.
 function pbSaveImg_HL_Callback(~, ~, handles)
 
-[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+[filename, pathname] = uiputfile({'*.png'}, 'Save file name');
 if  filename~=0
     img = getframe(handles.axes5);
     imwrite(img.cdata, [pathname, filesep, filename], 'Quality', 100);  
@@ -864,10 +864,10 @@ set(legend('Score'), 'Location', 'best', 'FontSize', 6);
 
 % --- Executes on button press in pbSaveImg_LL.
 function pbSaveImg_LL_Callback(~, ~, handles)
-[filename, pathname] = uiputfile({'*.jpg'}, 'Save file name');
+[filename, pathname] = uiputfile({'*.png'}, 'Save file name');
 if  filename~=0
     img = getframe(handles.axes6);
-    imwrite(img.cdata, [pathname, filesep, filename], 'Quality', 100);  
+    imwrite(img.cdata, [pathname, filesep, filename]);%, 'Quality', 100);  
 %     export_fig(handles.axes5, [pathname, filesep, filename]);
 end
 

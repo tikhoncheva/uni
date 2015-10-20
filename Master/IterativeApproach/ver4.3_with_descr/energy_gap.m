@@ -14,10 +14,9 @@ end
 
 figure;hold on;
 plot([1:nIt], f, ...
-    'LineWidth', 2, ...
-    'Color', 'b', ...
+    'LineWidth', 3, ... %'Color', 'b', ...
     'LineStyle', '-', ...
-    'Marker', 'x', ...
+    'Marker', 'o', ...
     'MarkerSize',10);
 
 Xmin = 1; Xmax = nIt;
@@ -25,8 +24,8 @@ Ymin = 0; Ymax = max(f(:));
 
 axis([Xmin Xmax Ymin-0.02*(Ymax-Ymin) Ymax+0.02*(Ymax-Ymin)]);
 
-xlabel('Iteration', 'FontSize', 13);
-ylabel('Gap', 'FontSize', 13);
+xlabel('Iteration', 'FontSize', 15);
+ylabel('Gap', 'FontSize', 15);
 
 hold off;
 
