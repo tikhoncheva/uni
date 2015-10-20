@@ -54,12 +54,12 @@ function [handles] = update_GUI_after_one_GM_iteration(L,handles) %, it, time, L
                     LLGmatches(it).matched_pairs, ...
                     HLGmatches(it).matched_pairs, GT.LLpairs);    
    
-    figure; 
-%     axes(handles.axes13);
+%     figure; 
+    axes(handles.axes13);
     plot_score(LLGmatches); % plot score and accuracy
     if ~isempty(GT.LLpairs)                       % if we know the Ground Truth fot the HL
-        figure;
-%         axes(handles.axes14); %plot_accuracy(LLG1, LLG2, LLGmatches, GT.LLpairs);
+%         figure;
+        axes(handles.axes14); %plot_accuracy(LLG1, LLG2, LLGmatches, GT.LLpairs);
         i = 1:1:it;
         plot(i, handles.Accuracy,'lineWidth', 3)
         hold on;

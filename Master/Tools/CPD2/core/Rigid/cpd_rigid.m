@@ -69,7 +69,7 @@ sigma2_init=sigma2;
 
 T=Y; s=1; R=eye(D); 
 % ETikhoncheva, 01.09.2015
-t= [0;0];
+% t= [0;0];
 
 % Optimization
 iter=0; ntol=tol+10; L=0;
