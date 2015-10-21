@@ -13,7 +13,7 @@
 %  headings = normal,
   listof   = leveldown,
   chapterprefix=true  % like in standard class "report"
-]                                       {scrreprt} %{scrreprt} %{scrbook}
+]                                       {scrbook} %{scrreprt} %{scrbook}
 % used pagages
 \usepackage     [utf8]                  {inputenc}
 \usepackage     [T1]                    {fontenc}
@@ -29,6 +29,7 @@
 %\usepackage                                           {algpseudocode}
 \usepackage [font=small,labelfont=bf,labelsep=colon] {caption}
 \usepackage                                          {subcaption}
+%\usepackage [bf]                                     {subfigure}
 \usepackage     [english]               {babel}
 %\usepackage                             {natbib}
 \usepackage                             {hyperref}
@@ -103,14 +104,18 @@
         \setlength{\belowdisplayskip}{0pt}%
         \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
         \endgroup}
+        
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+
 \begin{document}
 
 %% title pages similar to providet template instead of maketitle
-%  \include{titlepages-eng} % or english title page
+  \include{titlepages-eng} % or english title page
 
-%  \frontmatter
+  \frontmatter
 %  \pagestyle{plain}
-%  \include{abstract/abstracts}
+  \include{abstract/abstracts}
 
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
@@ -118,24 +123,25 @@
 \raggedbottom % do not try to fill whole page
 
 
-
+%% Table of contents
   \pagestyle{headings}
-  
-%  \pagenumbering{roman}
-%  \tableofcontents
+  \tableofcontents
 
-%  \mainmatter
+  \mainmatter
 %  \pagestyle{fancy}
 %  \fancyhead[RO]{\leftmark}
 %  \fancyhead[LE]{\rightmark}
 %  \fancyfoot{}
   
+  \include{introduction}
   \include{chapter1/chapter1}
   \include{chapter2/chapter2}
   \include{chapter3/chapter3}
+  \include{conclusions}
   
 
-%  \part{Appendix}
+%% Appendix
+% \part{Appendix}
   \begin{appendix}
   	\include{appendix/QAP}
   	\include{appendix/RRWM}
