@@ -1,0 +1,24 @@
+\chapter{Conclusions and future work}
+%In the present work we propose a novel approach for matching graph based on the divide-and-conquer paradigm.
+The present master thesis addresses the problem of graph matching and its application for finding correspondences between points on two images. The task of the graph matching problem is to find a mapping between node set of the one graph into node set of the other graph that satisfies some predefined conditions. In the chapter~\ref{chapter:GM} we formally define the graph matching problem together with its variations. Additionally, we provide an extensive overview of the classical and recent algorithms for solving different graph matching problems. 
+
+%One distinguishes exact and inexact graph matching. The first is often too strict and therefore not suitable for practical applications. Therefore the main interest of the researchers lies on the inexact case.
+
+The most general formulation of graph matching problem uses a so-called affinity matrix to measure similarity between two graphs. As it has been shown, this problem formulation represents a special case of quadratic assignment problem, which is known to be NP-hard. Due to the big size of the affinity matrix most of existing graph matching algorithms, that use this formulation, become fast intractable for relative small\footnote{The exact size of the graphs, that still can be handled by those algorithms, depends on the used implementation and on the hardware they are executed on. The used implementation of RRWM was able to match graphs with roughly up to $150$ nodes each.} graphs due to time and memory demand. For that reason, we suggest a framework, which allows the application of existing algorithms to bigger graphs. The detailed explanation of the proposed technique is given in the chapter~\ref{chapter:2levelGM}. There we present a two level graph matching algorithm, which is based on the well known divide-and-conquer paradigm. Initially provided graphs represent the lower level in our matching schema. To reduce the problem size we replace initial graphs by another smaller graphs (anchor graphs), which we place on the higher level. Each node (anchor) of such graph represents a subgraph of the corresponding initial graph. Given such two level structure our method proceeds we follows: it finds correspondences between nodes of the anchors graphs (higher level); finds for each pair of matched anchors a mapping between the nodes of the underlying subgraphs (lower level); updates subgraphs and runs further through the same steps until it does not achieve any improvement in the overall solution in several successive iterations. Under overall solution we understand a union of the local solutions of the subproblems. To perform matching between anchor graphs and subgraphs of the initial graphs we use Reweighted Random Walk algorithm~\cite{Cho2010_RRWM}.
+
+To partition the initial graph we suggest two methods. The first one puts a grid with fix number of cells over the graphs and captures nodes inside one cell into one cluster. The second method iteratively replaces edges in the independent edge sets of the initial graphs with a single node until the desirable size of graphs is reached. Generally, each other partition method can be used. However, our main requirement to it is, that it should create similar anchor graphs for similar initial graphs. Both of the proposed techniques have approved them selfs to be able to guaranty this property. However, we noticed, that the second method tends to creates more anchors in the areas of high node density in original graph. As a result, if the initial graphs have different regions of high node density the resulting anchor graphs could be very different.
+
+Since partition of the initial graphs into non-overlapping subgraphs has obviously a great impact on the quality of the solution, we suggest an update rule, whose aim is to improve existing partition using obtained correspondences between nodes of two graphs. This is achieved by estimating an affine transformation between matched subgraphs. We came to this idea based on the consideration, that in case of correct matching local connected groups of nodes should underlie the same local transformation.
+
+
+It continuous until we do not achieve an improvement in several successive iterations.
+
+
+ A resulting solution is then combined from local solutions of single subproblems. A disadvantage of such an approach is however, that a runtime improvement is sometimes paid with a drop in the accuracy.
+Due to that, one want to have a trade off between speed up and accuracy. What is more important depends on a particular problem.
+
+
+
+
+
+
