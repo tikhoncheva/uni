@@ -28,8 +28,8 @@ function plot_graph(img, LLG, varargin)
     edges = edges(:);
     points = LLG.V(edges,:);
     points(3:3:end,:) = NaN;
-    line(points(:,1), points(:,2), 'Color', 'g');
-    
+    line(points(:,1), points(:,2), 'Color', 'g', 'LineWidth' ,2);
+    drawnow;
     % nodes
     plot(LLG.V(:,1), LLG.V(:,2), 'ko', 'MarkerFaceColor', [0 0 0]);       
     

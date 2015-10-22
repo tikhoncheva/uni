@@ -223,7 +223,7 @@ In all cases the proposed two level graph matching framework outperforms both GL
 In following sections we use the developed two level graph matching algorithm for finding correspondences between feature on a pair of images. To formulate this problem as graph matching problem we use the standard approach settled in computer vision literature~\cite{Cho2010_RRWM,Cho2012_ProgressiveGM,FastPFP,Hancock_EM_SVD,Hancock_GM_SpectralPart}. For that we extract SIFT features~\cite{Lowe2004} of two images around keypoints located using some feature detector (we used  MSER~\cite{MSER}). Given the extracted features of two images we construct two attributed graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E^J,D^J)$ for each image respectively. The node of those graphs are placed at the locations of the detected keypoints with their features as node attributes. To connect nodes via edges one can use Delaunay triangulation~\cite{Hancock_EM_SVD,Hancock_GM_SpectralPart}, nearest neighbors relations between nodes~\cite{Sanrom2012} or consider complete graphs~\cite{Cho2012_ProgressiveGM,Cho2014_Haystack}.
 
 \subsection{Image affine transformation}
-The first image set we consider can be seen as a synthetic data set of real images. It consists of images pairs, where one image in each pair is the same in all cases and the second image represent a rotated/shifted copy of the first one (see Fig.~\ref{fig:ImageTrafo_initGraphs}). On this simple examples we want to demonstrate the work of the update rule inside 2LevelGM algorithm (see chapter~\ref{updateRule}).
+The first image set we consider can be seen as a synthetic data set of real images. It consists of images pairs, where one image in each pair is the same in all cases and the second image represent a rotated/shifted copy of the first one (see Fig.~\ref{fig:ImageTrafo_initGraphs}\footnote{The presented here image of a church is taken from the SUN\cite{SUN} dataset (category "churche outdoor").}). On this simple examples we want to demonstrate the work of the update rule inside 2LevelGM algorithm (see chapter~\ref{updateRule}).
 
 \begin{figure}[h] 
 		\begin{subfigure}[b]{0.3\textwidth}
@@ -251,7 +251,7 @@ The first image set we consider can be seen as a synthetic data set of real imag
 			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair5"}
 			\caption{}
 		\end{subfigure} 	
-	\caption[Synthetic image data set]{Synthetic image data set: first image in each pair is a transformed copy of the second image. Keypoints are extracted using MSER feature detector, edges between nodes are build using Delaunay triangulation procedure}
+	\caption[Synthetic image data set]{Synthetic image data set: first image~\cite{SUN} in each pair is a transformed copy of the second image. Keypoints are extracted using MSER feature detector, edges between nodes are build using Delaunay triangulation procedure}
 	\label{fig:ImageTrafo_initGraphs}
 \end{figure}
 
@@ -382,7 +382,7 @@ In our framework we used the grid initialization with $2\times 2$ cells, as it w
 Summarizing, we have to admit that ProgGM showed better matching results over the whole House sequence. The objective score and accuracy of 2LevelGM is comparable with the results of ProgGM for the small values of the sequence gap. 2LevelGM even outperforms ProgGM in case of not extrapolated solutions and small sequence gap. The accuracy falls however rapidly down after the gap exceeds the value $40$. We found out, that there are two reasons for such a bad performance of 2LevelGM. The first one lies in the disability of the used matching algorithm to find good correspondences between correctly matched subgraphs. This is due to strong distortion in positions of the nodes in both subgraphs. The higher is the deformation the worse is the matching accuracy and therefore objective score~\cite{Cho2010_RRWM}.
 The second reason is the ineffectiveness of our update rule to improve graph partitions in this case. According to the formulation in the chapter~\ref{updateRule} the algorithms tries to estimate affine transformation between the nodes in the matched subgraphs, but in case of the house sequence this transformation is not affine. We also tried to improve the update rule by estimating a projective transformation between two sets of nodes. However, this did not help either, because different groups of nodes inside of one cluster seems to have different transformation.
 
-We consider this example as very important, even if 2LevelGM does not shows good results in this case. It showed us the weaknesses of our graph matching framework, that we hope to improve in the future work.
+%We consider this example as very important, even if 2LevelGM does not show good results in this case. It showed us the weaknesses of our graph matching framework, that we hope to improve in the future work.
 \FloatBarrier
 
 %\subsection{Some example on Caltech-101 and MSRC}
