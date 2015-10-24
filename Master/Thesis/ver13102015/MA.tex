@@ -113,19 +113,19 @@
 %% title pages similar to providet template instead of maketitle
   \include{titlepages-eng} % or english title page
 
-  \frontmatter
-%  \pagestyle{plain}
+  \pagestyle{empty}
+  \include{acknowledgments}
   \include{abstract/abstracts}
-
+  \pagestyle{headings}
+  
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
-
 \raggedbottom % do not try to fill whole page
 
 
 %% Table of contents
-  \pagestyle{headings}
-  \include{acknowledgments}
+  \frontmatter
+  \onehalfspacing
   \tableofcontents
 
   \mainmatter

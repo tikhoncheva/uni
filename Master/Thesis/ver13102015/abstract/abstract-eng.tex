@@ -1,23 +1,2 @@
-%% Latex markup and citations may be used here
-(abstract in english, at most 200 words. Example: \cite{loremIpsum})
-
-Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor
-incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.
-Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa
-qui officia deserunt mollit anim id est laborum.
-
-Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
-consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et
-accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit
-augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
-laoreet dolore magna aliquam erat volutpat.
-
-Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit
-lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure
-dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore
-eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui
-blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla
-facilisi.
+Graph matching is one of the fundamental problems in graph theory and computer vision. Due to its practical relevance this problem is heavily investigated and there are a lot of approximative algorithms for solving it.
+However a lot of algorithms are able to work efficiently only with small graphs (up to $100$ nodes) and scale poorly for bigger graphs. In this thesis we introduce a novel approach for extension of the usability of existing graph matching algorithms to bigger graphs. For that we introduce a two level graph matching framework. Two given graphs to match represent the lower level. To reduce problem size we partition each of the graphs into fix number of subgraphs and capture each subgraph with a node of a new (anchor) graph, that is placed on the second higher level. To solve initial matching problem we iteratively solve first matching problem on the higher level, which gives us correspondences between nodes of two anchor graphs. Afterwards we find in parallel correspondences between nodes of the matched subgraphs pairs. To improve initial partition before next iteration we introduce an update rule, which allows the subgraphs to exchange nodes on their border. We demonstrate effectiveness of our approach in matching synthetic graphs and finding correspondences between pairs of images.
