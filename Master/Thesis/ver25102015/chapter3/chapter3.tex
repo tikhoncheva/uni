@@ -1,0 +1,399 @@
+\chapter{Evaluation results} \label{chapter:results}
+
+In this chapter we explore the quality of the proposed two level graph matching framework (we call it further 2LevelGM) on synthetic and real examples. The quality is measured by the matching score and accuracy of an obtained solution together with the running time in seconds needed to find it. Note, that under accuracy we understand actually recall of the graph matching algorithms (i.e. number of correct detected matches divided by the number of all correct matches), as it is done in~\cite{Cho2014_Haystack,Cho2010_RRWM,Cho2012_ProgressiveGM,Duchenne2011,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}.
+To rate the usefulness of 2LevelGM we provide a comparison study across different graph matching algorithms. All tests in this chapter have been executed on a computer with an Intel(R) Core(R) i5-3210M CPU 2.50GHz with $4$ cores unless otherwise specified. We implemented our framework in the software package MATLAB and used $2$ workers\footnote{For more details see~\url{http://mathworks.com/help/distcomp/parallel-pools.html}} to run 2LevelGM. The code was not optimized. The sources of additionally used libraries and algorithms for comparisons are referred directly in the text. To make the comparison between the algorithms fair we used in all cases the same greedy assignment algorithm~\cite{Leordeanu2005_SM} for discretization of an obtained continuous solution. We also included the initialization and discretization steps into the runtime measurement.
+
+\section{Synthetic data}
+For the first set of tests we adopted a commonly used approach for evaluation of graph matching algorithms on two synthetic generated sets of points (see \cite{Cho2014_Haystack}, \cite{Cho2010_RRWM}, \cite{Leordeanu2009_IPFP}). 
+For this purpose one generates first a set $V^I\subset\mathbb{R}^2$ of $n_1$ standard normally distributed points on a plane: $V^I=\{v_i=(x_i,y_i)|x_i\sim\mathcal{N}(0,1),y_i\sim\mathcal{N}(0,1),i=1,\dots,n_1\}$. In a second step $V^J$ is generated, which represents a distorted copy of the first set with $\bar{n}$ additional normally distributed points. The distortion is achieved by adding a normally distributed noise with zero mean and a variance $\sigma^2$ to the coordinates of the points in $V^I$. 
+%The parameter $\sigma$ expresses the deformation in the second set $V^J$.
+This means, that the set $V^J$ consists of $n_2=n_1+\bar{n}$ nodes, where $n_1$ points have a unique pair in $V^I$ and are called inliers, whereby the other $\bar{n}$ points are outliers. The task is to find correspondences between points in the two sets, which obviously can be considered as a graph matching problem. For that we consider two fully connected graphs $G^I$ and $G^J$ with the nodes defined by the points in $V^I$ and $V^J$ respectively. We assume, that the graphs do not have attributes and each node in the first graph can be theoretically matched to each node in the second graph.
+
+For the evaluation of our graph matching framework we follow the setup of the synthetic point set tests from the papers~\cite{Cho2014_Haystack} and \cite{FastPFP} and formulate four different kinds of tests. In the first test we set the number of outliers $\bar{n}$ to zero and vary only the deformation noise $\sigma^2$. In the second test, we do not have a deformation noise ($\sigma^2=0$) and compare the behavior of the different graph matching algorithms in case of a increasing number of outliers $\bar{n}$. In the third test, we perform the second test in presence of deformation in the second graph. For this we fix $\sigma^2= 0.03$ and increase iteratively the number of outliers $\bar{n}$. Finally, in the fourth test we consider again two graphs with the same size, but omit randomly $\theta$ percentage of edges in both graphs with increasing $\theta$. 
+For performing the tests we adopted the supplemental MATLAB code provided by Minsu Cho et al. in their paper~\cite{Cho2014_Haystack,code_MPM}. For simplicity we combine the described tests together in a first group of tests. %and present results of its test below.We combine the described tests in one group and perform further a comparison of graph matching algorithms on two such groups, that differ in the size of considered graphs inside them. 
+
+The first graphs we consider are relatively small: $100-150$ nodes. The main reason for using small graphs is to compare the 2LevelGM with the following well known methods: MPM~\cite{Cho2014_Haystack}, RRWM~\cite{Cho2010_RRWM}, SM~\cite{Leordeanu2005_SM} and IPFP~\cite{Leordeanu2009_IPFP}\footnote{We used the implementation of those algorithms provided in~\cite{code_MPM}.}. The selection of the graph size was determined by application examples of the corresponding algorithms provided in the mentioned publications. To our best knowledge, those algorithms has not been applied directly to graphs with more than $150$ nodes each without additional problem simplifications (for example reduction of the set of possible correspondences, which is difficult to achieve for non-attributed graphs). This restriction on the size of the graphs is determined mainly by the size of the dense affinity matrix $S$, which is used by all algorithms. The matrix $S$ is calculated in all cases using Eq.~\eqref{eq:edge_sim1_2} with $\sigma_s^2=0.15$, where the value of the parameter $\sigma_s^2$ is chosen according to the proposition made in~\cite{Cho2010_RRWM}. To calculate affinity matrix on the anchor level we use $\sigma_s^2=10$. 
+
+Since our initial graphs $G^I$ and $G^J$ are not attributed, we first consider the formulation of 2LevelGM with non-attributed anchors graphs. The similarities between anchors are calculated in this case based on the matching score of the underlying subgraphs (see chapter~\ref{anchorGraphMatching}). For the initialization of the initial subgraphs we use the grid method (see chapter~\ref{subgraphInit}) with $2\times 2$ cells. The average matching results of $10$ runs in the four defined tests are illustrated in Figs.~\ref{fig:synTest1_ver433}-\ref{fig:synTest4_ver433}. The vertical bars at each point show the standard deviation of the measured mean value (accuracy, matching score and running time) for the corresponding problem setting.
+% -----------------------------  Version 4.3.3    -------------------------------
+\begin{figure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test2/accuracy_avg10t"} 
+	\end{subfigure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test2/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test2/time_summary_avg10t"} 
+	\end{subfigure} 
+	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $1$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $1$ ($n_1=100$, $\bar{n}=0$, $\theta=100\%$)}
+	\label{fig:synTest1_ver433}
+\end{figure}
+%\vspace{-20pt}
+\begin{figure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test3/accuracy_avg10t"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test3/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test3/time_summary_avg10t"} 
+	\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $2$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $2$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0$, $\theta=100\%$)}
+	\label{fig:synTest2_ver433}
+\end{figure}
+%\vspace{-20pt}
+\begin{figure}
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test1/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test1/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test1/time_summary_avg10t"} 
+		\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $3$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $3$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$, $\theta=100\%$)}
+	\label{fig:synTest3_ver433}
+\end{figure}
+%\vspace{-20pt}
+\begin{figure}
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test4/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test4/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/no_descr/Results_v4.3.3/Test4/time_summary_avg10t"} 
+		\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $4$ ($n_1=n_2=100$, $\sigma^2=0$)}
+	\label{fig:synTest4_ver433}
+\end{figure}
+%\FloatBarrier
+%-------------------------------------------------------------------------------
+
+From this results one can see that the SM algorithm has the worst matching quality in all cases. 2LevelGM performs little bit unstable, which is indicated by a relatively high standard deviation compared with other algorithms. For this reason its average performance (objective score and accuracy) of 2LevelGM is a little bit lower than the one of IPFP and RRWM, although in individual runs 2LevelGM is not worse. Additionally the running time of 2LevelGM is slower as for IPFP and RRWM. However this is expected, because without anchor attributes 2LevelGM performs graph matching using RRWM on each pair of subgraphs. Although those subgraphs are smaller than the initial graphs, the overall complexity of this procedure for relative small graphs $G^I,G^J$ is higher compared to the one for direct application of RRWM. The best matching results are achieved in three of four tests by the MPM, which is also the slowest algorithm. However, it is outperformed by 2LevelGM in the first test (Fig.~\ref{fig:synTest1_ver433}) with significantly smaller time demand\footnote{The used implementations of 2LevelGM, SM and IPFP are purely MATLAB implementations, whereby some steps of MPM and RRWM were written using $C++$. This makes the comparison of the running time between algorithms difficult.}.
+
+Below we present the results of testing on the first group of tests using 2LevelG with attributed anchor graphs. For this purpose we use the attributes, that capture geometrical structure of the subgraphs (see chapter~\ref{anchorGraphMatching}). We set the size of used histograms to $35$ bins and the radius $R$ of the circle region around each node to $2$. The results of the comparison are presented in Figs.~\ref{fig:synTest1_descr_ver433}-\ref{fig:synTest4_descr_ver433}. One can directly see the improved performance time of the 2LevelGM algorithm in all tests. The proposed algorithm also shows a more stable performance in the second test. 
+%, which practically solves subgraph the isomorphism problem.
+On the other side, the algorithm seems to be more susceptible to graph deformations (see Figs.~\ref{fig:synTest1_descr_ver433}, \ref{fig:synTest4_descr_ver433}). The reason for this is in the selected anchor attributes, that are not sufficiently robust against deformations in the length of edges.
+
+% -----------------------------  Version 4.3.3    -------------------------------
+\begin{figure}[h]
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test2/accuracy_avg10t"} 
+	\end{subfigure}
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test2/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.31\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test2/time_summary_avg10t"} 
+	\end{subfigure} 
+	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $1$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $1$ ($n_1=100$, $\bar{n}=0$, $\sigma^2=0$)}
+	\label{fig:synTest1_descr_ver433}
+\end{figure}
+%\vspace{-25pt}
+\begin{figure}[h]
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test3/accuracy_avg10t"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test3/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.33\textwidth}
+		\centering
+		\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test3/time_summary_avg10t"} 
+	\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $2$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $2$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0$, $\theta=100\%$)}
+	\label{fig:synTest2_descr_ver433}
+\end{figure}
+%\vspace{-25pt}
+\begin{figure}[h]
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test1/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test1/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test1/time_summary_avg10t"} 
+		\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $3$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $3$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$, $\theta=100\%$)}
+	\label{fig:synTest3_descr_ver433}
+\end{figure}
+%\vspace{-25pt}
+\begin{figure}[h]
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test4/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test4/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest/descr/Results_v4.3.3/Test4/time_summary_avg10t"} 
+		\end{subfigure} 	
+	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $4$ ($n_1=n_2=100$, $\sigma^2=0.00$)}
+	\label{fig:synTest4_descr_ver433}
+\end{figure}
+% --------------------------------------------------------------------------------
+
+To test the performance of our framework on bigger graphs we performed another group of tests and compare 2LevelGM with the PATH~\cite{Zazlavskiy2008_PATH}\footnote{\url{http://cbio.ensmp.fr/graphm/}} and GLAG~\cite{Fiori2013_GLAG}\footnote{\url{http://www.fing.edu.uy/~mfiori/}. We replaced the default maximal number of iterations ($30000$) with $1000$.} algorithms. In contrast to the graph matching problem formulation considered by 2LevelGM and previous algorithms the PATH and GLAG algorithms solve the minimization problem from Eq.~\eqref{eq:QAP1}. Consequently they do not work with the affinity matrix $S$ and can therefore be directly applied to bigger graphs without the necessity to reduce the set of possible candidate matches. The result of the comparison in one run can be seen in Figs.~\ref{fig:synTest1_bigGraphs_ver433}-\ref{fig:synTest3_bigGraphs_ver433}\footnote{This group of tests was executed on a desktop PC with an 2.67GHz Intel(R) Xeon(R) CPU with $4$ cores. $4$ MATLAB workers were used}. We do not provide averaged results for this set of tests due to their high computational demand. For this tests we used again a grid initialization method for 2LevelGM with $5\times 4$ cells.
+\FloatBarrier
+
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
+		\end{subfigure} 	
+	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $1$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=100\%$)}
+	\label{fig:synTest1_bigGraphs_ver433}
+\end{figure}
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
+		\end{subfigure} 	
+	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $2$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0.03$, $\theta=100\%$)}
+	\label{fig:synTest2_bigGraphs_ver433}
+\end{figure}
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
+		\end{subfigure} 	
+	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $3$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=90\%$)}
+	\label{fig:synTest3_bigGraphs_ver433}
+\end{figure}
+
+All performed tests in this group can be considered as instances of the graph isomorphism problem in exact (Fig.~\ref{fig:synTest1_bigGraphs_ver433}) and inexact (Figs.~\ref{fig:synTest2_bigGraphs_ver433},~\ref{fig:synTest3_bigGraphs_ver433}) forms. We investigate the matching score, accuracy and running time of the graph matching algorithms as functions of number of nodes in the initial graphs.
+In all cases the proposed two level graph matching framework outperforms both GLAG and PATH in objective score and especially in running time with one exception. This one is the running rime of the last iteration in Fig.~\ref{fig:synTest2_bigGraphs_ver433}. We consider it as an individual case and suppose, that an imbalanced graph partitioning of initial graphs causes the jump in the running time. Overall 2LevelGM shows a high matching accuracy in all three tests. Additionally we believe it is possible to improve the framework by solving instability issues, which we saw in previous cases. 
+\FloatBarrier
+% --------------------------------------------------------------------
+% --------------------------------------------------------------------
+\section{Real data tests}
+In following sections we use the developed two level graph matching algorithm for finding correspondences between feature on a pair of images. To formulate this problem as graph matching problem we use the standard approach settled in computer vision literature~\cite{Cho2010_RRWM,Cho2012_ProgressiveGM,FastPFP,Hancock_EM_SVD,Hancock_GM_SpectralPart}. For that we extract SIFT features~\cite{Lowe2004} of two images around keypoints located using some feature detector (we used  MSER~\cite{MSER}). Given the extracted features of two images we construct two attributed graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E^J,D^J)$ for each image respectively. The nodes of those graphs are placed at the locations of the detected keypoints with their features as node attributes. To connect nodes via edges one can use Delaunay triangulation~\cite{Hancock_EM_SVD,Hancock_GM_SpectralPart}, nearest neighbors relations between nodes~\cite{Sanrom2012} or consider complete graphs~\cite{Cho2012_ProgressiveGM,Cho2014_Haystack}.
+
+\subsection{Image affine transformation}
+The first image set we consider can be seen as a synthetic data set of real images. It consists of image pairs, where one image in each pair is the same in all cases and the second image represent a rotated/shifted copy of the first one (see Fig.~\ref{fig:ImageTrafo_initGraphs}\footnote{The presented here image of a church is taken from the SUN\cite{SUN} dataset (category "churche outdoor").}). On this simple examples we want to demonstrate the work of the update rule inside 2LevelGM algorithm (see chapter~\ref{updateRule}).
+
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.3\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair1"} 
+			\caption{}\label{fig:ImageTrafo_initGraphs_a}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair2"} 
+			\caption{}
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.3\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair3"}
+			\caption{}
+		\end{subfigure} 	
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair4"} 
+			\caption{}
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/Img_pair5"}
+			\caption{}
+		\end{subfigure} 	
+	\caption[Synthetic image data set]{Synthetic image data set: first image~\cite{SUN} in each pair is a transformed copy of the second image. Keypoints are extracted on the second image in each pair using MSER feature detector~\cite{MSER} and inherit by the first image, edges between nodes are build using Delaunay triangulation procedure~\cite{Hancock_EM_SVD,Hancock_GM_SpectralPart}}
+	\label{fig:ImageTrafo_initGraphs}
+\end{figure}
+
+\begin{figure} \centering
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/It1"} 
+			\caption{Iteration $1$}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/It2"} 
+			\caption{Iteration $2$}
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/It3"}
+			\caption{Iteration $3$}
+		\end{subfigure} 	
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/accuracy"}
+			\caption{Accuracy}
+			\label{fig:ImageTrafo_sIterations_d}
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/score"}
+			\caption{Matching score}
+			\label{fig:ImageTrafo_sIterations_e}
+		\end{subfigure}
+		\begin{subfigure}[b]{0.3\textwidth}
+			\centering
+			\includegraphics[width=4cm]{"chapter3/fig/ImageTrafo/sIterations/gap"}
+			\caption{Gap between current and optimal solutions}
+			\label{fig:ImageTrafo_sIterations_f}
+		\end{subfigure} 	
+	\caption[Result of application 2LevelGM to the image pair~\ref{fig:ImageTrafo_initGraphs_a}]{Result of application 2LevelGM to the image pair~\ref{fig:ImageTrafo_initGraphs_a}. Nodes of the matched subgraphs have the same color.}
+	\label{fig:ImageTrafo_sIterations}
+\end{figure}
+
+To create the anchor graphs we used the HEM coarsening algorithm (see Alg.~\ref{alg:HEM}) with fixed number of anchor. Since the initial graphs are not big (the right image in each pair contains $152$ keypoints), we set the number of anchors to $3$ for all anchor graphs. It this case the subgraphs are big enough to guaranty robust estimation of affine transformation between them. The work of 2LevelGM is illustrated in Fig.~\ref{fig:ImageTrafo_sIterations} on the example of the first image pair (Fig.~\ref{fig:ImageTrafo_initGraphs_a}). The nodes in the matched subgraphs have the same color. One can see how the initial graph partition changes through the iterations, which leads to the improvement in both objective score and accuracy(see Figs.~\ref{fig:ImageTrafo_sIterations_d}-\ref{fig:ImageTrafo_sIterations_f}). The Fig.~\ref{fig:ImageTrafo_sIterations_f} shows additionally the decrease of the gap $\frac{x_i-x_{\text{opt}}}{x_{\text{opt}}}$ between optimal solution $x_{\text{opt}}$ and solution in the i-th iteration $x_i$. It is east to see that three iterations are sufficient. Further iteration do not improve matching.
+
+In Fig.~\ref{fig:ImageTrafo} we present the results of matching with 2LevelGM of all $5$ image pairs in comparison with the results obtained with the progressive graph matching algorithm (ProgGM)~\cite{Cho2012_ProgressiveGM}. %\ToDo{The last is an iterative algorithm, which starts with a set of candidate matches between nodes of the initial graphs and updates this set in each iteration by replacing some candidates with a better one. The selection of new candidates is based on the estimation of a homography between features of matched nodes.}
+To make the comparison fair, we use in both methods the Eq.~\eqref{eq:edge_sim1_2} with $\sigma_s^2=0.15$ to calculate affinity matrix for the initial graphs and their subgraphs. For the anchor graphs we use the same formula but with $\sigma^2_s=10$. The size of the set of initial candidate matches used by ProgGM is limited by $3000$ pairs. As to the rest we use for ProgGM default parameters suggested by the authors with RRWM as its graph matching module.
+
+It is pleasant to see that 2LevelGM is able to find the absolutely correct matching for the whole set except one image pairs and therefore shows better results in objective score and accuracy than ProgGM does. The result of matching of the last image pair is \ToDo{roughly} the same for both algorithms. We notice, that the 2LevelGM is not able to improve graph partitioning further in this case, although some nodes from the true matches belonged to different subgraphs. Regarding the running time ProgGM is faster. However we \ToDo{should point out} may notice, that ProgGM \ToDo{directly} stops as soon as the matching score does not increase any more. In contrast to that, our 2LevelGM has to make some additional iterations at the end to be sure of finding local minimum. This is done intentionally, as we cannot make \ToDo{certain} any statement about convergence of our framework.
+
+\begin{figure}[h] \centering
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.35]{"chapter3/fig/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/accuracy1"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.35]{"chapter3/fig/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/score1"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.35]{"chapter3/fig/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/time1"}
+		\end{subfigure} 	
+	\caption[Evaluation of 2LevelGM on the synthetic image dataset]{Evaluation of 2LevelGM on the synthetic image dataset} \label{fig:ImageTrafo}
+\end{figure}
+
+\subsection{House dataset}
+Our next data set is the well known CMU House sequence~\cite{CMUHouse} which consists of $111$ images of a toy house taken from different viewpoints. It was widely used for evaluation of graph matching algorithms~\cite{Armiti2014,Hancock_ModalClusters,Cho2010_RRWM,Duchenne2011,FastPFP,Hancock_EM_SVD}. The provided ground truth~\cite{CMUHouse_GT} consists of $30$ feature points presented in all frames in the sequence. For that reason most authors considered for matching small graphs with $30$ nodes. By analog with the previous dataset we used MSER to extract around $250$ keypoints on each image in the sequence with SIFT descriptors and use all of them to build initial graphs to be matched. The provided ground truth is extrapolated to neighboring features in the same way it was done in~\cite{Cho2012_ProgressiveGM}\footnote{We set the radius of extrapolation to $10$.}. We perform matching between pairs of image spaced by $1$, $10$, $20$, \dots, $110$ frames. However we match at maximum $10$ image pairs for each gap (i.e. detachment between frames). Further we  analyze the averaged matching score, accuracy and running time of 2LevelGM, ProgGM and simple feature matching~\cite{Lowe2004} as functions of the sequence gap. Notice, that the bigger the gap the stronger is the deformation between the object on two images and the more difficult is the matching problem. 
+
+The results of matching can be seen in Figs.~\ref{fig:House_sol}-\ref{fig:House_ext_sol}. The difference between two provided groups of results lies in the post-processing step applied to the final solutions of all three algorithms \ToDo{in the second group}. This post processing step is initially used only by ProgGM to extrapolate the obtained graph matching solution in the same way as it is done for the ground truth~\cite{Cho2012_ProgressiveGM}. This leads to the possibly not unique correspondences between node sets of initial graphs and, in our opinion, significantly increases the accuracy of the solution (compare images in Fig.~\ref{fig:sol_ext}). To make the comparison fairer we applied the same post-processing step also to the solutions of 2LevelGM and feature matching.
+
+\begin{figure}[h] \centering
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/accuracy"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/score"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/time_summary"}
+		\end{subfigure} 	
+	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: not extrapolated solution} \label{fig:House_sol}
+\end{figure}
+
+\begin{figure}[h] \centering
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/accuracy"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.33\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/score"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/time_summary"}
+		\end{subfigure} 	
+	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: extrapolated solution} \label{fig:House_ext_sol}
+\end{figure}
+
+For the ProgGM we used the same parameters as for the synthetic image set matching from the previous section.
+In our framework we used the grid initialization with $2\times 2$ cells, as it worked better in this case than HEM or LEM algorithms did. Those coarsening algorithms created very unbalanced subgraphs, that caused problems in time performance and space allocation during the matching process. We also used attributed anchor graphs to find correspondences between subgraphs. In application to the house sequence this approach showed the same performance regarding matching accuracy and objective score as the idea to use subgraphs matchings to calculate similarities between anchor. Additionally, it is much faster. To define anchor attributes we used only the provided node attributes. We also tried to include structure information of the subgraphs into anchor attributes or use only it instead of feature based attributes, but it did not have great impact on the results.
+
+\begin{figure}[h]\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=5cm]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/fi_1_ProgGM"} 
+			\caption{\scriptsize solution ProgGM, accuracy $11.63\%$}
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=5cm]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/fi_1_ProgGM"} 
+			\caption{\scriptsize exttapolated solution ProgGM, accuracy $100\%$}
+		\end{subfigure}
+%		\begin{subfigure}[b]{0.49\textwidth}
+%			\centering
+%			\includegraphics[width=4.0cm]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/fi_1_TwoLevelGM"}
+%			\caption{\scriptsize solution  2LevelGM, \\accuracy $13.57\%$}
+%		\end{subfigure}
+%		\begin{subfigure}[b]{0.49\textwidth}
+%			\centering
+%			\includegraphics[width=4.0cm]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/fi_1_TwoLevelGM"}
+%			\caption{\scriptsize ext.solution 2LevelGM, \\accuracy $98.2\%$}
+%		\end{subfigure}
+	\caption[Result of the extrapolation of a matching solution]{Result of extrapolation of a matching solution (blue color denotes correct matches and red the wrong one): multiple correspondences and higher accuracy and score} \label{fig:sol_ext}
+\end{figure}
+
+Summarizing, we have to admit that ProgGM shows better matching results over majority of the House sequence than two other methods. In contrast to this, the simple feature matching is the weakest method from the three considered, what however was expected. The objective score and accuracy of 2LevelGM is comparable with the results of ProgGM for the small values of the sequence gap. 2LevelGM even outperforms ProgGM in case of not extrapolated solutions and small sequence gap. The accuracy falls however rapidly down after the gap exceeds the value $40$. We found out, that there are two reasons for such behavior of 2LevelGM. The first one lies in the disability of the used matching algorithm to find good correspondences between correctly matched subgraphs. The cause is strong distortion in positions of the nodes in both subgraphs. The higher the deformation the worse the matching accuracy and therefore objective score is~\cite{Cho2010_RRWM}.
+The second reason is the ineffectiveness of our update rule to improve graph partitions in this case. According to the formulation in the chapter~\ref{updateRule} the algorithms tries to estimate affine transformation between the nodes in the matched subgraphs, but in case of the house sequence this transformation is not affine. The attempt to improve the update rule by estimating a projective transformation between two sets of nodes was not successful because different groups of nodes inside one cluster have different transformations.
+
+%We consider this example as very important, even if 2LevelGM does not show good results in this case. It showed us the weaknesses of our graph matching framework, that we hope to improve in the future work.
+\FloatBarrier
+
+%\subsection{Some example on Caltech-101 and MSRC}
+
+\section{Discussion}
+
+In this chapter we have performed evaluation of suggested two level graph matching framework on synthetic graphs and real image examples. We have compared it with different state-of-the-art algorithms and reported the results of matching by measuring reached objective score, accuracy of obtained solution and required running time.
+
+In the first group of tests we have evaluated how well our two level approach treats graphs, which still can be matched directly with existing algorithms based on the same problem formulation (RRWM~\cite{Cho2010_RRWM}, MPM~\cite{Cho2014_Haystack}, SM~\cite{Leordeanu2005_SM} and IPFP~\cite{Leordeanu2009_IPFP}). The results shows, that in case of subgraph isomorphism and homomorphism, our approaches gains the close results to those of RRWM, IPFP and MPM and outperform SM. However it shows a little bit weaker results than other algorithms in case of high deformation between matched graphs. Although, even in this case it is able to outperform MPM and SM.
+
+In the second group we have tested ability of 2LevelGM to solve (sub)graph isomorphism and homomorphism problems on the graphs with up to $600$ nodes. In this case the proposed approach outperforms both GLAG~\cite{Fiori2013_GLAG} and PATH~\cite{Zazlavskiy2008_PATH} in accuracy, objective score and running time.
+
+At the end we have used 2LevelGM for finding correspondences between keypoints of two images. We have shown that in case, when changes in the positions of keypoints on two images can be described by an affine transformation, the two level graph matching algorithm outperforms existing ProgMG~\cite{Cho2012_ProgressiveGM}. On the other side, in case of complex transformation between keypoints, the used graph partition update rule is getting less effective. This can be seen on the evaluation results on the CMU House sequence~\cite{CMUHouse}. We consider this example as very important one because it shows some weaknesses of our graph matching framework. Its further development lies out this work, but we hope to improve it in the future.
