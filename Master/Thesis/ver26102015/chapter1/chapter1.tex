@@ -60,7 +60,7 @@ In Fig.~\ref{fig:Exact_GM} one can see examples of different exact graph matchin
         \caption{Graph homomorphism}
         \label{fig:homomorphism}
     \end{subfigure}
-    \caption[Exact graph matching problems]{Exact graph matching problems}\label{fig:Exact_GM}
+    \caption[Exact graph matching problems]{Exact graph matching problems. Node correspondences are listed below each subfigure.}\label{fig:Exact_GM}
 \end{figure}
 
 %\subsection{Compexity}
@@ -79,7 +79,8 @@ From the other techniques we want to mention the algorithm described by MacKay~\
 % ---------------------------------------------------------------------------------------------------------------------------------
 \section{Inexact graph matching}
 As we mentioned above exact graph matching problems are often not applicable to real-world problems. There are two reasons for that. %\ToDo{On the one hand, there are natural variations in the structure of graphs, that describe the same object}
-On the one hand, the same object can be described by graphs with different structures. Those variations could be a consequence of object deformations or noise influence, that can occur in some real world applications. On the other hand, solving a graph matching problem exactly can be time and/or memory consuming. As a consequence one can be interested in solving graph matching problems inexactly. In this case, a strong edge preserving mapping between the nodes of two graphs is not required.
+On the one hand, the same object can be described by graphs with different structures. %Those variations
+This could be a consequence of object deformations or noise influence, that can occur in some real world applications. On the other hand, solving a graph matching problem exactly can be time and/or memory consuming. As a consequence one can be interested in solving graph matching problems inexactly. In this case, a strong edge preserving mapping between the nodes of two graphs is not required.
 
 \vspace{-12pt}
 \begin{figure}[htb]
@@ -95,11 +96,11 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{equation*}
 where $S(G^I, G^J, \hat{m})$ defines a similarity measure between the attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$. The mapping $m$ is required to be total and sometimes also injective, to guarantee one-to-one matching.
 
-Depending on the case, if an algorithm for solving problem~\eqref{gGMP} finds a global solution or not, this algorithm is called \emph{optimal} or~\emph{suboptimal}, respectively. The choice, which algorithm to select depends on a specific problem. It should be noted, that an optimal inexact algorithm is not necessary faster than an exact one. On the other hand, suboptimal inexact algorithms often do not have any performance guarantee.
+Depending on the case, if an algorithm for solving problem~\eqref{gGMP} finds a global solution or not, this algorithm is called \emph{optimal} or~\emph{suboptimal}, respectively. The choice, which algorithm to select depends on a specific problem. It should be noted, that an optimal inexact algorithm is not necessary faster than a one, which solves an exact graph matching problem. On the other hand, suboptimal inexact algorithms often do not have any performance guarantee.
 
 There are also different ways to define a similarity function $S(G^I,G^J,m)$, which leads to high number of different approaches inside the group of inexact graph matching algorithms. In the following section we summarize the most common forms of the objective function of the problem~\eqref{gGMP}.
 % ---------------------------------------------------------------------------------------------------------------------------------
-\subsection{Graph matching objective function}
+\subsubsection*{Graph matching objective function}
 In some literature (e.g.~\cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}), instead of defining a similarity function as it is done by Eq.~\eqref{gGMP}, one speaks about dissimilarity between two graphs. The goal in this case is to minimize disagreement in the graph structure. Two both formulations of the problem are equivalent and can be easily transformed from one into the other.
 % ---------------------------------------------------------------------------------------------------------------------------------
 \subsubsection{Quadratic Optimization Problem}

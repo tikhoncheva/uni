@@ -12,14 +12,15 @@
   numbers  = noendperiod,
 %  headings = normal,
   listof   = leveldown,
-  chapterprefix=true  % like in standard class "report"
+  chapterprefix=true  % like in standard class "report",
+%  openany    % supress empty pages
 ]                                       {scrbook} %{scrreprt} %{scrbook}
 % used pagages
 \usepackage     [utf8]                  {inputenc}
 \usepackage     [T1]                    {fontenc}
-\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
+%\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
 %\usepackage                             {exscale} 
-\usepackage                             {microtype}
+%\usepackage                             {microtype}
 %\usepackage                             {color}
 \usepackage                             {xcolor} 
 \usepackage                             {amsmath}
@@ -37,9 +38,10 @@
 %\usepackage							 {makeidx} % Index-generation
 %\usepackage                             {parskip}  % Removes paragraph indentation (not needed most of the time now)
 \usepackage                             {titlesec} % Set distance between section titles and text
-\usepackage                             {fancyhdr} % headings and footnotes
-
+%\usepackage                             {fancyhdr} % headings and footnotes
 \usepackage                             {placeins} % FloatBarrier
+
+\usepackage[automark,headsepline]{scrpage2}
 
 \setlength{\parskip}{2mm} % no indent
 \setlength{\parindent}{0pt} % no indent
@@ -105,6 +107,8 @@
         \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
         \endgroup}
         
+        
+        
 %---------------------------------------------------------------------------------
 %---------------------------------------------------------------------------------
 
@@ -114,9 +118,10 @@
   \include{titlepages-eng} % or english title page
 
   \pagestyle{empty}
+  \include{deposition}
   \include{acknowledgments}
   \include{abstract/abstracts}
-  \pagestyle{headings}
+%  \pagestyle{headings}
   
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
@@ -126,8 +131,14 @@
 %% Table of contents
   \frontmatter
   \onehalfspacing
+  \thispagestyle{empty}
   \tableofcontents
-
+	
+%\cfoot[\pagemark]{\pagemark}
+%\lehead{\headmark}
+%\rohead{\headmark}
+  \pagestyle{scrheadings}
+	
   \mainmatter
   \include{introduction}
   \include{chapter1/chapter1}
@@ -146,6 +157,5 @@
 %    \listoftables
     \bibliographystyle{ieee}
     \bibliography{references}    
-    \include{deposition}
   \end{appendix}
 \end{document}
