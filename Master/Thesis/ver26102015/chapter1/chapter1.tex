@@ -94,11 +94,11 @@ Let us recall the problem statement \eqref{gGMP}:
 \begin{equation*}
 m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{equation*}
-where $S(G^I, G^J, \hat{m})$ defines a similarity measure between the attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$. The mapping $m$ is required to be total and sometimes also injective, to guarantee one-to-one matching.
+where $S(G^I, G^J, \hat{m})$ defines a similarity measure between the attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$. The mapping $m$ is required to be total and sometimes also injective, to guarantee one-to-one matching. We call further algorithms, that solve inexact graph matching problem, inexact.
 
 Depending on the case, if an algorithm for solving problem~\eqref{gGMP} finds a global solution or not, this algorithm is called \emph{optimal} or~\emph{suboptimal}, respectively. The choice, which algorithm to select depends on a specific problem. It should be noted, that an optimal inexact algorithm is not necessary faster than a one, which solves an exact graph matching problem. On the other hand, suboptimal inexact algorithms often do not have any performance guarantee.
 
-There are also different ways to define a similarity function $S(G^I,G^J,m)$, which leads to high number of different approaches inside the group of inexact graph matching algorithms. In the following section we summarize the most common forms of the objective function of the problem~\eqref{gGMP}.
+There are also different ways to define a similarity function $S(G^I,G^J,m)$, which leads to high number of different approaches inside the group of algorithms that solve inexact graph matching problem. In the following section we summarize the most common forms of the objective function of the problem~\eqref{gGMP}.
 % ---------------------------------------------------------------------------------------------------------------------------------
 \subsubsection*{Graph matching objective function}
 In some literature (e.g.~\cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}), instead of defining a similarity function as it is done by Eq.~\eqref{gGMP}, one speaks about dissimilarity between two graphs. The goal in this case is to minimize disagreement in the graph structure. Two both formulations of the problem are equivalent and can be easily transformed from one into the other.
@@ -117,7 +117,7 @@ We denote with $\Pi_n$ the set of all feasible permutations:
 \begin{equation*}
 \Pi_n=\{P\in\{0,1\}^{n\times n}|\sum_{i=1,\dots,n}P_{ij}=\sum_{j=1,\dots,n}P_{ij}=1\quad\forall i,j=1,\dots,n\}
 \end{equation*}
-Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighted graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as~(compare with \cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Umeyam1988,Zazlavskiy2008_PATH}):
+Let matrices $A^I$ and $A^J$ be the adjacency matrices of the graphs $G^I$ and $G^J$ respectively. We assume, that in case of weighted graphs, the adjacency matrices contain edge weights, instead of binary values. We can now formulate the graph matching problem as the following minimization problem~(compare with \cite{Herault1990_SimulatedAnnealing,FastPFP,Lyzinski2015,Roth2001,Umeyam1988,Zazlavskiy2008_PATH}):
 \begin{equation} \label{eq:QAP1}
 %P = \argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2
 P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2_2
@@ -140,7 +140,7 @@ We return back to the case where $n_1\not=n_2$. Let us denote with a binary vect
  
 %For this, we also assume, that $|V^I|=n_1$, $|V^J|=n_2$ and $n_1$ is not necessary equal to $n_2$. The maximum number of possible matches is though equal to $\min(n_1, n_2)$.
 
-To measure a similarity between graphs one considers two different kinds of similarities: second-order \emph{edge similarity} and first-order \emph{node similarity}. The first one is defined as a function of the edges $s_E:E^I\times E^J\rightarrow\mathbb{R}$ and should penalize a disagreement in the structure of two graphs. The second one $s_V:V^I\times V^J\rightarrow\mathbb{R}$ represent additional constraints on the possible node correspondences.
+To measure a similarity between graphs one considers two different kinds of similarities: second-order \emph{edge similarity} and first-order \emph{node similarity}. The first one is defined as a function of the edges $s_E:E^I\times E^J\rightarrow\mathbb{R}$ and should penalize a disagreement in the structure of two graphs. The second one $s_V:V^I\times V^J\rightarrow\mathbb{R}$ represent additional constraints on the possible node correspondences (for example matched nodes should have similar attributes).
 
 %Now we want to reformulate the objective function in \eqref{gGMP} using introduced node and edge similarity functions.
 %A found mapping m (see Eq.~\eqref{gGMP}) gives us a set of node correspondences, which maximizes the similarity value between two graphs. Such a subset can be represented by a binary vector $x\in \{0,1\}^{n_1n_2}$, where $x_{(j-1)n_1+i}=1$, if node $v_i\in V^I$ is matched to node $u_j\in V^J$, and $x_{(j-1)n_1+i}=0$ otherwise. For simplicity we will write further $x_{ij}$ instead of $x_{(j-1)n_1+i}$.
@@ -150,7 +150,7 @@ Using the introduced notation and definitions of the node and edge similarity fu
 \begin{equation}\label{eq:sumQAP}
 	S(G^I,G^J,m)=\sum_{\substack{x_{ij}=1\\x_{i^\prime j^\prime}=1}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j})
 \end{equation}
-This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, u_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we obtain the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2014_Haystack, Cho2010_RRWM, Cho2012_ProgressiveGM, Conte2004,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}:
+This formula can be also expressed in matrix form. We define an \emph{affinity} or \emph{similarity matrix} $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$, whose diagonal elements are $s_V(v_i, v_j)$ and non-diagonal elements are $s_E(e_{ii\prime}, e_{jj\prime})$. Using this matrix we obtain the following formulation of the graph matching problem as an quadratic optimization problem \cite{Cho2010_RRWM, Cho2012_ProgressiveGM,Cho2014_Haystack, Conte2004,Rangarajan1996_GAGM,Leordeanu2005_SM,Leordeanu2009_IPFP}:
 \begin{alignat}{2}
     &     && \argmax_x{x^TSx}                           \label{eq:gQAP1}\\ %\notag\\
     & \text{s.t. } &&  x\in \{0,1\}^{n_1n_2}            \label{eq:gQAP2}\\
@@ -167,14 +167,14 @@ Below we list a different ways to define a node and edge similarities between tw
 %\subsubsection{Edge similarity}
 \textbf{Edge similarity}
 
-One possible approach to calculate an edge similarity is to calculate \emph{edge dissimilarity} $d_E:E^I\times E^J\rightarrow\mathbb{R}$ first and then transform it into similarity by using, for example, one of the following functions~\cite{Cho2014_Haystack, Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM}:
+One possible approach to calculate an edge similarity is to calculate \emph{edge dissimilarity} $d_E:E^I\times E^J\rightarrow\mathbb{R}$ first and then transform it into similarity by using, for example, one of the following functions~\cite{ Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM,Cho2014_Haystack}:
 \begin{itemize}
 	\item \itemEq{s_E(e_{ii\prime}, e_{jj\prime})= exp(-\frac{d_E(e_{ii\prime}, e_{jj\prime})^2}{\sigma^2_{s}}) \label{eq:edge_sim1}}
 	\item \itemEq{s_E(e_{ii\prime}, e_{jj\prime})= \max(\beta - d_E(e_{ii\prime}, e_{jj\prime})/\sigma^2_{s},0)  \label{eq:edge_sim2}}
 \end{itemize}
 where $e_{ii\prime}\in E^I$ and $e_{jj\prime}\in E^J$. The parameters $\sigma_s$ and $\beta$ define a sensibility of a graph matching algorithm to the dissimilarities between the graphs.
 
-This leads us to the question how to calculate edge dissimilarity. The most obvious way is to compare a weights of the edges, if they are provided. An other alternative could be to use the length of the edges~\cite{Cho2014_Haystack, Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM}, if coordinates of the nodes in some system (usually Cartesian coordinates) are known. It is a significant assumption, which holds however for almost all graphs arose in practical application.
+This leads us to the question how to calculate edge dissimilarity. The most obvious way is to compare a weights of the edges, if they are provided. An other alternative could be to use the length of the edges~\cite{Cho2009_AgglClustering, Cho2010_RRWM,Cho2012_ProgressiveGM,Cho2014_Haystack}, if coordinates of the nodes in some system (usually Cartesian coordinates) are known. It is a significant assumption, which holds however for almost all graphs arose in practical application.
 
 Sometimes node attributes can be used to calculate edge dissimilarities. For example, if graph nodes are described by an ellipse with known center coordinates and orientation, one can calculate so-called geometric dissimilarity of the edges~\cite{Cho2009_AgglClustering,Cho2012_ProgressiveGM}:
 \begin{alignat}{4}\label{eq:geomDiss}
@@ -200,7 +200,7 @@ Consider two attributed graphs $G^I = (V^I, E^I,D^I)$ and $G^J = (V^J, E^J,D^J)$
 	\item nodes in $V^I\backslash\bar{V}^I$ are \emph{deleted}
 	\item nodes in $V^J\backslash\bar{V}^J$ are \emph{inserted}.
 \end{itemize}
-A edit operation of an edge is defined based on a transformation applied to its end nodes. For example, insertion of a node $v_j\in V^J$ implies that all edges, connected to this node, are also inserted. Alternatively, if a node $v_i\in V^I$ is deleted, then all edges incident to this node are also deleted. We say, that an edge $\{v_i,v_{i^\prime}\}\in E^I$ was substituted by an edge $\{v_j,v_{j^\prime}\}\in E^J$, if the nodes $v_i,v_{i^\prime}$ were mapped in $v_j,v_{j^\prime}$.
+A edit operation of an edge is defined based on a transformation applied to its end nodes. For example, insertion of a node $v_j\in V^J$ implies that all edges, connected to this node, are also inserted. Alternatively, if a node $v_i\in V^I$ is deleted, then all edges incident to this node are also deleted. We say, that an edge $\{v_i,v_{i^\prime}\}\in E^I$ was substituted by an edge $\{v_j,v_{j^\prime}\}\in E^J$, if the nodes $v_i,v_{i^\prime}$ were mapped in $v_j,v_{j^\prime}$ respectively.
 
 We assume that all operations can be performed simultaneously. Let $S=\{s_1,s_2,\dots,\newline s_k\}$ denote a set of operations needed to transform the graph $G^I$ into the graph $G^J$. 
 Each edit operation $s_i, 1\le i\le k,$ has an assigned nonnegative cost $c(s_i)$. The cost of the whole sequence $S$ is defined then as $\sum_{i=1}^{k}c(s_i)$. Using it and following papers~\cite{Bunke1983_inexactGM, Wang1995} we define a \emph{edit distance} between the graphs $G^I$ and $G^J$ as follows:
@@ -209,9 +209,9 @@ dist(G^I,G^J,m) = \min\limits_{S=\{s_1,\dots,s_k\}}c(S)
 \end{eqnarray}
 The task of the error-corrected graph matching is to find such a mapping $m$ between $V^I$ and $V^J$, which induces the cheapest transformation between the graphs.
 
-The cost functions of each operation are often defined as functions of edge weights and node attributes. However their exact definition depends on a specific application. Sometimes, it can be helpful, when the distance measure~\eqref{eq:editDist} defines a metric, which is not automatically the case. Bunke and Allermann~\cite{Bunke1983_inexactGM} have shown that the graph edit distance can fulfill the properties of a metric under specific conditions on the cost functions of the individual edit operations. For example, one of this conditions is, that a single operation is always preferred to a sequence of two operations with the same result (triangular inequality of the operation cost functions). Later, Bunke and Shearer~\cite{Bunke1998_graphDist} suggest a new graph edit distance, that does not depend on the cost of the edit operations, and is a metric.
+The cost functions of each operation are often defined as functions of edge weights and node attributes. However their exact definition depends on a specific application. Sometimes, it can be helpful, when the distance measure~\eqref{eq:editDist} defines a metric, which is not automatically the case. Bunke and Allermann~\cite{Bunke1983_inexactGM} have shown that the graph edit distance can fulfill the properties of a metric under specific conditions on the cost functions of the individual edit operations. For example, one of this conditions is, that a single operation is always preferred to a sequence of two operations with the same result (triangular inequality of the operation cost functions). Later, Bunke and Shearer~\cite{Bunke1998_graphDist} have suggested a new graph edit distance, that does not depend on the cost of the edit operations, and is a metric.
 
-An interesting question is, how does the error corrected graph matching problem correspond to the other matching problems defined previously. It was shown in~\cite{Bunke1999_UnderlyingCosts}, that graph isomorphism, subgraph isomorphism and maximum common subgraph problems can be considered as a special case of the error correcting graph matching. The same holds true for the inexact graph matching problem formulated as in~\eqref{eq:QAP1}. This is easy to see, if one rewrite the objective function of ~\eqref{eq:QAP1} as $\sum_{i=1}^n\sum_{i^\prime=1}^{n}(A^I_{ii^\prime}-A^J_{\sigma(i)\sigma(i^\prime)})^2$. A comparison of this expression with the definition of $c(S)$ in~\eqref{eq:editDist} leads us direct to the idea, how to set the edge insertion/deletion/substitution cost functions so as to make the problem formulations equivalent: 
+An interesting question is, how does the error corrected graph matching problem correspond to the other matching problems defined previously. It was shown in~\cite{Bunke1999_UnderlyingCosts}, that graph isomorphism, subgraph isomorphism and maximum common subgraph problems can be considered as a special case of the error correcting graph matching. The same holds true for the inexact graph matching problem formulated as in~\eqref{eq:QAP1}. This is easy to see, if one rewrite the objective function of ~\eqref{eq:QAP1}\footnote{For simplicity we assume that the costs of the edit operations does not depend on the node attributes, so we have omitted the second term in Eq.~\eqref{eq:QAP1}} as $\sum_{i=1}^n\sum_{i^\prime=1}^{n}(A^I_{ii^\prime}-A^J_{\sigma(i)\sigma(i^\prime)})^2$. A comparison of this expression with the definition of $c(S)$ in~\eqref{eq:editDist} leads us direct to the idea, how to set the edge insertion/deletion/substitution cost functions so as to make the problem formulations equivalent: 
 \begin{equation*}
 c(e_{\text{subst}})=(A^I_{ii^\prime}-A^J_{\sigma(i)\sigma(i^\prime)})^2\quad c(e_{\text{insert}})=(A^J_{\sigma(i)\sigma(i^\prime)})^2\quad c(e_{\text{del}})=(A^I_{ii^\prime})^2
 \end{equation*}
