@@ -78,7 +78,7 @@ X2 = cell(nImagePairs, length(methods));
 perform_data = cell(nImagePairs, length(methods));
 
 %% start parallel pool
-poolobj = parpool(3);       
+% poolobj = parpool(3);       
 %% main loop start
 for cImg=1:nImagePairs
 %     cImg = 1;
@@ -125,7 +125,7 @@ for cImg=1:nImagePairs
         
         f2 = plotMatches(mname, problem, ...
                      accuracy2(cImg,i), score2(cImg,i), X2{cImg,i});                 
-        print(f1, [savepath2, 'fi_', num2str(cImg), '_', mname(9:end)],'-dpng');    
+        print(f2, [savepath2, 'fi_', num2str(cImg), '_', mname(9:end)],'-dpng');    
         
         close all;
     end
@@ -139,7 +139,7 @@ for cImg=1:nImagePairs
 end     
 
 %% close parallel pool
-delete(poolobj);  
+% delete(poolobj);  
 %%
 names = {'accuracy', 'score', 'time', 'time_summary', 'accuracy', 'score', 'time', 'time_summary'};
 handleCount = 0;
