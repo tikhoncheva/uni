@@ -47,7 +47,7 @@ The objective function of the trace formulation of QAP can be further rewritten 
  \begin{align}\label{eq:QAP_classic4}
 \tr(F\hat{P}D^T\hat{P}^T+B\hat{P}^T)&=\tr(\hat{P}(F\hat{P}D^T)^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
 									&=\vec(\hat{P})^T\vec(F\hat{P}D^T)+\vec(B)^T\vec(\hat{P}) \notag\\	
-                                    &=\vec(\hat{P})^T(D\otimes F)\vec{\hat{P}}+\vec(B)^T\vec(\hat{P}).
+                                    &=\vec(\hat{P})^T(D\otimes F)\vec({\hat{P}})+\vec(B)^T\vec(\hat{P}).
 \end{align}
 Based on this formulation the matrix $B$ is called sometimes \emph{linear cost matrix} and the matrix $D\otimes F$ \emph{quadratic costs matrix}~\cite{Burkard98thequadratic,Roth2001}. If we replace the matrix $F$ with $-(A^I)^T$, the matrix $D$ with $(A^J)^T$ and the matrix $B$ with $D^I(D^J)^T$, we obtain the formulation in Eq.~\eqref{eq:QAP3} from chapter~\ref{chapter:GM}. Analog, if we define a matrix $S=(-D\otimes F)$ with the vector $\vec(B)$ on the diagonal, we come to the formulation in Eq.~\eqref{eq:gQAP1}.
 
