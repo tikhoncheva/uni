@@ -13,7 +13,7 @@ for i = 1:nIt
 end
 
 figure;hold on;
-plot([1:nIt], f, ...
+plot([1:1:nIt], f, ...
     'LineWidth', 3, ... %'Color', 'b', ...
     'LineStyle', '-', ...
     'Marker', 'o', ...
@@ -23,6 +23,7 @@ Xmin = 1; Xmax = nIt;
 Ymin = 0; Ymax = max(f(:));
 
 axis([Xmin Xmax Ymin-0.02*(Ymax-Ymin) Ymax+0.02*(Ymax-Ymin)]);
+set(gca,'xtick', [1:nIt])
 
 xlabel('Iteration', 'FontSize', 15);
 ylabel('Gap', 'FontSize', 15);

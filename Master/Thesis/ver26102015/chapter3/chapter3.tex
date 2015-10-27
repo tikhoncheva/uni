@@ -176,7 +176,7 @@ To test the performance of our framework on bigger graphs we performed another g
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
+			\includegraphics[scale=0.33]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
 		\end{subfigure} 	
 	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $1$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=100\%$)}
 	\label{fig:synTest1_bigGraphs_ver433}
@@ -192,7 +192,7 @@ To test the performance of our framework on bigger graphs we performed another g
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
+			\includegraphics[scale=0.33]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
 		\end{subfigure} 	
 	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $2$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0.03$, $\theta=100\%$)}
 	\label{fig:synTest2_bigGraphs_ver433}
@@ -208,7 +208,7 @@ To test the performance of our framework on bigger graphs we performed another g
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
+			\includegraphics[scale=0.33]{"chapter3/fig/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
 		\end{subfigure} 	
 	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $3$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=90\%$)}
 	\label{fig:synTest3_bigGraphs_ver433}
@@ -314,22 +314,22 @@ It is pleasant to see that 2LevelGM is able to find the absolutely correct match
 \end{figure}
 
 \subsection{House dataset}
-Our next data set is the well known CMU House sequence~\cite{CMUHouse} which consists of $111$ images of a toy house taken from different viewpoints. It was widely used for the evaluation of graph matching algorithms~\cite{Armiti2014,Hancock_ModalClusters,Cho2010_RRWM,Duchenne2011,FastPFP,Hancock_EM_SVD}. The provided ground truth~\cite{CMUHouse_GT} consists of $30$ feature points presented in all frames in the sequence. Due to that reason most authors considered for matching small graphs with $30$ nodes. By analogy with the previous dataset we used MSER to extract around $250$ keypoints on each image in the sequence with SIFT descriptors and use all of them to build the initial graphs to be matched. The provided ground truth is extrapolated to neighboring features in the same way it was done in~\cite{Cho2012_ProgressiveGM}\footnote{We set the radius of extrapolation to $10$.}. We perform matching between pairs of images spaced by $1$, $10$, $20$, \dots, $110$ frames. However we match at maximum $10$ image pairs for each gap (i.e. detachment between frames). Further we  analyze the averaged matching score, accuracy and running time of 2LevelGM, ProgGM and simple feature matching~\cite{Lowe2004} as functions of the sequence gap. Notice that the bigger the gap the stronger is the deformation between the object on two images and the more difficult is the matching problem. 
+Our next data set is the well known CMU House sequence~\cite{CMUHouse} which consists of $111$ images of a toy house taken from different viewpoints. It was widely used for the evaluation of graph matching algorithms~\cite{Armiti2014,Hancock_ModalClusters,Cho2010_RRWM,Duchenne2011,FastPFP,Hancock_EM_SVD}. The provided ground truth~\cite{CMUHouse_GT} consists of $30$ feature points presented in all frames in the sequence. Due to that reason most authors considered for matching small graphs with $30$ nodes. By analogy with the previous dataset we used MSER to extract around $250$ keypoints on each image in the sequence with SIFT descriptors and use all of them to build the initial graphs to be matched. The provided ground truth is extrapolated to neighboring features in the same way it was done in~\cite{Cho2012_ProgressiveGM}\footnote{We set the radius of extrapolation to $10$.}. We perform matching between pairs of images spaced by $1$, $10$, $20$, \dots, $110$ frames. However we match at maximum $10$ image pairs for each gap (i.e. detachment between frames). Further we  analyze the averaged matching score, accuracy and running time of 2LevelGM, ProgGM and simple feature matching~\cite{Lowe2004} as functions of the sequence gap. Notice that the bigger the gap the stronger is the deformation between the object on two images and the more difficult the matching problem is. 
 
 The results of matching can be seen in Figs.~\ref{fig:House_sol}-\ref{fig:House_ext_sol}. The difference between two provided groups of results lies in the post-processing step applied to the final solutions of all three algorithms in the second group. This post processing step is initially used only by ProgGM to extrapolate the obtained graph matching solution in the same way as it is done for the ground truth~\cite{Cho2012_ProgressiveGM}. This leads to the possibly not unique correspondences between node sets of initial graphs and, in our opinion, significantly increases the accuracy of the solution (compare images in Fig.~\ref{fig:sol_ext}). To make the comparison fairer we applied the same post-processing step also to the solutions of 2LevelGM and feature matching.
 
 \begin{figure}[h] \centering
 		\begin{subfigure}[b]{0.33\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/accuracy"} 
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/accuracy"} 
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.33\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/score"} 
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/score"} 
 		\end{subfigure}
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/performance/time_summary"}
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/time_summary"}
 		\end{subfigure} 	
 	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: not extrapolated solution} \label{fig:House_sol}
 \end{figure}
@@ -337,21 +337,21 @@ The results of matching can be seen in Figs.~\ref{fig:House_sol}-\ref{fig:House_
 \begin{figure}[h] \centering
 		\begin{subfigure}[b]{0.33\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/accuracy"} 
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/accuracy"} 
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.33\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/score"} 
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/score"} 
 		\end{subfigure}
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/performance/time_summary"}
+			\includegraphics[scale=0.25]{"chapter3/fig/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/time_summary"}
 		\end{subfigure} 	
 	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: extrapolated solution} \label{fig:House_ext_sol}
 \end{figure}
 
 For ProgGM we used the same parameters as for the synthetic image set matching from the previous section.
-In 2LevelGM we used the grid initialization with $2\times 2$ cells, as it worked better in this case than HEM or LEM algorithms did. Those coarsening algorithms created very unbalanced subgraphs, which caused problems in time performance and space allocation during the matching process. We also used attributed anchor graphs to find correspondences between subgraphs. In application to the house sequence this approach showed the same results regarding matching accuracy and objective score as the idea to use subgraph matchings to calculate similarities between anchors. Additionally it is much faster. To define anchor attributes we used only the provided node attributes. We also tried to include structure information of the subgraphs into the anchor attributes or use only it instead of feature based attributes, but the impact on the results was minimal.
+In 2LevelGM we used the grid initialization with $2\times 2$ cells, which worked better in this case than HEM or LEM algorithms did. Those coarsening algorithms created very unbalanced subgraphs, which caused problems in time performance and space allocation during the matching process. We also used attributed anchor graphs to find correspondences between subgraphs. In application for the house sequence this approach showed the same results regarding matching accuracy and objective score as the idea to use subgraph matchings to calculate similarities between anchors. Additionally it is much faster. To define anchor attributes we used only the provided node attributes. We also tried to include structure information of the subgraphs into the anchor attributes or use only the structure based attributes, but the impact on the results was minimal.
 
 \begin{figure}[h]\centering
 		\begin{subfigure}[b]{0.45\textwidth}
@@ -377,7 +377,7 @@ In 2LevelGM we used the grid initialization with $2\times 2$ cells, as it worked
 	\caption[Result of the extrapolation of a matching solution]{Result of extrapolation of a matching solution (blue color denotes correct matches and red the wrong one): multiple correspondences, higher accuracy and score} \label{fig:sol_ext}
 \end{figure}
 
-Summarizing we have to admit that ProgGM shows better matching results over the majority of the House sequence than two other methods compared with the other two methods. In contrast to this, the simple feature matching is the weakest method from the three considered, what however was expected. The objective score and accuracy of 2LevelGM is comparable with the results of ProgGM for small values of the sequence gap. 2LevelGM even outperforms ProgGM in case of not extrapolated solutions and a small sequence gap. The accuracy falls however rapidly down after the gap exceeds the value $40$. During the investigation of this behavior we found out, that there are two reasons responsible for it. The first one lies in the disability of the used matching algorithm to find good correspondences between correctly matched subgraphs. The cause is a strong distortion in positions of the nodes in both subgraphs. The higher the deformation the worse the matching accuracy and therefore the objective score is~\cite{Cho2010_RRWM}.
+Summarizing we have to admit that ProgGM shows better matching results over the majority of the House sequence than two other methods compared with the other two methods. In contrast to this, the simple feature matching is the weakest method from the three considered, what however was expected. The objective score and accuracy of 2LevelGM is comparable with the results of ProgGM for small values of the sequence gap. 2LevelGM even outperforms ProgGM in case of not extrapolated solutions and a small sequence gap. The accuracy falls however rapidly down after the gap exceeds the value $40$. During the investigation of this behavior we found out, that there are two reasons responsible for it. The first one lies in the disability of the used matching algorithm to find good correspondences between correctly matched subgraphs. The cause is a strong distortion in positions of the nodes in both subgraphs. The higher the deformation the worse the matching accuracy and therefore the objective score are~\cite{Cho2010_RRWM}.
 The second reason is the ineffectiveness of our update rule to improve graph partitions in this case. According to the formulation in chapter~\ref{updateRule} the algorithms tries to estimate affine transformation between the nodes in the matched subgraphs, but in case of the house sequence this transformation is not affine. The attempt to improve the update rule by estimating a projective transformation between two sets of nodes was not successful as different groups of nodes inside one cluster have different transformations.
 
 %We consider this example as very important, even if 2LevelGM does not show good results in this case. It showed us the weaknesses of our graph matching framework, that we hope to improve in the future work.
@@ -387,7 +387,7 @@ The second reason is the ineffectiveness of our update rule to improve graph par
 
 \section{Discussion}
 
-In this chapter we have performed an evaluation of the suggested two level graph matching framework on synthetic graphs and real image examples. We have compared it with different state-of-the-art algorithms and reported the results of matching by measuring the reached objective score, accuracy of the obtained solution and the required running time.
+In this chapter we have performed an evaluation of the suggested two level graph matching framework on synthetic graphs and real image examples. We have compared it with different state-of-the-art algorithms and presented the results of matching by measuring the reached objective score, accuracy of the obtained solution and the required running time.
 
 In the first group of tests we have evaluated how well our two level approach treats graphs, which still can be matched directly with existing algorithms based on the same problem formulation (RRWM~\cite{Cho2010_RRWM}, MPM~\cite{Cho2014_Haystack}, SM~\cite{Leordeanu2005_SM} and IPFP~\cite{Leordeanu2009_IPFP}). The results show, that in the case of subgraph isomorphism and homomorphism, our approach gains results, which are close to those of RRWM, IPFP and MPM, and outperforms SM. However it shows a little bit weaker results than other algorithms in case of high deformation between matched graphs. Although even in this case it is able to outperform MPM and SM.
 
