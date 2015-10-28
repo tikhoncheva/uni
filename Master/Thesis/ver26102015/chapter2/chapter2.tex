@@ -22,7 +22,7 @@ The matrix $S\in\mathbb{R}^{n_1n_2\times n_1n_2}$ in Eq.~\eqref{eq:gQAP1_2} encl
 
 As we saw in the previous chapter, the selected formulation of a graph matching problem is widely used as the most general one. However, the size of the affinity matrix $S$ can cause problems due to the required memory demands. For example, a dense affinity matrix between two graphs with $200$ nodes each needs approximately 12Gb memory (double precision). There are several possible ways to reduce the memory complexity of the formulated graph matching problem. Here we mention three possible approaches.
 
-The first one is to reduce a set of candidate correspondences by selecting a subset $M^\prime\subset M$. This can be done, for example, by restricting the number of candidate matches for a node $v_i\in V^I$ to some number smaller than $n_2$. This method is often used, as it not only solves memory issues of the problem formulation as defined in Eqs.~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}, but also reduces the algorithmic complexity of many algorithms, which highly depend on the number of possible matches~(e.g.~\cite{Cho2014_Haystack,Cho2010_RRWM,Cho2012_ProgressiveGM, Leordeanu2005_SM}).
+The first one is to reduce a set of candidate correspondences by selecting a subset $M^\prime\subset M$. This can be done, for example, by restricting the number of candidate matches for a node $v_i\in V^I$ to some number smaller than $n_2$. This method is often used, as it not only solves memory issues of the problem formulation as defined in Eqs.~\eqref{eq:gQAP1_2}-\eqref{eq:gQAP4_2}, but also reduces the algorithmic complexity of many algorithms, which highly depend on the number of possible matches~(e.g.~\cite{Cho2010_RRWM,Cho2012_ProgressiveGM,Cho2014_Haystack,Leordeanu2005_SM}).
 
 The second possibility, is to make the matrix $S$ sparser by excluding the comparison of some nodes or edges from the consideration. In case of big graphs this can however lead to a high loss of initially provided information and influences dramatically the quality of a resulting matching. 
 
@@ -60,11 +60,11 @@ We return now back to the case of two graphs $G^I=(V^I,E^I,D^I)$ and $G^J=(V^J,E
 For each of them we build an anchor graph $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$ respectively.
 Now instead of matching graphs $G^I$ and $G^J$ directly on the lower level, we want to match first the corresponding anchor graphs. Matches between anchor nodes give us correspondences between underlying subgraphs. After that, we can perform graph matching for each pair of matched subgraphs independently. A union of local solutions from the single subgraph matching problems gives us a solution of the initial problem. More formally, we replace the objective function of the initial matching problem (see Eq.~\eqref{eq:gQAP1_2}, \eqref{eq:sumQAP}) with the new function:
 \begin{equation}\label{eq:sumQAP_2}
-	S(G^I,G^J,m|m^a)=\sum_{\substack{ v_{i},v_{i^\prime}\in V^I_k\\v_{j},v_{j^\prime}\in V^J_p\\ m^a(a_k)=a_p}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{\substack{ v_{i}\in V^I_k\\v_{j}\in V^J_p\\ m^a(a_k)=a_p}}s_V(v_{i},v_{j}),
+	S(G^I,G^J,m|m^a)=\sum_{\substack{ v_{i},v_{i^\prime}\in V^I_k\\v_{j},v_{j^\prime}\in V^J_p,\\m(v_i)=v_j, m(v_{i^\prime})=v_{j^\prime}\\ m^a(a_k)=a_p}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{\substack{ v_{i}\in V^I_k\\v_{j}\in V^J_p\\m(v_i)=v_j\\ m^a(a_k)=a_p}}s_V(v_{i},v_{j}),
 \end{equation}
 where $S(G^I,G^J,m|m^a)$ denotes the similarity of the initial graphs given the matching $m^a=\{(a_k,a_p)|a_k\in A^I,a_p\in A^J\}$ of the corresponding anchor graphs or, which is the same, the correspondences $\{(V^ I_k,V^J_p)|V^I_k\subset G^I,V^J_p\subset G^J\}$ between the subgraphs of the initial graphs.
 
-Why can this approach be better than the direct one? As we cab see from the previous section the time and space complexity of the considering graph matching problem depends highly on the size of initial graphs. Constructed anchor graphs are however several time smaller than the initial graphs, which means, the matching algorithm on the anchor level can be performed much faster and without high memory demand compared to the lower level. The same holds true for matching between the subgraphs.
+Why can this approach be better than the direct one? As we can see from the previous section the time and space complexity of the considering graph matching problem depends highly on the size of initial graphs. Constructed anchor graphs are however several time smaller than the initial graphs, which means, the matching algorithm on the anchor level can be performed much faster and without high memory demand compared to the lower level. The same holds true for matching between the subgraphs.
 %If $C(n)$ is complexity of a graph matching algorithm with $n$ possible correspondences.
 Obviously, the accuracy of such an two level matching approach depends heavily on the partition of the initial graphs into subgraphs and on the quality of a graph matching algorithm on both the higher and lower levels. We concentrate ourself on the first of this two critical moments and use an existing algorithm for graph matching. To make the described two level approach more robust against graph partitioning we suggest to use an obtained matching between two graphs to correct their partitions. The overall procedure (matching on the higher level, matching on the lower level and partition updating) is then repeated iteratively till convergence of the objective function~\eqref{eq:gQAP1_2}. The algorithm is summarized below in Alg.\ref{alg:2levelGM}.
 
@@ -75,12 +75,12 @@ Obviously, the accuracy of such an two level matching approach depends heavily o
 	\KwOut{set $m$ of correspondences between the nodes $V(G^I)$ and $V(G^J)$}
 	construct anchor graph $A^I$ of the graph $G^I$ \label{alg:2levelGM_clustering1}\\
 	construct anchor graph $A^J$ of the graph $G^J$ \label{alg:2levelGM_clustering2}\\
-	i=0, $score_i$=0\\
+	i=0, $r=0$, $score_i$=0\\
 	\While{$r<R$  \textbf{AND} $i\le N$}
 	{ $i=i+1$ \\
 	  \If{$i\ge 2$}
 	  {update subgraphs $G[V^I_k],G[V^J_p],k=1\dots,m_1,\ p=1\dots,m_2$ \label{alg:2levelGM_update}}
-	  match anchor graphs $A^I$,$A^J$ \label{alg:2levelGM_GM1} \\
+	  match anchor graphs $A^I$, $A^J$ \label{alg:2levelGM_GM1} \\
 	  $m_i=\emptyset$\\
 	  \ForEach{pair of matched anchors $(a_k,a_p),a_k\in V(A^I), a_p\in V(A^J)$}
 	  {match subgraphs $G[V^I_k]$,$G[V^J_p]$ \label{alg:2levelGM_GM2}\\
