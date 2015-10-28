@@ -4,20 +4,24 @@
 \documentclass  [
   paper    = a4,
   BCOR     = 10mm,    % binding correction
-  twoside,
+  twoside, openright,
   fontsize = 12pt,
 %  fleqn,
   toc      = bibnumbered,
   toc      = listofnumbered,
+%  idxtotoc,     				% index in toc
   numbers  = noendperiod,
-%  headings = normal,
-  listof   = leveldown,
-  chapterprefix=true  % like in standard class "report",
-%  openany    % supress empty pages
+%  listof   = leveldown,
+  chapterprefix = true 			% like in standard class "report"
 ]                                       {scrbook} %{scrreprt} %{scrbook}
-% used pagages
+%---------------------------------------------------------------------------------
+% Packages
+%---------------------------------------------------------------------------------
+\usepackage     [english]               {babel}
 \usepackage     [utf8]                  {inputenc}
 \usepackage     [T1]                    {fontenc}
+%\usepackage							    {makeidx} % Index-generation
+\usepackage                             {url}
 %\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
 %\usepackage                             {exscale} 
 %\usepackage                             {microtype}
@@ -27,21 +31,20 @@
 \usepackage                             {amssymb}
 \usepackage                             {graphicx}
 \usepackage [ruled,vlined,linesnumbered]{algorithm2e} % pseudo algorithms
-%\usepackage                                           {algpseudocode}
 \usepackage [font=small,labelfont=bf,labelsep=colon] {caption}
 \usepackage                                          {subcaption}
-%\usepackage [bf]                                     {subfigure}
-\usepackage     [english]               {babel}
 %\usepackage                             {natbib}
 \usepackage                             {hyperref}
 \usepackage     [onehalfspacing]        {setspace} % 1.5 line spacing
-%\usepackage							 {makeidx} % Index-generation
-%\usepackage                             {parskip}  % Removes paragraph indentation (not needed most of the time now)
+
 \usepackage                             {titlesec} % Set distance between section titles and text
 %\usepackage                             {fancyhdr} % headings and footnotes
 \usepackage                             {placeins} % FloatBarrier
+\usepackage   [automark,headsepline]    {scrpage2}
+\usepackage                             {datetime}
 
-\usepackage[automark,headsepline]{scrpage2}
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
 
 \setlength{\parskip}{2mm} % no indent
 \setlength{\parindent}{0pt} % no indent
@@ -50,27 +53,6 @@
 \titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
-
-%\setkomafont{chapter}{\LARGE\rmfamily} % Überschrift der Ebene
-%\setkomafont{section}{\Large\rmfamily}
-%\setkomafont{subsection}{\large\rmfamily}
-%\setkomafont{subsubsection}{\large\rmfamily}
-%\setkomafont{chapterentry}{\large\rmfamily} % Überschrift der Ebene in Inhaltsverzeichnis
-%\setkomafont{descriptionlabel}{\bfseries\rmfamily} % für description Umgebungen
-%\setkomafont{captionlabel}{\small\bfseries}
-
-
-% Line spacing --------------------------------------------------------
-%\newlength{\defbaselineskip}
-%\setlength{\defbaselineskip}{\baselineskip}
-%\newcommand{\setlinespacing}[1]%
-%           {\setlength{\baselineskip}{#1 \defbaselineskip}}
-%\newcommand{\goodspacing}{\setlength{\baselineskip}%
-%                           {1.3 \defbaselineskip}}
-%\newcommand{\doublespacing}{\setlength{\baselineskip}%
-%                           {2.0 \defbaselineskip}}
-%\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
-% --------------------------------------------------------
 
 
 \allowdisplaybreaks     % allow page breaks in formulas
@@ -84,7 +66,9 @@
     urlcolor=darkblue
 }
 
+%---------------------------------------------------------------------------------
 % Defintions
+%---------------------------------------------------------------------------------
 \def\vec{\mathop{\rm vec}}								% matrix vectorization
 \def\tr{\mathop{\rm tr}}								% matrix trace
 \def\argmax{\mathop{\rm argmax}}						% argmax
@@ -92,9 +76,11 @@
 \def\median{\mathop{\rm median}} 						% median
 \def\dist{\mathop{\rm dist}} 						    % dist
 
-\def\version{Version of 25.10.2015} 
+%---------------------------------------------------------------------------------
+% New commands
+%---------------------------------------------------------------------------------
 \newcommand\ToDo[1]{\textcolor{red}{#1}} 
-\newcommand\currentname{\@currentlabelname}
+%\newcommand\currentname{\@currentlabelname}
 
 % list uquation with number
 \newcommand{\listequationnumber}{\refstepcounter{equation}(\theequation)}
@@ -106,22 +92,30 @@
         \setlength{\belowdisplayskip}{0pt}%
         \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
         \endgroup}
-        
-        
-        
+               
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+
+% Pagestyle:
+%\pagestyle{headings}
+
 %---------------------------------------------------------------------------------
 %---------------------------------------------------------------------------------
 
 \begin{document}
-
-%% title pages similar to providet template instead of maketitle
-  \include{titlepages-eng} % or english title page
+%  \pagenumbering{roman} 
+  %% title pages similar to providet template instead of maketitle
+%  \KOMAoptions{twoside=false}
+  \include{titlepages-eng3} % english title page
 
   \pagestyle{empty}
   \include{deposition}
   \include{acknowledgments}
   \include{abstract/abstracts}
-%  \pagestyle{headings}
+
+%  \KOMAoptions{twoside=true}
+  \pagestyle{headings}
+  \onehalfspacing
   
 \abovedisplayskip = 6pt minus 2pt %plus 2pt
 \belowdisplayskip = 6pt minus 2pt %plus 2pt
@@ -130,14 +124,13 @@
 
 %% Table of contents
   \frontmatter
-  \onehalfspacing
   \thispagestyle{empty}
   \tableofcontents
 	
 %\cfoot[\pagemark]{\pagemark}
 %\lehead{\headmark}
 %\rohead{\headmark}
-  \pagestyle{scrheadings}
+%  \pagestyle{scrheadings}
 	
   \mainmatter
   \include{introduction}
