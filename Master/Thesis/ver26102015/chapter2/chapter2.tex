@@ -1,5 +1,5 @@
 \chapter{Two level graph matching} \label{chapter:2levelGM}
-In this chapter we describe our novel approach for graph matching. Our aim however was not to develop a new matching algorithm, but to propose a framework, which would help to solve problems, where the direct application of existing matching algorithms is impossible due to memory requirements or runtime. This is often the case when a graph matching problem is formulated using a similarity matrix between graphs~(see Eq.~\eqref{eq:gQAP1}). The main idea of our approach is based on the \emph{divide and conquer} technique~\cite{Cormen}, which is well known for example from its application for array sorting algorithms. According to this general paradigm, a given graph matching problem, which is too difficult to be solved directly, is subdivided into smaller subproblems. Those subproblems are created in such a way, that they can be solved without great effort. A resulting solution is then combined from local solutions of single subproblems. A disadvantage of such an approach is however, that a runtime improvement is sometimes paid with a drop in the accuracy.
+In this chapter we describe our novel approach for graph matching. Our aim however was not to develop a new matching algorithm, but to propose a framework, which would help to solve problems, where the direct application of existing matching algorithms is impossible due to memory requirements or runtime. This is often the case when a graph matching problem is formulated using a similarity matrix between graphs~(see Eq.~\eqref{eq:gQAP1}). The main idea of our approach is based on a variation of the \emph{divide and conquer} technique~\cite{Cormen}, which is well known for example from its application for array sorting algorithms. According to this general paradigm, a given graph matching problem, which is too difficult to be solved directly, is subdivided into smaller subproblems. Those subproblems are created in such a way, that they can be solved without great effort. A resulting solution is then combined from local solutions of single subproblems. A disadvantage of such an approach is however, that a runtime improvement is sometimes paid with a drop in the accuracy.
 Due to that, one want to have a trade off between speed up and accuracy. What is more important depends on the particular problem.
 
 Several existing algorithms share similar ideas. Those which are closest to our approach were described in the previous chapter under the group of algorithms based on clustering techniques. Below we review them shortly again to point out, that none of them is completely repeated by our framework.
@@ -72,7 +72,7 @@ Obviously, the accuracy of such an two level matching approach depends heavily o
 	\KwIn{ initial graphs $G^I$, $G^J$\\
 		   \hspace{45pt}maximal number of iterations $N$\\
 		   \hspace{45pt}convergence parameters $R$ and $\epsilon$}
-	\KwOut{set $m$ of correspondences between the nodes $V(G^I)$ and $V(G^J)$}
+	\KwOut{set $m$ of correspondences between the nodes in $V(G^I)$ and in $V(G^J)$}
 	construct anchor graph $A^I$ of the graph $G^I$ \label{alg:2levelGM_clustering1}\\
 	construct anchor graph $A^J$ of the graph $G^J$ \label{alg:2levelGM_clustering2}\\
 	i=0, $r=0$, $score_i$=0\\
@@ -84,7 +84,7 @@ Obviously, the accuracy of such an two level matching approach depends heavily o
 	  $m_i=\emptyset$\\
 	  \ForEach{pair of matched anchors $(a_k,a_p),a_k\in V(A^I), a_p\in V(A^J)$}
 	  {match subgraphs $G[V^I_k]$,$G[V^J_p]$ \label{alg:2levelGM_GM2}\\
-	   $m_i=m_i\cup\{m^k_i\}$\hspace{55pt}\tcc{$m^k_i$ set of local correspondences}
+	   $m_i=m_i\cup\{m^{kp}_i\}$\hspace{50pt}\tcc{$m^{kp}_i$ set of local correspondences}
 	  }
 	  $score_i=x^TSx$\ \ \tcc{$x$ the indicator vector of the subset $m_i\subseteq M$}
 	  \If{$|score_i-score_{i-1}|<\epsilon$}
@@ -102,35 +102,37 @@ graph partitioning~(lines~\ref{alg:2levelGM_clustering1},\ref{alg:2levelGM_clust
 \subsection{Anchor graph construction} \label{subgraphInit}
 The problem of anchor graph construction for an initially given graph $G^I=(V^I,E^I,D^I)$ turns straight forward into a problem of partitioning the graph $G^I$. During our work on this thesis we tried out different strategies for clustering nodes of a given graph. Here we present those, which were more suitable for our matching framework, however generally an arbitrary algorithm for graph partitioning can be used.
 
-Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefore can define the length of an edge as a $L^2-$distance between its endpoints. The reason for this assumption is given by practical applications such as image or object recognition.
+Here and further we assume that the nodes of the given fine graph $G^I$ are located on a plane. That means, for each node we have additionally to its attribute an associated pair of coordinates and therefore can define the length of an edge as the $L^2-$distance between its endpoints. The reason for this assumption is given by practical applications such as image or object recognition.
 \subsubsection{Using grid}	
 The first algorithm we describe is the most simple one. It uses a grid with fixed number of rows $r$, columns $c$ and a cell width $w$. The grid is placed over the graph $G^I$. Nodes that are captured by a same grid cell belong to one cluster. Obviously, the number of clusters is equal to $r\times c$. We place anchor nodes in the middle of the grid cells. Two anchors are connected by an edge, if the cells they belong to have a common edge.
 \subsubsection{Algorithms based on node merge}
-The next considered approach creates an anchor graph $A^I$ with a predefined number $m_1$ of anchors. For that we adopted a coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP, Safro2012_GC, Karypis95_GP, Hendrickson1995}.
+The next considered approach creates an anchor graph $A^I$ with a predefined number $m_1$ of anchors. For that we adopted a coarsening phase from multi-level graph partition algorithms \cite{Chevalier09_GP,Hendrickson1995,Karypis95_GP,Safro2012_GC}.
 Such algorithms have generally three phases: 
 \begin{enumerate}
 	\item graph coarsening phase, where one creates a hierarchy of graphs by successive merging of nodes in graph on previous stage starting with the initial graph;
 	\item graph partition phase, where the partition problem is solved exact on the coarsest level;
 	\item refinement phase, where solution of the coarsest level is interpolated through all levels of the hierarchy until the initial graph.
 \end{enumerate}
-There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (SAG)~\cite{Chevalier09_GP}, which groups nodes of $G^I$ in disjoint subsets based on the strength of the edges between them. We implemented two SAG based algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)~\cite{Chevalier09_GP}. Both algorithms visit nodes of the graph $G^I$ in random order and construct an independent set of edges $E^\prime$ of the graph. The edge selection is based on the edge weights. The HEM algorithm picks and adds into $E^\prime$ the strongest edge adjacent to a current node $v$, that does not belong to the set of end nodes of edges in $E^\prime$~(see Alg.~\ref{alg:HEM}). As opposed to this, the LEM algorithm selects the weakest edge adjacent to a current node. The edges in $E^\prime$ will be contracted, i.e. their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
+There are several types of graph coarsening algorithms. In our work we used so-called strict aggregation scheme (SAG)~\cite{Chevalier09_GP}, which groups nodes of $G^I$ in disjoint subsets based on the strength of the edges between them. We implemented two SAG based algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)~\cite{Chevalier09_GP}. Both algorithms visit nodes of the graph $G^I$ in random order and construct an independent set of edges $E^\prime$ of the graph. The edge selection is based on the edge weights\footnote{We denote weight of an edge $vv^\prime\in E^I$ with $w(v,v^\prime)$}. The HEM algorithm picks and adds into $E^\prime$ the strongest edge adjacent to a current node $v$, that does not belong to the set of end nodes of edges in $E^\prime$~(see Alg.~\ref{alg:HEM}). As opposed to this, the LEM algorithm selects the weakest edge incident to a current node. The edges in $E^\prime$ will be contracted, i.e. their endpoints will be replaced with a new node, that lies in the middle of a contracted edge and is connected to all neighbors of its endpoints.
 
 %{\LinesNumberedHidden
 %\LinesNumberedHidden
 %\LinesNotNumbered
 \begin{algorithm}[h]
-	i = 0, $E^\prime=\emptyset$ \\
-	\While{$|V(G^I)|>m_1$  \textbf{AND} $i\le N$}
-	{ select a random node $v\in V(G^I)\setminus V(M)$ \\
-	  \If{$\exists v^\prime=\argmax_{u\in V(G^I)\setminus V(M)} w(v,u)$}
-	  {$E^\prime=E^\prime\cup{e_{vv^\prime}}$}
+	$i = 0$, $E^\prime=\emptyset$ \\
+	\While{$|V^I|>m_1$  \textbf{AND} $i\le N$}
+	{ select a random node $v\in V^I\setminus V(E^\prime)$ \\
+	  \If{$\exists v^\prime=\argmax_{u\in V^I\setminus V(E^\prime)} w(v,u)$}
+	  {$E^\prime=E^\prime\cup vv^\prime$\\
+	   $i=0$}
 	  \Else{$i=i+1$}
 	}
-	\Return $G^I$
+	contract edges in $E^\prime$\\ 
+	\Return coarsened $G^I$
 	\caption{HEM($G^I$, $m_1$, $N$)} \label{alg:HEM}
 \end{algorithm}
 
-In our case, the graph $G^I$ is not initially weighted. To use the described coarsening methods we need to define a strength of graph edges. In case of LEM-Algotihm we set the length of an edge as its strength: $w_{vv^\prime}=\|v-v^\prime\|_{2}$. If we use HEM-Algorithm the strength of an edge is equal to $w_{ii^\prime} = exp(-\frac{\|v-v^\prime\|_{2}}{\sigma^2_{s}})$ with a constant $\sigma^2_{s}$.
+In our case, the graph $G^I$ is not initially weighted. To use the described coarsening methods we need to define a strength of graph edges. In case of LEM-Algotihm we set the length of an edge as its strength: $w(v,v^\prime)=\|v-v^{\prime}\|_{2}$. If we use HEM-Algorithm the strength of an edge is equal to $w(v,v^\prime) = exp(-\frac{\|v-v^\prime\|_{2}}{\sigma^2_{s}})$ with a constant $\sigma^2_{s}$.
 
 It is clear, that one iteration of HEM or LEM reduces the number of nodes in $G$ at most by $\lfloor\frac{n}{2} \rfloor$ nodes. To get an coarse graph with $m_1$ nodes the coarsening algorithm should be repeated several times.
 
@@ -211,12 +213,12 @@ err(T_{pk}) & = \median_{v_j\in V^J_p}err(v_j)
 \end{split}\end{equation}
 From both transformations we select the one with the smallest error and replace the second with the inverse transformation of the selected one. For simplicity we preserve the notation $T_{kp}$ and $T_{pk}$ for the transformations related to the matched subgraph pair $(a_k, a_p)$. In this way we associate with each pair of matched subgraphs, that have at least $3$ provided node correspondences\footnote{We need at least $3$ pairs of correspondences between two sets of points to be able to estimate an affine transformation between them.}, two affine transformations between their nodes.
 
-In the next step, we apply the estimated transformations to each subgraph of both graphs to project them into the node space of the opposite graph (see Fig.~\ref{fig:update}). This means for the subgraph $G[V^J_p]$, that the transformation $T_{pk}$ associated with the anchor pair $(a_k,a_p)$ is now casted as a mapping $T_{pk}:V^J_p\rightarrow V^I$. For the projected points $T_{pk}(v_j),v_j\in V^J_p,$ we find their nearest neighbors $\bar{v}_i=NN(T_{pk}(v_j))$ in $V^I$. In Fig.~\ref{fig:update} the projected points $T_{pk}(v_j),v_j\in V^J_p,$ are marked with bright red color. We define a new matrix $\bar{U}^{Ia}\in\mathbb{R}^{|V^I|\times m_1}$ and assign to its elements $\bar{U}^{Ia}_{\bar{v}_i,a_k}=\|T_{pk}(v_j)-\bar{v}_i\|_2$ the distance between the projections $T_{pk}(v_j)$ of $v_j\in V^J_p$ and their nearest neighbor $NN(T_{pk}(v_j))$ in $V^I$.
+In the next step, we apply the estimated transformations to each subgraph of both graphs to project them onto the node space of the opposite graph (see Fig.~\ref{fig:update}). This means for the subgraph $G[V^J_p]$, that the transformation $T_{pk}$ associated with the anchor pair $(a_k,a_p)$ is now casted as a mapping $T_{pk}:V^J_p\rightarrow V^I$. For the projected points $T_{pk}(v_j),v_j\in V^J_p,$ we find their nearest neighbors $\bar{v}_i=NN(T_{pk}(v_j))$ in $V^I$. In Fig.~\ref{fig:update} the projected points $T_{pk}(v_j),v_j\in V^J_p,$ are marked with bright red color. We define a new matrix $\bar{U}^{Ia}\in\mathbb{R}^{|V^I|\times m_1}$ and assign to its elements $\bar{U}^{Ia}_{\bar{v}_i,a_k}=\|T_{pk}(v_j)-\bar{v}_i\|_2$ the distance between the projections $T_{pk}(v_j)$ of $v_j\in V^J_p$ and their nearest neighbor $NN(T_{pk}(v_j))$ in $V^I$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.35]{chapter2/fig/update.png}
-	\caption{Example of the graph partition update rule} \label{fig:update}
+	\caption[Example of the graph partition update rule]{Example of the graph partition update rule. We project the subgraph $G^J_p$ onto the subgraph $G^I_k$ using estimated affine transformation $T_{pk}$. Nodes in the graph $G^I$, which were overlaid by the projection of the subgraph $G^J_k$ have a chance to be included into the subgraph $G^I_k$.} \label{fig:update}
 \end{figure}
 
 After performing the same procedure for all transformations $T_{pk}$ we set all not-assigned elements of $\bar{U}^{Ia}$ to infinite. If there are some lines in $\bar{U}^{Ia}$ where all elements are infinite, meaning that the corresponding nodes in $V^I$ are not selected as nearest neighbors of the projections of the nodes in $V^J$,
@@ -276,7 +278,7 @@ In case when we use graph matching to determine the similarity between anchors, 
 
 At the end we only need to determine the complexity of our update rule. The CPD algorithm has linear complexity, which means we can estimate transformations between all matched subgraphs with demand $\sum_{(a_k,a_p)\in M^a}\mathcal{O}(\max(|V^I_k|,|V^J_p|))$. The actual update step afterwards has the complexity $\mathcal{O}(n_1m_1+n_2m_2)$.
 
-If we assume, that we can completely parallelize the computation of the sum in Eq.~\eqref{eq:complexity2}, that the total complexity of one iteration of our two level graph matching approach is equal to
+If we assume that we can completely parallelize the computation of the sum in Eq.~\eqref{eq:complexity2}, then the total complexity of one iteration of our two level graph matching approach is equal to
 \begin{equation}\label{eq:complexity3}
 \begin{split}
 \mathcal{O}(m_1^2m_2^2)&+\mathcal{O}(f_{GM}(m_1,m_2))+\mathcal{O}(f_{GM}(\max_{k}|V^I_k|,\max_{p}|V^J_p|))\\

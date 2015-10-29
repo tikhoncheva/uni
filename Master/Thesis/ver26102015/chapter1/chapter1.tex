@@ -178,11 +178,11 @@ This leads us to the question how to calculate edge dissimilarity. The most obvi
 
 Sometimes node attributes can be used to calculate edge dissimilarities. For example, if graph nodes are described by an ellipse with known center coordinates and orientation, one can calculate so-called geometric dissimilarity of the edges~\cite{Cho2009_AgglClustering,Cho2012_ProgressiveGM}:
 \begin{alignat}{4}\label{eq:geomDiss}
-& d(e_{ij},e_{i^\prime j^\prime}) && =\frac{1}{2}(d_{geo}(m_j|m_i) && +d_{geo}(m_i|m_j)) \\
-& d_{geo}(m_j|m_i) && =\frac{1}{2}(\|x_{j^\prime}-H_{i}x_j\| && + \|x_{j}-H^{-1}_ix_{j^\prime}\|) \\
-& d_{geo}(m_i|m_j) && =\frac{1}{2}(\|x_{i^\prime}-H_{j}x_i\| && + \|x_{i}-H^{-1}_{j}x_{i^\prime}\|) 
+& d_E(e_{ii^\prime},e_{jj^\prime}) && =\frac{1}{2}(d_{geo}(m_{i^\prime}|m_i) && +d_{geo}(m_i|m_{i^\prime})) \\
+& d_{geo}(m_{i^\prime}|m_i) && =\frac{1}{2}(\|x_{j^\prime}-H_{i}x_{i^\prime}\| && + \|x_{i^\prime}-H^{-1}_ix_{j^\prime}\|) \\
+& d_{geo}(m_i|m_{i^\prime}) && =\frac{1}{2}(\|x_j-H_{i^\prime}x_i\| && + \|x_{i}-H^{-1}_{i^\prime}x_j\|) 
 \end{alignat}
-where $m_i$ is a correspondence between nodes $v_i$ and $v_{i^\prime}$ and $H_i$ is an affine homography from $v_i$ to $v_{i^\prime}$ estimated based on elliptic regions around each node.
+where $m_i$ is a correspondence between nodes $v_i\in V^I$ and $v_{j}\in V^J$ and $H_i$ is an affine homography from $v_i$ to $v_{j}$ estimated based on elliptic regions around each node. $x_i$ and $x_{j}$ denote the centers of this elliptic regions.
 
 Another way to calculate edge similarities could be to use directly some similarity measure, such as cosine similarity\footnote{The cosine similarity of two vectors $x_1,x_2\in\mathbb{R}^n$ is equal to $s_{cos}=\frac{x_1^Tx_2}{\|x_1\|_2\|x_2\|_2}$}.
 

@@ -3,9 +3,7 @@ Consider a problem of assignment of $n$ facilities to $n$ locations given the tr
 \begin{equation}\label{eq:QAP_classic}
 P = \argmin_{\hat{\sigma}\in\Sigma_n}\sum_{i=1}^{n}\sum_{j=1}^{n}f_{ij}d_{\hat{\sigma}(i)\hat{\sigma}(j)}+\sum_{i=1}^{n}b_{i\hat{\sigma}(i)},
 \end{equation}
-where $\Sigma_n$ is a set of all possible permutations of the set $\{1,\dots,n\}$, and is called \emph{Koopmans-Beckmann version of the quadratic assignment problem}~\cite{Burkard98thequadratic} (further \emph{QAP}). %We assume further, that the matrix $B$ is a constant matrix. The second term in the objective function of~\eqref{eq:QAP_classic} can be left without 
-
-%Here we want to show, how the formulation~\eqref{eq:QAP_classic} can be transformed into \eqref{eq:QAP1} and \eqref{eq:QAP2}. 
+where $\Sigma_n$ is a set of all possible permutations of the set $\{1,\dots,n\}$. Eq.~\eqref{eq:QAP_classic} is called \emph{Koopmans-Beckmann version of the quadratic assignment problem}~\cite{Burkard98thequadratic} (further \emph{QAP}).
 
 We can assign a permutation matrix $P=(P_{ij})\in\{0,1\}^{n\times n}$ to each permutation $\sigma$, where $P_{i\sigma(i)}=1$ and $0$ elsewhere. The set of all feasible permutation matrices is defined as
 \begin{equation*}
@@ -60,7 +58,7 @@ It remains to show, that the problem in Eq.~\eqref{eq:QAP1} is equivalent to the
 \end{align*}
 The first and the last terms are obviously constant and thus can be ignored during optimization. Consequently, it holds:
 \begin{equation}\label{eq:trace_1}
-\argmin_{\hat{P}\in\Pi_n}\|A^I\hat{P}-\hat{P}A^J\|^2 = \argmin_{\hat{P}\in\Pi_n}-\tr((A^I)^T\hat{P}A^J\hat{P}^T).
+\argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2 = \argmin_{\hat{P}\in\Pi_n}-\tr((A^I)^T\hat{P}A^J\hat{P}^T).
 \end{equation}
 We perform the same transformations with the second term:
 \begin{align*}
