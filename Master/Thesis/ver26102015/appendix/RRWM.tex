@@ -1,7 +1,5 @@
 \chapter{Reweighted random walks for graph matching (RRWM)}\label{appendixB} 
-%For reasons of completeness we describe detailed graph matching algorithm used in our two level graph matching framework. However, we do not provide theoretical justification of the algorithm steps and refer a reader to the original paper for that. %We use the notation introduced above at the beginning of this chapter.
 
-%\subsection{Reweighted random walks for graph matching (RRWM)}
 The presented algorithm is developed by Minsu Cho et al.~\cite{Cho2010_RRWM} and interprets the graph matching problem~\eqref{eq:gQAP1}:
 \begin{alignat*}{2}
 &     && \argmax_x{x^TSx}                           \tag{\ref{eq:gQAP1}}\\
@@ -29,21 +27,21 @@ between two graphs $G^I=(V^I,E^I,D^I)$, $G^J=(V^J,E^J,D^J)$ in a random walk vie
 \end{figure}
 %\vspace{-10pt}
 It is obvious, that the graph matching problem between two graphs $G^I$ and $G^J$ is equivalent to finding a subset of nodes in the associated graph $G^{rw}$, so that the respective node correspondences between $V^I$ and $V^J$ satisfy the matching criteria of the initial problem.
-For finding such a subset the authors adopt the page ranking algorithm based on a random walk, which is assumed to be a Markov chain~\cite{PageRank}. To describe a Markov chain one defines a transition matrix $P$. An usual approach to define a transition matrix of a wighted graph $G^{rw}$ is to convert the weighted adjacency matrix $W$ of the graph into a stochastic matrix by the following normalization $P=D^{-1}W$, where $D$ is a diagonal matrix with entries $D_{kk}=\sum_{l}{W_{kl}}$. This method was, for example, used in the PageRank algorithm~\cite{PageRank}. It is however not suitable for the graph matching purposes, as it treats false correspondences equal to all other correspondences. To avoid this problem Cho et al. introduced an additional absorbing node $v_{abs}$~(see Fig.~\ref{fig:RRWM2}) in the Graph $G^{rw}$. This node represents a state, that can be reached from each node $v_k=v_{ij}\in V^{rw}$ with the probability $1-D_{kk}/D_{\text{max}}, D_{\text{max}}=max_{k}D_{kk}$, but can not be left any more. Using $D_\text{max}$ the matrix $W$ is converted into a stochastic matrix by its multiplication with the factor $1/D_{\text{max}}$.
-Summarizing, the transition matrix $P\in\mathbb{R}^{(n_1n_2+1)\times(n_1n_2+1)}$ is defined as 
+For finding such a subset the authors adopt the page ranking algorithm based on a random walk, which is assumed to be a Markov chain~\cite{PageRank}. To describe a Markov chain one defines a transition matrix $P$. An usual approach to define a transition matrix of a wighted graph $G^{rw}$ is to convert the weighted adjacency matrix $W$ of the graph into a stochastic matrix by the following normalization $P=D^{-1}W$, where $D$ is a diagonal matrix with entries $D_{kk}=\sum_{l}{W_{kl}}$. This method was, for example, used in the PageRank algorithm~\cite{PageRank}. It is however not suitable for the graph matching purposes, as it treats false correspondences equal to all other correspondences. To avoid this problem Cho et al. introduced an additional absorbing node $v_{abs}$~(see Fig.~\ref{fig:RRWM2}) in the Graph $G^{rw}$. This node represents a state, that can be reached from each node $v_k=v_{ij}\in V^{rw}$ with the probability $1-D_{kk}/D_{\text{max}},\ D_{\text{max}}=max_{k}D_{kk}$. Once reached the node  $v_{abs}$ can not be left any more. Using $D_\text{max}$ the matrix $W$ is converted into a stochastic matrix by its multiplication with the factor $1/D_{\text{max}}$.
+Summarizing the transition matrix $P\in\mathbb{R}^{(n_1n_2+1)\times(n_1n_2+1)}$ is defined as 
 \begin{equation}P=
 \begin{pmatrix}
 W/D_{\text{max}} & \mathbf{1}-d/D_{\text{max}} \\
 0\dots 0 & 1
 \end{pmatrix} \label{eq:RRW_P}
 \end{equation}
-and update formula of the probability distribution of the Markov chain as
+and update formula of the probability distribution of the Markov chain is defined as
 \begin{equation}\label{eq:RRW_MC}
 \left(x^{(n+1)T},\ x_{\text{abs}}^{(n+1)}\right)=\alpha\left(x^{(n)T},\ x_{\text{abs}}^{(n)}\right)P+(1-\alpha)r^T,
 \end{equation}
 where $\mathbf{1}$ in~\eqref{eq:RRW_P} denotes a vector of size $\mathbb{R}^{n_1n_2\times 1}$ with all entries equal to $1$, $d=(D_{11},\dots,D_{n_1n_2})$ is the diagonal of the matrix $D$, $\alpha$ is a weighted factor and $r\in\mathbb{R}^{n_1n_2+1}$ is a \emph{reweighted jump vector}.
 
-A Markov chain, defined by Eq.~\ref{eq:RRW_MC} without the second term, is denoted as an \emph{affinity-preserving random walk}. The distribution $\mathbf{\bar{x}}$ of unabsorbed random walks at time $n$ is defined as follows:
+A Markov chain, defined by Eq.~\eqref{eq:RRW_MC} without the second term, is denoted by the authors as an \emph{affinity-preserving random walk}. The distribution $\mathbf{\bar{x}}$ of unabsorbed random walks at time $n$ is defined as follows:
 \begin{equation}\label{eq:RRWM_x}
 \mathbf{\bar{x}}^{(n)}_{ij}=P(X^{(n)}=v_{ij}|X^{(n)}\not=v_{\text{abs}})=\frac{x^{(n)}_{ij}}{1-x^{(n)}_{\text{abs}}}, 
 \end{equation}
