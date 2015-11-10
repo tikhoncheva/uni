@@ -1,0 +1,151 @@
+%----------------------------------------------------------------------
+% MasterThesis: Ekaterina Tikhoncheva, © 09/2015
+%----------------------------------------------------------------------
+\documentclass  [
+  paper    = a4,
+  BCOR     = 10mm,    % binding correction
+  twoside, openright,
+  fontsize = 12pt,
+%  fleqn,
+  toc      = bibnumbered,
+  toc      = listofnumbered,
+%  idxtotoc,     				% index in toc
+  numbers  = noendperiod,
+%  listof   = leveldown,
+  chapterprefix = true 			% like in standard class "report"
+]                                       {scrbook} %{scrreprt} %{scrbook}
+%---------------------------------------------------------------------------------
+% Packages
+%---------------------------------------------------------------------------------
+\usepackage     [english]               {babel}
+\usepackage     [utf8]                  {inputenc}
+\usepackage     [T1]                    {fontenc}
+%\usepackage							    {makeidx} % Index-generation
+\usepackage                             {url}
+%\usepackage     [sc]                    {mathpazo} % Palatino für Mathemodus
+%\usepackage                             {exscale} 
+%\usepackage                             {microtype}
+%\usepackage                             {color}
+\usepackage                             {xcolor} 
+\usepackage                             {amsmath}
+\usepackage                             {amssymb}
+\usepackage                             {graphicx}
+\usepackage [ruled,vlined,linesnumbered]{algorithm2e} % pseudo algorithms
+\usepackage [font=small,labelfont=bf,labelsep=colon] {caption}
+\usepackage                                          {subcaption}
+%\usepackage                             {natbib}
+\usepackage                             {hyperref}
+\usepackage     [onehalfspacing]        {setspace} % 1.5 line spacing
+
+\usepackage                             {titlesec} % Set distance between section titles and text
+%\usepackage                             {fancyhdr} % headings and footnotes
+\usepackage                             {placeins} % FloatBarrier
+\usepackage   [automark,headsepline]    {scrpage2}
+\usepackage                             {datetime}
+
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+
+\setlength{\parskip}{2mm} % no indent
+\setlength{\parindent}{0pt} % no indent
+%\renewcommand{\baselinestretch}{1.3}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+
+\allowdisplaybreaks     % allow page breaks in formulas
+% links
+\definecolor{darkblue}{rgb}{0.0,0.0,0.4}
+\definecolor{darkgreen}{rgb}{0.0,0.4,0.0}
+\hypersetup{
+    colorlinks,
+    linkcolor = black,
+    citecolor = black, %darkgreen,
+    urlcolor  = black %darkblue
+}
+
+
+%---------------------------------------------------------------------------------
+% Defintions
+%---------------------------------------------------------------------------------
+\def\vec{\mathop{\rm vec}}								% matrix vectorization
+\def\tr{\mathop{\rm tr}}								% matrix trace
+\def\argmax{\mathop{\rm argmax}}						% argmax
+\def\argmin{\mathop{\rm argmin}}						% argmin
+\def\median{\mathop{\rm median}} 						% median
+\def\dist{\mathop{\rm dist}} 						    % dist
+
+%---------------------------------------------------------------------------------
+% New commands
+%---------------------------------------------------------------------------------
+\newcommand\ToDo[1]{\textcolor{red}{#1}} 
+%\newcommand\currentname{\@currentlabelname}
+
+% list uquation with number
+\newcommand{\listequationnumber}{\refstepcounter{equation}(\theequation)}
+\newcommand{\listequation}[1]{\hfill$\displaystyle #1$\hfill\listequationnumber}
+
+\newcommand{\itemEq}[1]{%
+        \begingroup%
+        \setlength{\abovedisplayskip}{0pt}%
+        \setlength{\belowdisplayskip}{0pt}%
+        \parbox[c]{\linewidth}{\begin{flalign}#1&&\end{flalign}}%
+        \endgroup}
+               
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+
+% Pagestyle:
+%\pagestyle{headings}
+
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+
+\begin{document}
+%  \pagenumbering{roman} 
+  %% title pages similar to providet template instead of maketitle
+  \include{titlepages-eng3} % english title page
+
+  \pagestyle{empty}
+  \include{deposition}
+  \include{acknowledgments}
+  \include{abstract/abstracts}
+
+  \pagestyle{headings}
+  \onehalfspacing
+  
+\abovedisplayskip = 6pt minus 2pt %plus 2pt
+\belowdisplayskip = 6pt minus 2pt %plus 2pt
+\raggedbottom % do not try to fill whole page
+
+
+%% Table of contents
+  \frontmatter
+  \thispagestyle{empty}
+  \tableofcontents
+
+%% Main body	
+  \pagestyle{scrheadings}
+	
+  \mainmatter
+  \include{introduction}
+  \include{chapter1/chapter1}
+  \include{chapter2/chapter2}
+  \include{chapter3/chapter3}
+  \include{conclusions}
+  
+
+%% Appendix
+% \part{Appendix}
+  \begin{appendix}
+  	\include{appendix/QAP}
+  	\include{appendix/RRWM}
+%    \chapter{Lists}
+    \listoffigures
+%    \listoftables
+    \bibliographystyle{ieee}
+    \bibliography{references}    
+  \end{appendix}
+\end{document}
