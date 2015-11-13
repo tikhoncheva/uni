@@ -194,6 +194,18 @@
         </y:ShapeNode>
       </data>
     </node>
+    <node id="n10">
+      <data key="d5"/>
+      <data key="d6">
+        <y:ImageNode>
+          <y:Geometry height="105.2962962962963" width="162.8148148148148" x="-51.407407407407405" y="467.4074074074074"/>
+          <y:Fill color="#CCCCFF" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="sandwich" modelPosition="s" textColor="#000000" visible="true" width="4.0" x="79.4074074074074" y="109.2962962962963"/>
+          <y:Image alphaImage="true" refid="1"/>
+        </y:ImageNode>
+      </data>
+    </node>
     <edge id="e0" source="n4" target="n5">
       <data key="d10">
         <y:PolyLineEdge>
@@ -356,6 +368,20 @@
     </edge>
   </graph>
   <data key="d7">
-    <y:Resources/>
+    <y:Resources>
+      <y:Resource id="1" type="java.awt.image.BufferedImage">iVBORw0KGgoAAAANSUhEUgAAAGIAAAA7CAYAAACAJF8xAAACjElEQVR42u3Zv2sTYRgH8PsDbunY&#13;
+ISAc+QNKySCIkEEQHCJCCf7gqFBIO+kmgskgdToHM2Wot9zSoB5UU7EIAe3SwRsiJcMRjBjwBFMS&#13;
+w7Vc8Jr7evlJwWRpc2lSvl94p7vp+dz7vO/DCWCmIgJLQAiGEIRgCEEIhhCEYAhBCIYQhJjO2AVk&#13;
+FQXKYG0gX2kSYuJxLXxRHyIiCBCEMJaevYdpHxPiXGLpkDsQCeiWy9ZEiAsF0YJTNbG38wpqutf3&#13;
+0yqy+jbyewWYlg2XEMHGs0vYebGCiDiPiPwUL7NvoOubUJUHuCGJfqH9YksKDJcQwcUpQlte8Iu5&#13;
+gGX1K2zv5MNj2PsbiM8RIuA0UEjfhCjMIZL6hJo37J0/MJTrhAi0Jf3Ucb/9tYv3oH0bPQO0LANb&#13;
+WwasFiGC6Ekw1aVu/49pKHu8NZ3TdviObPxSB0JSDJyqjIQYx2RsQJHaRZQg65UzzhF3oZWbhDhb&#13;
+EU8JUfuM9Wi429r8JS6uYtN0CDFxCM9B/ZcFy+qvA9iuR4jxQ9RR0JJIyDLk/kqsI1d2MKuZ8jMi&#13;
+hJhWwvBv+ci/Wd3x54z2e1eR2j2ABxBivLemErRYqNPfQ8ldHI70UiDN0M1oBueIhj8xX+setlcy&#13;
+KI74leBVsogTItAtgSPjOS53inwLmeLwPeGVNcQIEbRFBbm1Rb/IIsKrOn78d+tpoZF/jHlCBL8r&#13;
+XOsjUtFQ59COPnqNwm+ndyD/Rd18i2Q01JsVCBE8Rm0f75Q1RPv/HgZD2m08UXP4kFlBmBCTvNLa&#13;
+qPYHtOqJP3JeE/bhbCPMFsQFDyEIwRCCEAwhCMEQghAMIQjBEIIQDCEIwRCCEAwhCMEQghAMIQjB&#13;
+EIIZ5B90V9xENG7P1wAAAABJRU5ErkJggg==</y:Resource>
+    </y:Resources>
   </data>
 </graphml>

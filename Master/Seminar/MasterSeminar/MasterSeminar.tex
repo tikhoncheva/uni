@@ -7,6 +7,7 @@
 \usepackage{natbib}
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{algorithm,algorithmic}
+
 %\floatname{algorithm}{Algorithmus}
 
 %\usepackage{tikz}
@@ -142,7 +143,7 @@ A matching function between $G^I$ and $G^J$ is a mapping %between the sets of no
 \visible<3->{
 Define a function $S(G^I, G^J, m)$ to measure the quality of matching $m$ that fulfills some conditions\\
 $\Rightarrow$ \textcolor{red}{Graph matching problem} between $G^I$ and $G^J$ 
-\begin{equation*} \label{gGMP}
+\begin{equation*}
 m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{equation*}
 }
@@ -163,132 +164,240 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------%
-\begin{frame}
-\frametitle{Exact graph matching}
-Edge preserving mapping $m$:\\
-$\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ for all $v_i,v_{i^\prime}\in V^I$.
-
-
-\begin{itemize}
-\item mapping $m$ is bijective $\rightarrow$ graph isomorphism
-\item mapping $m$ is injective $\rightarrow$ graph monomorphism
-\item mapping $m$ is total\hspace{15pt} $\rightarrow$ graph homomorphism
-\end{itemize}
-\begin{figure}[h!]
-    \centering
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{fig/GI}
-        \caption{Graph isomorphism}
-        \label{fig:GI}
-    \end{subfigure}
-    ~
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{fig/monomorphism}
-        \caption{Graph monomorphism}
-        \label{fig:monomorphism}
-    \end{subfigure}
-    ~
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{fig/homomorphism}
-        \caption{Graph homomorphism}
-        \label{fig:homomorphism}
-    \end{subfigure}
-\end{figure}
-
-\visible<2>{\textcolor{red}{\hspace{2cm}not unique!}}
-\end{frame}
-
-%--------------------------------------------------------------------------%
-\begin{frame}
-%\frametitle{Graph Matching}
-Given two attributed graphs $\bar{G}^P=(\bar{V}^P, \bar{E}^P, \bar{A}^P)$ and $\bar{G}^Q=(\bar{V}^Q, \bar{E}^Q, \bar{A}^Q)$ with $n^P$ and $n^Q$ nodes respectively.
-
-A result of graph matching is a subset of possible correspondences between those graphs, which can be represented in form of assignment matrix $X\in\{0,1\}^{n^P\times n^Q}$:
-$$X_{ia} = \begin{cases} 1 & \mbox{node}\ v_i\in \bar{V}^P \mbox{matches}\ v_a \in \bar{V}^Q \\
-						 0 & \mbox{otherwise} \\
-			\end{cases}$$
-General formulation:
-$$x^* = \arg\max S(x)$$
-$$ s.t. \begin{cases}
-									x\in\{0,1\}^{n^Pn^Q} \\
-								 \sum_{i=1}^{n^P}x_{ia}\le 1 \\
-								 \sum_{a=1}^{n^Q}x_{ia}\le 1  \end{cases}$$
-The objective function $S(x)$ measures the similarity between the graph attributes. 
-\end{frame} 
-
-%--------------------------------------------------------------------------%
-%--------------------------------------------------------------------------%
-\section{Solution techniques} 
-\begin{frame}
-\frametitle{Drei exemplarische Typen von Suchanfragen}
-\begin{itemize}
-\item spezielle: \hspace{50pt}
-						\visible<2->{\textcolor{red}{Problem der Knappheit}} \\
-	\glqq Does Netscape support the JDK 1.1 - code-signing API?\grqq
-	\cite{Kleinberg}
-	\begin{block}{}
-	\item 
-	breit angelegte: \hspace{30pt} 	
-					\visible<3->{\textcolor{red}{Problem der Vielfältigkeit}} \\
-	\glqq Find information about the Java programming language\grqq \cite{Kleinberg}
-	\end{block}
-	
-	\item Suche nach ähnlichen Seiten\\
-	\glqq Find pages similar to {\it java.sun.com}\grqq\cite{Kleinberg}
-	
-\end{itemize}
-\end{frame}
-%--------------------------------------------------------------------------%
-\begin{frame}
-\frametitle{Ranking}
-
-\begin{itemize}
-\item Man möchte die angesehensten Seiten (Authorities) aus der Menge aller zu der Anfrage relevanten Seiten finden
-\item Mögliche Hindernisse:
-	\begin{itemize}
-	\item die höchst relevanten Seiten werden nicht unbedingt durch ein textbasiertes Ranking vorgezogen
-	\item es kann sein,  dass die relevanten Seiten die Wörter aus der Suchanfrage gar nicht enthalten
-	\end{itemize}
-\end{itemize}
-\end{frame}
-%--------------------------------------------------------------------------%
 \begin{frame}[allowframebreaks]
+\frametitle{Exact graph matching}
+Edge preserving mapping $m$:
+$\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ % for all $v_i,v_{i^\prime}\in V^I$.
 
-\begin{block}{Annahme}
-Die Relevanz zwischen zwei Seiten wurde vom Ersteller des Links zwischen diesen Seiten geprüft
+\begin{minipage}[0.2\textheight]{\textwidth}
+	\begin{columns}[T]
+		\begin{column}{0.6\textwidth}
+			\begin{itemize}
+			\item mapping $m$ is bijective $\rightarrow$ graph isomorphism (GI)
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{figure}[h!]
+			    \centering
+			    \includegraphics[width=2cm]{fig/GI}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{minipage}
+
+\begin{minipage}[0.2\textheight]{\textwidth}
+	\begin{columns}[T]
+		\begin{column}{0.6\textwidth}
+			\begin{itemize}
+			\item mapping $m$ is injective $\rightarrow$ graph monomorphism
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{figure}[h!]
+			    \centering
+			    \includegraphics[width=2cm]{fig/monomorphism}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{minipage}
+
+\begin{minipage}[0.2\textheight]{\textwidth}
+	\begin{columns}[T]
+		\begin{column}{0.6\textwidth}
+			\begin{itemize}
+			\item mapping $m$ is total\hspace{15pt} $\rightarrow$ graph homomorphism
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\begin{figure}[h!]
+			    \centering
+			    \includegraphics[width=2cm]{fig/homomorphism}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{minipage}
+\textcolor{red}{NP complete (except GI)~\cite{Garey_NPComplet}}
+%\visible<2>{\textcolor{red}{NP complete(except GI)}}
+
+\framebreak
+%--------------------------------------------------------------------------%
+Exact graph matching:
+\begin{itemize}
+\item too strict
+\item time/memory consuming
+\item cannot handle object deformation
+\end{itemize}
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.5\textwidth]{fig/inexactGM}
+\end{figure}
+\end{frame}
+
+%--------------------------------------------------------------------------%
+\begin{frame} [allowframebreaks]
+\frametitle{Inexact graph matching}
+\begin{equation*}
+m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
+\end{equation*}
+\begin{itemize}
+\item second-order (edge) similarity \textcolor{red}{$s_E(e_{ii^\prime},e_{jj^\prime})$}, $e_{ii^\prime}\in E^I, e_{jj^\prime}\in E^J$
+\item first-order (node) similarity \textcolor{red}{$s_V(v_{i},v_{j})$}, $v_i\in V^I, v_j\in V^J$
+\end{itemize}
+
+\begin{equation*}
+	S(G^I,G^J,m)=\sum_{\substack{m(v_i)=v_j\\m(v_i^{\prime})=v_j^{\prime}}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{m(v_i)=v_j}s_V(v_{i},v_{j})
+\end{equation*}
+
+\begin{itemize}
+\item Assignment matrix $x\in\{0,1\}^{n_1\times n_2},\ x_{ij}=1\iff m(v_i)=v_j$
+\end{itemize}
+
+\framebreak
+The most common problem formulation:
+\begin{block}{Quadratic Assignment Problem (NP complete)~\cite{Burkard98thequadratic}}
+$$x^* = \arg\max \sum_{\substack{x_{ij}=1\\x_{i^\prime j^\prime}=1}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j}) $$
+$$ s.t. \begin{cases}
+		x\in\{0,1\}^{n_1n_2} \\
+		\sum_{i=1}^{n_1}x_{ij}\le 1 \\
+		\sum_{j=1}^{n_2}x_{ij}\le 1
+\end{cases}$$
 \end{block}
+Using matrix notation : $\arg\max_{x}{x^TSx}$, $S-$similarity (or affinity) matrix
 
-Stimmt im Allgemeinen nicht (z.B. Navigationslinks, Werbung)
-\vspace{10pt}
-
-Aber unter dieser Annahme reicht es, nur die Linkstruktur des WWW zu betrachten, um die Autorität einer Seite im Bezug auf eine andere zu bestimmen
-
-\frametitle{Authorities und Hubs}
+%Algorithms that solve this problem can be optimal or suboptimal.
 
 \framebreak
 
-\begin{block}{Authorities (Autoritätsseiten)}
-Relevante Seiten, auf die viele weitere relevante Seiten zeigen
-\end{block}
+Solution techniques~\cite{Conte2004}
+\begin{itemize}
+\item discrete optimization
+	\begin{itemize}
+	\item tree search~\cite{Bunke1983_inexactGM,Shapiro1981,Fu1979,Wang1995}
+	\item simulated annealing~\cite{Herault1990_SimulatedAnnealing}
+	\end{itemize} 
+\item continuous optimization
+	\begin{itemize}
+		\item constraint relaxation~\cite{Rangarajan1996_GAGM,Leordeanu2009_IPFP,FastPFP,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}
+		\item spectral methods~\cite{Leordeanu2005_SM,Umeyam1988}
+		\item probabilistic frameworks~\cite{Armiti2014,Hancock_Kittler,Hancock_EM_SVD,Sanrom2012}
+		\item clustering~\cite{Hancock_ModalClusters,Cho2009_AgglClustering,Hancock_GM_SpectralPart,Lyzinski2015}
+	\end{itemize} 
+\end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Drawback of the existing algorithms}
 
-
-\begin{block}{Hubs}
-Seiten, die auf viele Authorities zeigen
-\end{block}
+\begin{itemize}
+\item most of them were developed for matching relative small graphs ($\sim 100$ nodes)
+\item scale badly due to the polynomial increase of time and storage demand
+\item algorithms for the big graphs use another formulation of the graph matching optimization problem\\
+\vspace{5pt}
+{\centering
+$P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2_2$}
+\end{itemize}
 
 \end{frame}
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
-\section{2LevelGM} 
+\section{2LevelGM}
+
+\begin{frame}
+\frametitle{Complexity reduction}
+\begin{block}{}
+\tiny
+$$x^* = \arg\max x^TSx $$
+$$ s.t. \begin{cases}
+		x\in\{0,1\}^{n_1n_2} \\
+		\sum_{i=1}^{n_1}x_{ij}\le 1 \\
+		\sum_{j=1}^{n_2}x_{ij}\le 1
+\end{cases}$$
+\end{block}
+
+\begin{itemize}
+\item set of candidate correspondences
+\item sparse affinity matrix
+\item subdivide problem into a set of smaller subproblems
+\visible<2->{\hspace{10pt}\textcolor{red}{$\leftarrow$\\}}
+\visible<3->{Similar works:
+			\begin{itemize}
+				\item semisupervised case~\cite{Lyzinski2015}
+				\item another objective function~\cite{Hancock_ModalClusters,Hancock_GM_SpectralPart}
+				\item special kind of subproblem~\cite{Hancock_GM_SpectralPart,CliqueGraph_CVPR2015}
+			\end{itemize}}
+\end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Two level graph matching framework}
+Lower level: initial graphs $G^I$, $G^J$\\
+Higher level: simplified graphs (anchor graphs $A^I$, $A^J$)\\
+\begin{figure} [h]
+	\centering
+	\includegraphics[scale=0.35]{fig/twolevels3.png}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Anchor graph construction}
+Goal: $G^I=(V^I,E^I, D^I)\rightarrow A^I=(V^{Ia},E^{Ia},U^{Ia})$
+
+Equivalent: partitioning of $G^I\supset(G^I_1\cup\dots\cup G^I_{|V^{Ia}|})$
+
+Done by: \begin{itemize}
+			\item grid with $r$ rows and $c$ columns
+			\item graph coarsening algorithms: Heavy Edge Matching (HEM) and Light Edge Matching (LEM)
+		\end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Anchor graph and subgraph matching}
+Find correspondences between two anchor graphs $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$
+
+\begin{itemize}
+	\item edge similarity: compare length of the edges beween anchors
+	\item node similarity: 
+	\begin{itemize}
+		\item score of the matching of $G^I_k$ and $G^J_p$
+		\item define anchor attributes based on the $D^I,D^J$ and/or on the geometry of $G^I,G^J$
+	\end{itemize}
+\end{itemize}
+
+Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{Cho2010_RRWM})
+\end{frame}
+
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Graph partition update}
+\begin{enumerate}
+\item estimate an affine transformation between matched subgraphs based on the provided local correspondences (point set registration problem)
+\item let nodes "vote" to which subgraphs they should belong to
+\end{enumerate}
+\begin{figure} [h]
+	\centering
+	\includegraphics[scale=0.35]{fig/update.png}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Complexity}
+%complexity of a selected graph matching algorithm $\mathcal{O}(f_{GM}(n_1,n_2))$
+\begin{itemize}
+%\item Graph partitioning: $\mathcal{O}(n_2^2)$ 
+%\item Codebook of node attributes: 
+\item size of the anchor graphs and subgraphs
+\item number of iterations
+\end{itemize}
 
 
+
+\end{frame}
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \section{Evaluation} 
 
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
-\section*{The End}
 \begin{frame}{The end}
 \centering
 \LARGE
