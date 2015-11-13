@@ -37,6 +37,13 @@
 
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
+\def\vec{\mathop{\rm vec}}								% matrix vectorization
+\def\tr{\mathop{\rm tr}}								% matrix trace
+\def\argmax{\mathop{\rm argmax}}						% argmax
+\def\argmin{\mathop{\rm argmin}}						% argmin
+\def\median{\mathop{\rm median}} 						% median
+\def\dist{\mathop{\rm dist}} 						    % dist
+%--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \title[Application of graph matching in Computer Vision]
 	{Application of graph matching in Computer Vision}
@@ -66,31 +73,131 @@
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \section{Graph matching} 
-\begin{frame}
-\frametitle{Goal}
 
-\begin{figure}[h!]
-%    \centering
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=10cm]{fig/duck1_duck2.png}
-    \end{subfigure}
-\end{figure}
+\begin{frame}[allowframebreaks]
+\frametitle{Attributed undirected graph}
+
+Attributed undirected graph $G=(V,$
+\begin{itemize}
+\item set of nodes $V=\{v_i\}_{i=1}^{n}$
+\end{itemize}
+\vspace{2cm}
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=5cm]{fig/graph_1_nodes.pdf}
+\end{figure}%
+%\end{frame}
+\framebreak
+%--------------------------------------------------------------------------%
+%\begin{frame}
+\frametitle{Attributed undirected graph}
+Attributed undirected graph $G=(V,E,$
+\begin{itemize}
+\item set of nodes $V=\{v_i\}_{i=1}^{n}$
+\item set of edges $E\subseteq\{\{u,v\}| u, v\in V\}$
+\end{itemize}
+\vspace{1.5cm}
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=5cm]{fig/graph_1.pdf}
+\end{figure}%
 \end{frame}
-
+%--------------------------------------------------------------------------%
 \begin{frame}
-\frametitle{Goal}
+\frametitle{Attributed undirected graph}
+Attributed undirected graph $G=(V,E,D)$
+\begin{itemize}
+\item set of nodes $V=\{v_i\}_{i=1}^{n}$
+\item set of edges $E\subseteq\{\{u,v\}| u, v\in V\}$
+\item node attributes $D=\{d_i\}_{i=1}^{n}$
+\end{itemize}
+\vspace{1cm}
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=5cm]{fig/at_graph_1.pdf}
+\end{figure}%
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Graph matching}
+Let us consider two undirected attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J,D^J)$: % with $|V^I|=n_1$ and $|V^J|=n_2$:
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=6cm]{fig/graphs_12.pdf}
+\end{figure}
+%A matching function between $G^I$ and $G^J$ is a mapping $m:V^I\rightarrow V^J$ between the sets of nodes of two graphs.
+\end{frame}
+%\framebreak
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Graph matching}
+\begin{figure}[t]
+        \centering
+        \includegraphics[width=5cm]{fig/matching_12.pdf}
+\end{figure}
+A matching function between $G^I$ and $G^J$ is a mapping %between the sets of nodes of two graphs:
+\\
+{\hspace{4cm}$m:V^I\rightarrow V^J$}
+\visible<2>{\textcolor{red}{\hspace{2cm}not unique!}}
+\visible<3->{
+Define a function $S(G^I, G^J, m)$ to measure the quality of matching $m$ that fulfills some conditions\\
+$\Rightarrow$ \textcolor{red}{Graph matching problem} between $G^I$ and $G^J$ 
+\begin{equation*} \label{gGMP}
+m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
+\end{equation*}
+}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Graph matching in computer vision}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=5cm]{fig/ducks_12.pdf}
+\end{figure}
+\begin{itemize}
+\item image matching
+\item shape matching
+\item object detection
+\item object tracking
+\item $\dots$
+\end{itemize}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Exact graph matching}
+Edge preserving mapping $m$:\\
+$\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ for all $v_i,v_{i^\prime}\in V^I$.
 
+
+\begin{itemize}
+\item mapping $m$ is bijective $\rightarrow$ graph isomorphism
+\item mapping $m$ is injective $\rightarrow$ graph monomorphism
+\item mapping $m$ is total\hspace{15pt} $\rightarrow$ graph homomorphism
+\end{itemize}
 \begin{figure}[h!]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{fig/duck1}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/GI}
+        \caption{Graph isomorphism}
+        \label{fig:GI}
     \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{fig/duck2}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/monomorphism}
+        \caption{Graph monomorphism}
+        \label{fig:monomorphism}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{fig/homomorphism}
+        \caption{Graph homomorphism}
+        \label{fig:homomorphism}
     \end{subfigure}
 \end{figure}
 
+\visible<2>{\textcolor{red}{\hspace{2cm}not unique!}}
 \end{frame}
+
 %--------------------------------------------------------------------------%
 \begin{frame}
 %\frametitle{Graph Matching}
@@ -164,41 +271,6 @@ Aber unter dieser Annahme reicht es, nur die Linkstruktur des WWW zu betrachten,
 Relevante Seiten, auf die viele weitere relevante Seiten zeigen
 \end{block}
 
-%\vspace{5pt}
-%\begin{minipage}[0.2\textheight]{\textwidth}
-%	\begin{columns}[T]
-%		\begin{column}{0.7\textwidth}
-%			{\bf Problem}: populäre Seiten kommen immer als Authorities vor
-%			
-%			\vspace{10pt}
-%			Es muss eine Überlappung in den Links, die auf Authorities zeigen, berücksichtigt werden
-%		\end{column}
-%		\begin{column}{0.2\textwidth}
-%			\begin{figure}
-%			\begin{tikzpicture}
-%				\node[] (h) at ( 1.0, 1.3) {Hubs};
-%				\node[] (v3) at ( 0.0, 0.0) {};\fill[red] (v3) circle (2pt);
-%				\node[] (v4) at ( 1.0, 0.0) {};\fill[red] (v4) circle (2pt);
-%				\node[] (v5) at ( 2.0, 0.0) {};\fill[red] (v5) circle (2pt);
-%			
-%				\node[] (v0) at ( 0.0, 1.0) {};\fill[blue] (v0) circle (2pt);
-%				\node[] (v1) at ( 1.0, 1.0) {};\fill[blue] (v1) circle (2pt);
-%				\node[] (v2) at ( 2.0, 1.0) {};\fill[blue] (v2) circle (2pt);
-%				
-%				\draw[->] (v2) to node[right] {} (v4);
-%				
-%				\draw[->] (v0) to node[right] {} (v3);
-%				\draw[->] (v0) to node[right] {} (v5);
-%				
-%				\draw[->] (v1) to node[right] {} (v3);
-%				\draw[->] (v1) to node[right] {} (v4);
-%				
-%				\node[] (a) at ( 1.0, -.2) {Authorities};
-%			\end{tikzpicture}
-%			\end{figure}
-%		\end{column}
-%	\end{columns}
-%\end{minipage}
 
 \begin{block}{Hubs}
 Seiten, die auf viele Authorities zeigen
