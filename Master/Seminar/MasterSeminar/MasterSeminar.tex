@@ -12,9 +12,11 @@
 
 %\usepackage{tikz}
 %	\usetikzlibrary[topaths,arrows,calc]
-\usepackage{wrapfig}
+%\usepackage{wrapfig}
 \usepackage{graphicx}
+%\usepackage{stackengine}
 \usepackage{subcaption}
+\captionsetup[subfigure]{labelformat=empty}
 
 
 \usepackage[english]{babel}
@@ -74,7 +76,7 @@
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \section{Graph matching} 
-
+\subsection{Introduction}
 \begin{frame}[allowframebreaks]
 \frametitle{Attributed undirected graph}
 
@@ -119,6 +121,7 @@ Attributed undirected graph $G=(V,E,D)$
 \end{figure}%
 \end{frame}
 %--------------------------------------------------------------------------%
+\subsection{Graph matching}
 \begin{frame}
 \frametitle{Graph matching}
 Let us consider two undirected attributed graphs $G^I = (V^I, E^I, D^I)$ and $G^J = (V^J, E^J,D^J)$: % with $|V^I|=n_1$ and $|V^J|=n_2$:
@@ -164,6 +167,7 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------%
+\subsection{Exact graph matching}
 \begin{frame}[allowframebreaks]
 \frametitle{Exact graph matching}
 Edge preserving mapping $m$:
@@ -234,6 +238,7 @@ Exact graph matching:
 \end{frame}
 
 %--------------------------------------------------------------------------%
+\subsection{Inexact graph matching}
 \begin{frame} [allowframebreaks]
 \frametitle{Inexact graph matching}
 \begin{equation*}
@@ -334,7 +339,7 @@ Lower level: initial graphs $G^I$, $G^J$\\
 Higher level: simplified graphs (anchor graphs $A^I$, $A^J$)\\
 \begin{figure} [h]
 	\centering
-	\includegraphics[scale=0.35]{fig/twolevels3.png}
+	\includegraphics[scale=0.35]{fig/2levelGM/twolevels3.png}
 \end{figure}
 \end{frame}
 %--------------------------------------------------------------------------%
@@ -370,32 +375,384 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 \begin{frame}
 \frametitle{Graph partition update}
 \begin{enumerate}
-\item estimate an affine transformation between matched subgraphs based on the provided local correspondences (point set registration problem)
+\item estimate an affine transformation between matched subgraphs (point set registration problem)
 \item let nodes "vote" to which subgraphs they should belong to
 \end{enumerate}
 \begin{figure} [h]
 	\centering
-	\includegraphics[scale=0.35]{fig/update.png}
+	\includegraphics[scale=0.35]{fig/2levelGM/update.png}
 \end{figure}
 \end{frame}
 %--------------------------------------------------------------------------%
-\begin{frame}
-\frametitle{Complexity}
-%complexity of a selected graph matching algorithm $\mathcal{O}(f_{GM}(n_1,n_2))$
-\begin{itemize}
-%\item Graph partitioning: $\mathcal{O}(n_2^2)$ 
-%\item Codebook of node attributes: 
-\item size of the anchor graphs and subgraphs
-\item number of iterations
-\end{itemize}
-
-
-
-\end{frame}
+%\begin{frame}
+%\frametitle{Complexity}
+%%complexity of a selected graph matching algorithm $\mathcal{O}(f_{GM}(n_1,n_2))$
+%\begin{itemize}
+%%\item Graph partitioning: $\mathcal{O}(n_2^2)$ 
+%%\item Codebook of node attributes: 
+%\item size of the anchor graphs and subgraphs
+%\item number of iterations
+%\end{itemize}
+%\end{frame}
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \section{Evaluation} 
+\begin{frame}
+\frametitle{}
+\centering 
+{\Huge Evaluation}
+\end{frame}
 
+\subsection{Synthetic data}
+\begin{frame}[allowframebreaks]
+\frametitle{Synthetic data}
+\centering
+%$G^I, G^J$ are two complete graphs. $G^J$ is a copy of $G^I$ with additional outlier nodes and random shift in the node positions.
+
+\begin{figure}
+	\begin{subfigure}[b] {0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test2/accuracy_avg10t"} 
+	\end{subfigure}
+	\begin{subfigure}[b] {0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test2/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b] {0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test2/time_summary_avg10t"} 
+	\end{subfigure} 
+%	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $1$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $1$ ($n_1=100$, $\bar{n}=0$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test3/accuracy_avg10t"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test3/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test3/time_summary_avg10t"} 
+	\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $2$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $2$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test1/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test1/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test1/time_summary_avg10t"} 
+		\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $3$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $3$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test4/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test4/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/no_descr/Results_v4.3.3/Test4/time_summary_avg10t"} 
+		\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $4$ ($n_1=n_2=100$, $\sigma^2=0$)}
+\end{figure}
+
+\framebreak
+
+
+\begin{figure}[h]
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test2/accuracy_avg10t"} 
+	\end{subfigure}
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test2/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test2/time_summary_avg10t"} 
+	\end{subfigure} 
+%	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $1$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $1$ ($n_1=100$, $\bar{n}=0$, $\sigma^2=0$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h]
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test3/accuracy_avg10t"} 
+	\end{subfigure}%% 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test3/score_avg10t"} 
+	\end{subfigure} 
+	\begin{subfigure}[b]{0.32\textwidth}
+		\centering
+		\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test3/time_summary_avg10t"} 
+	\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $2$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $2$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h]
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test1/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test1/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test1/time_summary_avg10t"} 
+		\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $3$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic data: test $3$ ($n_1=100$, $\bar{n}\in[0,50]$, $\sigma^2=0.03$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h]
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test4/accuracy_avg10t"} 
+		\end{subfigure}%% 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test4/score_avg10t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/SyntheticTest/descr/Results_v4.3.3/Test4/time_summary_avg10t"} 
+		\end{subfigure} 	
+%	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic 
+\end{figure}
+
+\framebreak
+
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
+		\end{subfigure} 	
+%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $1$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
+		\end{subfigure} 	
+%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $2$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0.03$, $\theta=100\%$)}
+\end{figure}
+\vspace{-20pt}
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/accuracy_avg1t"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/score_avg1t"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
+		\end{subfigure} 	
+%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $3$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=90\%$)}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------%
+\subsection{Real data}
+\begin{frame}[allowframebreaks]
+\frametitle{Image affine transformation}
+
+\begin{figure}[h] 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/ImageTrafo/Img_pair1"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/ImageTrafo/Img_pair2"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/ImageTrafo/Img_pair3"}
+		\end{subfigure} 	
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/ImageTrafo/Img_pair4"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.45\textwidth}
+			\centering
+			\includegraphics[width=2cm]{"fig/evaluation/ImageTrafo/Img_pair5"}
+		\end{subfigure} 	
+\end{figure}
+
+\begin{figure}[h] \centering
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.15]{"fig/evaluation/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/accuracy1"} 
+		\end{subfigure} 
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.15]{"fig/evaluation/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/score1"} 
+		\end{subfigure}
+		\begin{subfigure}[b]{0.32\textwidth}
+			\centering
+			\includegraphics[scale=0.15]{"fig/evaluation/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/time1"}
+		\end{subfigure} 	
+\end{figure}
+
+\framebreak
+
+\begin{figure} 
+	\begin{center}
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/It1"} 
+			\caption{\scriptsize Iteration $1$}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/It2"} 
+			\caption{\scriptsize Iteration $2$}
+		\end{subfigure} 
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/It3"}
+			\caption{\scriptsize Iteration $3$}
+		\end{subfigure} 	
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/accuracy"}
+			\caption{\scriptsize Accuracy\hspace{5pt}}
+		\end{subfigure} 
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/score"}
+			\caption{\scriptsize Matching score\hspace{5pt}}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.32\textwidth}
+			\includegraphics[width=4cm]{"fig/evaluation/ImageTrafo/sIterations/gap"}
+			\caption{\scriptsize Gap between current and optimal solutions}
+		\end{subfigure} 	
+	\end{center}		
+%	\caption[Result of applying 2LevelGM to the image pair~\ref{fig:ImageTrafo_initGraphs_a}]{Result of applying 2LevelGM to the image pair~\ref{fig:ImageTrafo_initGraphs_a}. Nodes of the matched subgraphs have the same color.}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}[allowframebreaks]
+\frametitle{House data set}
+
+\begin{minipage}[0.2\textheight]{\textwidth}
+	\begin{columns}[T]
+		\begin{column}{0.7\textwidth}
+
+			\begin{figure}[h] \centering
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/accuracy"} 
+					\end{subfigure} 
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/score"} 
+					\end{subfigure}
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/time_summary"}
+					\end{subfigure} 	
+			%	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: not extrapolated solution} \label{fig:House_sol}
+			\end{figure}
+			
+			\begin{figure}[h] \centering
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/accuracy"} 
+					\end{subfigure} 
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/score"} 
+					\end{subfigure}
+					\begin{subfigure}[b]{0.32\textwidth}
+						\centering
+						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/time_summary"}
+					\end{subfigure} 	
+			%	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: extrapolated solution} \label{fig:House_ext_sol}
+			\end{figure}
+
+		\end{column}
+		
+		\begin{column}{0.3\textwidth}
+			\begin{figure}[h!]
+				\begin{subfigure}[b]{0.6\textwidth}
+					\centering
+					\includegraphics[width=2cm]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution/fi_1_ProgGM"} 
+					\caption{\tiny accuracy $11.63\%$}
+				\end{subfigure}\\
+				\begin{subfigure}[b]{0.6\textwidth}
+					\centering
+					\includegraphics[width=2cm]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution/fi_1_ProgGM"} 
+					\caption{\tiny accuracy $100\%$}
+				\end{subfigure}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{minipage}
+\end{frame}
+%--------------------------------------------------------------------------%
+%--------------------------------------------------------------------------%
+\section{Conclusions}
+\begin{frame} %[allowframebreaks]
+\frametitle{Conclusions}
+	\begin{itemize}
+		\item inexact graph matching problem
+		\item application of existing algorithms to bigger graphs
+		\item very good results for (sub)graph isomorphism problems
+		\item sensible to the deformations, but not more then other algorithms
+		\item good results in case of affine deformations
+		\item troubles with non-affine transformations
+		\item complexity depends on the number of iterations and on the size of the anchor graphs and subgraphs
+		\item fast
+		\item anchor attributes for anchor graph matching are preferred
+	\end{itemize}
+\end{frame}
+
+%--------------------------------------------------------------------------%
+\begin{frame} %[allowframebreaks]
+\frametitle{Future work}
+	\begin{itemize}
+		\item more sophisticated graph partitioning techniques
+		\item improvement of anchor attributes
+		\item further improvement of the update rule
+		\item probabilistic matching framework
+		\item hierarchical method
+	\end{itemize}
+\end{frame}
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
 \begin{frame}{The end}
