@@ -8,7 +8,7 @@
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{algorithm,algorithmic}
 
-%\floatname{algorithm}{Algorithmus}
+\usepackage{natbib}
 
 %\usepackage{tikz}
 %	\usetikzlibrary[topaths,arrows,calc]
@@ -112,7 +112,7 @@ Attributed undirected graph $G=(V,E,D)$
 \begin{itemize}
 \item set of nodes $V=\{v_i\}_{i=1}^{n}$
 \item set of edges $E\subseteq\{\{u,v\}| u, v\in V\}$
-\item node attributes $D=\{d_i\}_{i=1}^{n}$
+\item node attributes $D=\{d_i\}_{i=1}^{n}$, $D\subset\mathbb{R}^r$
 \end{itemize}
 \vspace{1cm}
 \begin{figure}[b]
@@ -144,7 +144,7 @@ A matching function between $G^I$ and $G^J$ is a mapping %between the sets of no
 {\hspace{4cm}$m:V^I\rightarrow V^J$}
 \visible<2>{\textcolor{red}{\hspace{2cm}not unique!}}
 \visible<3->{
-Define a function $S(G^I, G^J, m)$ to measure the quality of matching $m$ that fulfills some conditions\\
+Define a function $S(G^I, G^J, m)$ to measure the quality of matching $m$ that fulfills some constraints\\
 $\Rightarrow$ \textcolor{red}{Graph matching problem} between $G^I$ and $G^J$ 
 \begin{equation*}
 m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
@@ -167,6 +167,27 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{itemize}
 \end{frame}
 %--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Graph matching}
+
+A matching function between $G^I$ and $G^J$ is a mapping %between the sets of nodes of two graphs:
+\\
+{\hspace{4cm}$m:V^I\rightarrow V^J$}
+
+Graph matching problem between $G^I$ and $G^J$ 
+\begin{equation*}
+m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
+\end{equation*}
+
+
+Depending on the required properties of a matching one distinguishes
+\begin{itemize}
+\item exact graph matching
+\item inexact graph matching
+\end{itemize}
+
+\end{frame}
+%--------------------------------------------------------------------------%
 \subsection{Exact graph matching}
 \begin{frame}[allowframebreaks]
 \frametitle{Exact graph matching}
@@ -183,7 +204,7 @@ $\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ % for al
 		\begin{column}{0.3\textwidth}
 			\begin{figure}[h!]
 			    \centering
-			    \includegraphics[width=2cm]{fig/GI}
+			    \includegraphics[width=2.3cm]{fig/GI}
 			\end{figure}
 		\end{column}
 	\end{columns}
@@ -199,7 +220,7 @@ $\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ % for al
 		\begin{column}{0.3\textwidth}
 			\begin{figure}[h!]
 			    \centering
-			    \includegraphics[width=2cm]{fig/monomorphism}
+			    \includegraphics[width=2.3cm]{fig/monomorphism}
 			\end{figure}
 		\end{column}
 	\end{columns}
@@ -215,12 +236,12 @@ $\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ % for al
 		\begin{column}{0.3\textwidth}
 			\begin{figure}[h!]
 			    \centering
-			    \includegraphics[width=2cm]{fig/homomorphism}
+			    \includegraphics[width=2.3cm]{fig/homomorphism}
 			\end{figure}
 		\end{column}
 	\end{columns}
 \end{minipage}
-\textcolor{red}{NP complete (except GI)~\cite{Garey_NPComplet}}
+\textcolor{red}{NP complete (except GI)~{\tiny\citep{Garey_NPComplet}}}
 %\visible<2>{\textcolor{red}{NP complete(except GI)}}
 
 \framebreak
@@ -228,8 +249,8 @@ $\{v_i,v_{i^\prime}\}\in E^I\Rightarrow\{m(v),m(v_{i^\prime})\}\in E^J$ % for al
 Exact graph matching:
 \begin{itemize}
 \item too strict
-\item time/memory consuming
 \item cannot handle object deformation
+\item time/memory consuming
 \end{itemize}
 \begin{figure}[htb]
 	\centering
@@ -241,25 +262,26 @@ Exact graph matching:
 \subsection{Inexact graph matching}
 \begin{frame} [allowframebreaks]
 \frametitle{Inexact graph matching}
+Introduce similarity measure between nodes/edges in the graphs
+%Do not require exact correspondences between two graphs
 \begin{equation*}
 m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \end{equation*}
-\begin{itemize}
-\item second-order (edge) similarity \textcolor{red}{$s_E(e_{ii^\prime},e_{jj^\prime})$}, $e_{ii^\prime}\in E^I, e_{jj^\prime}\in E^J$
-\item first-order (node) similarity \textcolor{red}{$s_V(v_{i},v_{j})$}, $v_i\in V^I, v_j\in V^J$
-\end{itemize}
 
 \begin{equation*}
 	S(G^I,G^J,m)=\sum_{\substack{m(v_i)=v_j\\m(v_i^{\prime})=v_j^{\prime}}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{m(v_i)=v_j}s_V(v_{i},v_{j})
 \end{equation*}
 
 \begin{itemize}
-\item Assignment matrix $x\in\{0,1\}^{n_1\times n_2},\ x_{ij}=1\iff m(v_i)=v_j$
+\item second-order (edge) similarity \textcolor{red}{$s_E(e_{ii^\prime},e_{jj^\prime})$}, $e_{ii^\prime}\in E^I, e_{jj^\prime}\in E^J$
+\item first-order (node) similarity \textcolor{red}{$s_V(v_{i},v_{j})$}, $v_i\in V^I, v_j\in V^J$
+\item assignment matrix $X\in\{0,1\}^{n_1\times n_2},\ X_{ij}=1\iff m(v_i)=v_j$ \\
+      vector form $x = \vec(X)$
 \end{itemize}
 
 \framebreak
 The most common problem formulation:
-\begin{block}{Quadratic Assignment Problem (NP complete)~\cite{Burkard98thequadratic}}
+\begin{block}{Quadratic Assignment Problem (NP complete)~{\tiny\citep{Burkard98thequadratic}}}
 $$x^* = \arg\max \sum_{\substack{x_{ij}=1\\x_{i^\prime j^\prime}=1}}s_E(e_{ii^\prime},e_{jj^\prime}) + \sum_{x_{ij}=1}s_V(v_{i},v_{j}) $$
 $$ s.t. \begin{cases}
 		x\in\{0,1\}^{n_1n_2} \\
@@ -267,25 +289,25 @@ $$ s.t. \begin{cases}
 		\sum_{j=1}^{n_2}x_{ij}\le 1
 \end{cases}$$
 \end{block}
-Using matrix notation : $\arg\max_{x}{x^TSx}$, $S-$similarity (or affinity) matrix
+Using matrix notation : $\arg\max_{x}{x^TSx}$, $S$ is a similarity (or affinity) matrix
 
 %Algorithms that solve this problem can be optimal or suboptimal.
 
 \framebreak
 
-Solution techniques~\cite{Conte2004}
+Solution techniques~{\tiny\citep{Conte2004}}
 \begin{itemize}
 \item discrete optimization
 	\begin{itemize}
-	\item tree search~\cite{Bunke1983_inexactGM,Shapiro1981,Fu1979,Wang1995}
-	\item simulated annealing~\cite{Herault1990_SimulatedAnnealing}
+	\item tree search~{\tiny\citep{Bunke1983_inexactGM,Shapiro1981,Fu1979,Wang1995}}
+	\item simulated annealing~{\tiny\citep{Herault1990_SimulatedAnnealing}}
 	\end{itemize} 
 \item continuous optimization
 	\begin{itemize}
-		\item constraint relaxation~\cite{Rangarajan1996_GAGM,Leordeanu2009_IPFP,FastPFP,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}
-		\item spectral methods~\cite{Leordeanu2005_SM,Umeyam1988}
-		\item probabilistic frameworks~\cite{Armiti2014,Hancock_Kittler,Hancock_EM_SVD,Sanrom2012}
-		\item clustering~\cite{Hancock_ModalClusters,Cho2009_AgglClustering,Hancock_GM_SpectralPart,Lyzinski2015}
+		\item constraint relaxation~{\tiny\citep{Rangarajan1996_GAGM,Leordeanu2009_IPFP,FastPFP,Vogelstein_BrainGraphs,Zazlavskiy2008_PATH}}
+		\item spectral methods~{\tiny\citep{Leordeanu2005_SM,Umeyam1988}}
+		\item probabilistic frameworks~{\tiny\citep{Armiti2014,Hancock_Kittler,Hancock_EM_SVD,Sanrom2012}}
+		\item clustering~{\tiny\citep{Hancock_ModalClusters,Cho2009_AgglClustering,Hancock_GM_SpectralPart,Lyzinski2015}}
 	\end{itemize} 
 \end{itemize}
 \end{frame}
@@ -294,18 +316,30 @@ Solution techniques~\cite{Conte2004}
 \frametitle{Drawback of the existing algorithms}
 
 \begin{itemize}
-\item most of them were developed for matching relative small graphs ($\sim 100$ nodes)
+\item most of the algorithms are developed for matching relatively small graphs ($\sim 150$ nodes)
 \item scale badly due to the polynomial increase of time and storage demand
 \item algorithms for the big graphs use another formulation of the graph matching optimization problem\\
 \vspace{5pt}
 {\centering
-$P = \argmin_{\hat{P}\in\Pi_n}\|A^I-\hat{P}A^J\hat{P}^T\|^2+\|D^I-\hat{P}D^J\|^2_2$}
+$x^* = \argmin_{X}\|A^I-XA^JX^T\|^2+\|D^I-XD^J\|^2_2$}
+\end{itemize}
+
+\end{frame}
+%--------------------------------------------------------------------------%
+\begin{frame}
+\frametitle{Aim of the master's thesis}
+\begin{itemize}
+\item a novel framework that should help to extend the usability
+of existing graph matching algorithms to bigger graphs
+\item a variant of the well-known divide and conquer paradigm:\\
+	subdividing initial problem into a set of smaller problems, which can be easily handled with existing algorithms
+\item iterative algorithm that allows to improve initial subdivision into subproblems
 \end{itemize}
 
 \end{frame}
 %--------------------------------------------------------------------------%
 %--------------------------------------------------------------------------%
-\section{2LevelGM}
+\section{Two level graph matching framework (2LevelGM)}
 
 \begin{frame}
 \frametitle{Complexity reduction}
@@ -320,15 +354,15 @@ $$ s.t. \begin{cases}
 \end{block}
 
 \begin{itemize}
-\item set of candidate correspondences
+\item set of candidate correspondences~{\tiny \citep{Cho2012_ProgressiveGM}}
 \item sparse affinity matrix
 \item subdivide problem into a set of smaller subproblems
 \visible<2->{\hspace{10pt}\textcolor{red}{$\leftarrow$\\}}
 \visible<3->{Similar works:
 			\begin{itemize}
-				\item semisupervised case~\cite{Lyzinski2015}
-				\item another objective function~\cite{Hancock_ModalClusters,Hancock_GM_SpectralPart}
-				\item special kind of subproblem~\cite{Hancock_GM_SpectralPart,CliqueGraph_CVPR2015}
+				\item semisupervised case~{\tiny\citep{Lyzinski2015}}
+				\item another objective function~{\tiny\citep{Lyzinski2015,Hancock_ModalClusters,Hancock_GM_SpectralPart}}
+				\item special kind of subproblem~{\tiny\citep{Hancock_GM_SpectralPart,CliqueGraph_CVPR2015}}
 			\end{itemize}}
 \end{itemize}
 \end{frame}
@@ -357,7 +391,7 @@ Done by: \begin{itemize}
 %--------------------------------------------------------------------------%
 \begin{frame}
 \frametitle{Anchor graph and subgraph matching}
-Find correspondences between two anchor graphs $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$
+Goal: find correspondences between two anchor graphs $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and $A^J=(V^{Ja},E^{Ja},U^{Ja})$
 
 \begin{itemize}
 	\item edge similarity: compare length of the edges beween anchors
@@ -368,7 +402,7 @@ Find correspondences between two anchor graphs $A^I=(V^{Ia},E^{Ia},U^{Ia})$ and 
 	\end{itemize}
 \end{itemize}
 
-Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{Cho2010_RRWM})
+Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~{\tiny\citep{Cho2010_RRWM}})
 \end{frame}
 
 %--------------------------------------------------------------------------%
@@ -398,9 +432,17 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 %--------------------------------------------------------------------------%
 \section{Evaluation} 
 \begin{frame}
-\frametitle{}
-\centering 
-{\Huge Evaluation}
+\frametitle{Evaluation}
+%\centering 
+%{\Huge Evaluation}
+Two ways of evaluation have been used
+\begin{itemize}
+\item synthetic data
+\item real data
+\end{itemize}
+
+The quality is measured by the matching score and accuracy of an obtained solution together with the running time in seconds needed to find it.
+
 \end{frame}
 
 \subsection{Synthetic data}
@@ -473,6 +515,8 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 %	\caption[Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with non-attributed anchor graphs on synthetic data: test $4$ ($n_1=n_2=100$, $\sigma^2=0$)}
 \end{figure}
 
+Performance of the 2LevelGM with non-attributed anchor graphs
+
 \framebreak
 
 
@@ -539,7 +583,7 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 		\end{subfigure} 	
 %	\caption[Performance of the 2LevelGM with attributed anchor graphs on synthetic data (test $4$)]{Performance of the 2LevelGM with attributed anchor graphs on synthetic 
 \end{figure}
-
+Performance of the 2LevelGM with attributed anchor graphs
 \framebreak
 
 \begin{figure}[h] 
@@ -589,6 +633,7 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 		\end{subfigure} 	
 %	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $3$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=90\%$)}
 \end{figure}
+Comparison of 2LevelGM, GLAG and PATH on bigger graphs
 \end{frame}
 %--------------------------------------------------------------------------%
 \subsection{Real data}
@@ -630,7 +675,8 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
 			\includegraphics[scale=0.15]{"fig/evaluation/ImageTrafo/anchor_descr/using_cpd_afftrafo/performance/time1"}
-		\end{subfigure} 	
+		\end{subfigure}
+		\caption*{Evaluation of 2LevelGM on the synthetic image dataset}
 \end{figure}
 
 \framebreak
@@ -666,7 +712,7 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 \end{figure}
 \end{frame}
 %--------------------------------------------------------------------------%
-\begin{frame}[allowframebreaks]
+\begin{frame} %[allowframebreaks]
 \frametitle{House data set}
 
 \begin{minipage}[0.2\textheight]{\textwidth}
@@ -686,9 +732,9 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 						\centering
 						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/solution2/performance/time_summary"}
 					\end{subfigure} 	
-			%	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: not extrapolated solution} \label{fig:House_sol}
+				\caption*{Evaluation of 2LevelGM on the CMU House sequence: not extrapolated solution}
 			\end{figure}
-			
+			\vspace{-20pt}
 			\begin{figure}[h] \centering
 					\begin{subfigure}[b]{0.32\textwidth}
 						\centering
@@ -702,7 +748,7 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 						\centering
 						\includegraphics[scale=0.12]{"fig/evaluation/HouseSeq2/anchor_descr/using_cpd_afftrafo/ext_solution2/performance/time_summary"}
 					\end{subfigure} 	
-			%	\caption[Evaluation of 2LevelGM on the CMU House sequence]{Evaluation of 2LevelGM on the CMU House sequence: extrapolated solution} \label{fig:House_ext_sol}
+				\caption*{Evaluation of 2LevelGM on the CMU House sequence: extrapolated solution}
 			\end{figure}
 
 		\end{column}
@@ -729,15 +775,20 @@ Match anchor graphs and subgraph using some existing algorithm (e.g.~RRWM~\cite{
 \section{Conclusions}
 \begin{frame} %[allowframebreaks]
 \frametitle{Conclusions}
+	The developed algorithm
 	\begin{itemize}
-		\item inexact graph matching problem
-		\item application of existing algorithms to bigger graphs
-		\item very good results for (sub)graph isomorphism problems
-		\item sensible to the deformations, but not more then other algorithms
-		\item good results in case of affine deformations
-		\item troubles with non-affine transformations
-		\item complexity depends on the number of iterations and on the size of the anchor graphs and subgraphs
-		\item fast
+		\item solves inexact graph matching problem
+		\item is fast
+		\item allows application of existing algorithms to bigger graphs
+		\item shows very good results for (sub)graph isomorphism problems
+		\item handles reasonably the affine deformations in graph structure
+	\end{itemize}
+
+	It has following properties:
+	\begin{itemize}
+		\item it is sensible to non-affine deformations in graph structure
+%		\item  with non-affine transformations
+		\item it's complexity depends on the number of iterations and on the size of the anchor graphs and subgraphs
 		\item anchor attributes for anchor graph matching are preferred
 	\end{itemize}
 \end{frame}
@@ -777,7 +828,7 @@ Thank you for your attention!
 %--------------------------------------------------------------------------%
 \begin{frame}[allowframebreaks]
 	\frametitle{References}
-	\bibliographystyle{plain}
+	\bibliographystyle{plainnat}
 	\bibliography{bibliographie}
 \end{frame} 
 
