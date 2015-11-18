@@ -275,8 +275,7 @@ m = \argmax_{\hat{m}}S(G^I, G^J, \hat{m})
 \begin{itemize}
 \item second-order (edge) similarity \textcolor{red}{$s_E(e_{ii^\prime},e_{jj^\prime})$}, $e_{ii^\prime}\in E^I, e_{jj^\prime}\in E^J$
 \item first-order (node) similarity \textcolor{red}{$s_V(v_{i},v_{j})$}, $v_i\in V^I, v_j\in V^J$
-\item assignment matrix $X\in\{0,1\}^{n_1\times n_2},\ X_{ij}=1\iff m(v_i)=v_j$ \\
-      vector form $x = \vec(X)$
+\item assignment matrix $X\in\{0,1\}^{n_1\times n_2},\ X_{ij}=1\iff m(v_i)=v_j$, $x = \vec(X)$
 \end{itemize}
 
 \framebreak
@@ -328,13 +327,17 @@ $x^* = \argmin_{X}\|A^I-XA^JX^T\|^2+\|D^I-XD^J\|^2_2$}
 %--------------------------------------------------------------------------%
 \begin{frame}
 \frametitle{Aim of the master's thesis}
+
+
 \begin{itemize}
 \item a novel framework that should help to extend the usability
 of existing graph matching algorithms to bigger graphs
-\item a variant of the well-known divide and conquer paradigm:\\
-	subdividing initial problem into a set of smaller problems, which can be easily handled with existing algorithms
-\item iterative algorithm that allows to improve initial subdivision into subproblems
+%\item iterative algorithm that allows to improve initial subdivision into subproblems
 \end{itemize}
+\vspace{10pt}
+Idea:\\
+\hspace{10pt} subdividing initial problem into a set of smaller problems, which can be easily handled with existing algorithms\\
+\hspace{10pt}$\Rightarrow$ a variant of the well-known divide-and-conquer paradigm
 
 \end{frame}
 %--------------------------------------------------------------------------%
@@ -585,53 +588,53 @@ Performance of the 2LevelGM with non-attributed anchor graphs
 \end{figure}
 Performance of the 2LevelGM with attributed anchor graphs
 \framebreak
-
+\vspace{-20pt}
 \begin{figure}[h] 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/accuracy_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/accuracy_avg1t"} 
 		\end{subfigure}
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/score_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/score_avg1t"} 
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
-		\end{subfigure} 	
-%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $1$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=100\%$)}
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test1/time_summary_avg1t"} 
+		\end{subfigure} 	\vspace{-10pt}
+	\caption*{\tiny graph isomorphism}
 \end{figure}
 \vspace{-20pt}
 \begin{figure}[h] 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/accuracy_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/accuracy_avg1t"} 
 		\end{subfigure}
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/score_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/score_avg1t"} 
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
-		\end{subfigure} 	
-%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $2$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0.03$, $\theta=100\%$)}
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test2/time_summary_avg1t"} 
+		\end{subfigure} 	\vspace{-10pt}
+	\caption*{\tiny deformation noise $\sim\mathcal{N}(0, 0.03)$}
 \end{figure}
 \vspace{-20pt}
 \begin{figure}[h] 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/accuracy_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/accuracy_avg1t"} 
 		\end{subfigure}
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/score_avg1t"} 
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/score_avg1t"} 
 		\end{subfigure} 
 		\begin{subfigure}[b]{0.32\textwidth}
 			\centering
-			\includegraphics[width=2.5cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
-		\end{subfigure} 	
-%	\caption[Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs: test $3$]{Performance comparison of 2LevelGM, GLAG and PATH on bigger graphs ($\bar{n}=0$, $\sigma^2=0$, $\theta=90\%$)}
+			\includegraphics[width=2.0cm]{"fig/evaluation/SyntheticTest_BigGraphs/descr/Results_v4.3.3/Test3/time_summary_avg1t"} 
+		\end{subfigure} 	\vspace{-10pt}
+	\caption*{\tiny omit $90\%$ of edges}
 \end{figure}
 Comparison of 2LevelGM, GLAG and PATH on bigger graphs
 \end{frame}
